@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "ch.fluxron.fluxronapp"
         minSdkVersion 18
-        targetSdkVersion 23
+        targetSdkVersion 18
         versionCode 1
         versionName "1.0"
     }
@@ -22,4 +22,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'de.greenrobot:eventbus:2.4.0'
 }

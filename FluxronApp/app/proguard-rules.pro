@@ -15,3 +15,14 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Do not obfuscate event handler methods
+# as these are bound on runtime by GreenRobot EventBus
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
+# Required for GreenRobot EventBus with AsyncExecutor
+-keepclassmembers class * extends de.greenrobot.event.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
+}
