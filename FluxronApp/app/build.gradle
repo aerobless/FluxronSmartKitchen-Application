@@ -4,6 +4,13 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
+    // fix for duplicate files
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
     defaultConfig {
         applicationId "ch.fluxron.fluxronapp"
         minSdkVersion 18
@@ -23,4 +30,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'com.couchbase.lite:couchbase-lite-android:1.1.0'
 }
