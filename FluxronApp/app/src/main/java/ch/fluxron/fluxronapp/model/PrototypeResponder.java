@@ -1,6 +1,19 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
+import ch.fluxron.fluxronapp.modelevents.BluetoothDeviceListRequest;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessage;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessageResponse;
 
@@ -24,4 +37,25 @@ public class PrototypeResponder {
             Thread.sleep(500);
         }
     }
+
+    public void onEventAsync(BluetoothDeviceListRequest msg) {
+        getBluetoothDevices();
+    }
+
+    public void getBluetoothDevices(){
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            //MSG: Device does not support Bluetooth
+        }
+        if (!bluetoothAdapter.isEnabled()) {
+            //MSG: Please enable Bluetooth
+        }
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        List<String> s = new ArrayList<String>();
+        for(BluetoothDevice bt : pairedDevices){
+            s.add(bt.getName());
+            Log.d("FLUXRON.PROTOTYPE", bt.getName());
+        }
+    }
+
 }

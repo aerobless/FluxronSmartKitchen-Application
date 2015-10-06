@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
+import ch.fluxron.fluxronapp.modelevents.BluetoothDeviceListRequest;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessage;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessageResponse;
 import de.greenrobot.event.EventBus;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         SimpleMessage m = new SimpleMessage();
         m.setMessageText("test");
         busProvider.getEventBus().post(m);
+
+        busProvider.getEventBus().post(new BluetoothDeviceListRequest());
     }
 
     public void onEventMainThread(SimpleMessageResponse msg){
