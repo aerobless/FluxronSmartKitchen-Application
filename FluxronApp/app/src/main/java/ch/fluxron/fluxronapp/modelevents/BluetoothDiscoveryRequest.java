@@ -1,5 +1,5 @@
 package ch.fluxron.fluxronapp.modelevents;
 
-public class BluetoothDeviceListRequest {
+public class BluetoothDiscoveryRequest {
 
 }

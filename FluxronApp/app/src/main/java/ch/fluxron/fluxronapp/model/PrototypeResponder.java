@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
-import ch.fluxron.fluxronapp.modelevents.BluetoothDeviceListRequest;
+import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryRequest;
+import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessage;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessageResponse;
 
@@ -38,11 +39,7 @@ public class PrototypeResponder {
         }
     }
 
-    public void onEventAsync(BluetoothDeviceListRequest msg) {
-        getBluetoothDevices();
-    }
-
-    public void getBluetoothDevices(){
+    public void onEventAsync(BluetoothDiscoveryRequest msg) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             //MSG: Device does not support Bluetooth
@@ -52,10 +49,11 @@ public class PrototypeResponder {
         }
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         List<String> s = new ArrayList<String>();
-        for(BluetoothDevice bt : pairedDevices){
-            s.add(bt.getName());
-            Log.d("FLUXRON.PROTOTYPE", bt.getName());
+        for(BluetoothDevice device : pairedDevices){
+            s.add(device.getName());
+            BluetoothDiscoveryResponse response = new BluetoothDiscoveryResponse(device.getName(), device.getAddress());
+            provider.getEventBus().post(response);
         }
+        bluetoothAdapter.startDiscovery();
     }
-
 }
