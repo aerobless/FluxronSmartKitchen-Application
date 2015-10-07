@@ -24,6 +24,7 @@ import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
+import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -85,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
         busProvider.getUiEventBus().post(m);
 
         //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
+    }
+
+    public void navigateCreate(View btn){
+        Intent startOther = new Intent(this, CreateKitchenActivity.class);
+        startActivity(startOther);
     }
 
     public void onEventMainThread(SimpleMessageResponse msg){
