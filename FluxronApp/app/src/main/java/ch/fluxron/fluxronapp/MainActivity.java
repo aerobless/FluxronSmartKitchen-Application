@@ -42,12 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
         textViewWidget = (TextView)this.findViewById(R.id.prototypeMessageList);
 
-        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
-        busProvider.getUiEventBus().register(this);
-
         //Bluetooth Discovery Prototyp
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         //registerReceiver(receiver, filter); // Don't forget to unregister during onDestroy
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
+        busProvider.getUiEventBus().register(this);
     }
 
     @Override
