@@ -15,7 +15,6 @@ public class LocalDatabase {
         this.provider.getDalEventBus().register(this);
     }
 
-
     public void onEventAsync(Object msg) {
     }
 }

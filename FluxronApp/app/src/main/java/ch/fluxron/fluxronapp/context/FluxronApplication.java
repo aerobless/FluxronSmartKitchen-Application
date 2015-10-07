@@ -21,6 +21,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private EventBus dalToModelEventBus;
     private ch.fluxron.fluxronapp.ui.util.IEventBusProvider uiToModelProvider;
     private ch.fluxron.fluxronapp.data.IEventBusProvider dalToModelProvider;
+    private ch.fluxron.fluxronapp.model.IEventBusProvider modelProvier;
     private PrototypeResponder responder;
     private Manager couchbaseManager;
     private Database couchbaseDB;
@@ -50,11 +51,23 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
                 return dalToModelEventBus;
             }
         };
+
+        modelProvier = new ch.fluxron.fluxronapp.model.IEventBusProvider(){
+            @Override
+            public EventBus getDalEventBus() {
+                return dalToModelEventBus;
+            }
+
+            @Override
+            public EventBus getUiEventBus() {
+                return uiToModelEventBus;
+            }
+        };
     }
 
     private void setUpLayers() {
         // Business layer
-        responder = new PrototypeResponder(dalToModelProvider);
+        responder = new PrototypeResponder(modelProvier);
 
         setupDal();
     }

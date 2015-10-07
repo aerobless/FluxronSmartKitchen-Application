@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import ch.fluxron.fluxronapp.data.IEventBusProvider;
+import ch.fluxron.fluxronapp.model.IEventBusProvider;
 import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryRequest;
 import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessage;
