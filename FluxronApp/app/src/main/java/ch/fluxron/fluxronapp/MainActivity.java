@@ -22,7 +22,7 @@ import ch.fluxron.fluxronapp.modelevents.SimpleMessageResponse;
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewWidget;
-    IEventBusProvider busProvider;
+    ch.fluxron.fluxronapp.ui.util.IEventBusProvider busProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         textViewWidget = (TextView)this.findViewById(R.id.prototypeMessageList);
 
-        busProvider = (IEventBusProvider)getApplication();
-        busProvider.getEventBus().register(this);
+        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
+        busProvider.getUiEventBus().register(this);
 
         //Bluetooth Discovery Prototyp
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -63,16 +63,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        busProvider.getEventBus().unregister(this);
+        busProvider.getUiEventBus().unregister(this);
         super.onStop();
     }
 
     public void sendTestMessage(View btn){
         SimpleMessage m = new SimpleMessage();
         m.setMessageText("test");
-        busProvider.getEventBus().post(m);
+        busProvider.getUiEventBus().post(m);
 
-        busProvider.getEventBus().post(new BluetoothDiscoveryRequest());
+        busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
     }
 
     public void onEventMainThread(SimpleMessageResponse msg){
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 BluetoothDiscoveryResponse response = new BluetoothDiscoveryResponse(device.getName(), device.getAddress());
-                busProvider.getEventBus().post(response);
+                busProvider.getUiEventBus().post(response);
             }
         }
     };

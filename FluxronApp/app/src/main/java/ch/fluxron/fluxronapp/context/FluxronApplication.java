@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.data.LocalDatabase;
 import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
 import de.greenrobot.event.EventBus;
@@ -20,12 +21,15 @@ import de.greenrobot.event.EventBus;
 /**
  * Main Context for the Application
  */
-public class FluxronApplication extends Application implements IEventBusProvider {
+public class FluxronApplication extends Application implements ch.fluxron.fluxronapp.ui.util.IEventBusProvider {
     private EventBus uiToModelEventBus;
     private EventBus dalToModelEventBus;
+    private IEventBusProvider uiToModelProvider;
+    private IEventBusProvider dalToModelProvider;
     private PrototypeResponder responder;
     private Manager couchbaseManager;
     private Database couchbaseDB;
+    private LocalDatabase localDatabase;
 
     @Override
     public void onCreate() {
@@ -35,42 +39,48 @@ public class FluxronApplication extends Application implements IEventBusProvider
         setUpLayers();
     }
 
+    private void setUpEventBuses(){
+        uiToModelEventBus = new EventBus();
+        uiToModelProvider = new IEventBusProvider() {
+            @Override
+            public EventBus getEventBus() {
+                return getUiEventBus();
+            }
+        };
+
+        dalToModelEventBus = new EventBus();
+        dalToModelProvider = new IEventBusProvider() {
+            @Override
+            public EventBus getEventBus() {
+                return getDalEventBus();
+            }
+        };
+    }
+
     private void setUpLayers() {
         // Business layer
-        responder = new PrototypeResponder(this);
+        responder = new PrototypeResponder(uiToModelProvider);
 
-        // DAL
+        setupDal();
+    }
+
+    private void setupDal() {
         try {
             couchbaseManager = new Manager(new AndroidContext(this.getApplicationContext()), Manager.DEFAULT_OPTIONS);
-            try {
-                couchbaseDB = couchbaseManager.getDatabase("protobase");
-
-                Document doc = couchbaseDB.getExistingDocument("testdoc");
-
-                if (doc==null) {
-                    doc = couchbaseDB.getDocument("testdoc");
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    map.put("testvalue", "Some Text Here");
-                    doc.putProperties(map);
-                }
-                else {
-                    Log.d("FLUXRON.PROTOTYPE", "retrievedDocument=" + String.valueOf(doc.getProperties()));
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }
+            couchbaseDB = couchbaseManager.getDatabase("protobase");
+            localDatabase = new LocalDatabase(dalToModelProvider, couchbaseDB);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
     }
 
-    private void setUpEventBuses(){
-        uiToModelEventBus = new EventBus();
-        dalToModelEventBus = new EventBus();
+    public EventBus getDalEventBus() {
+        return dalToModelEventBus;
     }
 
-    @Override
-    public EventBus getEventBus() {
+    public EventBus getUiEventBus() {
         return uiToModelEventBus;
     }
 }
