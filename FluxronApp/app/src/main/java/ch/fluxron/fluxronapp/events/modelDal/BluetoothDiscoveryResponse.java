@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.modelevents;
+package ch.fluxron.fluxronapp.events.modelDal;
 
 public class BluetoothDiscoveryResponse {
     private String deviceName;

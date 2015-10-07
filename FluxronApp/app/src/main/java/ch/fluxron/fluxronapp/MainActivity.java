@@ -13,10 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryRequest;
-import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryResponse;
-import ch.fluxron.fluxronapp.modelevents.SimpleMessage;
-import ch.fluxron.fluxronapp.modelevents.SimpleMessageResponse;
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
+import ch.fluxron.fluxronapp.events.SimpleMessage;
+import ch.fluxron.fluxronapp.events.SimpleMessageResponse;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.modelevents;
+package ch.fluxron.fluxronapp.events;
 
 /**
  * A simple message containing a text. PROTOTYPE USAGE ONLY!
