@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
 import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryRequest;
 import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessage;

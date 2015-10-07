@@ -1,20 +1,15 @@
 package ch.fluxron.fluxronapp.context;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.android.AndroidContext;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.LocalDatabase;
-import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
 import de.greenrobot.event.EventBus;
 
@@ -24,8 +19,8 @@ import de.greenrobot.event.EventBus;
 public class FluxronApplication extends Application implements ch.fluxron.fluxronapp.ui.util.IEventBusProvider {
     private EventBus uiToModelEventBus;
     private EventBus dalToModelEventBus;
-    private IEventBusProvider uiToModelProvider;
-    private IEventBusProvider dalToModelProvider;
+    private ch.fluxron.fluxronapp.ui.util.IEventBusProvider uiToModelProvider;
+    private ch.fluxron.fluxronapp.data.IEventBusProvider dalToModelProvider;
     private PrototypeResponder responder;
     private Manager couchbaseManager;
     private Database couchbaseDB;
@@ -41,25 +36,25 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
 
     private void setUpEventBuses(){
         uiToModelEventBus = new EventBus();
-        uiToModelProvider = new IEventBusProvider() {
+        uiToModelProvider = new ch.fluxron.fluxronapp.ui.util.IEventBusProvider() {
             @Override
-            public EventBus getEventBus() {
-                return getUiEventBus();
+            public EventBus getUiEventBus() {
+                return uiToModelEventBus;
             }
         };
 
         dalToModelEventBus = new EventBus();
-        dalToModelProvider = new IEventBusProvider() {
+        dalToModelProvider = new ch.fluxron.fluxronapp.data.IEventBusProvider() {
             @Override
-            public EventBus getEventBus() {
-                return getDalEventBus();
+            public EventBus getDalEventBus() {
+                return dalToModelEventBus;
             }
         };
     }
 
     private void setUpLayers() {
         // Business layer
-        responder = new PrototypeResponder(uiToModelProvider);
+        responder = new PrototypeResponder(dalToModelProvider);
 
         setupDal();
     }

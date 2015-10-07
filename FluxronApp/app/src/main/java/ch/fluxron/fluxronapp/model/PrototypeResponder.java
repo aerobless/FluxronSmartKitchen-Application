@@ -2,17 +2,12 @@ package ch.fluxron.fluxronapp.model;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import ch.fluxron.fluxronapp.eventsbase.IEventBusProvider;
+import ch.fluxron.fluxronapp.data.IEventBusProvider;
 import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryRequest;
 import ch.fluxron.fluxronapp.modelevents.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.modelevents.SimpleMessage;
@@ -27,14 +22,14 @@ public class PrototypeResponder {
 
     public PrototypeResponder(IEventBusProvider provider) {
         this.provider = provider;
-        provider.getEventBus().register(this);
+        provider.getDalEventBus().register(this);
     }
 
     public void onEventAsync(SimpleMessage msg) throws InterruptedException {
         for (int i =0; i < 30; i++) {
             SimpleMessageResponse response = new SimpleMessageResponse();
             response.setMessageText("hello " + i);
-            provider.getEventBus().post(response);
+            provider.getDalEventBus().post(response);
             Thread.sleep(500);
         }
     }
@@ -52,7 +47,7 @@ public class PrototypeResponder {
         for(BluetoothDevice device : pairedDevices){
             s.add(device.getName());
             BluetoothDiscoveryResponse response = new BluetoothDiscoveryResponse(device.getName(), device.getAddress());
-            provider.getEventBus().post(response);
+            provider.getDalEventBus().post(response);
         }
         bluetoothAdapter.startDiscovery();
     }
