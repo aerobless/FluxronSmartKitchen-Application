@@ -2,8 +2,12 @@ package ch.fluxron.fluxronapp.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 
 public class CreateKitchenActivity extends AppCompatActivity {
@@ -26,5 +30,19 @@ public class CreateKitchenActivity extends AppCompatActivity {
 
     public void onEventMainThread(Object msg){
         busProvider.getUiEventBus();
+    }
+
+    public void createNewKitchen(View button){
+        TextView nameText = (TextView)findViewById(R.id.editTextName);
+        String name = nameText.getText().toString();
+
+        Kitchen k = new Kitchen(name);
+
+        SaveKitchenCommand command = new SaveKitchenCommand();
+        command.setKitchen(k);
+
+        busProvider.getUiEventBus().post(command);
+
+        finish();//TODO: Wait for a response of type KitchenSaved
     }
 }

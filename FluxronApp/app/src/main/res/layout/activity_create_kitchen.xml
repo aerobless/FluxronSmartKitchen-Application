@@ -30,4 +30,12 @@
         android:singleLine="false"
         android:id="@+id/editTextDescription"
         android:layout_weight="0.19" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create >"
+        android:id="@+id/buttonCreate"
+        android:onClick="createNewKitchen"
+        android:layout_gravity="right" />
 </LinearLayout>
