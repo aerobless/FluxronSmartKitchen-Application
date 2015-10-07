@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ch.fluxron.fluxronapp.ui.util.IEventBusProvider busProvider;
     private ArrayAdapter<String> listAdapter;
     private ListView kitchenListView ;
+    private HashSet<String> kitchenIdentifiers = new HashSet<>();
     private ArrayList<String> kitchenList = new ArrayList<String>();
 
     @Override
@@ -99,7 +101,10 @@ public class MainActivity extends AppCompatActivity {
 
         kitchenListView = (ListView) findViewById( R.id.kitchenList );
 
-        kitchenList.add(msg.getKitchen().getName());
+        if (!kitchenIdentifiers.contains(msg.getKitchen().getId())) {
+            kitchenList.add(msg.getKitchen().getName());
+            kitchenIdentifiers.add(msg.getKitchen().getId());
+        }
         listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, kitchenList);
 
         // Set the ArrayAdapter as the ListView's adapter.

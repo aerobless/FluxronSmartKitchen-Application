@@ -88,8 +88,9 @@ public class LocalDatabase {
                 QueryRow row = it.next();
                 //String docId = String.valueOf(row.getDocument().getProperties().get("type"));
                 String kitchenName = String.valueOf(row.getValue());
+                String kitchenId = String.valueOf(row.getDocumentId());
                 //Log.d("FLUXRON", kitchenName);
-                provider.getDalEventBus().post(new KitchenLoaded(new Kitchen(kitchenName)));
+                provider.getDalEventBus().post(new KitchenLoaded(new Kitchen(kitchenId, kitchenName)));
             }
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();

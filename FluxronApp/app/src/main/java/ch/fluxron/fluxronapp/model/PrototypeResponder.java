@@ -28,6 +28,7 @@ public class PrototypeResponder {
     public void onEventAsync(SaveKitchenCommand msg) {
         SaveObjectCommand cmd = new SaveObjectCommand();
         cmd.setData(msg.getKitchen());
+        cmd.setDocumentId(msg.getKitchen().getId());
         provider.getDalEventBus().post(cmd);
     }
 
