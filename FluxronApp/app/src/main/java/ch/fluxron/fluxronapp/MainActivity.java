@@ -13,10 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
-import ch.fluxron.fluxronapp.events.SimpleMessage;
-import ch.fluxron.fluxronapp.events.SimpleMessageResponse;
+import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,11 +67,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendTestMessage(View btn){
-        SimpleMessage m = new SimpleMessage();
-        m.setMessageText("test");
+        SaveKitchenCommand m = new SaveKitchenCommand();
+        m.setKitchen(new Kitchen("Test Kitchen"));
         busProvider.getUiEventBus().post(m);
 
-        busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
+        //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
     }
 
     public void onEventMainThread(SimpleMessageResponse msg){

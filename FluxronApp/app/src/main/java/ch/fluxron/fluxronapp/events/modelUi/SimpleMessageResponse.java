@@ -1,9 +1,9 @@
-package ch.fluxron.fluxronapp.events;
+package ch.fluxron.fluxronapp.events.modelUi;
 
 /**
  * A simple message containing a text. PROTOTYPE USAGE ONLY!
  */
-public class SimpleMessage {
+public class SimpleMessageResponse {
     public String getMessageText() {
         return messageText;
     }

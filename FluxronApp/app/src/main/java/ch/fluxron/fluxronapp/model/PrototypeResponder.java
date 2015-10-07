@@ -9,8 +9,8 @@ import java.util.Set;
 
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
-import ch.fluxron.fluxronapp.events.SimpleMessage;
-import ch.fluxron.fluxronapp.events.SimpleMessageResponse;
+import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
 
 /**
  * Responds to a message. FOR PROTOTYPE USAGE ONLY!!!
@@ -22,15 +22,13 @@ public class PrototypeResponder {
     public PrototypeResponder(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);
+        provider.getUiEventBus().register(this);
     }
 
-    public void onEventAsync(SimpleMessage msg) throws InterruptedException {
-        for (int i =0; i < 30; i++) {
-            SimpleMessageResponse response = new SimpleMessageResponse();
-            response.setMessageText("hello " + i);
-            provider.getDalEventBus().post(response);
-            Thread.sleep(500);
-        }
+    public void onEventAsync(SaveKitchenCommand msg) {
+        SaveObjectCommand cmd = new SaveObjectCommand();
+        cmd.setData(msg.getKitchen());
+        provider.getDalEventBus().post(cmd);
     }
 
     public void onEventAsync(BluetoothDiscoveryRequest msg) {
