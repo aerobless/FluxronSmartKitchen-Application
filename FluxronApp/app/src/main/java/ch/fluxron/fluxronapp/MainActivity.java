@@ -11,9 +11,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
+import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
@@ -22,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textViewWidget;
     ch.fluxron.fluxronapp.ui.util.IEventBusProvider busProvider;
+    private ArrayAdapter<String> listAdapter;
+    private ListView kitchenListView ;
+    private ArrayList<String> kitchenList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Bluetooth Discovery Prototyp
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(receiver, filter); // Don't forget to unregister during onDestroy
+        //registerReceiver(receiver, filter); // Don't forget to unregister during onDestroy
     }
 
     @Override
@@ -68,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendTestMessage(View btn){
         SaveKitchenCommand m = new SaveKitchenCommand();
-        m.setKitchen(new Kitchen("Test Kitchen"));
+
+        EditText kitName = (EditText) findViewById( R.id.kitchenName );
+        m.setKitchen(new Kitchen(kitName.getText().toString()));
         busProvider.getUiEventBus().post(m);
 
         //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
@@ -80,7 +91,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void onEventMainThread(BluetoothDiscoveryResponse msg){
         textViewWidget.setText(msg.getDeviceName() +" "+msg.getDeviceMAC());
-        Log.d("FLUXRON.PROTOTYPE", msg.getDeviceName() +" "+msg.getDeviceMAC());
+        Log.d("FLUXRON.PROTOTYPE", msg.getDeviceName() + " " + msg.getDeviceMAC());
+    }
+
+    public void onEventMainThread(KitchenLoaded msg){
+        Log.d("FLUXRON.PROTOTYPE", msg.getKitchen().getName());
+
+        kitchenListView = (ListView) findViewById( R.id.kitchenList );
+
+        kitchenList.add(msg.getKitchen().getName());
+        listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, kitchenList);
+
+        // Set the ArrayAdapter as the ListView's adapter.
+        kitchenListView.setAdapter( listAdapter );
     }
 
     //Bluetooth Discovery Prototyp

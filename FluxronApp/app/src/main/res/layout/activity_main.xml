@@ -5,15 +5,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
     android:columnCount="1"
-    android:rowCount="2">
+    android:rowCount="4">
 
     <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/prototypeMessageList"
         android:layout_row="0" />
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="600px"
+        android:id="@+id/kitchenList"
+        android:layout_row="2"
+        android:layout_column="0" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/kitchenName"
+        android:layout_row="3"
+        android:layout_column="0" />
+
     <Button android:text="send" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/prototypeButton"
         android:onClick="sendTestMessage"
-        android:layout_row="1"/>
+        android:layout_row="3"/>
 </GridLayout>

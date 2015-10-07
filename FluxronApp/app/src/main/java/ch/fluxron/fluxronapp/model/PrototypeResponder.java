@@ -31,6 +31,11 @@ public class PrototypeResponder {
         provider.getDalEventBus().post(cmd);
     }
 
+    public void onEventAsync(ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded msg) {
+        ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded uiMsg = new ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded(msg.getKitchen());
+        provider.getUiEventBus().post(uiMsg);
+    }
+
     public void onEventAsync(BluetoothDiscoveryRequest msg) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
