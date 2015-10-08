@@ -6,6 +6,7 @@ package ch.fluxron.fluxronapp.objectBase;
 public class Kitchen {
     private String name;
     private String id;
+    private String description;
 
     public Kitchen(String name) {
         this.id = null;
@@ -27,5 +28,13 @@ public class Kitchen {
 
     public String getId() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -17,6 +17,11 @@ public class CreateKitchenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_kitchen);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
         busProvider.getUiEventBus().register(this);
@@ -34,9 +39,12 @@ public class CreateKitchenActivity extends AppCompatActivity {
 
     public void createNewKitchen(View button){
         TextView nameText = (TextView)findViewById(R.id.editTextName);
+        TextView descText = (TextView)findViewById(R.id.editTextName);
         String name = nameText.getText().toString();
+        String description = descText.getText().toString();
 
         Kitchen k = new Kitchen(name);
+        k.setDescription(description);
 
         SaveKitchenCommand command = new SaveKitchenCommand();
         command.setKitchen(k);
