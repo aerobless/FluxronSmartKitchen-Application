@@ -21,14 +21,14 @@ import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
  */
 public class Bluetooth {
     private IEventBusProvider provider;
-    private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
-    private OutputStream outStream = null;
+    private BluetoothAdapter btAdapter;
+    private BluetoothSocket btSocket;
+    private OutputStream outStream;
 
     private static final String TAG = "FLUXRON";
 
     // SPP UUID service
-    private static final UUID MY_UUID = UUID.fromString("13371337-0000-9999-8000-00805F9B34FB");
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     //Bluetooth Device MAC
     private static String address = "00:13:04:12:06:20";
@@ -40,7 +40,7 @@ public class Bluetooth {
 
     public void onEventAsync(BluetoothDiscoveryRequest msg) {
         btAdapter = setupBluetooth();
-        Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+        /*Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
         List<String> s = new ArrayList<String>();
 
         BluetoothDevice flux = null;
@@ -58,37 +58,41 @@ public class Bluetooth {
         } else {
             //TODO: Handle case when there are no paired devices
             Log.d(TAG, "No paird devices found");
-        }
+        }*/
 
         //Connection
-        if(flux != null){
-            BluetoothDevice device = btAdapter.getRemoteDevice(address);
-            try {
-                btSocket = createBluetoothSocket(device);
-            } catch (IOException e1) {
-                Log.d("Fatal Error", "In onResume() and socket create failed: " + e1.getMessage() + ".");
-            }
-            btAdapter.cancelDiscovery();
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        try {
+            btSocket = createBluetoothSocket(device);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        //btAdapter.cancelDiscovery();
 
-            Log.d(TAG, "Connecting");
+        Log.d(TAG, "Connecting");
+        try {
+            btSocket.connect();
+            Log.d(TAG, "Connection ok");
+        } catch (IOException e) {
             try {
-                btSocket.connect();
-                Log.d(TAG, "Connection ok");
-            } catch (IOException e) {
-                try {
-                    btSocket.close();
-                } catch (IOException e2) {
-                    Log.d(TAG, e2.getMessage());
-                }
-
-                Log.d(TAG, "Create Socket");
-                try {
-                    outStream = btSocket.getOutputStream();
-                } catch (IOException ed) {
-                    Log.d(TAG, ed.getMessage());
-                }
+                btSocket.close();
+            } catch (IOException e2) {
+               e2.printStackTrace();
             }
         }
+
+        Log.d(TAG, "Creating Socket");
+        try {
+            outStream = btSocket.getOutputStream();
+            byte[] msgBuffer = "Hello world".getBytes();
+            outStream.write(msgBuffer);
+            outStream.flush();
+            outStream.close();
+            btSocket.close();
+        } catch (IOException ed) {
+            ed.printStackTrace();
+        }
+
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
