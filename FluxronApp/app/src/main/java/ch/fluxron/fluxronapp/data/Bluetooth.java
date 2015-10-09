@@ -27,7 +27,7 @@ public class Bluetooth {
 
     private static final String TAG = "FLUXRON";
 
-    // SPP UUID service
+    // SPP UUID service (well-known UUID for SPP Boards)
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     //Bluetooth Device MAC
@@ -40,25 +40,7 @@ public class Bluetooth {
 
     public void onEventAsync(BluetoothDiscoveryRequest msg) {
         btAdapter = setupBluetooth();
-        /*Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
-        List<String> s = new ArrayList<String>();
-
-        BluetoothDevice flux = null;
-        if (pairedDevices != null) {
-            for(BluetoothDevice device : pairedDevices){
-                Log.d(TAG, device.getName()+" "+device.getAddress());
-                //Example: FLX_GTZ_196 00:13:04:12:06:20
-                s.add(device.getName());
-                if(device.getAddress().equals(address)){
-                    flux = device;
-                    Log.d(TAG, "Device found");
-                    break;
-                }
-            }
-        } else {
-            //TODO: Handle case when there are no paired devices
-            Log.d(TAG, "No paird devices found");
-        }*/
+        listPairedDevices();
 
         //Connection
         BluetoothDevice device = btAdapter.getRemoteDevice(address);
@@ -67,7 +49,6 @@ public class Bluetooth {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        //btAdapter.cancelDiscovery();
 
         Log.d(TAG, "Connecting");
         try {
@@ -84,15 +65,68 @@ public class Bluetooth {
         Log.d(TAG, "Creating Socket");
         try {
             outStream = btSocket.getOutputStream();
-            byte[] msgBuffer = "Hello world".getBytes();
-            outStream.write(msgBuffer);
-            outStream.flush();
-            outStream.close();
-            btSocket.close();
         } catch (IOException ed) {
             ed.printStackTrace();
         }
 
+        Log.d(TAG, "Sending Message");
+        //Example Read Message
+        //AA AA 40 01 30 01 00 00 00 00 72 00
+        byte[] message = {(byte)0x40, (byte)0x01, (byte)0x30, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00};
+        generateMessage(message);
+        try {
+            outStream.write(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "all done.");
+    }
+
+    //TODO: need byte[] instead of Byte[] ..
+    private Byte[] generateMessage(byte[] canMessage){
+        List<Byte> msgBuilder = new ArrayList<Byte>();
+        msgBuilder.add((byte)0xAA);
+        msgBuilder.add((byte)0xAA);
+        int checksum = 0;
+        for (byte b : canMessage) {
+            msgBuilder.add(b);
+            checksum += b;
+        }
+        msgBuilder.add((byte)checksum);
+        Byte[] msgArray = msgBuilder.toArray(new Byte[msgBuilder.size()]);
+        return msgArray;
+    }
+
+    private BluetoothAdapter setupBluetooth(){
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if(btAdapter == null) {
+            //TODO: Handle error, no Bluetooth Adapter
+            Log.d(TAG, "No Bluetooth adapter");
+        }
+
+        if (!btAdapter.isEnabled()) {
+            //TODO: Offer user to enable Bluetooth.
+            Log.d(TAG, "Bluetooth not enabled");
+        }
+        return btAdapter;
+    }
+
+    private List<String> listPairedDevices(){
+        Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+        List<String> s = new ArrayList<String>();
+
+        if (pairedDevices != null) {
+            for(BluetoothDevice device : pairedDevices){
+                //Example: FLX_GTZ_196 00:13:04:12:06:20
+                Log.d(TAG, device.getName()+" "+device.getAddress());
+                s.add(device.getName()+" "+device.getAddress());
+            }
+            return s;
+        } else {
+            Log.d(TAG, "No paird devices found");
+            return null;
+        }
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
@@ -105,25 +139,6 @@ public class Bluetooth {
             }
         }
         return  device.createRfcommSocketToServiceRecord(MY_UUID);
-    }
-
-    private BluetoothAdapter setupBluetooth(){
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if(btAdapter != null) {
-            // Continue with bluetooth setup.
-        } else {
-            //TODO: Handle error, no Bluetooth Adapter
-            Log.d(TAG, "No Bluetooth adapter");
-        }
-
-        if (btAdapter.isEnabled()) {
-            // Enabled. Work with Bluetooth.
-        } else {
-            //TODO: Offer user to enable Bluetooth.
-            Log.d(TAG, "Bluetooth not enabled");
-        }
-        return btAdapter;
     }
 
 }
