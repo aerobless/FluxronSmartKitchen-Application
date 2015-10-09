@@ -1,12 +1,5 @@
 package ch.fluxron.fluxronapp.model;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
@@ -30,28 +23,13 @@ public class PrototypeResponder {
         cmd.setData(msg.getKitchen());
         cmd.setDocumentId(msg.getKitchen().getId());
         provider.getDalEventBus().post(cmd);
+
+        //Temporary message to trigger the Bluetooth Module. Later there will be proper messages from BL to UI concerning Bluetooth.
+        provider.getDalEventBus().post(new BluetoothDiscoveryRequest());
     }
 
     public void onEventAsync(ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded msg) {
         ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded uiMsg = new ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded(msg.getKitchen());
         provider.getUiEventBus().post(uiMsg);
-    }
-
-    public void onEventAsync(BluetoothDiscoveryRequest msg) {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            //MSG: Device does not support Bluetooth
-        }
-        if (!bluetoothAdapter.isEnabled()) {
-            //MSG: Please enable Bluetooth
-        }
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        List<String> s = new ArrayList<String>();
-        for(BluetoothDevice device : pairedDevices){
-            s.add(device.getName());
-            BluetoothDiscoveryResponse response = new BluetoothDiscoveryResponse(device.getName(), device.getAddress());
-            provider.getDalEventBus().post(response);
-        }
-        bluetoothAdapter.startDiscovery();
     }
 }
