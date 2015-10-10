@@ -51,7 +51,7 @@ public class KitchenListAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if (vi == null)
-            vi = inflater.inflate(R.layout.fragment_kitchen, null);
+            vi = inflater.inflate(R.layout.listrow_kitchen, null);
 
         TextView title = (TextView) vi.findViewById(R.id.titleText);
         TextView description = (TextView) vi.findViewById(R.id.descriptionText);
