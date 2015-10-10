@@ -1,14 +1,13 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
 
-public class DeviceActivity extends AppCompatActivity {
-    ch.fluxron.fluxronapp.ui.util.IEventBusProvider busProvider;
+public class DeviceActivity extends FluxronBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,22 +15,9 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
-        busProvider.getUiEventBus().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        busProvider.getUiEventBus().unregister(this);
-        super.onStop();
-    }
-
     public void onEventMainThread(Object msg){
-        busProvider.getUiEventBus();
+        // TODO: Add event handling for device activity
+        postMessage(null);
     }
 
     public void onBackButtonClicked(View button){

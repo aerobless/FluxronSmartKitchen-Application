@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,11 +26,11 @@ import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
+import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FluxronBaseActivity {
 
     TextView textViewWidget;
-    ch.fluxron.fluxronapp.ui.util.IEventBusProvider busProvider;
     private ArrayAdapter<String> listAdapter;
     private ListView kitchenListView ;
     private HashSet<String> kitchenIdentifiers = new HashSet<>();
@@ -64,14 +63,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
-        busProvider.getUiEventBus().register(this);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -93,18 +84,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStop() {
-        busProvider.getUiEventBus().unregister(this);
-        super.onStop();
-    }
-
     public void sendTestMessage(View btn){
         SaveKitchenCommand m = new SaveKitchenCommand();
 
         EditText kitName = (EditText) findViewById( R.id.kitchenName );
         m.setKitchen(new Kitchen(kitName.getText().toString()));
-        busProvider.getUiEventBus().post(m);
+        postMessage(m);
 
         //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
     }
@@ -146,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 BluetoothDiscoveryResponse response = new BluetoothDiscoveryResponse(device.getName(), device.getAddress());
-                busProvider.getUiEventBus().post(response);
+                postMessage(response);
             }
         }
     };

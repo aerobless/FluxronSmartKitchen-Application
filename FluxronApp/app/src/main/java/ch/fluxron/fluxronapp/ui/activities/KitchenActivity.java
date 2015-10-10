@@ -2,14 +2,13 @@ package ch.fluxron.fluxronapp.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
 
-public class KitchenActivity extends AppCompatActivity {
-    ch.fluxron.fluxronapp.ui.util.IEventBusProvider busProvider;
+public class KitchenActivity extends FluxronBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,22 +16,8 @@ public class KitchenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kitchen);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
-        busProvider.getUiEventBus().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        busProvider.getUiEventBus().unregister(this);
-        super.onStop();
-    }
-
     public void onEventMainThread(Object msg){
-        busProvider.getUiEventBus();
+        postMessage(null);
     }
 
     public void onBackButtonClicked(View button){
