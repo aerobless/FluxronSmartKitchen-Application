@@ -20,7 +20,8 @@
                     style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_test_icon" />
+                    android:src="@drawable/ic_test_icon"
+                    android:onClick="onBackButtonClicked"/>
                 <ImageButton
                     style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"

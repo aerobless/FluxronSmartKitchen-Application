@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -25,6 +26,7 @@ import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
+import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,10 +43,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textViewWidget = (TextView)this.findViewById(R.id.prototypeMessageList);
+        kitchenListView = (ListView) findViewById(R.id.kitchenList);
+
+        kitchenListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onKitchenListItemClick(parent, view, position, id);
+            }
+        });
 
         //Bluetooth Discovery Prototyp
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         //registerReceiver(receiver, filter); // Don't forget to unregister during onDestroy
+    }
+
+    private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
+        Intent startOther = new Intent(this, KitchenActivity.class);
+        startOther.putExtra("KITCHEN_ID", "sdlfjsdlkwoiewo--werwerlj");
+        startActivity(startOther);
     }
 
     @Override
@@ -110,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     public void onEventMainThread(KitchenLoaded msg){
         Log.d("FLUXRON.PROTOTYPE", msg.getKitchen().getName());
 
-        kitchenListView = (ListView) findViewById( R.id.kitchenList );
+
 
         if (!kitchenIdentifiers.contains(msg.getKitchen().getId())) {
             kitchenList.add(msg.getKitchen().getName());

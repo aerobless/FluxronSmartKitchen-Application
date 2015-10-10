@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -37,8 +38,13 @@ public class CreateKitchenActivity extends AppCompatActivity {
         busProvider.getUiEventBus();
     }
 
+    public void onBackButtonClicked(View button){
+        // User cancelled the process
+        finish();
+    }
+
     public void createNewKitchen(View button){
-        TextView nameText = (TextView)findViewById(R.id.editTextName);
+        /*TextView nameText = (TextView)findViewById(R.id.editTextName);
         TextView descText = (TextView)findViewById(R.id.editTextName);
         String name = nameText.getText().toString();
         String description = descText.getText().toString();
@@ -49,8 +55,13 @@ public class CreateKitchenActivity extends AppCompatActivity {
         SaveKitchenCommand command = new SaveKitchenCommand();
         command.setKitchen(k);
 
-        busProvider.getUiEventBus().post(command);
+        busProvider.getUiEventBus().post(command);*/
 
-        finish();//TODO: Wait for a response of type KitchenSaved
+        //TODO: Wait for a response of type KitchenSaved
+        // Edit this device
+        Intent editDevice = new Intent(this, KitchenActivity.class);
+        editDevice.putExtra("KITCHEN_ID", "xxx-dsf-er22-34234-d00");
+        startActivity(editDevice);
+        finish();
     }
 }
