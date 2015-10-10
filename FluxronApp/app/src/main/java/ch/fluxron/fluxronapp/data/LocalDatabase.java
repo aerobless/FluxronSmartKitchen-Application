@@ -65,7 +65,6 @@ public class LocalDatabase {
      * @param cmd Command
      */
     public void onEventAsync(LoadObjectByIdCommand cmd) {
-
         // load the document by Id
         Document doc = database.getExistingDocument(cmd.getId());
         if(doc!=null){
@@ -74,17 +73,10 @@ public class LocalDatabase {
             String typeName = typeProperty instanceof String ? (String)typeProperty : null;
 
             // Convert to object using ObjectMapper
-            if (typeName!=null) {
-                try {
-                    Class<?> objectType = Class.forName(typeName);
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                    Object result = mapper.convertValue(doc.getProperties(), objectType);
-                    ObjectLoaded loadedEvent = new ObjectLoaded(doc.getId(), result);
-                    provider.getDalEventBus().post(loadedEvent);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+            Class<?> objectType = converter.getClassFromName(typeName);
+            if (objectType != null) {
+                ObjectLoaded msg = new ObjectLoaded(doc.getId(), converter.convertMapToObject(doc.getProperties(), objectType));
+                provider.getDalEventBus().post(msg);
             }
         }
         else {
