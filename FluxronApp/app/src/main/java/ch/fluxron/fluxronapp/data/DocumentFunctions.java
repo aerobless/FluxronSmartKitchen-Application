@@ -41,4 +41,18 @@ public class DocumentFunctions {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Deletes the document, null documents are ignored
+     * @param doc Document, can be null
+     */
+    public void deleteDocument(Document doc){
+        if (doc!=null){
+            try {
+                doc.delete();
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

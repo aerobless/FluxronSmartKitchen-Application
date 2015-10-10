@@ -12,7 +12,6 @@ import com.couchbase.lite.QueryRow;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -58,14 +57,7 @@ public class LocalDatabase {
      * @param cmd Command
      */
     public void onEventAsync(DeleteObjectById cmd) {
-        Document doc = database.getExistingDocument(cmd.getId());
-        if (doc!=null){
-            try {
-                doc.delete();
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }
-        }
+        documents.deleteDocument(database.getExistingDocument(cmd.getId()));
     }
 
     /**
