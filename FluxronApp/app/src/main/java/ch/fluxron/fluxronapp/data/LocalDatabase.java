@@ -1,7 +1,5 @@
 package ch.fluxron.fluxronapp.data;
 
-import android.util.Log;
-
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -14,6 +12,7 @@ import com.couchbase.lite.QueryRow;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,33 +30,25 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 public class LocalDatabase {
     private IEventBusProvider provider;
     private Database database;
+    private ObjectConverter converter;
+    private DocumentFunctions documents;
 
     public LocalDatabase(IEventBusProvider provider, Database database) {
         this.provider = provider;
         this.database = database;
         this.provider.getDalEventBus().register(this);
+        this.converter = new ObjectConverter();
+        this.documents = new DocumentFunctions(database);
     }
 
     public void onEventAsync(SaveObjectCommand cmd) {
+        Document doc = documents.createDocumentOnNull(cmd.getDocumentId());
 
-        Document doc;
-        if(cmd.getDocumentId() == null){
-            doc = database.createDocument();
-        } else {
-            doc = database.getExistingDocument(cmd.getDocumentId());
-        }
+        //TODO: change type to constant
         if(doc != null){
-            ObjectMapper mapper = new ObjectMapper();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> properties = mapper.convertValue(cmd.getData(), Map.class);
-            try {
-                //TODO: change type to constant
-                properties.put("type",cmd.getData().getClass().getCanonicalName());
-                doc.putProperties(properties);
-
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }
+            Map<String, Object> properties = converter.convertObjectToMap(cmd.getData());
+            properties.put("type",cmd.getData().getClass().getCanonicalName());
+            documents.tryPutProperties(doc, properties);
         }
     }
 
