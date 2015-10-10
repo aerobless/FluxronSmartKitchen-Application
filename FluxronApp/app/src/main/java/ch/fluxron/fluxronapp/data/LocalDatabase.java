@@ -27,6 +27,8 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
  * Listens to eventbus messages. Stores data persistently.
  */
 public class LocalDatabase {
+    private static final String TYPE_PROPERTY = "type";
+
     private IEventBusProvider provider;
     private Database database;
     private ObjectConverter converter;
@@ -46,7 +48,7 @@ public class LocalDatabase {
         //TODO: change type to constant
         if(doc != null){
             Map<String, Object> properties = converter.convertObjectToMap(cmd.getData());
-            properties.put("type",cmd.getData().getClass().getCanonicalName());
+            properties.put(TYPE_PROPERTY,cmd.getData().getClass().getCanonicalName());
             documents.tryPutProperties(doc, properties);
         }
     }
@@ -69,7 +71,7 @@ public class LocalDatabase {
         Document doc = database.getExistingDocument(cmd.getId());
         if(doc!=null){
             // Document found, get the type
-            Object typeProperty = doc.getProperty("type");
+            Object typeProperty = doc.getProperty(TYPE_PROPERTY);
             String typeName = typeProperty instanceof String ? (String)typeProperty : null;
 
             // Convert to object using ObjectMapper
@@ -103,7 +105,7 @@ public class LocalDatabase {
                     new Mapper() {
                         @Override
                         public void map(Map<String, Object> document, Emitter emitter) {
-                            emitter.emit((Object)document.get("type"), null);
+                            emitter.emit((Object)document.get(TYPE_PROPERTY), null);
                         }
                     }, "1"
             );
