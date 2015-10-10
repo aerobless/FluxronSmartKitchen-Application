@@ -27,14 +27,13 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
+import ch.fluxron.fluxronapp.ui.adapters.KitchenListAdapter;
 
 public class MainActivity extends FluxronBaseActivity {
 
     TextView textViewWidget;
-    private ArrayAdapter<String> listAdapter;
+    private KitchenListAdapter listAdapter;
     private ListView kitchenListView ;
-    private HashSet<String> kitchenIdentifiers = new HashSet<>();
-    private ArrayList<String> kitchenList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +49,10 @@ public class MainActivity extends FluxronBaseActivity {
                 onKitchenListItemClick(parent, view, position, id);
             }
         });
+
+        // Set the ListView's adapter.
+        listAdapter = new KitchenListAdapter(this);
+        kitchenListView.setAdapter(listAdapter);
 
         //Bluetooth Discovery Prototyp
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -111,16 +114,7 @@ public class MainActivity extends FluxronBaseActivity {
     public void onEventMainThread(KitchenLoaded msg){
         Log.d("FLUXRON.PROTOTYPE", msg.getKitchen().getName());
 
-
-
-        if (!kitchenIdentifiers.contains(msg.getKitchen().getId())) {
-            kitchenList.add(msg.getKitchen().getName());
-            kitchenIdentifiers.add(msg.getKitchen().getId());
-        }
-        listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, kitchenList);
-
-        // Set the ArrayAdapter as the ListView's adapter.
-        kitchenListView.setAdapter( listAdapter );
+        listAdapter.addOrUpdate(msg.getKitchen());
     }
 
     //Bluetooth Discovery Prototyp
