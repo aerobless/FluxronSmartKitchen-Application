@@ -1,12 +1,24 @@
 package ch.fluxron.fluxronapp.objectBase;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * A kitchen.
  */
 public class Kitchen {
     private String name;
+
+    @JsonProperty("_id")
     private String id;
+
     private String description;
+
+    /**
+     * Default empty constructor used for deserialization
+     */
+    public Kitchen() {
+
+    }
 
     public Kitchen(String name) {
         this.id = null;

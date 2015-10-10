@@ -19,6 +19,7 @@ import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
 
 import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -63,7 +64,7 @@ public class MainActivity extends FluxronBaseActivity {
 
     private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
         Intent startOther = new Intent(this, KitchenActivity.class);
-        startOther.putExtra("KITCHEN_ID", "sdlfjsdlkwoiewo--werwerlj");
+        startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, ((Kitchen)listAdapter.getItem(position)).getId());
         startActivity(startOther);
     }
 

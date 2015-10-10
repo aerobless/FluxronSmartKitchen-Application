@@ -11,6 +11,7 @@ import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Iterator;
@@ -18,6 +19,8 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded;
+import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
@@ -54,6 +57,38 @@ public class LocalDatabase {
             } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Triggered when an object should be loaded by id.
+     * @param cmd Command
+     */
+    public void onEventAsync(LoadObjectByIdCommand cmd) {
+
+        // load the document by Id
+        Document doc = database.getExistingDocument(cmd.getId());
+        if(doc!=null){
+            // Document found, get the type
+            Object typeProperty = doc.getProperty("type");
+            String typeName = typeProperty instanceof String ? (String)typeProperty : null;
+
+            // Convert to object using ObjectMapper
+            if (typeName!=null) {
+                try {
+                    Class<?> objectType = Class.forName(typeName);
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    Object result = mapper.convertValue(doc.getProperties(), objectType);
+                    ObjectLoaded loadedEvent = new ObjectLoaded(doc.getId(), result);
+                    provider.getDalEventBus().post(loadedEvent);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else {
+            // TODO: Error message if not found
         }
     }
 

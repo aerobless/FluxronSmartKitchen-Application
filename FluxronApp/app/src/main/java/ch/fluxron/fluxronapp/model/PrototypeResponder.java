@@ -3,9 +3,14 @@ package ch.fluxron.fluxronapp.model;
 import android.util.Log;
 
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
+import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**
  * Responds to a message. FOR PROTOTYPE USAGE ONLY!!!
@@ -35,6 +40,18 @@ public class PrototypeResponder {
         cmd.setQuery(msg.getQuery());
 
         provider.getDalEventBus().post(cmd);
+    }
+
+    public void onEventAsync(ObjectLoaded msg) {
+        if (msg.getData() instanceof Kitchen) {
+            provider.getUiEventBus().post(new KitchenLoaded((Kitchen) msg.getData()));
+        }
+    }
+
+    public void onEventAsync(LoadKitchenCommand cmd){
+        LoadObjectByIdCommand dbCommand = new LoadObjectByIdCommand();
+        dbCommand.setId(cmd.getId());
+        provider.getDalEventBus().post(dbCommand);
     }
 
     public void onEventAsync(ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded msg) {
