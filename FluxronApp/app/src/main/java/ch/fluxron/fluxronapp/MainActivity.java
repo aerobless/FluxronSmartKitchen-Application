@@ -11,19 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
+import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+
 import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
-import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -88,12 +83,10 @@ public class MainActivity extends FluxronBaseActivity {
     }
 
     public void sendTestMessage(View btn){
-        SaveKitchenCommand m = new SaveKitchenCommand();
-
-        EditText kitName = (EditText) findViewById( R.id.kitchenName );
-        m.setKitchen(new Kitchen(kitName.getText().toString()));
-        postMessage(m);
-
+        String searchQuery = ((TextView)findViewById(R.id.kitchenName)).getText().toString();
+        FindKitchenCommand cmd = new FindKitchenCommand();
+        cmd.setQuery(searchQuery);
+        postMessage(cmd);
         //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
     }
 

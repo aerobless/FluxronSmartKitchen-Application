@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Iterator;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
@@ -34,6 +35,7 @@ public class LocalDatabase {
     }
 
     public void onEventAsync(SaveObjectCommand cmd) {
+
         Document doc;
         if(cmd.getDocumentId() == null){
             doc = database.createDocument();
@@ -49,48 +51,58 @@ public class LocalDatabase {
                 properties.put("type",cmd.getData().getClass().getCanonicalName());
                 doc.putProperties(properties);
 
-                Document readDoc = database.getDocument(doc.getId());
-                //Log.d("FLUXRON", String.valueOf(readDoc.getProperties()));
-
-                retrieveKitchens();
-
             } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void retrieveKitchens(){
+    /**
+     * Triggered when a find kitchen command is issued
+     * @param cmd Command
+     */
+    public void onEventAsync(FindKitchenCommand cmd) {
+        retrieveKitchens(cmd.getQuery());
+    }
+
+    /**
+     * Reads all the kitchens containing the query text in their name
+     * @param query Query, ignored if null
+     */
+    public void retrieveKitchens(String query){
         View kitchenList = database.getView("byObjectType");
         if (kitchenList != null) {
             kitchenList.setMap(
                     new Mapper() {
                         @Override
-                        public void map(Map<String, Object> document,
-                                        Emitter emitter) {
-                    /* Emit data to matieralized view */
-                            emitter.emit(
-                                    (Object) document.get("type"), document.get("name"));
+                        public void map(Map<String, Object> document, Emitter emitter) {
+                            emitter.emit((Object)document.get("type"), null);
                         }
-                    }, "1" /* The version number of the mapper... */
+                    }, "1"
             );
         }
+
         kitchenList = database.getView("byObjectType");
         Query orderedQuery = kitchenList.createQuery();
         orderedQuery.setStartKey("ch.fluxron.fluxronapp.objectBase.Kitchen");
         orderedQuery.setEndKey("ch.fluxron.fluxronapp.objectBase.Kitchen");
-        orderedQuery.setLimit(10);
-        QueryEnumerator results = null;
+        QueryEnumerator results;
 
         try {
             results = orderedQuery.run();
             for (Iterator<QueryRow> it = results; it.hasNext();) {
                 QueryRow row = it.next();
-                //String docId = String.valueOf(row.getDocument().getProperties().get("type"));
-                String kitchenName = String.valueOf(row.getValue());
+
+                String kitchenName = String.valueOf(row.getDocument().getProperty("name"));
                 String kitchenId = String.valueOf(row.getDocumentId());
-                //Log.d("FLUXRON", kitchenName);
-                provider.getDalEventBus().post(new KitchenLoaded(new Kitchen(kitchenId, kitchenName)));
+                String kitchenDescription = String.valueOf(row.getDocument().getProperty("description"));
+                Log.d("search", query + " vs " + kitchenName);
+                if(query == null || kitchenName.contains(query)) {
+                    Log.d("search.match", query);
+                    Kitchen data = new Kitchen(kitchenId, kitchenName);
+                    data.setDescription(kitchenDescription);
+                    provider.getDalEventBus().post(new KitchenLoaded(data));
+                }
             }
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();

@@ -1,8 +1,10 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.util.Log;
+
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
 
 /**
@@ -26,6 +28,13 @@ public class PrototypeResponder {
 
         //Temporary message to trigger the Bluetooth Module. Later there will be proper messages from BL to UI concerning Bluetooth.
         provider.getDalEventBus().post(new BluetoothDiscoveryRequest());
+    }
+
+    public void onEventAsync(FindKitchenCommand msg) {
+        ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand();
+        cmd.setQuery(msg.getQuery());
+
+        provider.getDalEventBus().post(cmd);
     }
 
     public void onEventAsync(ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded msg) {

@@ -3,8 +3,11 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
 
@@ -26,8 +29,8 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
     }
 
     public void createNewKitchen(View button){
-        /*TextView nameText = (TextView)findViewById(R.id.editTextName);
-        TextView descText = (TextView)findViewById(R.id.editTextName);
+        TextView nameText = (TextView)findViewById(R.id.editTextName);
+        TextView descText = (TextView)findViewById(R.id.editTextDescription);
         String name = nameText.getText().toString();
         String description = descText.getText().toString();
 
@@ -37,7 +40,7 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         SaveKitchenCommand command = new SaveKitchenCommand();
         command.setKitchen(k);
 
-        busProvider.getUiEventBus().post(command);*/
+        postMessage(command);
 
         //TODO: Wait for a response of type KitchenSaved
         // Edit this device
