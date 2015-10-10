@@ -70,7 +70,7 @@ public class LocalDatabase {
      * @param query Query, ignored if null
      */
     public void retrieveKitchens(String query){
-        View kitchenList = database.getView("byObjectType");
+        View kitchenList = database.getView("objectsByType");
         if (kitchenList != null) {
             kitchenList.setMap(
                     new Mapper() {
@@ -82,7 +82,7 @@ public class LocalDatabase {
             );
         }
 
-        kitchenList = database.getView("byObjectType");
+        kitchenList = database.getView("objectsByType");
         Query orderedQuery = kitchenList.createQuery();
         orderedQuery.setStartKey("ch.fluxron.fluxronapp.objectBase.Kitchen");
         orderedQuery.setEndKey("ch.fluxron.fluxronapp.objectBase.Kitchen");
@@ -96,9 +96,9 @@ public class LocalDatabase {
                 String kitchenName = String.valueOf(row.getDocument().getProperty("name"));
                 String kitchenId = String.valueOf(row.getDocumentId());
                 String kitchenDescription = String.valueOf(row.getDocument().getProperty("description"));
-                Log.d("search", query + " vs " + kitchenName);
+
                 if(query == null || kitchenName.contains(query)) {
-                    Log.d("search.match", query);
+                    
                     Kitchen data = new Kitchen(kitchenId, kitchenName);
                     data.setDescription(kitchenDescription);
                     provider.getDalEventBus().post(new KitchenLoaded(data));

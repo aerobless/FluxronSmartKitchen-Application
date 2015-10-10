@@ -54,6 +54,13 @@ public class MainActivity extends FluxronBaseActivity {
         //registerReceiver(receiver, filter); // Don't forget to unregister during onDestroy
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        postMessage(new FindKitchenCommand());
+    }
+
     private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
         Intent startOther = new Intent(this, KitchenActivity.class);
         startOther.putExtra("KITCHEN_ID", "sdlfjsdlkwoiewo--werwerlj");
@@ -86,7 +93,9 @@ public class MainActivity extends FluxronBaseActivity {
         String searchQuery = ((TextView)findViewById(R.id.kitchenName)).getText().toString();
         FindKitchenCommand cmd = new FindKitchenCommand();
         cmd.setQuery(searchQuery);
+        listAdapter.clear();
         postMessage(cmd);
+
         //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
     }
 
