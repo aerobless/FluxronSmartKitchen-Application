@@ -1,11 +1,11 @@
 package ch.fluxron.fluxronapp.model;
 
-import android.util.Log;
-
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
+import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelUi.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.LoadKitchenCommand;
@@ -57,5 +57,9 @@ public class PrototypeResponder {
     public void onEventAsync(ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded msg) {
         ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded uiMsg = new ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded(msg.getKitchen());
         provider.getUiEventBus().post(uiMsg);
+    }
+
+    public void onEventAsync(DeleteKitchenCommand msg) {
+        provider.getDalEventBus().post(new DeleteObjectById(msg.getId()));
     }
 }

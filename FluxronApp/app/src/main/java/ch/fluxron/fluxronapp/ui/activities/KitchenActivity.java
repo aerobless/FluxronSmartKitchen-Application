@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -48,5 +49,11 @@ public class KitchenActivity extends FluxronBaseActivity {
         Intent editDevice = new Intent(this, DeviceActivity.class);
         editDevice.putExtra("DEVICE_ID", "xxx-dsf-er22-34234-d00");
         startActivity(editDevice);
+    }
+
+    public void onDeleteButtonClicked(View button){
+        // Send a deletion command
+        postMessage(new DeleteKitchenCommand(kitchenId));
+        finish();
     }
 }

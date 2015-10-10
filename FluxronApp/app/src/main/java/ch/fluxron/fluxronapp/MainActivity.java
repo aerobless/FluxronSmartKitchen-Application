@@ -59,6 +59,8 @@ public class MainActivity extends FluxronBaseActivity {
     public void onStart() {
         super.onStart();
 
+        // Refresh the list
+        listAdapter.clear();
         postMessage(new FindKitchenCommand());
     }
 

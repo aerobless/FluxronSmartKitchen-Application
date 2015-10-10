@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Iterator;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
@@ -54,6 +55,22 @@ public class LocalDatabase {
                 properties.put("type",cmd.getData().getClass().getCanonicalName());
                 doc.putProperties(properties);
 
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * Triggered when an object should be deleted by id.
+     * @param cmd Command
+     */
+    public void onEventAsync(DeleteObjectById cmd) {
+        Document doc = database.getExistingDocument(cmd.getId());
+        if (doc!=null){
+            try {
+                doc.delete();
             } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }

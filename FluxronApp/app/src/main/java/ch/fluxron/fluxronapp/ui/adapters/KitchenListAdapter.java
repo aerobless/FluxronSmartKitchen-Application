@@ -87,5 +87,6 @@ public class KitchenListAdapter extends BaseAdapter{
     public void clear(){
         kitchens.clear();
         kitchenIds.clear();
+        notifyDataSetChanged();
     }
 }

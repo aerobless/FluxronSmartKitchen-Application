@@ -21,6 +21,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/buttonDelete"
+        android:onClick="onDeleteButtonClicked"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Edit a device"
         android:id="@+id/buttonEditDevice"
         android:onClick="onEditDeviceClicked"
