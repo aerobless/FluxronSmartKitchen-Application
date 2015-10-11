@@ -9,6 +9,7 @@ import com.couchbase.lite.android.AndroidContext;
 
 import java.io.IOException;
 
+import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.LocalDatabase;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
@@ -79,7 +80,8 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
             couchbaseManager = new Manager(new AndroidContext(this.getApplicationContext()), Manager.DEFAULT_OPTIONS);
             couchbaseDB = couchbaseManager.getDatabase("protobase");
             localDatabase = new LocalDatabase(dalToModelProvider, couchbaseDB);
-            bluetooth = new Bluetooth(dalToModelProvider);
+            BluetoothSPP bt = new BluetoothSPP(this.getApplicationContext());
+            bluetooth = new Bluetooth(dalToModelProvider, bt);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {

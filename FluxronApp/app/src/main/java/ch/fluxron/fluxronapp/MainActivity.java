@@ -1,10 +1,6 @@
 package ch.fluxron.fluxronapp;
 
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
+import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
 
@@ -49,10 +46,6 @@ public class MainActivity extends FluxronBaseActivity {
         // Set the ListView's adapter.
         listAdapter = new KitchenListAdapter(this);
         kitchenListView.setAdapter(listAdapter);
-
-        //Bluetooth Discovery Prototyp
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        //registerReceiver(receiver, filter); // Don't forget to unregister during onDestroy
     }
 
     @Override
@@ -66,7 +59,7 @@ public class MainActivity extends FluxronBaseActivity {
 
     private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
         Intent startOther = new Intent(this, KitchenActivity.class);
-        startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, ((Kitchen)listAdapter.getItem(position)).getId());
+        startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, ((Kitchen) listAdapter.getItem(position)).getId());
         startActivity(startOther);
     }
 
@@ -98,8 +91,10 @@ public class MainActivity extends FluxronBaseActivity {
         cmd.setQuery(searchQuery);
         listAdapter.clear();
         postMessage(cmd);
+    }
 
-        //busProvider.getUiEventBus().post(new BluetoothDiscoveryRequest());
+    public void sendBluetoothTestMessage(View btn){
+        postMessage(new BluetoothTestCommand());
     }
 
     public void navigateCreate(View btn){
@@ -122,16 +117,4 @@ public class MainActivity extends FluxronBaseActivity {
         listAdapter.addOrUpdate(msg.getKitchen());
     }
 
-    //Bluetooth Discovery Prototyp
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                BluetoothDiscoveryResponse response = new BluetoothDiscoveryResponse(device.getName(), device.getAddress());
-                postMessage(response);
-            }
-        }
-    };
 }

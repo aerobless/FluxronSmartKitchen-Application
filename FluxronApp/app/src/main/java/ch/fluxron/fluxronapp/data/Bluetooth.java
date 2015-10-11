@@ -7,13 +7,14 @@ import android.os.Build;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import app.akexorcist.bluetotohspp.library.BluetoothSPP;
+import app.akexorcist.bluetotohspp.library.BluetoothState;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
 
 /**
@@ -22,8 +23,7 @@ import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
 public class Bluetooth {
     private IEventBusProvider provider;
     private BluetoothAdapter btAdapter;
-    private BluetoothSocket btSocket;
-    private OutputStream outStream;
+    private BluetoothSPP btSPP;
 
     private static final String TAG = "FLUXRON";
 
@@ -33,55 +33,72 @@ public class Bluetooth {
     //Bluetooth Device MAC
     private static String address = "00:13:04:12:06:20";
 
-    public Bluetooth(IEventBusProvider provider) {
+    public Bluetooth(IEventBusProvider provider, BluetoothSPP bt) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
+        this.btSPP = bt;
     }
 
     public void onEventAsync(BluetoothDiscoveryRequest msg) {
-        btAdapter = setupBluetooth();
-        listPairedDevices();
 
-        //Connection
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
-        try {
-            btSocket = createBluetoothSocket(device);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-        Log.d(TAG, "Connecting");
-        try {
-            btSocket.connect();
-            Log.d(TAG, "Connection ok");
-        } catch (IOException e) {
-            try {
-                btSocket.close();
-            } catch (IOException e2) {
-               e2.printStackTrace();
+        btSPP.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
+            public void onDeviceConnected(String name, String address) {
+                Log.d(TAG, "connected");
             }
-        }
 
-        Log.d(TAG, "Creating Socket");
-        try {
-            outStream = btSocket.getOutputStream();
-        } catch (IOException ed) {
-            ed.printStackTrace();
-        }
+            public void onDeviceDisconnected() {
+                Log.d(TAG, "disconnected");
+                // Do something when connection was disconnected
+            }
 
-        Log.d(TAG, "Sending Message");
-        //Example Read Message
-        //AA AA 40 01 30 01 00 00 00 00 72 00
-        byte[] message = {(byte)0x40, (byte)0x01, (byte)0x30, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00};
-        generateMessage(message);
-        try {
-            outStream.write(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG, "all done.");
+            public void onDeviceConnectionFailed() {
+                Log.d(TAG, "connection failed");
+                // Do something when connection failed
+            }
+        });
+
+        btSPP.setBluetoothStateListener(new BluetoothSPP.BluetoothStateListener() {
+            public void onServiceStateChanged(int state) {
+                if (state == BluetoothState.STATE_CONNECTED) {
+                    Log.d(TAG, "successfully connected");
+                    //AA AA 40 18 10 04 00 00 00 00 6C 00
+                    Log.d(TAG, "sending message");
+                    btSPP.send(new byte[]{(byte) 0xAA, (byte) 0xAA, (byte) 0x18,
+                            (byte) 0x10, (byte) 0x04, (byte) 0x00, (byte) 0x00,
+                            (byte) 0x00, (byte) 0x00, (byte) 0x6C, (byte) 0x00}, true);
+                    btSPP.send("Hello world, plz answer..", true);
+                    btSPP.send(new byte[]{(byte) 0xAA, (byte) 0xAA, (byte) 0x18,
+                            (byte) 0x10, (byte) 0x04, (byte) 0x00, (byte) 0x00,
+                            (byte) 0x00, (byte) 0x00, (byte) 0x6C, (byte) 0x00}, false);
+                    Log.d(TAG, "message sent.. awaiting response");
+                }
+                // Do something when successfully connected
+                else if (state == BluetoothState.STATE_CONNECTING)
+                    Log.d(TAG, "trying to connect");
+                    // Do something while connecting
+                else if (state == BluetoothState.STATE_LISTEN)
+                    Log.d(TAG, "waiting for connection");
+                    // Do something when device is waiting for connection
+                else if (state == BluetoothState.STATE_NONE)
+                    Log.d(TAG, "no connection");
+                // Do something when device don't have any connection
+            }
+        });
+
+        btSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
+            public void onDataReceived(byte[] data, String message) {
+                // Do something when data incoming
+                Log.d(TAG, "data incomming: " + message + " " + data);
+            }
+        });
+
+        btSPP.setupService();
+        btSPP.startService(BluetoothState.DEVICE_OTHER);
+
+        btSPP.connect(address);
     }
 
+    //TODO: add unit test
     //TODO: need byte[] instead of Byte[] ..
     private Byte[] generateMessage(byte[] canMessage){
         List<Byte> msgBuilder = new ArrayList<Byte>();

@@ -32,6 +32,12 @@
         android:onClick="sendTestMessage"
         android:layout_row="3"/>
 
+    <Button android:text="bluetooth test" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/prototypeBluetoothButton"
+        android:onClick="sendBluetoothTestMessage"
+        android:layout_row="5"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

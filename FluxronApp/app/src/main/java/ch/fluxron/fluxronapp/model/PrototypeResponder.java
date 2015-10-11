@@ -5,6 +5,7 @@ import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
@@ -30,8 +31,9 @@ public class PrototypeResponder {
         cmd.setData(msg.getKitchen());
         cmd.setDocumentId(msg.getKitchen().getId());
         provider.getDalEventBus().post(cmd);
+    }
 
-        //Temporary message to trigger the Bluetooth Module. Later there will be proper messages from BL to UI concerning Bluetooth.
+    public void onEventAsync(BluetoothTestCommand msg){
         provider.getDalEventBus().post(new BluetoothDiscoveryRequest());
     }
 
