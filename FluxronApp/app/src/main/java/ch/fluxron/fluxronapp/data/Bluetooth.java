@@ -32,6 +32,9 @@ public class Bluetooth {
     private static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
     private static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
 
+    public Bluetooth() {
+    }
+
     public Bluetooth(IEventBusProvider provider, BluetoothSPP bt, Context context) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
@@ -138,24 +141,21 @@ public class Bluetooth {
      * Byte 0: 0xAA Startsequence
      * Byte 1: 0xAA Startsequence
      * Byte 2..9: CAN 8 Byte CAN Message
-     * Byte 11: Check LB Low Byte Checksum
-     * Byte 12: Check HB High Byte Checksum
-     *
-     * Note: According to document (Part_BLT_Protocol.pdf), Byte 10 & 11 contain the CR.. however
-     * the example message has 12 bytes, so I moved them accordingly.
+     * Byte 10: Check LB Low Byte Checksum
+     * Byte 11: Check HB High Byte Checksum
      */
-    private byte[] generateMessage(byte[] canMessage){
+    public byte[] generateMessage(byte[] canMessage){
         byte[] message = new byte[12];
         message[0] = (byte)0xAA;
         message[1] = (byte)0xAA;
         int checksumLow = 0;
         int checksumHigh = 0;
-        for (int c = 2; c < canMessage.length; c++) {
-            message[c] = canMessage[c-2];
-            if(c<6){
-                checksumLow += canMessage[c-2];
+        for (int c = 0; c < canMessage.length; c++) {
+            message[c+2] = canMessage[c];
+            if(c<4){
+                checksumLow += canMessage[c];
             } else {
-                checksumHigh += canMessage[c-2];
+                checksumHigh += canMessage[c];
             }
         }
         message[10] = (byte)checksumLow;
