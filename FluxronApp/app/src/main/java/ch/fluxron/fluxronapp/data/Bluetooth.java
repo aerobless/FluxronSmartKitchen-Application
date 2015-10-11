@@ -1,11 +1,13 @@
 package ch.fluxron.fluxronapp.data;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -27,16 +29,12 @@ public class Bluetooth {
     private static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
     private static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
 
-    public Bluetooth(IEventBusProvider provider, BluetoothSPP bt) {
+    public Bluetooth(IEventBusProvider provider, BluetoothSPP bt, Context context) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
         this.btSPP = bt;
         setupBluetooth();
-    }
-
-    public void onEventAsync(BluetoothDiscoveryRequest msg) {
-        listPairedDevices();
-        btSPP.connect(FLX_BAX_5206_ADDRESS);
+        setupDiscovery(context);
     }
 
     private void setupBluetooth(){
@@ -62,11 +60,9 @@ public class Bluetooth {
                     byte[] message = generateMessage(new byte[]{
                             (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
                             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00});
-                    btSPP.send(message, true);
-                    btSPP.send("Hello world, plz answer..", true);
+                    btSPP.send(message, false);
                     Log.d(TAG, "message sent.. awaiting response");
-                }
-                else if (state == BluetoothState.STATE_CONNECTING)
+                } else if (state == BluetoothState.STATE_CONNECTING)
                     Log.d(TAG, "trying to connect");
                 else if (state == BluetoothState.STATE_LISTEN)
                     Log.d(TAG, "waiting for connection");
@@ -85,6 +81,28 @@ public class Bluetooth {
         btSPP.startService(BluetoothState.DEVICE_OTHER);
     }
 
+    private void setupDiscovery(Context context){
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                // When discovery finds a device
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    // Get the BluetoothDevice object from the Intent
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    Log.d(TAG, "device discovered "+device.getName()+" "+device.getAddress());
+                }
+            }
+        };
+        IntentFilter ifilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        context.registerReceiver(receiver, ifilter);
+    }
+
+    public void onEventAsync(BluetoothDiscoveryRequest msg) {
+        listPairedDevices();
+        startDeviceDiscovery();
+        btSPP.connect(FLX_BAX_5206_ADDRESS);
+    }
+
     private List<String> listPairedDevices(){
         Set<BluetoothDevice> pairedDevices = btSPP.getBluetoothAdapter().getBondedDevices();
         List<String> s = new ArrayList<String>();
@@ -97,8 +115,21 @@ public class Bluetooth {
             }
             return s;
         } else {
-            Log.d(TAG, "No paird devices found");
+            Log.d(TAG, "no paired devices found");
             return null;
+        }
+    }
+
+    private void startDeviceDiscovery(){
+        stopDeviceDiscovery();
+        btSPP.startDiscovery();
+        Log.d(TAG, "device discovery started");
+    }
+
+    private void stopDeviceDiscovery(){
+        if(btSPP.isDiscovery()){
+            btSPP.cancelDiscovery();
+            Log.d(TAG, "device discovery stopped");
         }
     }
 
@@ -111,8 +142,8 @@ public class Bluetooth {
      * Byte 11: Check LB Low Byte Checksum
      * Byte 12: Check HB High Byte Checksum
      *
-     * Note: According to document, Byte 10 & 11 provide CR.. however
-     * the example message has 12 bytes.
+     * Note: According to document (Part_BLT_Protocol.pdf), Byte 10 & 11 contain the CR.. however
+     * the example message has 12 bytes, so I moved them accordingly.
      */
     private byte[] generateMessage(byte[] canMessage){
         byte[] message = new byte[12];

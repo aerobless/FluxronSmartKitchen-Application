@@ -81,7 +81,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
             couchbaseDB = couchbaseManager.getDatabase("protobase");
             localDatabase = new LocalDatabase(dalToModelProvider, couchbaseDB);
             BluetoothSPP bt = new BluetoothSPP(this.getApplicationContext());
-            bluetooth = new Bluetooth(dalToModelProvider, bt);
+            bluetooth = new Bluetooth(dalToModelProvider, bt, this.getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {
