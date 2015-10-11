@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryResponse;
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
@@ -104,11 +103,6 @@ public class MainActivity extends FluxronBaseActivity {
 
     public void onEventMainThread(SimpleMessageResponse msg){
         textViewWidget.setText(msg.getMessageText());
-    }
-
-    public void onEventMainThread(BluetoothDiscoveryResponse msg){
-        textViewWidget.setText(msg.getDeviceName() +" "+msg.getDeviceMAC());
-        Log.d("FLUXRON.PROTOTYPE", msg.getDeviceName() + " " + msg.getDeviceMAC());
     }
 
     public void onEventMainThread(KitchenLoaded msg){

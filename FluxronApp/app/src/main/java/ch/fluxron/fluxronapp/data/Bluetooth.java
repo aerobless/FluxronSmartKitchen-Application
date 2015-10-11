@@ -8,12 +8,15 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothConnectCommand;
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryCommand;
 
 /**
  * Listens to eventbus messages. Provides access to bluetooth devices.
@@ -73,7 +76,7 @@ public class Bluetooth {
 
         btSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
-                Log.d(TAG, "data incomming: " + message + " " + data);
+                Log.d(TAG, "data incoming: " + message + " " + data);
             }
         });
 
@@ -85,11 +88,9 @@ public class Bluetooth {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                // When discovery finds a device
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    // Get the BluetoothDevice object from the Intent
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    Log.d(TAG, "device discovered "+device.getName()+" "+device.getAddress());
+                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
                 }
             }
         };
@@ -97,39 +98,37 @@ public class Bluetooth {
         context.registerReceiver(receiver, ifilter);
     }
 
-    public void onEventAsync(BluetoothDiscoveryRequest msg) {
-        listPairedDevices();
-        startDeviceDiscovery();
-        btSPP.connect(FLX_BAX_5206_ADDRESS);
+    public void onEventAsync(BluetoothDiscoveryCommand cmd) {
+        if(cmd.isEnabled()){
+            discoverPairedDevices();
+            startDeviceDiscovery();
+        } else {
+            stopDeviceDiscovery();
+        }
     }
 
-    private List<String> listPairedDevices(){
+    public void onEventAsync(BluetoothConnectCommand cmd) {
+        btSPP.connect(cmd.getAddress());
+    }
+
+    private void discoverPairedDevices(){
         Set<BluetoothDevice> pairedDevices = btSPP.getBluetoothAdapter().getBondedDevices();
         List<String> s = new ArrayList<String>();
-
         if (pairedDevices != null) {
             for(BluetoothDevice device : pairedDevices){
-                //Example: FLX_GTZ_196 00:13:04:12:06:20
-                Log.d(TAG, device.getName()+" "+device.getAddress());
-                s.add(device.getName()+" "+device.getAddress());
+                provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
             }
-            return s;
-        } else {
-            Log.d(TAG, "no paired devices found");
-            return null;
         }
     }
 
     private void startDeviceDiscovery(){
         stopDeviceDiscovery();
         btSPP.startDiscovery();
-        Log.d(TAG, "device discovery started");
     }
 
     private void stopDeviceDiscovery(){
         if(btSPP.isDiscovery()){
             btSPP.cancelDiscovery();
-            Log.d(TAG, "device discovery stopped");
         }
     }
 

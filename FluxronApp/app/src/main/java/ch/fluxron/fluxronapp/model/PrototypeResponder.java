@@ -1,6 +1,9 @@
 package ch.fluxron.fluxronapp.model;
 
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
+import android.util.Log;
+
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
@@ -34,7 +37,12 @@ public class PrototypeResponder {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        provider.getDalEventBus().post(new BluetoothDiscoveryRequest());
+        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+    }
+
+    public void onEventAsync(BluetoothDeviceFound msg){
+        //TODO: send to GUI
+        Log.d("FLUXRON", "Got BluetoothDeviceFound Message: "+msg.getName()+" "+msg.getAddress());
     }
 
     public void onEventAsync(FindKitchenCommand msg) {
