@@ -2,16 +2,12 @@ package ch.fluxron.fluxronapp.data;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.os.Build;
 import android.util.Log;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
@@ -22,25 +18,28 @@ import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryRequest;
  */
 public class Bluetooth {
     private IEventBusProvider provider;
-    private BluetoothAdapter btAdapter;
     private BluetoothSPP btSPP;
 
     private static final String TAG = "FLUXRON";
 
-    // SPP UUID service (well-known UUID for SPP Boards)
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
     //Bluetooth Device MAC
-    private static String address = "00:13:04:12:06:20";
+    private static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
+    private static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
+    private static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
 
     public Bluetooth(IEventBusProvider provider, BluetoothSPP bt) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
         this.btSPP = bt;
+        setupBluetooth();
     }
 
     public void onEventAsync(BluetoothDiscoveryRequest msg) {
+        listPairedDevices();
+        btSPP.connect(FLX_BAX_5206_ADDRESS);
+    }
 
+    private void setupBluetooth(){
         btSPP.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
             public void onDeviceConnected(String name, String address) {
                 Log.d(TAG, "connected");
@@ -48,12 +47,10 @@ public class Bluetooth {
 
             public void onDeviceDisconnected() {
                 Log.d(TAG, "disconnected");
-                // Do something when connection was disconnected
             }
 
             public void onDeviceConnectionFailed() {
                 Log.d(TAG, "connection failed");
-                // Do something when connection failed
             }
         });
 
@@ -61,76 +58,35 @@ public class Bluetooth {
             public void onServiceStateChanged(int state) {
                 if (state == BluetoothState.STATE_CONNECTED) {
                     Log.d(TAG, "successfully connected");
-                    //AA AA 40 18 10 04 00 00 00 00 6C 00
                     Log.d(TAG, "sending message");
-                    btSPP.send(new byte[]{(byte) 0xAA, (byte) 0xAA, (byte) 0x18,
-                            (byte) 0x10, (byte) 0x04, (byte) 0x00, (byte) 0x00,
-                            (byte) 0x00, (byte) 0x00, (byte) 0x6C, (byte) 0x00}, true);
+                    byte[] message = generateMessage(new byte[]{
+                            (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
+                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00});
+                    btSPP.send(message, true);
                     btSPP.send("Hello world, plz answer..", true);
-                    btSPP.send(new byte[]{(byte) 0xAA, (byte) 0xAA, (byte) 0x18,
-                            (byte) 0x10, (byte) 0x04, (byte) 0x00, (byte) 0x00,
-                            (byte) 0x00, (byte) 0x00, (byte) 0x6C, (byte) 0x00}, false);
                     Log.d(TAG, "message sent.. awaiting response");
                 }
-                // Do something when successfully connected
                 else if (state == BluetoothState.STATE_CONNECTING)
                     Log.d(TAG, "trying to connect");
-                    // Do something while connecting
                 else if (state == BluetoothState.STATE_LISTEN)
                     Log.d(TAG, "waiting for connection");
-                    // Do something when device is waiting for connection
                 else if (state == BluetoothState.STATE_NONE)
                     Log.d(TAG, "no connection");
-                // Do something when device don't have any connection
             }
         });
 
         btSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
-                // Do something when data incoming
                 Log.d(TAG, "data incomming: " + message + " " + data);
             }
         });
 
         btSPP.setupService();
         btSPP.startService(BluetoothState.DEVICE_OTHER);
-
-        btSPP.connect(address);
-    }
-
-    //TODO: add unit test
-    //TODO: need byte[] instead of Byte[] ..
-    private Byte[] generateMessage(byte[] canMessage){
-        List<Byte> msgBuilder = new ArrayList<Byte>();
-        msgBuilder.add((byte)0xAA);
-        msgBuilder.add((byte)0xAA);
-        int checksum = 0;
-        for (byte b : canMessage) {
-            msgBuilder.add(b);
-            checksum += b;
-        }
-        msgBuilder.add((byte)checksum);
-        Byte[] msgArray = msgBuilder.toArray(new Byte[msgBuilder.size()]);
-        return msgArray;
-    }
-
-    private BluetoothAdapter setupBluetooth(){
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if(btAdapter == null) {
-            //TODO: Handle error, no Bluetooth Adapter
-            Log.d(TAG, "No Bluetooth adapter");
-        }
-
-        if (!btAdapter.isEnabled()) {
-            //TODO: Offer user to enable Bluetooth.
-            Log.d(TAG, "Bluetooth not enabled");
-        }
-        return btAdapter;
     }
 
     private List<String> listPairedDevices(){
-        Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+        Set<BluetoothDevice> pairedDevices = btSPP.getBluetoothAdapter().getBondedDevices();
         List<String> s = new ArrayList<String>();
 
         if (pairedDevices != null) {
@@ -146,16 +102,44 @@ public class Bluetooth {
         }
     }
 
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        if(Build.VERSION.SDK_INT >= 10){
-            try {
-                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
-                return (BluetoothSocket) m.invoke(device, MY_UUID);
-            } catch (Exception e) {
-                Log.e(TAG, "Could not create Insecure RFComm Connection", e);
+    //TODO: add unit test
+    /*
+     * Message Format:
+     * Byte 0: 0xAA Startsequence
+     * Byte 1: 0xAA Startsequence
+     * Byte 2..9: CAN 8 Byte CAN Message
+     * Byte 11: Check LB Low Byte Checksum
+     * Byte 12: Check HB High Byte Checksum
+     *
+     * Note: According to document, Byte 10 & 11 provide CR.. however
+     * the example message has 12 bytes.
+     */
+    private byte[] generateMessage(byte[] canMessage){
+        byte[] message = new byte[12];
+        message[0] = (byte)0xAA;
+        message[1] = (byte)0xAA;
+        int checksumLow = 0;
+        int checksumHigh = 0;
+        for (int c = 2; c < canMessage.length; c++) {
+            message[c] = canMessage[c-2];
+            if(c<6){
+                checksumLow += canMessage[c-2];
+            } else {
+                checksumHigh += canMessage[c-2];
             }
         }
-        return  device.createRfcommSocketToServiceRecord(MY_UUID);
+        message[10] = (byte)checksumLow;
+        message[11] = (byte)checksumHigh;
+
+        printUnsignedByteArray(message);
+        return message;
     }
 
+    private void printUnsignedByteArray(byte[] message) {
+        String hexMessage = "";
+        for (int i = 0; i < message.length; i++) {
+            hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";
+        }
+        Log.d(TAG, hexMessage);
+    }
 }
