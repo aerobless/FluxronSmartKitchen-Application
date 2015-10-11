@@ -69,20 +69,26 @@ public class LocalDatabase {
     public void onEventAsync(LoadObjectByIdCommand cmd) {
         // load the document by Id
         Document doc = database.getExistingDocument(cmd.getId());
-        if(doc!=null){
-            // Document found, get the type
+
+        loadObjectFromDocument(doc);
+    }
+
+    /**
+     * Tries to convert the document into an object and sends an ObjectLoaded message
+     * @param doc Document
+     */
+    private void loadObjectFromDocument(Document doc){
+        if(doc != null){
+            // Get the type information
             Object typeProperty = doc.getProperty(TYPE_PROPERTY);
             String typeName = typeProperty instanceof String ? (String)typeProperty : null;
 
-            // Convert to object using ObjectMapper
+            // Convert using ObjectMapper
             Class<?> objectType = converter.getClassFromName(typeName);
             if (objectType != null) {
                 ObjectLoaded msg = new ObjectLoaded(doc.getId(), converter.convertMapToObject(doc.getProperties(), objectType));
                 provider.getDalEventBus().post(msg);
             }
-        }
-        else {
-            // TODO: Error message if not found
         }
     }
 
@@ -99,42 +105,57 @@ public class LocalDatabase {
      * @param query Query, ignored if null
      */
     public void retrieveKitchens(String query){
-        View kitchenList = database.getView("objectsByType");
-        if (kitchenList != null) {
-            kitchenList.setMap(
-                    new Mapper() {
-                        @Override
-                        public void map(Map<String, Object> document, Emitter emitter) {
-                            emitter.emit((Object)document.get(TYPE_PROPERTY), null);
-                        }
-                    }, "1"
-            );
-        }
-
-        kitchenList = database.getView("objectsByType");
-        Query orderedQuery = kitchenList.createQuery();
-        orderedQuery.setStartKey("ch.fluxron.fluxronapp.objectBase.Kitchen");
-        orderedQuery.setEndKey("ch.fluxron.fluxronapp.objectBase.Kitchen");
+        Query orderedQuery = createTypeQuery(Kitchen.class);
         QueryEnumerator results;
 
         try {
             results = orderedQuery.run();
             for (Iterator<QueryRow> it = results; it.hasNext();) {
                 QueryRow row = it.next();
-
-                String kitchenName = String.valueOf(row.getDocument().getProperty("name"));
-                String kitchenId = String.valueOf(row.getDocumentId());
-                String kitchenDescription = String.valueOf(row.getDocument().getProperty("description"));
-
-                if(query == null || kitchenName.contains(query)) {
-                    
-                    Kitchen data = new Kitchen(kitchenId, kitchenName);
-                    data.setDescription(kitchenDescription);
-                    provider.getDalEventBus().post(new KitchenLoaded(data));
+                Kitchen o = (Kitchen)converter.convertMapToObject(row.getDocument().getProperties(), Kitchen.class);
+                if(query == null || o.getName().contains(query)) {
+                    provider.getDalEventBus().post(new ObjectLoaded(o.getId(), o));
                 }
             }
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Retrieves a query that reads all objects of a certain type from the database
+     * @param type Class of the type to be read
+     * @param <T> Type
+     * @return Query
+     */
+    private <T> Query createTypeQuery(Class<T> type){
+        Query q = createViewObjectsByType().createQuery();
+
+        String fullClassName = type.getCanonicalName();
+        q.setStartKey(fullClassName);
+        q.setEndKey(fullClassName);
+
+        return q;
+    }
+
+    /**
+     * Creates or retrieves a view that maps all stored objects to their "type" attribute
+     * @return View
+     */
+    private View createViewObjectsByType(){
+        View objectsByType = database.getView("objectsByType");
+
+        Mapper mapper = new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                emitter.emit((Object)document.get(TYPE_PROPERTY), null);
+            }
+        };
+
+        if (objectsByType != null) {
+            objectsByType.setMap(mapper, "1");
+        }
+
+        return objectsByType;
     }
 }
