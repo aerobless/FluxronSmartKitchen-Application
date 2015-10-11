@@ -54,11 +54,6 @@ public class PrototypeResponder {
         provider.getDalEventBus().post(dbCommand);
     }
 
-    public void onEventAsync(ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded msg) {
-        ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded uiMsg = new ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded(msg.getKitchen());
-        provider.getUiEventBus().post(uiMsg);
-    }
-
     public void onEventAsync(DeleteKitchenCommand msg) {
         provider.getDalEventBus().post(new DeleteObjectById(msg.getId()));
     }

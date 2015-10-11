@@ -9,15 +9,12 @@ import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelDal.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
