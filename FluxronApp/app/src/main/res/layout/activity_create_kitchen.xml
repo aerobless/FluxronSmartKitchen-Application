@@ -84,6 +84,20 @@
                 android:id="@+id/buttonCreate"
                 android:onClick="createNewKitchen"
                 android:layout_gravity="right" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TAKE PICTURE"
+                android:id="@+id/buttonPicture"
+                android:onClick="onCreatePictureClicked"
+                android:layout_gravity="right" />
+
+            <ImageView
+                android:layout_width="100dip"
+                android:layout_height="100dip"
+                android:id="@+id/imagePreview"
+                android:layout_gravity="center" />
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
