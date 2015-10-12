@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -26,6 +28,7 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 public class CreateKitchenActivity extends FluxronBaseActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private Uri tempFileName;
+    private String saveRequestId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +36,14 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         setContentView(R.layout.activity_create_kitchen);
     }
 
-    public void onEventMainThread(Object msg){
-        // TODO: Proper event handling for createKitchen
-        postMessage(null);
+    public void onEventMainThread(KitchenCreated msg){
+        // if the kitchen loaded was based on our request
+        if(msg.getConnectionId().equals(saveRequestId)){
+            Intent editDevice = new Intent(this, KitchenActivity.class);
+            editDevice.putExtra(KitchenActivity.PARAM_KITCHEN_ID, msg.getKitchen().getId());
+            startActivity(editDevice);
+            finish();
+        }
     }
 
     public void onBackButtonClicked(View button){
@@ -52,16 +60,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         Kitchen k = new Kitchen(name);
         k.setDescription(description);
 
+        // Send a command and remember its connection id
         SaveKitchenCommand command = new SaveKitchenCommand(k);
-
+        saveRequestId = command.getConnectionId();
         postMessage(command);
-
-        //TODO: Wait for a response of type KitchenSaved
-        // Edit this device
-        Intent editDevice = new Intent(this, KitchenActivity.class);
-        editDevice.putExtra("KITCHEN_ID", "xxx-dsf-er22-34234-d00");
-        startActivity(editDevice);
-        finish();
     }
 
     public void onCreatePictureClicked(View button) {

@@ -55,4 +55,13 @@ public class DocumentFunctions {
             }
         }
     }
+
+    /**
+     * Tests wether a document exists or not
+     * @param documentId Id to search for
+     * @return True if found, otherwise false
+     */
+    public boolean exists(String documentId) {
+        return database.getExistingDocument(documentId) != null;
+    }
 }

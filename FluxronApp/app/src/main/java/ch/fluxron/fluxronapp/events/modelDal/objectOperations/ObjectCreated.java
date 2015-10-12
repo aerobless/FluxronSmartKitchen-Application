@@ -7,8 +7,15 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
  */
 public class ObjectCreated extends RequestResponseConnection {
     private Object data;
-
     private String id;
+
+    /**
+     * Sets the data of the created object
+     * @param data Object data
+     */
+    public ObjectCreated(Object data){
+        this.data = data;
+    }
 
     /**
      * Returns the Object that was created

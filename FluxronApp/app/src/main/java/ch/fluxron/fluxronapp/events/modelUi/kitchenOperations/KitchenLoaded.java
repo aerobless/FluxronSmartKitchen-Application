@@ -1,11 +1,12 @@
 package ch.fluxron.fluxronapp.events.modelUi.kitchenOperations;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**
  * Notifies subscribers that a kitchen has been loaded
  */
-public class KitchenLoaded {
+public class KitchenLoaded extends RequestResponseConnection{
     private Kitchen kitchen;
 
     /**

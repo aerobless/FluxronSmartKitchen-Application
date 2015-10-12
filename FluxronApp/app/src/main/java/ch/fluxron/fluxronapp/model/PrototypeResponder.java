@@ -6,11 +6,13 @@ import ch.fluxron.fluxronapp.events.modelDal.BluetoothConnectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
@@ -33,6 +35,7 @@ public class PrototypeResponder {
         SaveObjectCommand cmd = new SaveObjectCommand();
         cmd.setData(msg.getKitchen());
         cmd.setDocumentId(msg.getKitchen().getId());
+        cmd.setConnectionId(msg);
         provider.getDalEventBus().post(cmd);
     }
 
@@ -46,28 +49,41 @@ public class PrototypeResponder {
 
     public void onEventAsync(BluetoothDeviceFound msg){
         //TODO: send to GUI
-        Log.d("FLUXRON", "Got BluetoothDeviceFound Message: "+msg.getName()+" "+msg.getAddress());
+        Log.d("FLUXRON", "Got BluetoothDeviceFound Message: " + msg.getName() + " " + msg.getAddress());
     }
 
     public void onEventAsync(FindKitchenCommand msg) {
-        ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand();
-        cmd.setQuery(msg.getQuery());
+        ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand(msg.getQuery());
+        cmd.setConnectionId(msg);
 
         provider.getDalEventBus().post(cmd);
     }
 
     public void onEventAsync(ObjectLoaded msg) {
         if (msg.getData() instanceof Kitchen) {
-            provider.getUiEventBus().post(new KitchenLoaded((Kitchen) msg.getData()));
+            KitchenLoaded event = new KitchenLoaded((Kitchen) msg.getData());
+            event.setConnectionId(msg);
+            provider.getUiEventBus().post(event);
+        }
+    }
+
+    public void onEventAsync(ObjectCreated msg) {
+        if (msg.getData() instanceof Kitchen) {
+            KitchenCreated event = new KitchenCreated((Kitchen) msg.getData());
+            event.setConnectionId(msg);
+            provider.getUiEventBus().post(event);
         }
     }
 
     public void onEventAsync(LoadKitchenCommand cmd){
         LoadObjectByIdCommand dbCommand = new LoadObjectByIdCommand(cmd.getId());
+        dbCommand.setConnectionId(cmd);
         provider.getDalEventBus().post(dbCommand);
     }
 
     public void onEventAsync(DeleteKitchenCommand msg) {
-        provider.getDalEventBus().post(new DeleteObjectById(msg.getId()));
+        DeleteObjectById delete = new DeleteObjectById(msg.getId());
+        delete.setConnectionId(msg);
+        provider.getDalEventBus().post(delete);
     }
 }

@@ -13,9 +13,11 @@ import com.couchbase.lite.QueryRow;
 import java.util.Iterator;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
@@ -39,17 +41,27 @@ public class LocalDatabase {
         this.documents = new DocumentFunctions(database);
     }
 
+    /**
+     * Triggered when saving an object
+     * @param cmd Command message
+     */
     public void onEventAsync(SaveObjectCommand cmd) {
+        boolean created = !documents.exists(cmd.getConnectionId());
         Document doc = documents.createDocumentOnNull(cmd.getDocumentId());
 
-        //TODO: change type to constant
         if(doc != null){
             Map<String, Object> properties = converter.convertObjectToMap(cmd.getData());
-            properties.put(TYPE_PROPERTY,cmd.getData().getClass().getCanonicalName());
+            properties.put(TYPE_PROPERTY, cmd.getData().getClass().getCanonicalName());
             documents.tryPutProperties(doc, properties);
+
+            // Fire an event if we created a new object
+            if(created) {
+                ObjectCreated event = new ObjectCreated(getObjectFromDocument(doc));
+                event.setConnectionId(cmd);
+                provider.getDalEventBus().post(event);
+            }
         }
     }
-
 
     /**
      * Triggered when an object should be deleted by id.
@@ -67,14 +79,29 @@ public class LocalDatabase {
         // load the document by Id
         Document doc = database.getExistingDocument(cmd.getId());
 
-        loadObjectFromDocument(doc);
+        loadObjectFromDocument(doc, cmd);
     }
 
     /**
      * Tries to convert the document into an object and sends an ObjectLoaded message
      * @param doc Document
+     * @param conn Connection
      */
-    private void loadObjectFromDocument(Document doc){
+    private void loadObjectFromDocument(Document doc, RequestResponseConnection conn){
+        Object o = getObjectFromDocument(doc);
+
+        if(o != null){
+            ObjectLoaded msg = new ObjectLoaded(doc.getId(), o);
+            msg.setConnectionId(conn);
+            provider.getDalEventBus().post(msg);
+        }
+    }
+
+    /**
+     * Tries to convert the document into an object and returns it
+     * @param doc Document
+     */
+    private Object getObjectFromDocument(Document doc){
         if(doc != null){
             // Get the type information
             Object typeProperty = doc.getProperty(TYPE_PROPERTY);
@@ -82,11 +109,9 @@ public class LocalDatabase {
 
             // Convert using ObjectMapper
             Class<?> objectType = converter.getClassFromName(typeName);
-            if (objectType != null) {
-                ObjectLoaded msg = new ObjectLoaded(doc.getId(), converter.convertMapToObject(doc.getProperties(), objectType));
-                provider.getDalEventBus().post(msg);
-            }
+            return converter.convertMapToObject(doc.getProperties(), objectType);
         }
+        return null;
     }
 
     /**
