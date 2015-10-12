@@ -63,8 +63,7 @@ public class PrototypeResponder {
     }
 
     public void onEventAsync(LoadKitchenCommand cmd){
-        LoadObjectByIdCommand dbCommand = new LoadObjectByIdCommand();
-        dbCommand.setId(cmd.getId());
+        LoadObjectByIdCommand dbCommand = new LoadObjectByIdCommand(cmd.getId());
         provider.getDalEventBus().post(dbCommand);
     }
 
