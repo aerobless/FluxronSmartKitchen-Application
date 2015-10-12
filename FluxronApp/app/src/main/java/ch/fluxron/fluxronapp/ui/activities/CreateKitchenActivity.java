@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
@@ -52,8 +52,7 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         Kitchen k = new Kitchen(name);
         k.setDescription(description);
 
-        SaveKitchenCommand command = new SaveKitchenCommand();
-        command.setKitchen(k);
+        SaveKitchenCommand command = new SaveKitchenCommand(k);
 
         postMessage(command);
 

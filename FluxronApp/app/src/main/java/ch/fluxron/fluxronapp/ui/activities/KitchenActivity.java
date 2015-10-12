@@ -2,14 +2,13 @@ package ch.fluxron.fluxronapp.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.events.modelUi.DeleteKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.LoadKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
 

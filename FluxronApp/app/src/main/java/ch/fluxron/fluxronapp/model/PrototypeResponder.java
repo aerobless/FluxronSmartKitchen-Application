@@ -9,11 +9,11 @@ import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
-import ch.fluxron.fluxronapp.events.modelUi.DeleteKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.LoadKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**

@@ -11,8 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
-import ch.fluxron.fluxronapp.events.modelUi.FindKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.KitchenLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 
 import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
@@ -51,9 +51,9 @@ public class MainActivity extends FluxronBaseActivity {
     public void onStart() {
         super.onStart();
 
-        // Refresh the list
+        // Refresh the list with an empty search query
         listAdapter.clear();
-        postMessage(new FindKitchenCommand());
+        postMessage(new FindKitchenCommand(""));
     }
 
     private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
@@ -86,8 +86,7 @@ public class MainActivity extends FluxronBaseActivity {
 
     public void sendTestMessage(View btn){
         String searchQuery = ((TextView)findViewById(R.id.kitchenName)).getText().toString();
-        FindKitchenCommand cmd = new FindKitchenCommand();
-        cmd.setQuery(searchQuery);
+        FindKitchenCommand cmd = new FindKitchenCommand(searchQuery);
         listAdapter.clear();
         postMessage(cmd);
     }
