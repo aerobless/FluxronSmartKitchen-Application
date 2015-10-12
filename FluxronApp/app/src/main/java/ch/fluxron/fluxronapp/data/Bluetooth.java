@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothConnectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
@@ -83,7 +84,7 @@ public class Bluetooth {
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00});
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(bluetoothEnabled() && (connectedDeviceAddress==null)){
+        if(bluetoothEnabled()){
             stopDeviceDiscovery();
 
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
@@ -109,11 +110,14 @@ public class Bluetooth {
             mConnectedThread = new ConnectedThread(btSocket);
             mConnectedThread.start();
             mConnectedThread.write(message);
-        } else if(bluetoothEnabled() && (connectedDeviceAddress==cmd.getAddress()) && (mConnectedThread!=null)){
-            Log.d(TAG, "Sending message to already connected device");
-            mConnectedThread.write(message);
-        } else if(bluetoothEnabled() && (connectedDeviceAddress!=cmd.getAddress())){
-            //TODO: establish new connection because the device has changed.
+
+            //Temporary timeout to keep reading thread from locking up the bluetooth adapter.
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            mConnectedThread.keepRunning.set(false);
         }
     }
 
@@ -209,8 +213,9 @@ public class Bluetooth {
     }
 
     private class ConnectedThread extends Thread {
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
+        private InputStream mmInStream;
+        private OutputStream mmOutStream;
+        public AtomicBoolean keepRunning = new AtomicBoolean(true);
 
         public ConnectedThread(BluetoothSocket socket) {
             InputStream tmpIn = null;
@@ -229,15 +234,25 @@ public class Bluetooth {
             byte[] buffer = new byte[16]; //TODO: size
             int nofBytes;
 
-            while (true) {
+            while (keepRunning.get()) {
                 try {
-                    nofBytes = mmInStream.read(buffer);
-                    Log.d(TAG, nofBytes+" Bytes received!!!");
-                    printUnsignedByteArray(buffer);
+                    if(mmInStream.available() > 0){
+                        nofBytes = mmInStream.read(buffer);
+                        Log.d(TAG, nofBytes+" Bytes received!!!");
+                        printUnsignedByteArray(buffer);
+                    }
                 } catch (IOException e) {
                     break;
                 }
             }
+            try {
+                mmInStream.close();
+                mmOutStream.close();
+                btSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
         public void write(byte[] message) {
