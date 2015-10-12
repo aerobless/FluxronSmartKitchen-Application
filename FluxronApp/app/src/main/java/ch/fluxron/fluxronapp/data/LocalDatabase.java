@@ -13,11 +13,11 @@ import com.couchbase.lite.QueryRow;
 import java.util.Iterator;
 import java.util.Map;
 
-import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
-import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
-import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**

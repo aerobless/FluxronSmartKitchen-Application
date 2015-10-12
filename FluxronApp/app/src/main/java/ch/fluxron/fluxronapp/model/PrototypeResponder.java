@@ -4,10 +4,10 @@ import android.util.Log;
 
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothConnectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
-import ch.fluxron.fluxronapp.events.modelDal.DeleteObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.LoadObjectByIdCommand;
-import ch.fluxron.fluxronapp.events.modelDal.ObjectLoaded;
-import ch.fluxron.fluxronapp.events.modelDal.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;

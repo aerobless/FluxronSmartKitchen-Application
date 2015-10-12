@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelDal;
+package ch.fluxron.fluxronapp.events.modelDal.objectOperations;
 
 /**
  * Requests the load of any object by its id.

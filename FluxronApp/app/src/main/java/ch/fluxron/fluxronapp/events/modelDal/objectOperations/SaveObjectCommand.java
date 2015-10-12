@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelDal;
+package ch.fluxron.fluxronapp.events.modelDal.objectOperations;
 
 /**
  * A simple message containing a text. PROTOTYPE USAGE ONLY!

@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelDal;
+package ch.fluxron.fluxronapp.events.modelDal.objectOperations;
 
 /**
  * Notifies listeners about an objects loading being completed.
