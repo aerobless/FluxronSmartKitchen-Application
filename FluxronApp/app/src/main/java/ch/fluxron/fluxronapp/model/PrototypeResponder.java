@@ -38,8 +38,8 @@ public class PrototypeResponder {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-        //provider.getDalEventBus().post(new BluetoothConnectCommand("00:13:04:12:06:20"));
+        //provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+        provider.getDalEventBus().post(new BluetoothConnectCommand("00:13:04:12:06:20"));
     }
 
     public void onEventAsync(BluetoothDeviceFound msg){
