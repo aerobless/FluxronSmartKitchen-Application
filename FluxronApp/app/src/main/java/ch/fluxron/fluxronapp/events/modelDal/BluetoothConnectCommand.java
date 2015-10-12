@@ -5,9 +5,11 @@ package ch.fluxron.fluxronapp.events.modelDal;
  */
 public class BluetoothConnectCommand {
     private String address;
+    private byte[] message;
 
-    public BluetoothConnectCommand(String address) {
+    public BluetoothConnectCommand(String address, byte[] message) {
         this.address = address;
+        this.message = message;
     }
 
     public String getAddress() {
@@ -16,5 +18,13 @@ public class BluetoothConnectCommand {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public byte[] getMessage() {
+        return message;
+    }
+
+    public void setMessage(byte[] message) {
+        this.message = message;
     }
 }

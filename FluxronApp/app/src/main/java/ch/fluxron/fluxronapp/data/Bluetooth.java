@@ -38,16 +38,16 @@ public class Bluetooth {
     private static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
     private static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
 
+    private static final int READ_TIMEOUT_IN_SECONDS = 1;
+
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private ConnectedThread mConnectedThread;
-    private String connectedDeviceAddress = null;
 
     // SPP UUID service (well-known)
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    public Bluetooth() {
-    }
+    public Bluetooth() {}
 
     public Bluetooth(IEventBusProvider provider, Context context) {
         this.provider = provider;
@@ -79,10 +79,6 @@ public class Bluetooth {
     }
 
     public void onEventAsync(BluetoothConnectCommand cmd) {
-        byte[] message = generateMessage(new byte[]{
-                (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00});
-
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothEnabled()){
             stopDeviceDiscovery();
@@ -109,11 +105,11 @@ public class Bluetooth {
             }
             mConnectedThread = new ConnectedThread(btSocket);
             mConnectedThread.start();
-            mConnectedThread.write(message);
+            mConnectedThread.write(generateChecksum(cmd.getMessage()));
 
             //Temporary timeout to keep reading thread from locking up the bluetooth adapter.
             try {
-                Thread.sleep(1000);
+                Thread.sleep(READ_TIMEOUT_IN_SECONDS*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -142,7 +138,6 @@ public class Bluetooth {
         }
     }
 
-    //TODO: add unit test
     /*
      * Message Format:
      * Byte 0: 0xAA Startsequence
@@ -151,7 +146,7 @@ public class Bluetooth {
      * Byte 10: Check LB Low Byte Checksum
      * Byte 11: Check HB High Byte Checksum
      */
-    public byte[] generateMessage(byte[] canMessage){
+    public byte[] generateChecksum(byte[] canMessage){
         byte[] message = new byte[12];
         message[0] = (byte)0xAA;
         message[1] = (byte)0xAA;
@@ -252,7 +247,6 @@ public class Bluetooth {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         public void write(byte[] message) {
