@@ -48,9 +48,6 @@ public class Bluetooth {
             (byte) 0x40, (byte) 0xfa, (byte) 0x03, (byte) 0x04,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
 
-
-
-
     private static final String TAG = "FLUXRON";
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
@@ -95,37 +92,43 @@ public class Bluetooth {
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
-
-                Log.d(TAG, "Trying to connect to "+cmd.getAddress());
-                try {
-                    btSocket.connect();
-                    Log.d(TAG, "Connection to "+cmd.getAddress()+" ok");
-                } catch (IOException e) {
-                    Log.d(TAG, "Connection to "+cmd.getAddress()+" failed.");
-                    try {
-                        btSocket.close();
-                    } catch (IOException e2) {
-                        errorExit(TAG, "In onResume() and unable to close socket during connection failure");
-                        e.printStackTrace();
-                    }
-                }
+                connectSocket(btSocket);
                 ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
                 mConnectedThread.start();
                 mConnectedThread.write(generateChecksum(cmd.getMessage()));
 
-                //Temporary timeout to keep reading thread from locking up the bluetooth adapter.
-                try {
-                    Thread.sleep(READ_TIMEOUT_IN_SECONDS*1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                mConnectedThread.keepRunning.set(false);
-
+                setConnectionTimeout(mConnectedThread, READ_TIMEOUT_IN_SECONDS);
             } catch (IOException e) {
-                errorExit(TAG, "In onResume() and socket create failed");
+                Log.d(TAG, "In onResume() and socket create failed");
                 e.printStackTrace();
             }
         }
+    }
+
+    private void connectSocket(BluetoothSocket btSocket) {
+        Log.d(TAG, "Trying to connect to " + btSocket.getRemoteDevice().getAddress());
+        try {
+            btSocket.connect();
+            Log.d(TAG, "Connection to "+btSocket.getRemoteDevice().getAddress()+" ok");
+        } catch (IOException e) {
+            Log.d(TAG, "Connection to "+btSocket.getRemoteDevice().getAddress()+" failed.");
+            try {
+                btSocket.close();
+            } catch (IOException e2) {
+                Log.d(TAG, "In onResume() and unable to close socket during connection failure");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //Temporary setConnectionTimeout to keep reading thread from locking up the bluetooth adapter.
+    private void setConnectionTimeout(ConnectedThread mConnectedThread, int time) {
+        try {
+            Thread.sleep(time*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mConnectedThread.keepRunning.set(false);
     }
 
     private void discoverPairedDevices(){
@@ -188,10 +191,6 @@ public class Bluetooth {
         Log.d(TAG, hexMessage);
     }
 
-    private void errorExit(String title, String message){
-        Log.d(TAG, title+" "+message);
-    }
-
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         if(Build.VERSION.SDK_INT >= 10){
             try {
@@ -207,7 +206,7 @@ public class Bluetooth {
 
     private boolean bluetoothEnabled() {
         if(btAdapter==null) {
-            errorExit(TAG, "Bluetooth not supported (Are you running on emulator?)");
+            Log.d(TAG, "Bluetooth not supported (Are you running on emulator?)");
         } else {
             if (btAdapter.isEnabled()) {
                 Log.d(TAG, "Bluetooth is on");
