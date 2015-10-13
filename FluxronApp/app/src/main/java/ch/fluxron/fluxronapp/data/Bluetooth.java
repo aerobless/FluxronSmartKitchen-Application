@@ -31,21 +31,21 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscov
 public class Bluetooth {
     private IEventBusProvider provider;
 
+    //Fluxron Demo Devices
+    public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
+    public static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
+    public static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
+
+    //Messages
+    public static final byte[] DEMO_MESSAGE = new byte[]{
+            (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+
     private static final String TAG = "FLUXRON";
-
-    //Bluetooth Device MAC
-    private static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
-    private static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
-    private static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
-
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
+    private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
     private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
-    private ConnectedThread mConnectedThread;
-
-    // SPP UUID service (well-known)
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     public Bluetooth() {}
 
@@ -85,44 +85,49 @@ public class Bluetooth {
 
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
             try {
-                btSocket = createBluetoothSocket(device);
+                BluetoothSocket btSocket = createBluetoothSocket(device);
+
+                Log.d(TAG, "Trying to connect to "+cmd.getAddress());
+                try {
+                    btSocket.connect();
+                    Log.d(TAG, "Connection to "+cmd.getAddress()+" ok");
+                } catch (IOException e) {
+                    Log.d(TAG, "Connection to "+cmd.getAddress()+" failed.");
+                    try {
+                        btSocket.close();
+                    } catch (IOException e2) {
+                        errorExit(TAG, "In onResume() and unable to close socket during connection failure");
+                        e.printStackTrace();
+                    }
+                }
+                ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
+                mConnectedThread.start();
+                mConnectedThread.write(generateChecksum(cmd.getMessage()));
+
+                //Temporary timeout to keep reading thread from locking up the bluetooth adapter.
+                try {
+                    Thread.sleep(READ_TIMEOUT_IN_SECONDS*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mConnectedThread.keepRunning.set(false);
+
             } catch (IOException e) {
                 errorExit(TAG, "In onResume() and socket create failed");
                 e.printStackTrace();
             }
 
-            Log.d(TAG, "Trying to connect");
-            try {
-                btSocket.connect();
-                Log.d(TAG, "Connection ok");
-            } catch (IOException e) {
-                try {
-                    btSocket.close();
-                } catch (IOException e2) {
-                    errorExit(TAG, "In onResume() and unable to close socket during connection failure");
-                    e.printStackTrace();
-                }
-            }
-            mConnectedThread = new ConnectedThread(btSocket);
-            mConnectedThread.start();
-            mConnectedThread.write(generateChecksum(cmd.getMessage()));
-
-            //Temporary timeout to keep reading thread from locking up the bluetooth adapter.
-            try {
-                Thread.sleep(READ_TIMEOUT_IN_SECONDS*1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            mConnectedThread.keepRunning.set(false);
         }
     }
 
     private void discoverPairedDevices(){
-        Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
-        List<String> s = new ArrayList<String>();
-        if (pairedDevices != null) {
-            for(BluetoothDevice device : pairedDevices){
-                provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(bluetoothEnabled()) {
+            Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+            if (pairedDevices != null) {
+                for (BluetoothDevice device : pairedDevices) {
+                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
+                }
             }
         }
     }
@@ -183,13 +188,13 @@ public class Bluetooth {
         if(Build.VERSION.SDK_INT >= 10){
             try {
                 final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
-                return (BluetoothSocket) m.invoke(device, MY_UUID);
+                return (BluetoothSocket) m.invoke(device, SPP_UUID);
             } catch (Exception e) {
                 Log.e(TAG, "Could not create Insecure RFComm Connection",e);
                 e.printStackTrace();
             }
         }
-        return  device.createRfcommSocketToServiceRecord(MY_UUID);
+        return  device.createRfcommSocketToServiceRecord(SPP_UUID);
     }
 
     private boolean bluetoothEnabled() {
@@ -208,13 +213,15 @@ public class Bluetooth {
     }
 
     private class ConnectedThread extends Thread {
-        private InputStream mmInStream;
-        private OutputStream mmOutStream;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+        private BluetoothSocket socket;
         public AtomicBoolean keepRunning = new AtomicBoolean(true);
 
-        public ConnectedThread(BluetoothSocket socket) {
+        public ConnectedThread(BluetoothSocket btsocket) {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+            socket = btsocket;
 
             try {
                 tmpIn = socket.getInputStream();
@@ -243,7 +250,7 @@ public class Bluetooth {
             try {
                 mmInStream.close();
                 mmOutStream.close();
-                btSocket.close();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -2,8 +2,10 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.Log;
 
+import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
@@ -40,11 +42,9 @@ public class PrototypeResponder {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        //provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-        byte[] message = new byte[]{
-                (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-        provider.getDalEventBus().post(new BluetoothConnectCommand("00:13:04:12:06:20", message));
+        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+        provider.getDalEventBus().post(new BluetoothConnectCommand(Bluetooth.FLX_GTZ_196_ADDRESS, Bluetooth.DEMO_MESSAGE));
+        provider.getDalEventBus().post(new BluetoothConnectCommand(Bluetooth.FLX_BAX_5206_ADDRESS, Bluetooth.DEMO_MESSAGE));
     }
 
     public void onEventAsync(BluetoothDeviceFound msg){
