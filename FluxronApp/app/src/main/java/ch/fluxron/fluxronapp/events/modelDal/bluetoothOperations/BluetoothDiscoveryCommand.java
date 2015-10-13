@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelDal;
+package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 
 public class BluetoothDiscoveryCommand {
     private boolean enabled;

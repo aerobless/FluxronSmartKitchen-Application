@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelDal;
+package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 
 /**
  * Sends a command to connect to a specific bluetooth device.

@@ -2,8 +2,8 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.Log;
 
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothConnectCommand;
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
@@ -53,7 +53,7 @@ public class PrototypeResponder {
     }
 
     public void onEventAsync(FindKitchenCommand msg) {
-        ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand(msg.getQuery());
+        ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.FindKitchenCommand(msg.getQuery());
         cmd.setConnectionId(msg);
 
         provider.getDalEventBus().post(cmd);

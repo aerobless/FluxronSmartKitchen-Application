@@ -21,9 +21,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothConnectCommand;
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDeviceFound;
-import ch.fluxron.fluxronapp.events.modelDal.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 
 /**
  * Listens to eventbus messages. Provides access to bluetooth devices.

@@ -15,7 +15,7 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
