@@ -10,13 +10,12 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,12 +40,22 @@ public class Bluetooth {
             (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
 
+    public static final byte[] PRODUCT_CODE = new byte[]{
+            (byte) 0x03, (byte) 0xFA, (byte) 0x02, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+
+    public static final byte[] SERIAL_NUMBER = new byte[]{
+            (byte) 0x40, (byte) 0xfa, (byte) 0x03, (byte) 0x04,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+
+
+
+
     private static final String TAG = "FLUXRON";
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
     private BluetoothAdapter btAdapter = null;
-
     public Bluetooth() {}
 
     public Bluetooth(IEventBusProvider provider, Context context) {
@@ -116,7 +125,6 @@ public class Bluetooth {
                 errorExit(TAG, "In onResume() and socket create failed");
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -215,6 +223,7 @@ public class Bluetooth {
     private class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+        private final int msgLength = 12;
         private BluetoothSocket socket;
         public AtomicBoolean keepRunning = new AtomicBoolean(true);
 
@@ -233,15 +242,20 @@ public class Bluetooth {
         }
 
         public void run() {
-            byte[] buffer = new byte[16]; //TODO: size
+            byte[] buffer = new byte[128];
             int nofBytes;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
 
             while (keepRunning.get()) {
                 try {
                     if(mmInStream.available() > 0){
                         nofBytes = mmInStream.read(buffer);
-                        Log.d(TAG, nofBytes+" Bytes received!!!");
-                        printUnsignedByteArray(buffer);
+                        outputStream.write(buffer, 0, nofBytes);
+                        Log.d(TAG, nofBytes + " Bytes received!!!");
+                        if(outputStream.size() == msgLength){
+                            printUnsignedByteArray(outputStream.toByteArray());
+                            outputStream.reset();
+                        }
                     }
                 } catch (IOException e) {
                     break;
