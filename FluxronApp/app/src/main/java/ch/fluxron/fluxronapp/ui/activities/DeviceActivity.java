@@ -5,6 +5,7 @@ import android.view.View;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
+import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 
 
 public class DeviceActivity extends FluxronBaseActivity {
@@ -24,5 +25,10 @@ public class DeviceActivity extends FluxronBaseActivity {
         // Close this activity and navigate back to the activity
         // that is below on the stack.
         finish();
+    }
+
+    public void onSampleText(View btn){
+        TemperatureBar tb = (TemperatureBar) findViewById(R.id.barTemp);
+        tb.setMinMax(0,0);
     }
 }

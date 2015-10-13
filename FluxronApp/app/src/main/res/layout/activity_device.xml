@@ -18,6 +18,24 @@
         android:id="@+id/buttonBack"
         android:onClick="onBackButtonClicked"
         android:layout_gravity="start" />
+
+    <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="10dp"
+        android:id="@+id/barTemp"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/buttonAdf"
+        android:layout_gravity="right"
+        android:onClick="onSampleText"/>
+
+
 </LinearLayout>
 <!--
 -->
