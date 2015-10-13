@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
+package ch.fluxron.fluxronapp.events.modelDal;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 

@@ -53,7 +53,7 @@ public class PrototypeResponder {
     }
 
     public void onEventAsync(FindKitchenCommand msg) {
-        ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.FindKitchenCommand(msg.getQuery());
+        ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand cmd = new ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand(msg.getQuery());
         cmd.setConnectionId(msg);
 
         provider.getDalEventBus().post(cmd);
