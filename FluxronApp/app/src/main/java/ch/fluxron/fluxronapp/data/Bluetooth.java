@@ -29,6 +29,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscov
  */
 public class Bluetooth {
     private IEventBusProvider provider;
+    private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
 
     //Fluxron Demo Devices
@@ -59,6 +60,7 @@ public class Bluetooth {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
         setupDiscovery(context);
+        messageFactory = new MessageFactory();
     }
 
     private void setupDiscovery(Context context){
@@ -95,7 +97,9 @@ public class Bluetooth {
                 connectSocket(btSocket);
                 ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
                 mConnectedThread.start();
-                mConnectedThread.write(generateChecksum(cmd.getMessage()));
+                byte[] message = messageFactory.generateChecksum(MessageFactory.CCD_READ_REQUEST, cmd.getMessage());
+                messageFactory.printUnsignedByteArray(message);
+                mConnectedThread.write(message);
 
                 setConnectionTimeout(mConnectedThread, READ_TIMEOUT_IN_SECONDS);
             } catch (IOException e) {
@@ -152,43 +156,6 @@ public class Bluetooth {
         if(btAdapter.isDiscovering()){
             btAdapter.cancelDiscovery();
         }
-    }
-
-    /*
-     * Message Format:
-     * Byte 0: 0xAA Startsequence
-     * Byte 1: 0xAA Startsequence
-     * Byte 2..9: CAN 8 Byte CAN Message
-     * Byte 10: Check LB Low Byte Checksum
-     * Byte 11: Check HB High Byte Checksum
-     */
-    public byte[] generateChecksum(byte[] canMessage){
-        byte[] message = new byte[12];
-        message[0] = (byte)0xAA;
-        message[1] = (byte)0xAA;
-        int checksumLow = 0;
-        int checksumHigh = 0;
-        for (int c = 0; c < canMessage.length; c++) {
-            message[c+2] = canMessage[c];
-            if(c<4){
-                checksumLow += canMessage[c];
-            } else {
-                checksumHigh += canMessage[c];
-            }
-        }
-        message[10] = (byte)checksumLow;
-        message[11] = (byte)checksumHigh;
-
-        printUnsignedByteArray(message);
-        return message;
-    }
-
-    private void printUnsignedByteArray(byte[] message) {
-        String hexMessage = "";
-        for (int i = 0; i < message.length; i++) {
-            hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";
-        }
-        Log.d(TAG, hexMessage);
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
@@ -252,7 +219,7 @@ public class Bluetooth {
                         outputStream.write(buffer, 0, nofBytes);
                         Log.d(TAG, nofBytes + " Bytes received!!!");
                         if(outputStream.size() == msgLength){
-                            printUnsignedByteArray(outputStream.toByteArray());
+                            messageFactory.printUnsignedByteArray(outputStream.toByteArray());
                             outputStream.reset();
                         }
                     }

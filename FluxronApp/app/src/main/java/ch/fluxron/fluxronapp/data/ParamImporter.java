@@ -1,7 +1,6 @@
 package ch.fluxron.fluxronapp.data;
 
 import android.content.Context;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import org.w3c.dom.Document;
@@ -16,8 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
