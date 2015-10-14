@@ -1,37 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="KITCHEN ACTIVITY"
-        android:id="@+id/textView2" />
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="192dp"
+        android:layout_width="match_parent"
+        android:background="#039be5"
+        >
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="- Back"
-        android:id="@+id/buttonBack"
-        android:onClick="onBackButtonClicked"
-        android:layout_gravity="start" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete"
-        android:id="@+id/buttonDelete"
-        android:onClick="onDeleteButtonClicked"
-        android:layout_gravity="center_horizontal" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit a device"
-        android:id="@+id/buttonEditDevice"
-        android:onClick="onEditDeviceClicked"
-        android:layout_gravity="end" />
-</LinearLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_create_kitchen"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent">
+            <ImageButton
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_test_icon"
+                android:onClick="onBackButtonClicked"/>
+            <ImageButton
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_test_icon" />
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KITCHEN ACTIVITY"
+                android:id="@+id/kitchenNameTitle"/>
+        </LinearLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:id="@+id/buttonDelete"
+                android:onClick="onDeleteButtonClicked"
+                android:layout_gravity="center_horizontal" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit a device"
+                android:id="@+id/buttonEditDevice"
+                android:onClick="onEditDeviceClicked"
+                android:layout_gravity="end" />
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
+
 <!--
+
 -->

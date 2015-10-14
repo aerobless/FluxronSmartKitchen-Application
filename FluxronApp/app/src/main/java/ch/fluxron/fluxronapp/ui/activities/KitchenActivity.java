@@ -34,7 +34,7 @@ public class KitchenActivity extends FluxronBaseActivity {
 
     public void onEventMainThread(KitchenLoaded msg){
         if(msg.getKitchen().getId().equals(kitchenId)) {
-            ((TextView) findViewById(R.id.textView2)).setText(msg.getKitchen().getName());
+            ((TextView) findViewById(R.id.kitchenNameTitle)).setText(msg.getKitchen().getName());
         }
     }
 
