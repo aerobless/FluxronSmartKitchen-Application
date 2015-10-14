@@ -2,16 +2,20 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.Log;
 
+import java.io.File;
+
 import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
@@ -37,6 +41,12 @@ public class PrototypeResponder {
         SaveObjectCommand cmd = new SaveObjectCommand();
         cmd.setData(msg.getKitchen());
         cmd.setDocumentId(msg.getKitchen().getId());
+        cmd.setConnectionId(msg);
+        provider.getDalEventBus().post(cmd);
+    }
+
+    public void onEventAsync(AttachImageToKitchenCommand msg) {
+        AttachFileToObjectById cmd = new AttachFileToObjectById(msg.getId(), msg.getImagePath(), "mainPicture");
         cmd.setConnectionId(msg);
         provider.getDalEventBus().post(cmd);
     }
