@@ -2,11 +2,24 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <!-- Window title is disabled because we use a custom title bar -->
         <item name="android:windowNoTitle">true</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="windowActionBar">false</item>
+
+        <!-- Colors -->
+        <item name="colorAccent">@color/accentColor1</item>
+
+        <!-- Global styles for controls-->
+        <item name="android:textViewStyle">@style/FluxronTextView</item>
     </style>
 
+    <style name="FluxronAppBar" parent="Widget.Design.AppBarLayout">
+        <item name="android:background">@color/primaryColorDark</item>
+    </style>
+
+    <style name="FluxronTextView" parent="android:Widget.TextView">
+        <item name="android:foreground">@color/contentForeground</item>
+    </style>
 </resources>

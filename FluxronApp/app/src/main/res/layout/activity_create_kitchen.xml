@@ -8,7 +8,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_height="192dp"
         android:layout_width="match_parent"
-        android:background="#039be5"
+        style="@style/FluxronAppBar"
         >
 
             <android.support.v7.widget.Toolbar

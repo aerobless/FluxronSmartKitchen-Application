@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.data;
 
+import android.content.ContentResolver;
 import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
@@ -34,13 +36,15 @@ public class LocalDatabase {
     private Database database;
     private ObjectConverter converter;
     private DocumentFunctions documents;
+    private ContentResolver resolver;
 
-    public LocalDatabase(IEventBusProvider provider, Database database) {
+    public LocalDatabase(IEventBusProvider provider, Database database, ContentResolver resolver) {
         this.provider = provider;
         this.database = database;
         this.provider.getDalEventBus().register(this);
         this.converter = new ObjectConverter();
         this.documents = new DocumentFunctions(database);
+        this.resolver = resolver;
     }
 
     /**
@@ -62,6 +66,18 @@ public class LocalDatabase {
                 event.setConnectionId(cmd);
                 provider.getDalEventBus().post(event);
             }
+        }
+    }
+
+    /**
+     * Triggered when attaching an image to an object
+     * @param cmd Command
+     */
+    public void onEventAsync(AttachFileToObjectById cmd) {
+        Document doc = database.getExistingDocument(cmd.getDocumentId());
+        if(doc != null) {
+            String mimeType;
+            documents.attachFileToDocument(doc, cmd.getFileUri(), cmd.getAttachmentName(), resolver.getType(cmd.getFileUri()));
         }
     }
 

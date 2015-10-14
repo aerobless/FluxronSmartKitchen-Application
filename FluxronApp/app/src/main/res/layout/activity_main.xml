@@ -9,13 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/kitchenList"
-        app:layout_behavior=
-            "@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="192dp"
         android:layout_width="match_parent"
-        android:background="#039be5"
+        style="@style/FluxronAppBar"
         >
 
         <android.support.v7.widget.Toolbar

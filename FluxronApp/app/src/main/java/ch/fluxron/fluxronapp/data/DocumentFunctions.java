@@ -1,9 +1,19 @@
 package ch.fluxron.fluxronapp.data;
 
+import android.net.Uri;
+
+import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.UnsavedRevision;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -63,5 +73,24 @@ public class DocumentFunctions {
      */
     public boolean exists(String documentId) {
         return database.getExistingDocument(documentId) != null;
+    }
+
+    /**
+     * Attaches a file's data to a document
+     * @param doc Document
+     * @param fileUri File pointing to the data
+     * @param attachmentName Name of the attachment
+     * @param contentType Content type of the attachment (i.e. image/jpeg)
+     */
+    public void attachFileToDocument(Document doc, Uri fileUri, String attachmentName, String contentType){
+        try {
+            InputStream stream = new BufferedInputStream(new FileInputStream(fileUri.getPath()));
+
+            UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
+            newRev.setAttachment(attachmentName, contentType, stream);
+            newRev.save();
+        } catch (IOException | CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
     }
 }

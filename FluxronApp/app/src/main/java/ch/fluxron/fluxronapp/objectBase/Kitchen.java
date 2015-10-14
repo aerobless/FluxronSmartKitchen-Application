@@ -7,10 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Kitchen {
     private String name;
-
     @JsonProperty("_id")
     private String id;
-
     private String description;
 
     /**
