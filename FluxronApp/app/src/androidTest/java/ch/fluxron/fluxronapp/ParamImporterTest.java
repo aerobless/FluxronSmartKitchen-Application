@@ -10,6 +10,8 @@ public class ParamImporterTest extends AndroidTestCase {
 
     public void testSomething(){
         ParamImporter paramImporter = new ParamImporter(getContext());
-        paramImporter.loadOD();
+        //paramImporter.loadOD();
+
+        paramImporter.loadParameters();
     }
 }
