@@ -29,6 +29,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscov
  */
 public class Bluetooth {
     private IEventBusProvider provider;
+    private BluetoothAdapter btAdapter = null;
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -52,7 +53,6 @@ public class Bluetooth {
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
-    private BluetoothAdapter btAdapter = null;
     public Bluetooth() {}
 
     public Bluetooth(IEventBusProvider provider, Context context) {
