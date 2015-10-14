@@ -23,7 +23,6 @@ import ch.fluxron.fluxronapp.ui.adapters.KitchenListAdapter;
 
 public class MainActivity extends FluxronBaseActivity {
 
-    TextView textViewWidget;
     private KitchenListAdapter listAdapter;
     private ListView kitchenListView ;
 
@@ -32,7 +31,6 @@ public class MainActivity extends FluxronBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewWidget = (TextView)this.findViewById(R.id.prototypeMessageList);
         kitchenListView = (ListView) findViewById(R.id.kitchenList);
 
         kitchenListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,10 +96,6 @@ public class MainActivity extends FluxronBaseActivity {
     public void navigateCreate(View btn){
         Intent startOther = new Intent(this, CreateKitchenActivity.class);
         startActivity(startOther);
-    }
-
-    public void onEventMainThread(SimpleMessageResponse msg){
-        textViewWidget.setText(msg.getMessageText());
     }
 
     public void onEventMainThread(KitchenLoaded msg){
