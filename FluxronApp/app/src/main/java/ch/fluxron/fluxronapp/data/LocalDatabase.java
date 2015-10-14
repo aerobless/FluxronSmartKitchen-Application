@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.data;
 
+import android.util.Log;
+
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -119,14 +121,14 @@ public class LocalDatabase {
      * @param cmd Command
      */
     public void onEventAsync(FindKitchenCommand cmd) {
-        retrieveKitchens(cmd.getQuery());
+        retrieveKitchens(cmd.getQuery(), cmd);
     }
 
     /**
      * Reads all the kitchens containing the query text in their name
      * @param query Query, ignored if null
      */
-    public void retrieveKitchens(String query){
+    public void retrieveKitchens(String query, RequestResponseConnection originalMessage){
         Query orderedQuery = createTypeQuery(Kitchen.class);
         QueryEnumerator results;
 
@@ -135,8 +137,10 @@ public class LocalDatabase {
             for (Iterator<QueryRow> it = results; it.hasNext();) {
                 QueryRow row = it.next();
                 Kitchen o = (Kitchen)converter.convertMapToObject(row.getDocument().getProperties(), Kitchen.class);
-                if(query == null || o.getName().contains(query)) {
-                    provider.getDalEventBus().post(new ObjectLoaded(o.getId(), o));
+                if(query == null || "".equals(query) || o.getName().toLowerCase().contains(query.toLowerCase())) {
+                    ObjectLoaded loadedEvent = new ObjectLoaded(o.getId(), o);
+                    loadedEvent.setConnectionId(originalMessage);
+                    provider.getDalEventBus().post(loadedEvent);
                 }
             }
         } catch (CouchbaseLiteException e) {

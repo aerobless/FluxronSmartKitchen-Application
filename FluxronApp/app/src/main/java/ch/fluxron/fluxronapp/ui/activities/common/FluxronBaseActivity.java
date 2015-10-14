@@ -1,6 +1,8 @@
 package ch.fluxron.fluxronapp.ui.activities.common;
 
 import android.support.v7.app.AppCompatActivity;
+
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 /**
  * Base class for all activities in the Fluxron tool app. Provides common functions like finding the
@@ -37,5 +39,19 @@ public class FluxronBaseActivity extends AppCompatActivity{
         if(msg!=null) {
             busProvider.getUiEventBus().post(msg);
         }
+    }
+
+    /**
+     * Sends a connection-based message and returns its connection identifier
+     * @param msg Message to be sent
+     * @return Connection identifier as a string
+     */
+    protected String postMessage(RequestResponseConnection msg){
+        if (msg!=null) {
+            String id = msg.getConnectionId();
+            postMessage((Object) msg);
+            return id;
+        }
+        return null;
     }
 }

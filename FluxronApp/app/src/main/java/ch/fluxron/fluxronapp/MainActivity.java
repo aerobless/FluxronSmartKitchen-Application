@@ -2,11 +2,14 @@ package ch.fluxron.fluxronapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +28,7 @@ public class MainActivity extends FluxronBaseActivity {
 
     private KitchenListAdapter listAdapter;
     private ListView kitchenListView ;
+    private String searchConnection = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,16 @@ public class MainActivity extends FluxronBaseActivity {
             }
         });
 
+        // Register events for text changed so the search can immediately start on typing
+        EditText kitchenSearchField = (EditText) findViewById(R.id.kitchenName);
+        kitchenSearchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { sendSearchMessage(); }
+
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        });
+
         // Set the ListView's adapter.
         listAdapter = new KitchenListAdapter(this);
         kitchenListView.setAdapter(listAdapter);
@@ -51,7 +65,7 @@ public class MainActivity extends FluxronBaseActivity {
 
         // Refresh the list with an empty search query
         listAdapter.clear();
-        postMessage(new FindKitchenCommand(""));
+        searchConnection = postMessage(new FindKitchenCommand(""));
     }
 
     private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
@@ -82,15 +96,15 @@ public class MainActivity extends FluxronBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendTestMessage(View btn){
+    public void sendBluetoothTestMessage(View btn){
+        postMessage(new BluetoothTestCommand());
+    }
+
+    public void sendSearchMessage(){
         String searchQuery = ((TextView)findViewById(R.id.kitchenName)).getText().toString();
         FindKitchenCommand cmd = new FindKitchenCommand(searchQuery);
         listAdapter.clear();
-        postMessage(cmd);
-    }
-
-    public void sendBluetoothTestMessage(View btn){
-        postMessage(new BluetoothTestCommand());
+        searchConnection = postMessage(cmd);
     }
 
     public void navigateCreate(View btn){
@@ -99,9 +113,10 @@ public class MainActivity extends FluxronBaseActivity {
     }
 
     public void onEventMainThread(KitchenLoaded msg){
-        Log.d("FLUXRON.PROTOTYPE", msg.getKitchen().getName());
+        Log.d("FLUXRON.PROTOTYPE", msg.getConnectionId() + " vs. " + searchConnection);
 
-        listAdapter.addOrUpdate(msg.getKitchen());
+        if (msg.getConnectionId().equals(searchConnection)) {
+            listAdapter.addOrUpdate(msg.getKitchen());
+        }
     }
-
 }
