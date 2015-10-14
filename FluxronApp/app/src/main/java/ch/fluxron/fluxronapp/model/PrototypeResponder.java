@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.File;
@@ -10,16 +12,20 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.FileStreamReady;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
@@ -49,6 +55,19 @@ public class PrototypeResponder {
         AttachFileToObjectById cmd = new AttachFileToObjectById(msg.getId(), msg.getImagePath(), "mainPicture");
         cmd.setConnectionId(msg);
         provider.getDalEventBus().post(cmd);
+    }
+
+    public void onEventAsync(LoadImageFromKitchenCommand msg) {
+        GetFileStreamFromAttachment cmd = new GetFileStreamFromAttachment(msg.getKitchenId(), msg.getImageName());
+        cmd.setConnectionId(msg);
+        provider.getDalEventBus().post(cmd);
+    }
+
+    public void onEventAsync(FileStreamReady msg){
+        Bitmap bmp = BitmapFactory.decodeStream(msg.getStream());
+        ImageLoaded event = new ImageLoaded(bmp);
+        event.setConnectionId(msg);
+        provider.getUiEventBus().post(event);
     }
 
     public void onEventAsync(BluetoothTestCommand msg){

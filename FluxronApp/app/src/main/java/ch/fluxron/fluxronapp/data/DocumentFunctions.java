@@ -6,6 +6,7 @@ import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Revision;
 import com.couchbase.lite.UnsavedRevision;
 
 import java.io.BufferedInputStream;
@@ -92,5 +93,26 @@ public class DocumentFunctions {
         } catch (IOException | CouchbaseLiteException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Gets a stream pointing to a document's attachment
+     * @param doc Document
+     * @param attachmentName Name of the attachment
+     * @return Stream or null if not found
+     */
+    public InputStream getStreamFromAttachment(Document doc, String attachmentName){
+        Revision rev = doc.getCurrentRevision();
+        Attachment att = rev.getAttachment(attachmentName);
+        if (att != null) {
+            InputStream is = null;
+            try {
+                is = att.getContent();
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+            return is;
+        }
+        return null;
     }
 }

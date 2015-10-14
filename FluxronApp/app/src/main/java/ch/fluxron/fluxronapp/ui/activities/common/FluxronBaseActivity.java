@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.ui.activities.common;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
@@ -9,7 +10,14 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * message bus and message posting.
  */
 public class FluxronBaseActivity extends AppCompatActivity{
-    private IEventBusProvider busProvider;
+    protected IEventBusProvider busProvider;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
+    }
 
     /**
      * Is called whenever this activity is brought to the user
@@ -18,7 +26,6 @@ public class FluxronBaseActivity extends AppCompatActivity{
     public void onStart() {
         super.onStart();
 
-        busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
         busProvider.getUiEventBus().register(this);
     }
 
