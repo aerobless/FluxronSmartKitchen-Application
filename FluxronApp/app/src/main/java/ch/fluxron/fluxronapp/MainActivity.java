@@ -2,6 +2,8 @@ package ch.fluxron.fluxronapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,7 +29,6 @@ import ch.fluxron.fluxronapp.ui.adapters.KitchenListAdapter;
 public class MainActivity extends FluxronBaseActivity {
 
     private KitchenListAdapter listAdapter;
-    private ListView kitchenListView ;
     private String searchConnection = "";
 
     @Override
@@ -35,27 +36,30 @@ public class MainActivity extends FluxronBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        kitchenListView = (ListView) findViewById(R.id.kitchenList);
-
-        kitchenListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onKitchenListItemClick(parent, view, position, id);
-            }
-        });
-
         // Register events for text changed so the search can immediately start on typing
         EditText kitchenSearchField = (EditText) findViewById(R.id.kitchenName);
         kitchenSearchField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { sendSearchMessage(); }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                sendSearchMessage();
+            }
 
-            @Override public void afterTextChanged(Editable s) {}
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
         });
 
-        // Set the ListView's adapter.
-        listAdapter = new KitchenListAdapter(this);
+        // Set the ListView's properties
+        RecyclerView kitchenListView = (RecyclerView) findViewById(R.id.kitchenList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        kitchenListView.setLayoutManager(layoutManager);
+
+        listAdapter = new KitchenListAdapter();
         kitchenListView.setAdapter(listAdapter);
     }
 
@@ -66,12 +70,6 @@ public class MainActivity extends FluxronBaseActivity {
         // Refresh the list with an empty search query
         listAdapter.clear();
         searchConnection = postMessage(new FindKitchenCommand(""));
-    }
-
-    private void onKitchenListItemClick(AdapterView<?> parent, View view, int position, long id){
-        Intent startOther = new Intent(this, KitchenActivity.class);
-        startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, ((Kitchen) listAdapter.getItem(position)).getId());
-        startActivity(startOther);
     }
 
     @Override

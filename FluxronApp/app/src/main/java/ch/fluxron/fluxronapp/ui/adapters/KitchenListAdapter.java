@@ -1,6 +1,8 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,50 +19,9 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 /**
  * Adapter for the kitchen search list. Handles the fragments for each row.
  */
-public class KitchenListAdapter extends BaseAdapter{
+public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
     private List<Kitchen> kitchens = new ArrayList<>();
     private HashMap<String, Integer> kitchenIds = new HashMap<>();
-    private LayoutInflater inflater;
-
-    /**
-     * Creates a new KitchenListAdapter
-     * @param context Application context this adapter is running in. Used to read the LayoutInflater.
-     */
-    public KitchenListAdapter(Context context) {
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    @Override
-    public int getCount() {
-        return kitchens.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return kitchens.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        // Get item ID is not used by Android itself and
-        // we have no use for a long-value as an id.
-        return -1;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        if (vi == null)
-            vi = inflater.inflate(R.layout.listrow_kitchen, null);
-
-        TextView title = (TextView) vi.findViewById(R.id.titleText);
-        TextView description = (TextView) vi.findViewById(R.id.descriptionText);
-
-        title.setText(kitchens.get(position).getName());
-        description.setText(kitchens.get(position).getDescription());
-
-        return vi;
-    }
 
     /**
      * Adds a new kitchen to the list. If the kitchen already exists,
@@ -71,14 +32,17 @@ public class KitchenListAdapter extends BaseAdapter{
         if (kitchenIds.containsKey(k.getId()))
         {
             int position = kitchenIds.get(k.getId()).intValue();
+            notifyItemChanged(position);
         }
         else
         {
             int newPosition = kitchens.size();
             kitchens.add(k);
             kitchenIds.put(k.getId(), newPosition);
+            notifyItemInserted(newPosition);
         }
-        notifyDataSetChanged();
+
+        Log.d("FLUXRON.PROTOTYPE", " kitchen ");
     }
 
     /**
@@ -88,5 +52,26 @@ public class KitchenListAdapter extends BaseAdapter{
         kitchens.clear();
         kitchenIds.clear();
         notifyDataSetChanged();
+    }
+
+    @Override
+    public KitchenHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.listrow_kitchen, parent, false);
+        Log.d("FLUXRON.PROTOTYPE", " holder created");
+        return new KitchenHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(KitchenHolder holder, int position) {
+        holder.bind(kitchens.get(position));
+        Log.d("FLUXRON.PROTOTYPE", " holder bound " + position);
+    }
+
+    @Override
+    public int getItemCount() {
+        Log.d("FLUXRON.PROTOTYPE", " itemcount " + kitchens.size());
+        return kitchens.size();
     }
 }
