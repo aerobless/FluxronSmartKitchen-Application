@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Back and Foreground -->
+    <color name="contentBackground" >#ffffff</color>
+    <color name="contentForeground" >#424242</color>
+
+    <!-- Primary Color -->
+    <color name="primaryColorDark"  >#0277bd</color>
+    <color name="primaryColor"      >#039be5</color>
+    <color name="primaryColorMedium">#4fc3f7</color>
+    <color name="primaryColorLight" >#b3e5fc</color>
+
+    <!-- Accent 1 -->
+    <color name="accentColor1"      >#ffb300</color>
+
+    <!-- Error, Warning, OK -->
+    <color name="errorColor"        >#d32f2f</color>
+    <color name="warningColor"      >#fbc02d</color>
+    <color name="okColor"           >#689f38</color>
+</resources>
