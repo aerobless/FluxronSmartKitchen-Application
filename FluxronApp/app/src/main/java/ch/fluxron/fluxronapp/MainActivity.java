@@ -111,8 +111,6 @@ public class MainActivity extends FluxronBaseActivity {
     }
 
     public void onEventMainThread(KitchenLoaded msg){
-        Log.d("FLUXRON.PROTOTYPE", msg.getConnectionId() + " vs. " + searchConnection);
-
         if (msg.getConnectionId().equals(searchConnection)) {
             listAdapter.addOrUpdate(msg.getKitchen());
         }

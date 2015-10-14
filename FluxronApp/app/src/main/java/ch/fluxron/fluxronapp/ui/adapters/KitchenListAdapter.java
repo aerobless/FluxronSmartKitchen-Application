@@ -41,8 +41,6 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
             kitchenIds.put(k.getId(), newPosition);
             notifyItemInserted(newPosition);
         }
-
-        Log.d("FLUXRON.PROTOTYPE", " kitchen ");
     }
 
     /**
@@ -59,19 +57,16 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.listrow_kitchen, parent, false);
-        Log.d("FLUXRON.PROTOTYPE", " holder created");
         return new KitchenHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(KitchenHolder holder, int position) {
         holder.bind(kitchens.get(position));
-        Log.d("FLUXRON.PROTOTYPE", " holder bound " + position);
     }
 
     @Override
     public int getItemCount() {
-        Log.d("FLUXRON.PROTOTYPE", " itemcount " + kitchens.size());
         return kitchens.size();
     }
 }
