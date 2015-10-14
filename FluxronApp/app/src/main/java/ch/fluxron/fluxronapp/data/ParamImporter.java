@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.data;
 
 import android.content.Context;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import org.w3c.dom.Document;
@@ -9,9 +10,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.jar.Attributes;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,7 +29,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 /**
- * Used to import .od XML files.
+ * Used to import .od XML and .eds text files.
  */
 public class ParamImporter {
     Context context;
@@ -32,8 +38,50 @@ public class ParamImporter {
         this.context = context;
     }
 
+    /**
+     * Read device parameters from a .eds file, containing information such as index, subindex etc.
+     */
+    public List<DeviceParameter> loadParameters(){
+        List<DeviceParameter> parameterList = new ArrayList<DeviceParameter>();
+
+        try {
+            InputStream is = context.getAssets().open("FLUXRON_parameter.eds");
+            BufferedReader in = new BufferedReader(new InputStreamReader(is));
+            String line = null;
+            StringBuilder responseData = new StringBuilder();
+            DeviceParameter param = null;
+            while((line = in.readLine()) != null) {
+                responseData.append(line);
+                if(line.matches("\\s*\\[[0-9]{1,4}(sub[0-9]{1,4})?\\]")){ //match [1000] and [1000sub1]
+                    param = new DeviceParameter();
+                    line = line.replaceAll("\\s|\\[|\\]",""); //remove spaces, []
+                    String[] parts = line.split("sub");
+                    param.setIndex(Integer.parseInt(parts[0]));
+                    if(parts.length>1){
+                        param.setSubindex(Integer.parseInt(parts[1]));
+                    }
+                    parameterList.add(param);
+                } else if (line.contains("ParameterName=") && (param!=null)){
+                    param.setName(line.substring(line.lastIndexOf("=") + 1));
+                } else if (line.contains("ObjectType=") && (param!=null)){
+                    param.setObjectType(Integer.decode(line.substring(line.lastIndexOf("=") + 1)));
+                } else if (line.contains("DataType=") && (param!=null)){
+                    param.setDataType(Integer.decode(line.substring(line.lastIndexOf("=") + 1)));
+                } else if (line.contains("AccessType=") && (param!=null)){
+                    param.setAccessType(line.substring(line.lastIndexOf("=") + 1));
+                } else if (line.contains("DefaultValue=") && (param!=null)){
+                    param.setDefaultValue(line.substring(line.lastIndexOf("=") + 1));
+                } else if (line.contains("PDOMapping=") && (param!=null)){
+                    param.setPdoMapping(Integer.parseInt(line.substring(line.lastIndexOf("=") + 1)));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return parameterList;
+    }
+
     public void loadOD(){
-        Log.d("FLUXRON", "running xpath");
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = null;
         try {
