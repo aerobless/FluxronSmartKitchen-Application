@@ -24,9 +24,10 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
+import ch.fluxron.fluxronapp.ui.adapters.IKitchenClickListener;
 import ch.fluxron.fluxronapp.ui.adapters.KitchenListAdapter;
 
-public class MainActivity extends FluxronBaseActivity {
+public class MainActivity extends FluxronBaseActivity implements IKitchenClickListener {
 
     private KitchenListAdapter listAdapter;
     private String searchConnection = "";
@@ -59,7 +60,7 @@ public class MainActivity extends FluxronBaseActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         kitchenListView.setLayoutManager(layoutManager);
 
-        listAdapter = new KitchenListAdapter();
+        listAdapter = new KitchenListAdapter(this);
         kitchenListView.setAdapter(listAdapter);
     }
 
@@ -114,5 +115,12 @@ public class MainActivity extends FluxronBaseActivity {
         if (msg.getConnectionId().equals(searchConnection)) {
             listAdapter.addOrUpdate(msg.getKitchen());
         }
+    }
+
+    @Override
+    public void kitchenClicked(Kitchen k) {
+        Intent startOther = new Intent(this, KitchenActivity.class);
+        startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, k.getId());
+        startActivity(startOther);
     }
 }

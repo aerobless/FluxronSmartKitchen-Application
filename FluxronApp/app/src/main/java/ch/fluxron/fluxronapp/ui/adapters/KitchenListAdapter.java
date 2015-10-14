@@ -22,6 +22,7 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
     private List<Kitchen> kitchens = new ArrayList<>();
     private HashMap<String, Integer> kitchenIds = new HashMap<>();
+    private IKitchenClickListener listener;
 
     /**
      * Adds a new kitchen to the list. If the kitchen already exists,
@@ -44,6 +45,14 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
     }
 
     /**
+     * Sets the instance listening to kitchen clicks
+     * @param listener Listener
+     */
+    public KitchenListAdapter(IKitchenClickListener listener) {
+        this.listener = listener;
+    }
+
+    /**
      * Removes all entries from the list
      */
     public void clear(){
@@ -57,7 +66,7 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.listrow_kitchen, parent, false);
-        return new KitchenHolder(itemView);
+        return new KitchenHolder(itemView, listener);
     }
 
     @Override
