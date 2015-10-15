@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="192dp"
@@ -40,22 +42,20 @@
 
 </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical" android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="1">
+            android:layout_margin="6dp"
+            >
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Name"
-                android:id="@+id/textViewName" />
+                android:id="@+id/textViewName"
+                android:layout_marginTop="4dp"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -63,11 +63,12 @@
                 android:id="@+id/editTextName" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Description"
-                android:id="@+id/textViewDescription" />
+                android:id="@+id/textViewDescription"
+                android:layout_marginTop="8dp"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -75,7 +76,16 @@
                 android:inputType="textMultiLine"
                 android:singleLine="false"
                 android:id="@+id/editTextDescription"
-                android:layout_weight="0.19" />
+                />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/imagePreview"
+                android:layout_gravity="center"
+                android:onClick="onCreatePictureClicked"
+                android:layout_weight="1"
+                />
 
             <Button
                 android:layout_width="wrap_content"
@@ -83,25 +93,9 @@
                 android:text="Create >"
                 android:id="@+id/buttonCreate"
                 android:onClick="createNewKitchen"
-                android:layout_gravity="right" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TAKE PICTURE"
-                android:id="@+id/buttonPicture"
-                android:onClick="onCreatePictureClicked"
-                android:layout_gravity="right" />
-
-            <ImageView
-                android:layout_width="100dip"
-                android:layout_height="100dip"
-                android:id="@+id/imagePreview"
-                android:layout_gravity="center" />
-
+                android:layout_gravity="bottom|right" />
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
-
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>
 <!--
 -->

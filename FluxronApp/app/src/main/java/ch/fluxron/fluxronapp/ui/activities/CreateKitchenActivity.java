@@ -95,10 +95,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-
-                Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
-                takenImage = Bitmap.createScaledBitmap(takenImage, 100, 100, false );
                 ImageView img = (ImageView)findViewById(R.id.imagePreview);
+                Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
+
+                takenImage = Bitmap.createScaledBitmap(takenImage, img.getWidth(), img.getHeight(), false);
                 img.setImageBitmap(takenImage);
             }
         }
