@@ -30,8 +30,7 @@ public class MessageFactory {
         byte[] messageBody = new byte[7];
         messageBody[0] = index[1]; //LSB
         messageBody[1] = index[0]; //MSB
-        messageBody[3] = subindex;
-        Log.d("test",messageBody[1]+"");
+        messageBody[2] = subindex;
         printUnsignedByteArray(messageBody);
         return buildMessage(CCD_READ_REQUEST, messageBody);
     }

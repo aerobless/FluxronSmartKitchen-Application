@@ -41,16 +41,10 @@ public class Bluetooth {
 
     //Messages
     public static final byte[] DEMO_MESSAGE = new byte[]{
-            (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-
-    public static final byte[] PRODUCT_CODE = new byte[]{
-            (byte) 0x03, (byte) 0xFA, (byte) 0x02, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-
-    public static final byte[] SERIAL_NUMBER = new byte[]{
-            (byte) 0x40, (byte) 0xfa, (byte) 0x03, (byte) 0x04,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+            (byte) 0xAA, (byte) 0xAA,
+            (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x72, (byte) 0x00 };
 
     private static final String TAG = "FLUXRON";
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
@@ -99,7 +93,7 @@ public class Bluetooth {
                 if(connectSocket(btSocket)){
                     ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
                     mConnectedThread.start();
-                    byte[] message = messageFactory.makeReadRequest(parameterList.get(0).getIndex(), parameterList.get(0).getSubindex());
+                    byte[] message = messageFactory.makeReadRequest(parameterList.get(1).getIndex(), parameterList.get(1).getSubindex());
                     messageFactory.printUnsignedByteArray(message);
                     mConnectedThread.write(message);
 
