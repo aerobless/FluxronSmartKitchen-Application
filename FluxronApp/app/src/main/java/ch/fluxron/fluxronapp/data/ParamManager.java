@@ -28,11 +28,17 @@ import javax.xml.xpath.XPathFactory;
 /**
  * Used to import .od XML and .eds text files.
  */
-public class ParamImporter {
-    Context context;
+public class ParamManager {
+    private Context context;
+    private List<DeviceParameter> parameterList;
 
-    public ParamImporter(Context context) {
+    public ParamManager(Context context) {
         this.context = context;
+        parameterList = loadParameters();
+    }
+
+    public List<DeviceParameter> getParameterList() {
+        return parameterList;
     }
 
     /**
@@ -53,9 +59,12 @@ public class ParamImporter {
                     param = new DeviceParameter();
                     line = line.replaceAll("\\s|\\[|\\]",""); //remove spaces, []
                     String[] parts = line.split("sub");
-                    param.setIndex(Integer.parseInt(parts[0]));
+                    byte[] index = new byte[2];
+                    index[0] = Byte.parseByte(parts[0].substring(0, 2));
+                    index[1] = Byte.parseByte(parts[0].substring(3, 4));
+                    param.setIndex(index);
                     if(parts.length>1){
-                        param.setSubindex(Integer.parseInt(parts[1]));
+                        param.setSubindex(Byte.parseByte(parts[1]));
                     }
                     parameterList.add(param);
                 } else if (line.contains("ParameterName=") && (param!=null)){

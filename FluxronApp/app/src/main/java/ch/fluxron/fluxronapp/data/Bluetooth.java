@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,6 +32,7 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
+    private List<DeviceParameter> parameterList;
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -54,13 +56,12 @@ public class Bluetooth {
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
-    public Bluetooth() {}
-
-    public Bluetooth(IEventBusProvider provider, Context context) {
+    public Bluetooth(IEventBusProvider provider, Context context, List<DeviceParameter> parameterList) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
-        setupDiscovery(context);
+        this.parameterList = parameterList;
         messageFactory = new MessageFactory();
+        setupDiscovery(context);
     }
 
     private void setupDiscovery(Context context){
@@ -87,6 +88,7 @@ public class Bluetooth {
     }
 
     public void onEventAsync(BluetoothConnectCommand cmd) {
+
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothEnabled()){
             stopDeviceDiscovery();
@@ -97,7 +99,7 @@ public class Bluetooth {
                 if(connectSocket(btSocket)){
                     ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
                     mConnectedThread.start();
-                    byte[] message = messageFactory.generateChecksum(MessageFactory.CCD_READ_REQUEST, cmd.getMessage());
+                    byte[] message = messageFactory.makeReadRequest(parameterList.get(0).getIndex(), parameterList.get(0).getSubindex());
                     messageFactory.printUnsignedByteArray(message);
                     mConnectedThread.write(message);
 

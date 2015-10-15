@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.data;
 
+import java.util.Arrays;
+
 /**
  * .
  */
@@ -12,8 +14,8 @@ public class DeviceParameter {
     private int pdoMapping;
     private int subNumber;
 
-    private int index;
-    private int subindex = 0;
+    private byte[] index;
+    private byte subindex = 0;
 
 
     public String getName() {
@@ -72,19 +74,19 @@ public class DeviceParameter {
         this.subNumber = subNumber;
     }
 
-    public int getIndex() {
+    public byte[] getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(byte[] index) {
         this.index = index;
     }
 
-    public int getSubindex() {
+    public byte getSubindex() {
         return subindex;
     }
 
-    public void setSubindex(int subindex) {
+    public void setSubindex(byte subindex) {
         this.subindex = subindex;
     }
 
@@ -98,7 +100,7 @@ public class DeviceParameter {
                 ", defaultValue='" + defaultValue + '\'' +
                 ", pdoMapping=" + pdoMapping +
                 ", subNumber=" + subNumber +
-                ", index=" + index +
+                ", index=" + Arrays.toString(index) +
                 ", subindex=" + subindex +
                 '}';
     }

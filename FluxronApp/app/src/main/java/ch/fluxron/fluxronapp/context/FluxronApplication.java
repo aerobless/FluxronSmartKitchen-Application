@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.LocalDatabase;
+import ch.fluxron.fluxronapp.data.ParamManager;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
 import de.greenrobot.event.EventBus;
 
@@ -28,6 +29,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private Database couchbaseDB;
     private LocalDatabase localDatabase;
     private Bluetooth bluetooth;
+    ParamManager paramManager;
 
     @Override
     public void onCreate() {
@@ -79,7 +81,8 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
             couchbaseManager = new Manager(new AndroidContext(this.getApplicationContext()), Manager.DEFAULT_OPTIONS);
             couchbaseDB = couchbaseManager.getDatabase("protobase");
             localDatabase = new LocalDatabase(dalToModelProvider, couchbaseDB, this.getContentResolver());
-            bluetooth = new Bluetooth(dalToModelProvider, this.getApplicationContext());
+            paramManager = new ParamManager(this.getApplicationContext());
+            bluetooth = new Bluetooth(dalToModelProvider, this.getApplicationContext(), paramManager.getParameterList());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {

@@ -25,6 +25,17 @@ public class MessageFactory {
     public final static byte CCD_READ_RESPONSE_4B =  (byte) 0x43;
     public final static byte CCD_WRITE_RESPONSE =  (byte) 0x60;
 
+
+    public byte[] makeReadRequest(byte[] index, byte subindex){
+        byte[] messageBody = new byte[7];
+        messageBody[0] = index[1]; //LSB
+        messageBody[1] = index[0]; //MSB
+        messageBody[3] = subindex;
+        Log.d("test",messageBody[1]+"");
+        printUnsignedByteArray(messageBody);
+        return buildMessage(CCD_READ_REQUEST, messageBody);
+    }
+
     /*
      * Message Format:
      * Byte 0: 0xAA Startsequence
@@ -34,16 +45,24 @@ public class MessageFactory {
      * Byte 10: Check LB Low Byte Checksum
      * Byte 11: Check HB High Byte Checksum
      */
-    public byte[] generateChecksum(byte requestCode, byte[] canMessage){
+    public byte[] buildMessage(byte requestCode, byte[] canMessage){
         byte[] message = new byte[12];
         message[0] = (byte)0xAA;
         message[1] = (byte)0xAA;
-        message[2] = (byte)requestCode;
-        int checksumLow = 0;
-        int checksumHigh = 0;
+        message[2] = requestCode;
         for (int c = 0; c < (canMessage.length); c++) {
             message[c+3] = canMessage[c];
         }
+        message = setChecksum(message);
+        return message;
+    }
+
+    /**
+     * Calculate the checksum for byte 2-9 and set it in byte 10 & 11.
+     */
+    private byte[] setChecksum(byte[] message) {
+        int checksumLow = 0;
+        int checksumHigh = 0;
         for (int c = 2; c < 10; c++) {
             if(c<6){
                 checksumLow += message[c];
