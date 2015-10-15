@@ -94,14 +94,17 @@ public class Bluetooth {
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
-                connectSocket(btSocket);
-                ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
-                mConnectedThread.start();
-                byte[] message = messageFactory.generateChecksum(MessageFactory.CCD_READ_REQUEST, cmd.getMessage());
-                messageFactory.printUnsignedByteArray(message);
-                mConnectedThread.write(message);
+                if(connectSocket(btSocket)){
+                    ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
+                    mConnectedThread.start();
+                    byte[] message = messageFactory.generateChecksum(MessageFactory.CCD_READ_REQUEST, cmd.getMessage());
+                    messageFactory.printUnsignedByteArray(message);
+                    mConnectedThread.write(message);
 
-                setConnectionTimeout(mConnectedThread, READ_TIMEOUT_IN_SECONDS);
+                    setConnectionTimeout(mConnectedThread, READ_TIMEOUT_IN_SECONDS);
+                } else {
+                    Log.d(TAG, "Unable to connect to remote device. Are you sure it is turned on and noone else is connected to it?");
+                }
             } catch (IOException e) {
                 Log.d(TAG, "In onResume() and socket create failed");
                 e.printStackTrace();
@@ -109,11 +112,12 @@ public class Bluetooth {
         }
     }
 
-    private void connectSocket(BluetoothSocket btSocket) {
+    private boolean connectSocket(BluetoothSocket btSocket) {
         Log.d(TAG, "Trying to connect to " + btSocket.getRemoteDevice().getAddress());
         try {
             btSocket.connect();
             Log.d(TAG, "Connection to "+btSocket.getRemoteDevice().getAddress()+" ok");
+            return true;
         } catch (IOException e) {
             Log.d(TAG, "Connection to "+btSocket.getRemoteDevice().getAddress()+" failed.");
             try {
@@ -123,6 +127,7 @@ public class Bluetooth {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 
     //Temporary setConnectionTimeout to keep reading thread from locking up the bluetooth adapter.
