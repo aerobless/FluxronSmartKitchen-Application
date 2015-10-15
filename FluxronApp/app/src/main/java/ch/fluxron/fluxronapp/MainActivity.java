@@ -60,7 +60,7 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         kitchenListView.setLayoutManager(layoutManager);
 
-        listAdapter = new KitchenListAdapter(this);
+        listAdapter = new KitchenListAdapter(this, this.busProvider);
         kitchenListView.setAdapter(listAdapter);
     }
 

@@ -15,6 +15,7 @@ import java.util.List;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
+import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
  * Adapter for the kitchen search list. Handles the fragments for each row.
@@ -23,6 +24,7 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
     private List<Kitchen> kitchens = new ArrayList<>();
     private HashMap<String, Integer> kitchenIds = new HashMap<>();
     private IKitchenClickListener listener;
+    private IEventBusProvider provider;
 
     /**
      * Adds a new kitchen to the list. If the kitchen already exists,
@@ -32,7 +34,7 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
     public void addOrUpdate(Kitchen k){
         if (kitchenIds.containsKey(k.getId()))
         {
-            int position = kitchenIds.get(k.getId()).intValue();
+            int position = kitchenIds.get(k.getId());
             notifyItemChanged(position);
         }
         else
@@ -48,8 +50,9 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
      * Sets the instance listening to kitchen clicks
      * @param listener Listener
      */
-    public KitchenListAdapter(IKitchenClickListener listener) {
+    public KitchenListAdapter(IKitchenClickListener listener, IEventBusProvider provider) {
         this.listener = listener;
+        this.provider = provider;
     }
 
     /**
@@ -66,7 +69,7 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.listrow_kitchen, parent, false);
-        return new KitchenHolder(itemView, listener);
+        return new KitchenHolder(itemView, listener, this.provider);
     }
 
     @Override

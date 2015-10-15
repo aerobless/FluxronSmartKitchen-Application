@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
@@ -41,6 +42,11 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         if(msg.getConnectionId().equals(saveRequestId)){
             Intent editDevice = new Intent(this, KitchenActivity.class);
             editDevice.putExtra(KitchenActivity.PARAM_KITCHEN_ID, msg.getKitchen().getId());
+
+            // Attach the image to the kitchen
+            AttachImageToKitchenCommand attachCommand = new AttachImageToKitchenCommand(msg.getKitchen().getId(), tempFileName);
+            postMessage(attachCommand);
+
             startActivity(editDevice);
             finish();
         }
@@ -89,7 +95,7 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Log.d("restsat", "lsdajflkjsdflkasdf");
+
                 Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
                 takenImage = Bitmap.createScaledBitmap(takenImage, 100, 100, false );
                 ImageView img = (ImageView)findViewById(R.id.imagePreview);
