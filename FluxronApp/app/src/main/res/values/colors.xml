@@ -2,10 +2,11 @@
 <resources>
     <!-- Back and Foreground -->
     <color name="contentBackground" >#ffffff</color>
+    <color name="titleForeground"   >#ffffff</color>
     <color name="contentForeground" >#424242</color>
 
     <!-- Primary Color -->
-    <color name="primaryColorDark"  >#0277bd</color>
+    <color name="primaryColorDark"  >#266f93</color>
     <color name="primaryColor"      >#039be5</color>
     <color name="primaryColorMedium">#4fc3f7</color>
     <color name="primaryColorLight" >#b3e5fc</color>

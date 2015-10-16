@@ -3,4 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Activity titles -->
+    <string name="activity_find_a_kitchen">Find a kitchen</string>
 </resources>

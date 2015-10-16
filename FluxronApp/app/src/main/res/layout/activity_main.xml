@@ -21,7 +21,8 @@
             android:id="@+id/toolbar_create_kitchen"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:visibility="gone">
 
             <ImageButton
                 style="?android:borderlessButtonStyle"
@@ -33,17 +34,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginLeft="9dp"
+            android:layout_marginRight="9dp"
+            android:layout_marginBottom="9dp"
+            android:layout_marginTop="35dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="FIND A KITCHEN" />
+                android:text="@string/activity_find_a_kitchen"
+                style="@style/FluxronTitleTextView"/>
             <EditText
                 android:layout_width="match_parent"
-                android:background="#aaffffff"
-                android:layout_margin="5dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/kitchenName" />
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                style="@style/FluxronSearchBar"
+                android:id="@+id/kitchenName"
+                android:drawableLeft="@drawable/ic_test_icon"/>
+
                 <Button android:text="bluetooth test" android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/prototypeBluetoothButton"

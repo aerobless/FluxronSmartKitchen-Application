@@ -23,4 +23,18 @@
     <style name="FluxronTextView" parent="android:Widget.TextView">
         <item name="android:foreground">@color/contentForeground</item>
     </style>
+
+    <style name="FluxronTitleTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/titleForeground</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="FluxronSearchBar" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/contentForeground</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:background">#99ffffff</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
 </resources>
