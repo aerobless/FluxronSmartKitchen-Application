@@ -31,10 +31,10 @@
     </style>
 
     <style name="FluxronSearchBar" parent="android:Widget.TextView">
-        <item name="android:textColor">@color/contentForeground</item>
+        <item name="android:textColor">@color/contentBackground</item>
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:background">#99ffffff</item>
+        <item name="android:background">@drawable/searchbox_background</item>
         <item name="android:layout_height">40dp</item>
     </style>
 </resources>
