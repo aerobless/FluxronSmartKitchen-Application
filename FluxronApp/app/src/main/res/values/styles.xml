@@ -17,6 +17,7 @@
 
     <style name="FluxronAppBar" parent="Widget.Design.AppBarLayout">
         <item name="android:background">@color/primaryColorDark</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="FluxronTextView" parent="android:Widget.TextView">
