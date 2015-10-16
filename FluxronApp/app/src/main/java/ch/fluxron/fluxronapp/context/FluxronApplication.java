@@ -12,6 +12,7 @@ import java.io.IOException;
 import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.LocalDatabase;
 import ch.fluxron.fluxronapp.data.ParamManager;
+import ch.fluxron.fluxronapp.model.DeviceManager;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
 import de.greenrobot.event.EventBus;
 
@@ -25,6 +26,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private ch.fluxron.fluxronapp.data.IEventBusProvider dalToModelProvider;
     private ch.fluxron.fluxronapp.model.IEventBusProvider modelProvier;
     private PrototypeResponder responder;
+    private DeviceManager deviceManager;
     private Manager couchbaseManager;
     private Database couchbaseDB;
     private LocalDatabase localDatabase;
@@ -72,6 +74,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private void setUpLayers() {
         // Business layer
         responder = new PrototypeResponder(modelProvier);
+        deviceManager = new DeviceManager(modelProvier);
 
         setupDal();
     }
