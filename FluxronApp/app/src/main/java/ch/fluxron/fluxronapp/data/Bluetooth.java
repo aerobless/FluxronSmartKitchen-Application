@@ -32,7 +32,6 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
-    private Map<String, DeviceParameter> parameterList;
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -53,8 +52,7 @@ public class Bluetooth {
     public Bluetooth(IEventBusProvider provider, Context context, Map<String, DeviceParameter> parameterList) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
-        this.parameterList = parameterList;
-        messageFactory = new MessageFactory();
+        messageFactory = new MessageFactory(parameterList);
         setupDiscovery(context);
     }
 
@@ -93,7 +91,7 @@ public class Bluetooth {
                 if(connectSocket(btSocket)){
                     ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
                     mConnectedThread.start();
-                    byte[] message = messageFactory.makeReadRequest(parameterList.get(1).getIndex(), parameterList.get(1).getSubindex());
+                    byte[] message = messageFactory.makeReadRequest(MessageFactory.F_IDENTITY);
                     messageFactory.printUnsignedByteArray(message);
                     mConnectedThread.write(message);
 
@@ -190,7 +188,7 @@ public class Bluetooth {
     private class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-        private final int msgLength = 12;
+        private final int msgLength = 17;
         private BluetoothSocket socket;
         public AtomicBoolean keepRunning = new AtomicBoolean(true);
 

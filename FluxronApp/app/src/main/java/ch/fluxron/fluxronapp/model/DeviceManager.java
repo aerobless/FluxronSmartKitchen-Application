@@ -22,7 +22,7 @@ public class DeviceManager {
     public void onEventAsync(BluetoothTestCommand msg){
         //provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
         provider.getDalEventBus().post(new BluetoothConnectCommand(Bluetooth.FLX_GTZ_196_ADDRESS, Bluetooth.DEMO_MESSAGE));
-        //provider.getDalEventBus().post(new BluetoothConnectCommand(Bluetooth.FLX_BAX_5206_ADDRESS, Bluetooth.SERIAL_NUMBER));
+        //provider.getDalEventBus().post(new BluetoothConnectCommand(Bluetooth.FLX_BAX_5206_ADDRESS, Bluetooth.DEMO_MESSAGE));
     }
 
     public void onEventAsync(BluetoothDeviceFound msg){

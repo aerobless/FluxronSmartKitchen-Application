@@ -2,10 +2,13 @@ package ch.fluxron.fluxronapp.data;
 
 import android.util.Log;
 
+import java.util.Map;
+
 /**
  * Encodes & decodes CANopen messages.
  */
 public class MessageFactory {
+    Map<String, DeviceParameter> parameterMap;
 
     /**
      * Command Code:
@@ -54,12 +57,17 @@ public class MessageFactory {
     public final static String F_KMX_TEMPERATURE_2 = "3028sub3";
     public final static String F_KMX_TEMPERATURE_3 = "3028sub4";
 
-    public byte[] makeReadRequest(byte[] index, byte subindex){
+
+    public MessageFactory(Map<String, DeviceParameter> parameterMap) {
+        this.parameterMap = parameterMap;
+    }
+
+    public byte[] makeReadRequest(String paramID){
+        byte[] index = parameterMap.get(paramID).getIndex();
         byte[] messageBody = new byte[7];
         messageBody[0] = index[1]; //LSB
         messageBody[1] = index[0]; //MSB
-        messageBody[2] = subindex;
-        printUnsignedByteArray(messageBody);
+        messageBody[2] = parameterMap.get(paramID).getSubindex();
         return buildMessage(CCD_READ_REQUEST, messageBody);
     }
 
