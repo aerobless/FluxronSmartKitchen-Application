@@ -2,6 +2,8 @@ package ch.fluxron.fluxronapp;
 import junit.framework.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.DeviceParameter;
 import ch.fluxron.fluxronapp.data.MessageFactory;
@@ -12,7 +14,7 @@ import ch.fluxron.fluxronapp.data.MessageFactory;
 public class MessageFactoryTest extends TestCase {
 
     public void testLowChecksum(){
-        MessageFactory messageFactory = new MessageFactory();
+        MessageFactory messageFactory = new MessageFactory(null);
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA, //Start sequence
                 (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
@@ -28,7 +30,7 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testHighChecksum(){
-        MessageFactory messageFactory = new MessageFactory();
+        MessageFactory messageFactory = new MessageFactory(null);
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA, //Start sequence
                 (byte) 0x40, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -44,18 +46,19 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testGenerateFullMessage(){
-        MessageFactory messageFactory = new MessageFactory();
+        Map<String, DeviceParameter> parameterMap = new HashMap<String, DeviceParameter>();
         DeviceParameter dp = new DeviceParameter();
         dp.setIndex(new byte[]{(byte) 0x30, (byte) 0x01});
         dp.setSubindex((byte) 0x01);
-
+        parameterMap.put("3001sub1", dp);
+        MessageFactory messageFactory = new MessageFactory(parameterMap);
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA,
                 (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x72, (byte) 0x00 };
         messageFactory.printUnsignedByteArray(expectation);
-        byte[] result = messageFactory.makeReadRequest(dp.getIndex(), dp.getSubindex());
+        byte[] result = messageFactory.makeReadRequest(MessageFactory.F_KNOB_A_DIGITAL);
         messageFactory.printUnsignedByteArray(result);
         assertTrue(Arrays.equals(expectation, result));
     }
