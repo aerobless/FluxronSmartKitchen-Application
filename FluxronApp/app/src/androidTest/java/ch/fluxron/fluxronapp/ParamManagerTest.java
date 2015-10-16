@@ -2,7 +2,7 @@ package ch.fluxron.fluxronapp;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import java.util.List;
+import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.DeviceParameter;
 import ch.fluxron.fluxronapp.data.ParamManager;
@@ -16,8 +16,8 @@ public class ParamManagerTest extends AndroidTestCase {
         ParamManager paramManager = new ParamManager(getContext());
         //paramManager.loadOD();
 
-        List<DeviceParameter> paramList = paramManager.loadParameters();
-        for(DeviceParameter p:paramList){
+        Map<String, DeviceParameter> paramList = paramManager.loadParameters();
+        for(DeviceParameter p:paramList.values()){
             Log.d("Fluxron", p.toString());
         }
     }

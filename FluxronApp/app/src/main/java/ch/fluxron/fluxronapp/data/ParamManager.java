@@ -13,8 +13,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,22 +30,22 @@ import javax.xml.xpath.XPathFactory;
  */
 public class ParamManager {
     private Context context;
-    private List<DeviceParameter> parameterList;
+    private Map<String, DeviceParameter> parameterList;
 
     public ParamManager(Context context) {
         this.context = context;
         parameterList = loadParameters();
     }
 
-    public List<DeviceParameter> getParameterList() {
+    public Map<String, DeviceParameter> getParameterList() {
         return parameterList;
     }
 
     /**
      * Read device parameters from a .eds file, containing information such as index, subindex etc.
      */
-    public List<DeviceParameter> loadParameters(){
-        List<DeviceParameter> parameterList = new ArrayList<DeviceParameter>();
+    public Map<String, DeviceParameter> loadParameters(){
+        Map<String, DeviceParameter> parameterList = new HashMap<String, DeviceParameter>();
 
         try {
             InputStream is = context.getAssets().open("FLUXRON_parameter.eds");
@@ -60,13 +60,13 @@ public class ParamManager {
                     line = line.replaceAll("\\s|\\[|\\]",""); //remove spaces, []
                     String[] parts = line.split("sub");
                     byte[] index = new byte[2];
-                    index[0] = Byte.decode("0x"+parts[0].substring(0, 2));
-                    index[1] = Byte.decode("0x"+parts[0].substring(3, 4));
+                    index[0] = Byte.decode("0x" + parts[0].substring(0, 2));
+                    index[1] = Byte.decode("0x" + parts[0].substring(3, 4));
                     param.setIndex(index);
                     if(parts.length>1){
-                        param.setSubindex(Byte.decode("0x"+parts[1]));
+                        param.setSubindex(Byte.decode("0x" + parts[1]));
                     }
-                    parameterList.add(param);
+                    parameterList.put(line, param);
                 } else if (line.contains("ParameterName=") && (param!=null)){
                     param.setName(line.substring(line.lastIndexOf("=") + 1));
                 } else if (line.contains("ObjectType=") && (param!=null)){

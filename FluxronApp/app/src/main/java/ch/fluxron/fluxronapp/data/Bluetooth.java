@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,7 +32,7 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
-    private List<DeviceParameter> parameterList;
+    private Map<String, DeviceParameter> parameterList;
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -50,7 +50,7 @@ public class Bluetooth {
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
-    public Bluetooth(IEventBusProvider provider, Context context, List<DeviceParameter> parameterList) {
+    public Bluetooth(IEventBusProvider provider, Context context, Map<String, DeviceParameter> parameterList) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
         this.parameterList = parameterList;
