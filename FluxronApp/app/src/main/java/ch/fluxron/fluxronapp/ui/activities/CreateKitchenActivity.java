@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
@@ -28,6 +30,7 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
 public class CreateKitchenActivity extends FluxronBaseActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final String EXTRA_SAVED_FILEPATH = "path";
     private Uri tempFileName;
     private String saveRequestId;
 
@@ -35,6 +38,22 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_kitchen);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_SAVED_FILEPATH, tempFileName.getPath());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String savedPath =savedInstanceState.getString(EXTRA_SAVED_FILEPATH);
+        if(savedPath != null) {
+            this.tempFileName = Uri.parse(savedPath);
+            loadImageToPreview();
+        }
     }
 
     public void onEventMainThread(KitchenCreated msg){
@@ -95,12 +114,16 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                ImageView img = (ImageView)findViewById(R.id.imagePreview);
-                Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
-
-                takenImage = Bitmap.createScaledBitmap(takenImage, img.getWidth(), img.getHeight(), false);
-                img.setImageBitmap(takenImage);
+                loadImageToPreview();
             }
         }
+    }
+
+    private void loadImageToPreview() {
+        ImageView img = (ImageView)findViewById(R.id.imagePreview);
+        Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
+
+        takenImage = Bitmap.createScaledBitmap(takenImage, 250, 250, false);
+        img.setImageBitmap(takenImage);
     }
 }
