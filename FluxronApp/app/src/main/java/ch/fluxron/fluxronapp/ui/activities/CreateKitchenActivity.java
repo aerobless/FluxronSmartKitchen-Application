@@ -6,9 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcel;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,13 +14,11 @@ import android.widget.TextView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -121,9 +117,12 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
 
     private void loadImageToPreview() {
         ImageView img = (ImageView)findViewById(R.id.imagePreview);
+        View noImg = findViewById(R.id.noImageInformation);
+
         Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
 
         takenImage = Bitmap.createScaledBitmap(takenImage, 250, 250, false);
         img.setImageBitmap(takenImage);
+        noImg.setVisibility(View.GONE);
     }
 }
