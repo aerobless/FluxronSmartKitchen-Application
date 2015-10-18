@@ -28,36 +28,6 @@ public class MessageFactory {
     public final static byte CCD_READ_RESPONSE_4B =  (byte) 0x43;
     public final static byte CCD_WRITE_RESPONSE =  (byte) 0x60;
 
-    //Known Fields
-    public final static String F_DEVICE_TYPE = "1000";
-    public final static String F_ERROR_REGISTER = "1001";
-    public final static String F_IDENTITY = "1018";
-    public final static String F_NOF_ENTRIES_IDENTITY = "1018sub0";
-    public final static String F_VENDOR_ID = "1018sub1";
-    public final static String F_PRODUCT_CODE = "1018sub2";
-    public final static String F_REVISION_NUMBER = "1018sub3";
-    public final static String F_SERIAL_NUMBER = "1018sub4";
-    public final static String F_UNSIGNED8_0to15 = "A0";
-    public final static String F_NOF_ENTRIES_UNSIGNED8 = "A0sub0";
-    public final static String F_TYPE = "A0sub1";
-    public final static String F_MINIMUM_VALUE = "A0sub2";
-    public final static String F_MAXIMUM_VALUE = "A0sub3";
-    public final static String F_MANUFACTURER_DEVICE_NAME = "1008";
-    public final static String F_MANUFACTURER_HARDWARE_VERSION = "1009";
-    public final static String F_MANUFACTURER_SOFTWARE_VERSION = "100A";
-    public final static String F_KNOB_ANGLE_DIGITAL = "3001";
-    public final static String F_NOF_ENTRIES_KNOB_ANGLE_DIGITAL = "3001sub0";
-    public final static String F_KNOB_A_DIGITAL = "3001sub1";
-    public final static String F_KNOB_B_DIGITAL = "3001sub2";
-    public final static String F_KNOB_STATUS = "3001sub3";
-    public final static String F_TEMPERATURE_SENSOR = "3028";
-    public final static String F_NOF_ENTRIES_TEMPERATURE_SENSOR = "3028sub0";
-    public final static String F_KMX_TEMPERATURE_0 = "3028sub1";
-    public final static String F_KMX_TEMPERATURE_1 = "3028sub2";
-    public final static String F_KMX_TEMPERATURE_2 = "3028sub3";
-    public final static String F_KMX_TEMPERATURE_3 = "3028sub4";
-
-
     public MessageFactory(Map<String, DeviceParameter> parameterMap) {
         this.parameterMap = parameterMap;
     }

@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 
@@ -29,14 +29,38 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscov
  * Listens to eventbus messages. Provides access to bluetooth devices.
  */
 public class Bluetooth {
+
+    //Known Fields
+    public final static String F_DEVICE_TYPE = "1000";
+    public final static String F_ERROR_REGISTER = "1001";
+    public final static String F_IDENTITY = "1018";
+    public final static String F_NOF_ENTRIES_IDENTITY = "1018sub0";
+    public final static String F_VENDOR_ID = "1018sub1";
+    public final static String F_PRODUCT_CODE = "1018sub2";
+    public final static String F_REVISION_NUMBER = "1018sub3";
+    public final static String F_SERIAL_NUMBER = "1018sub4";
+    public final static String F_UNSIGNED8_0to15 = "A0";
+    public final static String F_NOF_ENTRIES_UNSIGNED8 = "A0sub0";
+    public final static String F_TYPE = "A0sub1";
+    public final static String F_MINIMUM_VALUE = "A0sub2";
+    public final static String F_MAXIMUM_VALUE = "A0sub3";
+    public final static String F_MANUFACTURER_DEVICE_NAME = "1008";
+    public final static String F_MANUFACTURER_HARDWARE_VERSION = "1009";
+    public final static String F_MANUFACTURER_SOFTWARE_VERSION = "100A";
+    public final static String F_KNOB_ANGLE_DIGITAL = "3001";
+    public final static String F_NOF_ENTRIES_KNOB_ANGLE_DIGITAL = "3001sub0";
+    public final static String F_KNOB_A_DIGITAL = "3001sub1";
+    public final static String F_KNOB_B_DIGITAL = "3001sub2";
+    public final static String F_KNOB_STATUS = "3001sub3";
+    public final static String F_TEMPERATURE_SENSOR = "3028";
+    public final static String F_NOF_ENTRIES_TEMPERATURE_SENSOR = "3028sub0";
+    public final static String F_KMX_TEMPERATURE_0 = "3028sub1";
+    public final static String F_KMX_TEMPERATURE_1 = "3028sub2";
+    public final static String F_KMX_TEMPERATURE_2 = "3028sub3";
+    public final static String F_KMX_TEMPERATURE_3 = "3028sub4";
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
-
-    //Fluxron Demo Devices
-    public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
-    public static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
-    public static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
 
     //Messages
     public static final byte[] DEMO_MESSAGE = new byte[]{
@@ -53,6 +77,7 @@ public class Bluetooth {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
         messageFactory = new MessageFactory(parameterList);
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
     }
 
@@ -62,6 +87,7 @@ public class Bluetooth {
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    //TODO: check if it's really a Fluxron device
                     provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
                 }
             }
@@ -72,16 +98,14 @@ public class Bluetooth {
 
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
         if(cmd.isEnabled()){
-            discoverPairedDevices();
+            //discoverPairedDevices();
             startDeviceDiscovery();
         } else {
             stopDeviceDiscovery();
         }
     }
 
-    public void onEventAsync(BluetoothConnectCommand cmd) {
-
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
+    public void onEventAsync(BluetoothReadRequest cmd) {
         if(bluetoothEnabled()){
             stopDeviceDiscovery();
 
@@ -91,7 +115,7 @@ public class Bluetooth {
                 if(connectSocket(btSocket)){
                     ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
                     mConnectedThread.start();
-                    byte[] message = messageFactory.makeReadRequest(MessageFactory.F_IDENTITY);
+                    byte[] message = messageFactory.makeReadRequest(cmd.getField());
                     messageFactory.printUnsignedByteArray(message);
                     mConnectedThread.write(message);
 
@@ -135,7 +159,6 @@ public class Bluetooth {
     }
 
     private void discoverPairedDevices(){
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothEnabled()) {
             Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
             if (pairedDevices != null) {

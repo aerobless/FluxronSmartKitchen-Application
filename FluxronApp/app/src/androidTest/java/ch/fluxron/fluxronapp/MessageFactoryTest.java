@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.DeviceParameter;
 import ch.fluxron.fluxronapp.data.MessageFactory;
 
@@ -58,7 +59,7 @@ public class MessageFactoryTest extends TestCase {
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x72, (byte) 0x00 };
         messageFactory.printUnsignedByteArray(expectation);
-        byte[] result = messageFactory.makeReadRequest(MessageFactory.F_KNOB_A_DIGITAL);
+        byte[] result = messageFactory.makeReadRequest(Bluetooth.F_KNOB_A_DIGITAL);
         messageFactory.printUnsignedByteArray(result);
         assertTrue(Arrays.equals(expectation, result));
     }
