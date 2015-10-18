@@ -10,16 +10,12 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -61,13 +57,6 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
-
-    //Messages
-    public static final byte[] DEMO_MESSAGE = new byte[]{
-            (byte) 0xAA, (byte) 0xAA,
-            (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x72, (byte) 0x00 };
 
     private static final String TAG = "FLUXRON";
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
@@ -113,13 +102,13 @@ public class Bluetooth {
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
                 if(connectSocket(btSocket)){
-                    ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
-                    mConnectedThread.start();
+                    BTConnectionThread connectionThread = new BTConnectionThread(btSocket);
+                    connectionThread.start();
                     byte[] message = messageFactory.makeReadRequest(cmd.getField());
                     messageFactory.printUnsignedByteArray(message);
-                    mConnectedThread.write(message);
+                    connectionThread.write(message);
 
-                    setConnectionTimeout(mConnectedThread, READ_TIMEOUT_IN_SECONDS);
+                    setConnectionTimeout(connectionThread, READ_TIMEOUT_IN_SECONDS);
                 } else {
                     Log.d(TAG, "Unable to connect to remote device. Are you sure it is turned on and noone else is connected to it?");
                 }
@@ -149,13 +138,13 @@ public class Bluetooth {
     }
 
     //Temporary setConnectionTimeout to keep reading thread from locking up the bluetooth adapter.
-    private void setConnectionTimeout(ConnectedThread mConnectedThread, int time) {
+    private void setConnectionTimeout(BTConnectionThread connectionThread, int time) {
         try {
             Thread.sleep(time*1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        mConnectedThread.keepRunning.set(false);
+        connectionThread.keepRunning.set(false);
     }
 
     private void discoverPairedDevices(){
@@ -206,65 +195,5 @@ public class Bluetooth {
             }
         }
         return false;
-    }
-
-    private class ConnectedThread extends Thread {
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-        private final int msgLength = 17;
-        private BluetoothSocket socket;
-        public AtomicBoolean keepRunning = new AtomicBoolean(true);
-
-        public ConnectedThread(BluetoothSocket btsocket) {
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-            socket = btsocket;
-
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        public void run() {
-            byte[] buffer = new byte[128];
-            int nofBytes;
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-
-            while (keepRunning.get()) {
-                try {
-                    if(mmInStream.available() > 0){
-                        nofBytes = mmInStream.read(buffer);
-                        outputStream.write(buffer, 0, nofBytes);
-                        Log.d(TAG, nofBytes + " Bytes received!!!");
-                        if(outputStream.size() == msgLength){
-                            messageFactory.printUnsignedByteArray(outputStream.toByteArray());
-                            outputStream.reset();
-                        }
-                    }
-                } catch (IOException e) {
-                    break;
-                }
-            }
-            try {
-                mmInStream.close();
-                mmOutStream.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void write(byte[] message) {
-            Log.d(TAG, "Sending message");
-            try {
-                mmOutStream.write(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
