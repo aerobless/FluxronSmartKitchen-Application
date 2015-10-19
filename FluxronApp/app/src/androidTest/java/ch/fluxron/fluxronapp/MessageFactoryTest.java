@@ -63,4 +63,24 @@ public class MessageFactoryTest extends TestCase {
         messageFactory.printUnsignedByteArray(result);
         assertTrue(Arrays.equals(expectation, result));
     }
+
+    public void testChecksumValid(){
+        MessageFactory messageFactory = new MessageFactory(null);
+        byte[] someMessage = new byte[]{
+                (byte) 0xAA, (byte) 0xAA,
+                (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x72, (byte) 0x00 };
+        assertTrue(messageFactory.isChecksumValid(someMessage));
+    }
+
+    public void testChecksumInvalid(){
+        MessageFactory messageFactory = new MessageFactory(null);
+        byte[] someMessage = new byte[]{
+                (byte) 0xAA, (byte) 0xAA,
+                (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00 };
+        assertFalse(messageFactory.isChecksumValid(someMessage));
+    }
 }

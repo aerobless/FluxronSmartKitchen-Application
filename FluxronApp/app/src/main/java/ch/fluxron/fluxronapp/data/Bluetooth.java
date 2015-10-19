@@ -123,6 +123,9 @@ public class Bluetooth {
     public void onEventAsync(BluetoothMessageReceived msg) {
         Log.d(TAG, "Message from "+msg.getAddress());
         messageFactory.printUnsignedByteArray(msg.getMessage());
+        if(messageFactory.isChecksumValid(msg.getMessage())){
+            Log.d(TAG, "and its checksum is valid.");
+        }
     }
 
     private boolean connectSocket(BluetoothSocket btSocket) {

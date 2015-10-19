@@ -2,6 +2,7 @@ package ch.fluxron.fluxronapp.data;
 
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -66,18 +67,33 @@ public class MessageFactory {
      * Calculate the checksum for byte 2-9 and set it in byte 10 & 11.
      */
     private byte[] setChecksum(byte[] message) {
+        byte[] checkedMessage = message.clone();
         int checksumLow = 0;
         int checksumHigh = 0;
         for (int c = 2; c < 10; c++) {
             if(c<6){
-                checksumLow += message[c];
+                checksumLow += checkedMessage[c];
             } else {
-                checksumHigh += message[c];
+                checksumHigh += checkedMessage[c];
             }
         }
-        message[10] = (byte)checksumLow;
-        message[11] = (byte)checksumHigh;
-        return message;
+        checkedMessage[10] = (byte)checksumLow;
+        checkedMessage[11] = (byte)checksumHigh;
+        return checkedMessage;
+    }
+
+    public boolean isChecksumValid(byte[] originalMsg){
+        if(originalMsg.length == 12){
+            byte[] checkMsg = setChecksum(originalMsg);
+            if(Arrays.equals(originalMsg, checkMsg)){
+                printUnsignedByteArray(originalMsg);
+                printUnsignedByteArray(checkMsg);
+                return true;
+            }
+        }else {
+            Log.d("FLUXRON", "Only messages with length 12 can be verified. This message has length "+originalMsg.length);
+        }
+        return false;
     }
 
     public void printUnsignedByteArray(byte[] message) {

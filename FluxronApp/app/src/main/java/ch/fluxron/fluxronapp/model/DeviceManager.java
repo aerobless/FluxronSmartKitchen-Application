@@ -32,7 +32,7 @@ public class DeviceManager {
 
     public void onEventAsync(BluetoothTestCommand msg){
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, Bluetooth.F_IDENTITY));
+        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, Bluetooth.F_DEVICE_TYPE));
         //provider.getDalEventBus().post(new BluetoothReadRequest(Bluetooth.FLX_BAX_5206_ADDRESS, Bluetooth.DEMO_MESSAGE));
     }
 
