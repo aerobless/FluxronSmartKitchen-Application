@@ -31,9 +31,10 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, Bluetooth.F_DEVICE_TYPE));
-        //provider.getDalEventBus().post(new BluetoothReadRequest(Bluetooth.FLX_BAX_5206_ADDRESS, Bluetooth.DEMO_MESSAGE));
+       // provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+        String cmd = Bluetooth.F_MANUFACTURER_HARDWARE_VERSION;
+        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
+        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
     }
 
     public void onEventAsync(BluetoothDeviceFound msg){

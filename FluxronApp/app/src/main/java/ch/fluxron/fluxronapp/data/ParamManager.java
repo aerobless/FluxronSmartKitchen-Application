@@ -55,13 +55,15 @@ public class ParamManager {
             DeviceParameter param = null;
             while((line = in.readLine()) != null) {
                 responseData.append(line);
-                if(line.matches("\\s*\\[[0-9]{1,4}(sub[0-9]{1,4})?\\]")){ //match [1000] and [1000sub1]
+                if(line.matches("\\s*\\[[0-9A-Z]{1,4}(sub[0-9]{1,4})?\\]")){ //match [1000] and [1000sub1]
                     param = new DeviceParameter();
                     line = line.replaceAll("\\s|\\[|\\]",""); //remove spaces, []
                     String[] parts = line.split("sub");
                     byte[] index = new byte[2];
-                    index[0] = Byte.decode("0x" + parts[0].substring(0, 2));
-                    index[1] = Byte.decode("0x" + parts[0].substring(3, 4));
+                    index[0] = Integer.decode("0x" + parts[0].substring(0, 2)).byteValue();
+                    if(parts[0].length()>=4){
+                        index[1] = Integer.decode("0x" + parts[0].substring(3, 4)).byteValue();
+                    }
                     param.setIndex(index);
                     if(parts.length>1){
                         param.setSubindex(Byte.decode("0x" + parts[1]));
