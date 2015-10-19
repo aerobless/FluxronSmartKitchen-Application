@@ -5,9 +5,9 @@
     <string name="action_settings">Settings</string>
 
     <!-- Activity titles -->
+    <string name="activity_kitchen_overview">Kitchen overview</string>
     <string name="activity_find_a_kitchen">Find a kitchen</string>
 
     <!-- Help texts -->
-    <string name="no_image_here">
-        No image here. Tap this to take a snapshot.</string>
+    <string name="no_image_here">No image here. Tap this to take a snapshot.</string>
 </resources>

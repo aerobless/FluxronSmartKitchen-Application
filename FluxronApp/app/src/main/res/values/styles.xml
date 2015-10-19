@@ -37,4 +37,8 @@
         <item name="android:background">@drawable/searchbox_background</item>
         <item name="android:layout_height">40dp</item>
     </style>
+
+    <style name="FluxronImageButton" parent="android:Widget.ImageButton">
+        <item name="android:background">#00000000</item>
+    </style>
 </resources>

@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.design.widget.AppBarLayout
-        android:layout_height="192dp"
+        android:layout_height="120dp"
         android:layout_width="match_parent"
         style="@style/FluxronAppBar"
         >
@@ -14,59 +14,68 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_create_kitchen"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="9dp">
+
             <ImageButton
-                style="?android:borderlessButtonStyle"
+                style="@style/FluxronImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_test_icon"
-                android:onClick="onBackButtonClicked"/>
-            <ImageButton
-                style="?android:borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_test_icon" />
-        </android.support.v7.widget.Toolbar>
+                android:onClick="onBackButtonClicked"
+                android:layout_gravity="start"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="KITCHEN ACTIVITY"
+                android:text="@string/activity_kitchen_overview"
                 style="@style/FluxronTitleTextView"
-                android:id="@+id/kitchenNameTitle"/>
-        </LinearLayout>
+                android:id="@+id/kitchenNameTitle"
+                android:layout_gravity="start"
+                android:layout_marginLeft="20dp"/>
+
+            <ImageButton
+                style="@style/FluxronImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_test_icon"
+                android:onClick="onDeleteButtonClicked"
+                android:layout_gravity="end"/>
+        </android.support.v7.widget.Toolbar>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit a device"
+            android:id="@+id/buttonEditDevice"
+            android:onClick="onEditDeviceClicked"
+            android:layout_gravity="end" />
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Delete"
-                android:id="@+id/buttonDelete"
-                android:onClick="onDeleteButtonClicked"
-                android:layout_gravity="center_horizontal" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Edit a device"
-                android:id="@+id/buttonEditDevice"
-                android:onClick="onEditDeviceClicked"
-                android:layout_gravity="end" />
-        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!-- TODO: Replace with Fragment -->
+            <android.support.v7.widget.CardView
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:background="#2200ff00"/>
+            <!-- TODO: Replace with RecyclerView -->
+            <android.support.v7.widget.CardView
+                android:layout_width="150dp"
+                android:layout_height="130dp"
+                android:background="#11ffff00"
+                app:cardElevation="3dp"/>
+        </FrameLayout>
 
     </android.support.v4.widget.NestedScrollView>
 
