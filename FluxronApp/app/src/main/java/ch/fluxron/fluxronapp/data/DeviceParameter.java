@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.data;
 
+import android.util.Log;
+
 import java.util.Arrays;
 
 /**
@@ -100,8 +102,16 @@ public class DeviceParameter {
                 ", defaultValue='" + defaultValue + '\'' +
                 ", pdoMapping=" + pdoMapping +
                 ", subNumber=" + subNumber +
-                ", index=" + Arrays.toString(index) +
+                ", index=" + printUnsignedByteArray(index) +
                 ", subindex=" + subindex +
                 '}';
+    }
+
+    public String printUnsignedByteArray(byte[] message) {
+        String hexMessage = "";
+        for (int i = 0; i < message.length; i++) {
+            hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";
+        }
+        return hexMessage;
     }
 }

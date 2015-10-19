@@ -62,7 +62,7 @@ public class ParamManager {
                     byte[] index = new byte[2];
                     index[0] = Integer.decode("0x" + parts[0].substring(0, 2)).byteValue();
                     if(parts[0].length()>=4){
-                        index[1] = Integer.decode("0x" + parts[0].substring(3, 4)).byteValue();
+                        index[1] = Integer.decode("0x" + parts[0].substring(2, 4)).byteValue();
                     }
                     param.setIndex(index);
                     if(parts.length>1){
