@@ -23,6 +23,8 @@ public class MessageFactory {
     public final static byte CCD_WRITE_REQUEST_3B = (byte) 0x27;
     public final static byte CCD_WRITE_REQUEST_4B = (byte) 0x23;
 
+    public final static byte CCD_ERROR_RESPONSE =  (byte) 0x80;
+
     public final static byte CCD_READ_RESPONSE_1B =  (byte) 0x4F;
     public final static byte CCD_READ_RESPONSE_2B =  (byte) 0x4B;
     public final static byte CCD_READ_RESPONSE_3B =  (byte) 0x47;
@@ -68,17 +70,14 @@ public class MessageFactory {
      */
     private byte[] setChecksum(byte[] message) {
         byte[] checkedMessage = message.clone();
-        int checksumLow = 0;
-        int checksumHigh = 0;
+        int checksum = 0;
         for (int c = 2; c < 10; c++) {
-            if(c<6){
-                checksumLow += checkedMessage[c];
-            } else {
-                checksumHigh += checkedMessage[c];
-            }
+                checksum += checkedMessage[c];
         }
-        checkedMessage[10] = (byte)checksumLow;
-        checkedMessage[11] = (byte)checksumHigh;
+        checkedMessage[10] = (byte) (checksum & 0xFF);
+        if(checksum>=255){
+            checkedMessage[11] = (byte) ((checksum >> 8) & 0xFF);
+        }
         return checkedMessage;
     }
 
@@ -86,8 +85,6 @@ public class MessageFactory {
         if(originalMsg.length == 12){
             byte[] checkMsg = setChecksum(originalMsg);
             if(Arrays.equals(originalMsg, checkMsg)){
-                printUnsignedByteArray(originalMsg);
-                printUnsignedByteArray(checkMsg);
                 return true;
             }
         }else {

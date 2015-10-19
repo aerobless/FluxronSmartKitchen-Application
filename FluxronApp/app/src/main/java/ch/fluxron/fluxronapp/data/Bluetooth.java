@@ -60,7 +60,7 @@ public class Bluetooth {
     private BluetoothAdapter btAdapter = null;
 
     private static final String TAG = "FLUXRON";
-    private static final int READ_TIMEOUT_IN_SECONDS = 5;
+    private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
     public Bluetooth(IEventBusProvider provider, Context context, Map<String, DeviceParameter> parameterList) {
@@ -121,10 +121,48 @@ public class Bluetooth {
     }
 
     public void onEventAsync(BluetoothMessageReceived msg) {
-        Log.d(TAG, "Message from "+msg.getAddress());
-        messageFactory.printUnsignedByteArray(msg.getMessage());
-        if(messageFactory.isChecksumValid(msg.getMessage())){
+        Log.d(TAG, "Message from " + msg.getAddress());
+        byte[] data = msg.getData();
+        byte[] dataPayload = null;
+        messageFactory.printUnsignedByteArray(data);
+        if(messageFactory.isChecksumValid(data)){
             Log.d(TAG, "and its checksum is valid.");
+            if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B){
+                dataPayload = new byte[]{data[6]};
+            } else if (data[2] == MessageFactory.CCD_READ_RESPONSE_2B){
+                dataPayload = new byte[]{data[6],data[7]};
+            } else if (data[2] == MessageFactory.CCD_READ_RESPONSE_3B){
+                dataPayload = new byte[]{data[6],data[7],data[8]};
+            } else if (data[2] == MessageFactory.CCD_READ_RESPONSE_4B){
+                dataPayload = new byte[]{data[6],data[7],data[8],data[9]};
+            } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE){
+                //Doesn't contain data
+            } else if (data[2] == MessageFactory.CCD_ERROR_RESPONSE){
+                Log.d(TAG, "Received ERROR bluetooth message");
+            } else {
+                Log.d(TAG, "Unkown Command Code"+ data[2]);
+            }
+            if (dataPayload != null){
+                dataPayload = decodeLittleEndian(dataPayload);
+                messageFactory.printUnsignedByteArray(dataPayload);
+            }
+        } else {
+            Log.d(TAG,"Invalid checksum!");
+        }
+    }
+
+    private byte[] decodeLittleEndian(byte[] input){
+        if(input.length == 4){
+            return new byte[]{input[3], input[2], input[1], input[0]};
+        } else if(input.length == 3){
+            return new byte[]{input[2], input[1], input[0]};
+        }else if(input.length == 2){
+            return new byte[]{input[1], input[0]};
+        }else if(input.length == 1){
+            return input;
+        } else{
+            Log.d(TAG, "Unable to decode array with size "+input.length);
+            return input;
         }
     }
 

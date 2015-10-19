@@ -36,7 +36,7 @@ public class MessageFactoryTest extends TestCase {
                 (byte) 0xAA, (byte) 0xAA, //Start sequence
                 (byte) 0x40, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x44, (byte) 0x44, (byte) 0x00, (byte) 0x44,
-                (byte) 0x40, (byte) 0xCC}; //Checksum
+                (byte) 0xC, (byte) 0x1}; //Checksum
         messageFactory.printUnsignedByteArray(expectation);
         byte[] result = messageFactory.buildMessage(
                 MessageFactory.CCD_READ_REQUEST,

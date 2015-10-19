@@ -5,18 +5,18 @@ package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
  */
 public class BluetoothMessageReceived {
     String address;
-    byte[] message;
+    byte[] data;
 
-    public BluetoothMessageReceived(String address, byte[] message) {
+    public BluetoothMessageReceived(String address, byte[] data) {
         this.address = address;
-        this.message = message;
+        this.data = data;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public byte[] getMessage() {
-        return message;
+    public byte[] getData() {
+        return data;
     }
 }
