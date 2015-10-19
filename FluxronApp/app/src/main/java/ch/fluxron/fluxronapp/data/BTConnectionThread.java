@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.data;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
@@ -9,20 +10,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
+
 /**
  * Thread for active bluetooth connection.
  */
 public class BTConnectionThread extends Thread{
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    private final int msgLength = 17;
-    private BluetoothSocket socket;
+    private final int msgLength = 12;
+    private final BluetoothDevice remoteDevice;
+    private final IEventBusProvider provider;
+    private final BluetoothSocket socket;
     public AtomicBoolean keepRunning = new AtomicBoolean(true);
 
-    public BTConnectionThread(BluetoothSocket btsocket) {
+    public BTConnectionThread(BluetoothSocket btsocket, IEventBusProvider provider) {
+        remoteDevice = btsocket.getRemoteDevice();
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
         socket = btsocket;
+        this.provider = provider;
 
         try {
             tmpIn = socket.getInputStream();
@@ -44,9 +51,11 @@ public class BTConnectionThread extends Thread{
                     nofBytes = mmInStream.read(buffer);
                     outputStream.write(buffer, 0, nofBytes);
                     Log.d("FLUXRON", nofBytes + " Bytes received!!!");
-                    if(outputStream.size() == msgLength){
-                        //TODO: interpret & send response to event bus.
-                        printUnsignedByteArray(outputStream.toByteArray());
+
+                    //TODO: need a better way to decide when a message is ended
+                    if(outputStream.size() >= msgLength){
+                        byte[] responseMsg = outputStream.toByteArray();
+                        provider.getDalEventBus().post(new BluetoothMessageReceived(remoteDevice.getAddress(), responseMsg));
                         outputStream.reset();
                     }
                 }
@@ -70,13 +79,5 @@ public class BTConnectionThread extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void printUnsignedByteArray(byte[] message) {
-        String hexMessage = "";
-        for (int i = 0; i < message.length; i++) {
-            hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";
-        }
-        Log.d("FLUXRON", hexMessage);
     }
 }

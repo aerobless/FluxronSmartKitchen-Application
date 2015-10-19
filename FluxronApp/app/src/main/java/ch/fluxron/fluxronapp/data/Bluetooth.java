@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
@@ -59,7 +60,7 @@ public class Bluetooth {
     private BluetoothAdapter btAdapter = null;
 
     private static final String TAG = "FLUXRON";
-    private static final int READ_TIMEOUT_IN_SECONDS = 1;
+    private static final int READ_TIMEOUT_IN_SECONDS = 5;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
     public Bluetooth(IEventBusProvider provider, Context context, Map<String, DeviceParameter> parameterList) {
@@ -102,7 +103,7 @@ public class Bluetooth {
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
                 if(connectSocket(btSocket)){
-                    BTConnectionThread connectionThread = new BTConnectionThread(btSocket);
+                    BTConnectionThread connectionThread = new BTConnectionThread(btSocket, provider);
                     connectionThread.start();
                     byte[] message = messageFactory.makeReadRequest(cmd.getField());
                     messageFactory.printUnsignedByteArray(message);
@@ -117,6 +118,11 @@ public class Bluetooth {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onEventAsync(BluetoothMessageReceived msg) {
+        Log.d(TAG, "Message from "+msg.getAddress());
+        messageFactory.printUnsignedByteArray(msg.getMessage());
     }
 
     private boolean connectSocket(BluetoothSocket btSocket) {
