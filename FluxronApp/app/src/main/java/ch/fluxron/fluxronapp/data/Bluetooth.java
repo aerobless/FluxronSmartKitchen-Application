@@ -12,11 +12,14 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -143,27 +146,20 @@ public class Bluetooth {
                 Log.d(TAG, "Unkown Command Code"+ data[2]);
             }
             if (dataPayload != null){
-                dataPayload = decodeLittleEndian(dataPayload);
-                messageFactory.printUnsignedByteArray(dataPayload);
+                //messageFactory.printUnsignedByteArray(dataPayload);
+                //Log.d(TAG, "INT "+decodeByteArray(dataPayload));
+                //TODO: nicer method to generate/lookup field name
+                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), data[4]+data[3]+"sub"+data[5], decodeByteArray(dataPayload)));
             }
         } else {
-            Log.d(TAG,"Invalid checksum!");
+            Log.d(TAG, "Invalid checksum!");
         }
     }
 
-    private byte[] decodeLittleEndian(byte[] input){
-        if(input.length == 4){
-            return new byte[]{input[3], input[2], input[1], input[0]};
-        } else if(input.length == 3){
-            return new byte[]{input[2], input[1], input[0]};
-        }else if(input.length == 2){
-            return new byte[]{input[1], input[0]};
-        }else if(input.length == 1){
-            return input;
-        } else{
-            Log.d(TAG, "Unable to decode array with size "+input.length);
-            return input;
-        }
+    private int decodeByteArray(byte[] input){
+        ByteBuffer buffer = ByteBuffer.wrap(input);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        return buffer.getInt();
     }
 
     private boolean connectSocket(BluetoothSocket btSocket) {

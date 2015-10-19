@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.Bluetooth;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -35,6 +36,10 @@ public class DeviceManager {
         String cmd = Bluetooth.F_SERIAL_NUMBER;
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
+    }
+
+    public void onEventAsync(BluetoothDeviceChanged msg){
+        Log.d("FLUXRON", "Device "+msg.getAddress()+" has reported "+msg.getValue()+" for field "+msg.getField());
     }
 
     public void onEventAsync(BluetoothDeviceFound msg){
