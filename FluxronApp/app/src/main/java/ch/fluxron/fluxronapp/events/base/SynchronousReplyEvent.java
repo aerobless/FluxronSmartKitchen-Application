@@ -1,7 +1,5 @@
 package ch.fluxron.fluxronapp.events.base;
 
-import ch.fluxron.fluxronapp.model.ITypedCallback;
-
 /**
  * Base class for providing a synchronous callback.
  */

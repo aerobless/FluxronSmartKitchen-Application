@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.model;
+package ch.fluxron.fluxronapp.events.base;
 
 /**
  * A callback with a typed parameter
