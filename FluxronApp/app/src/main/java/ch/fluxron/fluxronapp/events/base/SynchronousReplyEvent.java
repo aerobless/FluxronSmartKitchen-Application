@@ -1,19 +1,23 @@
 package ch.fluxron.fluxronapp.events.base;
 
+import ch.fluxron.fluxronapp.model.ITypedCallback;
+
 /**
  * Base class for providing a synchronous callback.
  */
-public abstract class SynchronousReplyEvent {
-    private Runnable callback;
+public abstract class SynchronousReplyEvent<T> {
+    private ITypedCallback<T> callback;
 
-    public SynchronousReplyEvent(Runnable callback){
+    public SynchronousReplyEvent(ITypedCallback<T> callback){
         this.callback = callback;
     }
 
     /**
      * Run the specified callback
      */
-    public void runCallback(){
-        if (callback !=null) callback.run();
+    public void notifyCompletion(T result){
+        if (callback !=null){
+            callback.call(result);
+        }
     }
 }
