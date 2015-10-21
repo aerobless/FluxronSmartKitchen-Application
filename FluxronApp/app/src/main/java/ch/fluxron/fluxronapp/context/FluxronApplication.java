@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.LocalDatabase;
 import ch.fluxron.fluxronapp.data.ParamManager;
 import ch.fluxron.fluxronapp.model.DeviceManager;
+import ch.fluxron.fluxronapp.model.KitchenManager;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
 import de.greenrobot.event.EventBus;
 
@@ -31,6 +32,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private Database couchbaseDB;
     private LocalDatabase localDatabase;
     private Bluetooth bluetooth;
+    private KitchenManager kitchenManger;
     ParamManager paramManager;
 
     @Override
@@ -72,10 +74,12 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     }
 
     private void setUpLayers() {
-        // Business layer
+        // Business Layer
         responder = new PrototypeResponder(modelProvier);
         deviceManager = new DeviceManager(modelProvier);
+        kitchenManger = new KitchenManager(modelProvier);
 
+        // Data Access Layer
         setupDal();
     }
 
