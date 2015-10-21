@@ -46,6 +46,17 @@ public class MessageFactoryTest extends TestCase {
         assertTrue(Arrays.equals(expectation, result));
     }
 
+    public void testValidateChecksumGreater12B(){
+        MessageFactory messageFactory = new MessageFactory(null);
+        byte[] expectation = new byte[]{
+                (byte) 0xAA, (byte) 0xAA, //Start sequence
+                (byte) 0x40, (byte) 0x08, (byte) 0x10, (byte) 0x00, //Command, Index + Subindex
+                (byte) 0x05, (byte) 0x00, (byte) 0x00, (byte) 0x00, //specifies length as 5Bytes
+                (byte) 0x47, (byte) 0x49, (byte) 0x45, (byte) 0x54, (byte) 0x5a, //5Bytes
+                (byte) 0xe0, (byte) 0x1}; //Checksum
+        assertTrue(messageFactory.isChecksumValid(expectation));
+    }
+
     public void testGenerateFullMessage(){
         Map<String, DeviceParameter> parameterMap = new HashMap<String, DeviceParameter>();
         DeviceParameter dp = new DeviceParameter();

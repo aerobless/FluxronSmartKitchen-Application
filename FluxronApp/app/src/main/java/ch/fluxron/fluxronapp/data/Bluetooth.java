@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -140,6 +141,8 @@ public class Bluetooth {
                 dataPayload = new byte[]{data[6],data[7],data[8],data[9]};
             } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE){
                 //Doesn't contain data
+            } else if (data[2] == MessageFactory.CCD_READ_REQUEST){
+                dataPayload = retriveBigData(data);
             } else if (data[2] == MessageFactory.CCD_ERROR_RESPONSE){
                 Log.d(TAG, "Received ERROR bluetooth message");
             } else {
@@ -154,6 +157,19 @@ public class Bluetooth {
         } else {
             Log.d(TAG, "Invalid checksum!");
         }
+    }
+
+    /**
+     * Used to retrive data from Bluetooth messages that are longer then 12Bytes (>4Byte Data).
+     * These messages do not follow the CANopen specification. Instead Field 6 tells the
+     * additional length after then normal CANopen message (12B).
+     */
+    private byte[] retriveBigData(byte[] input){
+        byte [] subArray = Arrays.copyOfRange(input, 9, input.length-3);
+        if(subArray.length != input[6]){
+            Log.d(TAG, "Length of extracted data doesn't match specified length!");
+        }
+        return subArray;
     }
 
     private int decodeByteArray(byte[] input){

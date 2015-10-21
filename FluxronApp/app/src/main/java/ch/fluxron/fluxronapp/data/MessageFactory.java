@@ -69,20 +69,27 @@ public class MessageFactory {
      * Calculate the checksum for byte 2-9 and set it in byte 10 & 11.
      */
     private byte[] setChecksum(byte[] message) {
-        byte[] checkedMessage = message.clone();
-        int checksum = 0;
-        for (int c = 2; c < 10; c++) {
+        if(message.length >= 5){
+            byte[] checkedMessage = message.clone();
+            int checksum = 0;
+            int msgStart = 2;
+            int msgEnd = message.length-2;
+            for (int c = msgStart; c < msgEnd; c++) {
                 checksum += checkedMessage[c];
+            }
+            checkedMessage[msgEnd] = (byte) (checksum & 0xFF);
+            if(checksum>=255){
+                checkedMessage[msgEnd+1] = (byte) ((checksum >> 8) & 0xFF);
+            }
+            return checkedMessage;
+        } else {
+            Log.d("FLUXRON", "Unable to set checksum for message shorter than 5B");
+            return message;
         }
-        checkedMessage[10] = (byte) (checksum & 0xFF);
-        if(checksum>=255){
-            checkedMessage[11] = (byte) ((checksum >> 8) & 0xFF);
-        }
-        return checkedMessage;
     }
 
     public boolean isChecksumValid(byte[] originalMsg){
-        if(originalMsg.length == 12){
+        if(originalMsg.length >= 12){
             byte[] checkMsg = setChecksum(originalMsg);
             if(Arrays.equals(originalMsg, checkMsg)){
                 return true;
