@@ -39,12 +39,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     public void onEventMainThread(ImageLoaded msg){
         if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
-            Bitmap loadedImage = msg.getBmp();
-            float aspect = (float)loadedImage.getWidth() / (float)loadedImage.getHeight();
-            int newHeight = card.getHeight();
-            int newWidth = (int) (newHeight * aspect);
-
-            img.setImageBitmap(Bitmap.createScaledBitmap(loadedImage, newWidth, newHeight, false));
+            img.setImageBitmap(msg.getBmp());
         }
     }
 

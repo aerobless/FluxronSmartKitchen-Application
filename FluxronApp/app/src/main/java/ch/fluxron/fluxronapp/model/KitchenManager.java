@@ -98,7 +98,23 @@ public class KitchenManager {
             // Decode with the new sample size
             options.inJustDecodeBounds = false;
 
-            return BitmapFactory.decodeStream(stream.openStream(), new Rect(0,0,0,0), options);
+            Bitmap loadedImage = BitmapFactory.decodeStream(stream.openStream(), new Rect(0, 0, 0, 0), options);
+
+            // Calculate the bounds of the rescaled (proportional to ascpect ratio) image
+            float aspect = (float)loadedImage.getWidth() / (float)loadedImage.getHeight();
+            float newHeight = 1;
+            float newWidth = 1;
+            if (imageSize.x < imageSize.y && imageSize.x > 0) {
+                newWidth = imageSize.x;
+                newHeight = newWidth / aspect;
+            }
+            else if (imageSize.y > 0)  {
+                newHeight = imageSize.y;
+                newWidth = newHeight * aspect;
+            }
+
+            // Rescale to the newly calculated fitting bounds
+            return Bitmap.createScaledBitmap(loadedImage, (int)newWidth, (int)newHeight, false);
         }
     }
 
