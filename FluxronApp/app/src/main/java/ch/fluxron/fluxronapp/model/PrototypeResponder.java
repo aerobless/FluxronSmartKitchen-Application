@@ -1,25 +1,9 @@
 package ch.fluxron.fluxronapp.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.FileStreamReady;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
-import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 

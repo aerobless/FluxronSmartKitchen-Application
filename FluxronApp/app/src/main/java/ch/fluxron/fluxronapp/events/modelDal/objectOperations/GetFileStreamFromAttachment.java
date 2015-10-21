@@ -1,22 +1,26 @@
 package ch.fluxron.fluxronapp.events.modelDal.objectOperations;
 
-import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import java.io.InputStream;
+
+import ch.fluxron.fluxronapp.events.base.ITypedCallback;
+import ch.fluxron.fluxronapp.events.base.SynchronousReplyEvent;
 
 /**
  * Requests the stream of an Object
  */
-public class GetFileStreamFromAttachment extends RequestResponseConnection {
+public class GetFileStreamFromAttachment extends SynchronousReplyEvent<IStreamProvider> {
     private String objectId;
     private String attachmentName;
 
     /**
      * Sets the object's id and the attachment name
-     * @param objectId
-     * @param objectName
+     * @param objectId Id of the object the file is attached to
+     * @param attachmentName Name of the attached file
      */
-    public GetFileStreamFromAttachment(String objectId, String objectName) {
+    public GetFileStreamFromAttachment(String objectId, String attachmentName, ITypedCallback<IStreamProvider> callback) {
+        super(callback);
         this.objectId = objectId;
-        this.attachmentName = objectName;
+        this.attachmentName = attachmentName;
     }
 
     /**

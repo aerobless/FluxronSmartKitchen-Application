@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +39,7 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
         this.provider.getUiEventBus().register(this);
 
         parent.setOnClickListener(this);
+
     }
 
     public void onEventMainThread(ImageLoaded msg){
@@ -46,12 +48,17 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
         }
     }
 
-    public void bind(Kitchen k){
+    public void bind(final Kitchen k){
         boundData = k;
         title.setText(k.getName());
         description.setText(k.getDescription());
 
-        loadImage(k);
+        parent.post(new Runnable() {
+            @Override
+            public void run() {
+                loadImage(k);
+            }
+        });
     }
 
     /**
@@ -59,6 +66,7 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
      */
     private void loadImage(Kitchen k) {
         LoadImageFromKitchenCommand command = new LoadImageFromKitchenCommand(k.getId(), "mainPicture");
+        command.setImageSize(new Point(img.getWidth(), img.getHeight()));
         imageRequestId = command.getConnectionId();
         provider.getUiEventBus().post(command);
     }

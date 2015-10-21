@@ -1,6 +1,6 @@
 package ch.fluxron.fluxronapp.events.modelUi.kitchenOperations;
 
-import android.util.Size;
+import android.graphics.Point;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 
@@ -10,6 +10,7 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 public class LoadImageFromKitchenCommand extends RequestResponseConnection{
     private String kitchenId;
     private String imageName;
+    private Point imageSize;
 
     /**
      * Sets the id and the image name to load
@@ -35,5 +36,20 @@ public class LoadImageFromKitchenCommand extends RequestResponseConnection{
      */
     public String getImageName() {
         return imageName;
+    }
+
+    /**
+     * Returns the requested maximum image size
+     * @return Maximum or null if not specified
+     */
+    public Point getImageSize() {
+        return imageSize;
+    }
+
+    /**
+     * Returns the requested maximum image size or null, if the full version should be loaded
+     */
+    public void setImageSize(Point imageSize) {
+        this.imageSize = imageSize;
     }
 }

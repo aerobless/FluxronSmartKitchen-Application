@@ -2,11 +2,14 @@ package ch.fluxron.fluxronapp.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
 
+import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.FileStreamReady;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
@@ -59,21 +62,70 @@ public class KitchenManager {
      * Triggered when an image should be loaded
      * @param msg Message containing the loading request
      */
-    public void onEventAsync(LoadImageFromKitchenCommand msg) {
-        GetFileStreamFromAttachment cmd = new GetFileStreamFromAttachment(msg.getKitchenId(), msg.getImageName());
-        cmd.setConnectionId(msg);
+    public void onEventAsync(final LoadImageFromKitchenCommand msg) {
+        GetFileStreamFromAttachment cmd = new GetFileStreamFromAttachment(msg.getKitchenId(), msg.getImageName(), new ITypedCallback<IStreamProvider>() {
+            @Override
+            public void call(IStreamProvider streamProvider) {
+                Bitmap bmp = getFittingBitmap(streamProvider, msg.getImageSize());
+                ImageLoaded event = new ImageLoaded(bmp);
+                event.setConnectionId(msg);
+                provider.getUiEventBus().post(event);
+            }
+        });
         provider.getDalEventBus().post(cmd);
     }
 
     /**
-     * Triggered when a file stream is ready to load an image resource
-     * @param msg Message containing the stream handle
+     * Loads a bitmap that fits inside the specified size. If the size is null, the bitmap will be
+     * loaded in its full size.
+     * @param stream Stream to load the bitmap from
+     * @param imageSize Size to fit the bitmap in (or null if no fitting is requested)
+     * @return Fitting bitmap
      */
-    public void onEventAsync(FileStreamReady msg){
-        Bitmap bmp = BitmapFactory.decodeStream(msg.getStream());
-        ImageLoaded event = new ImageLoaded(bmp);
-        event.setConnectionId(msg);
-        provider.getUiEventBus().post(event);
+    private Bitmap getFittingBitmap(IStreamProvider stream, Point imageSize) {
+        if (imageSize == null) {
+            return BitmapFactory.decodeStream(stream.openStream());
+        }
+        else {
+            // Check the dimensions of the image
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(stream.openStream(), null, options);
+
+            // Calculate the sample size for the requested size
+            options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, imageSize.x, imageSize.y);
+
+            // Decode with the new sample size
+            options.inJustDecodeBounds = false;
+
+            return BitmapFactory.decodeStream(stream.openStream(), new Rect(0,0,0,0), options);
+        }
+    }
+
+    /**
+     * Calculates the biggest sample size that makes sure the image uses minumum space while not
+     * getting smaller than requestedWidth and requestedHeight
+     * @param width Width of the image
+     * @param height Height of the image
+     * @param requestedWidth Minimum width that is requested
+     * @param requestedHeight Minimum height that is requested
+     * @return Sample size (power of two)
+     */
+    private int calculateSampleSize(int width, int height, int requestedWidth, int requestedHeight) {
+       int sampleSize = 1;
+
+        if (height > requestedHeight || width > requestedWidth) {
+             final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Next power of 2, height and width should be larger than the requested size
+            while ((halfHeight / sampleSize) > requestedHeight
+                    && (halfWidth / sampleSize) > requestedWidth) {
+                sampleSize *= 2;
+            }
+        }
+
+        return sampleSize;
     }
 
     /**

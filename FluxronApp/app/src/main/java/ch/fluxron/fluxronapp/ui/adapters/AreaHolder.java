@@ -1,7 +1,7 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
 import android.graphics.Bitmap;
-import android.os.Build;
+import android.graphics.Point;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -52,10 +52,14 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
      * Binds the kitchen area
      * @param k Area
      */
-    public void bind(KitchenArea k){
+    public void bind(final KitchenArea k){
         boundData = k;
-
-        loadImage(k);
+        parent.post(new Runnable() {
+            @Override
+            public void run() {
+                loadImage(k);
+            }
+        });
     }
 
     /**
@@ -63,6 +67,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
      */
     private void loadImage(KitchenArea k) {
         LoadImageFromKitchenCommand command = new LoadImageFromKitchenCommand(k.getKitchenId(), k.getImageName());
+        command.setImageSize(new Point(img.getWidth(), img.getHeight()));
         imageRequestId = command.getConnectionId();
         provider.getUiEventBus().post(command);
     }

@@ -13,6 +13,7 @@ import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -20,8 +21,8 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.FileStreamReady;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
@@ -75,12 +76,15 @@ public class LocalDatabase {
      * Triggered when prompted to provide an attachment's stream
      * @param cmd Command message
      */
-    public void onEventAsync(GetFileStreamFromAttachment cmd) {
-        Document doc = database.getExistingDocument(cmd.getObjectId());
+    public void onEventAsync(final GetFileStreamFromAttachment cmd) {
+        final Document doc = database.getExistingDocument(cmd.getObjectId());
         if(doc != null) {
-            FileStreamReady streamReady = new FileStreamReady(documents.getStreamFromAttachment(doc, cmd.getAttachmentName()));
-            streamReady.setConnectionId(cmd);
-            provider.getDalEventBus().post(streamReady);
+            cmd.notifyCompletion(new IStreamProvider() {
+                @Override
+                public InputStream openStream() {
+                    return documents.getStreamFromAttachment(doc, cmd.getAttachmentName());
+                }
+            });
         }
     }
 
