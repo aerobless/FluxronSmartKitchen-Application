@@ -21,6 +21,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitch
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
+import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 
 /**
  * Responds to a message. FOR PROTOTYPE USAGE ONLY!!!
@@ -72,6 +73,10 @@ public class PrototypeResponder {
     public void onEventAsync(ObjectLoaded msg) {
         if (msg.getData() instanceof Kitchen) {
             KitchenLoaded event = new KitchenLoaded((Kitchen) msg.getData());
+
+            for (int i = 1; i <= 3; i++) {
+                event.getKitchen().getAreaList().add(new KitchenArea("mainPicture", event.getKitchen().getId(), i));
+            }
             event.setConnectionId(msg);
             provider.getUiEventBus().post(event);
         }

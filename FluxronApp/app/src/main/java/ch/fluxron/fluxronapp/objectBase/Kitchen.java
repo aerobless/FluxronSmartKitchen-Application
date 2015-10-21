@@ -2,6 +2,9 @@ package ch.fluxron.fluxronapp.objectBase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A kitchen.
  */
@@ -10,15 +13,18 @@ public class Kitchen {
     @JsonProperty("_id")
     private String id;
     private String description;
+    @JsonProperty("areas")
+    private List<KitchenArea> areas;
 
     /**
      * Default empty constructor used for deserialization
      */
     public Kitchen() {
-
+        areas = new ArrayList<>();
     }
 
     public Kitchen(String name) {
+        this();
         this.id = null;
         this.name = name;
     }
@@ -46,5 +52,9 @@ public class Kitchen {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<KitchenArea> getAreaList(){
+        return areas;
     }
 }
