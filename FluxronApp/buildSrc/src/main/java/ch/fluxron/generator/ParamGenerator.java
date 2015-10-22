@@ -13,6 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,8 +82,9 @@ public class ParamGenerator {
         paramManager.append("}\n");
 
         try {
+            Path pathToFile = Paths.get(outputPath);
+            Files.createDirectories(pathToFile.getParent());
             FileWriter fw = new FileWriter(outputPath);
-            System.out.println("Output-Path for generated classes: "+outputPath);
             BufferedWriter writer = new BufferedWriter(fw);
             writer.write(paramManager.toString());
             writer.close();
