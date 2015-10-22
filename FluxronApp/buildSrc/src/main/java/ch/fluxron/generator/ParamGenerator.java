@@ -5,6 +5,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.awt.SystemTray;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -35,9 +36,9 @@ public class ParamGenerator {
         System.out.println("Generating classes..");
         ParamGenerator generator = new ParamGenerator();
         Map<String, DeviceParameter> paramMap = generator.loadParameters(args[0]);
-        for(DeviceParameter p:paramMap.values()){
+        /*for(DeviceParameter p:paramMap.values()){
             System.out.println(p.toString());
-        }
+        }*/
         generator.generateClass(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
     }
 
@@ -76,10 +77,10 @@ public class ParamGenerator {
                 "    }\n");
 
         paramManager.append("}\n");
-        System.out.println(paramManager.toString());
 
         try {
             FileWriter fw = new FileWriter(outputPath);
+            System.out.println("Output-Path for generated classes: "+outputPath);
             BufferedWriter writer = new BufferedWriter(fw);
             writer.write(paramManager.toString());
             writer.close();
