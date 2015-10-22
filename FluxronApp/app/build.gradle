@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+task generateParams (type: JavaExec) {
+    println rootDir
+    classpath files("${rootDir}/buildSrc/build/classes/main/")
+    main 'ch.fluxron.generator.ParamGenerator'
+    args "${rootDir}"
+}
+
+preBuild.dependsOn generateParams
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"

@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.data;
+package ch.fluxron.generator;
 
 /**
  * .

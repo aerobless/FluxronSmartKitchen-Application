@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.data.generated.GParamManager;
+
 /**
  * Encodes & decodes CANopen messages.
  */
@@ -31,8 +33,9 @@ public class MessageFactory {
     public final static byte CCD_READ_RESPONSE_4B =  (byte) 0x43;
     public final static byte CCD_WRITE_RESPONSE =  (byte) 0x60;
 
-    public MessageFactory(Map<String, DeviceParameter> parameterMap) {
-        this.parameterMap = parameterMap;
+    public MessageFactory() {
+        GParamManager paramManager = new GParamManager();
+        this.parameterMap = paramManager.getParamMap();
     }
 
     public byte[] makeReadRequest(String paramID){

@@ -67,10 +67,11 @@ public class Bluetooth {
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
-    public Bluetooth(IEventBusProvider provider, Context context, Map<String, DeviceParameter> parameterList) {
+    public Bluetooth(IEventBusProvider provider, Context context) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
-        messageFactory = new MessageFactory(parameterList);
+
+        messageFactory = new MessageFactory();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
     }

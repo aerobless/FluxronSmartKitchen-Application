@@ -15,7 +15,7 @@ import ch.fluxron.fluxronapp.data.MessageFactory;
 public class MessageFactoryTest extends TestCase {
 
     public void testLowChecksum(){
-        MessageFactory messageFactory = new MessageFactory(null);
+        MessageFactory messageFactory = new MessageFactory();
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA, //Start sequence
                 (byte) 0x40, (byte) 0x18, (byte) 0x10, (byte) 0x04,
@@ -31,7 +31,7 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testHighChecksum(){
-        MessageFactory messageFactory = new MessageFactory(null);
+        MessageFactory messageFactory = new MessageFactory();
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA, //Start sequence
                 (byte) 0x40, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -47,7 +47,7 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testValidateChecksumGreater12B(){
-        MessageFactory messageFactory = new MessageFactory(null);
+        MessageFactory messageFactory = new MessageFactory();
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA, //Start sequence
                 (byte) 0x40, (byte) 0x08, (byte) 0x10, (byte) 0x00, //Command, Index + Subindex
@@ -58,12 +58,10 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testGenerateFullMessage(){
-        Map<String, DeviceParameter> parameterMap = new HashMap<String, DeviceParameter>();
         DeviceParameter dp = new DeviceParameter();
         dp.setIndex(new byte[]{(byte) 0x30, (byte) 0x01});
         dp.setSubindex((byte) 0x01);
-        parameterMap.put("3001sub1", dp);
-        MessageFactory messageFactory = new MessageFactory(parameterMap);
+        MessageFactory messageFactory = new MessageFactory();
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA,
                 (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
@@ -76,7 +74,7 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testChecksumValid(){
-        MessageFactory messageFactory = new MessageFactory(null);
+        MessageFactory messageFactory = new MessageFactory();
         byte[] someMessage = new byte[]{
                 (byte) 0xAA, (byte) 0xAA,
                 (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
@@ -86,7 +84,7 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testChecksumInvalid(){
-        MessageFactory messageFactory = new MessageFactory(null);
+        MessageFactory messageFactory = new MessageFactory();
         byte[] someMessage = new byte[]{
                 (byte) 0xAA, (byte) 0xAA,
                 (byte) 0x40, (byte) 0x01, (byte) 0x30, (byte) 0x01,
