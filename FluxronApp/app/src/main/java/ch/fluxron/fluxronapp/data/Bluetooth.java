@@ -16,7 +16,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,14 +46,20 @@ public class Bluetooth {
         setupDiscovery(context);
     }
 
+    /**
+     * Sets up a BroadcastReceiver to listen to BluetoothDevice.ACTION_FOUND.
+     * When a device is found a message is sent to the DAL-BL event bus.
+     * @param context
+     */
     private void setupDiscovery(Context context){
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    //TODO: check if it's really a Fluxron device
-                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
+                    if(isFluxronDevice(device)){
+                        provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
+                    }
                 }
             }
         };
@@ -62,15 +67,34 @@ public class Bluetooth {
         context.registerReceiver(receiver, ifilter);
     }
 
+    /**
+     * Light filter to prevent non-fluxron devices from getting listed.
+     * @param device
+     * @return true if device name starts with FLX, DGL, HC-06 or HM-Soft, which identifies it as a potential Fluxron Device.
+     */
+    public boolean isFluxronDevice(BluetoothDevice device){
+        if(device.getName().matches("(FLX|DGL|HC-06|HM-Soft).*")){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Starts/Stops the discovery of new devices via bluetooth.
+     * @param cmd
+     */
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
         if(cmd.isEnabled()){
-            //discoverPairedDevices();
             startDeviceDiscovery();
         } else {
             stopDeviceDiscovery();
         }
     }
 
+    /**
+     * Connects to a bluetooth device and reads the field specified in the command.
+     * @param cmd
+     */
     public void onEventAsync(BluetoothReadRequest cmd) {
         if(bluetoothEnabled()){
             stopDeviceDiscovery();
@@ -96,6 +120,10 @@ public class Bluetooth {
         }
     }
 
+    /**
+     * Handles (verifies, interprets) messages received from BTConnectionThread and sends them on to the business layer.
+     * @param msg
+     */
     public void onEventAsync(BluetoothMessageReceived msg) {
         Log.d(TAG, "Message from " + msg.getAddress());
         byte[] data = msg.getData();
@@ -135,6 +163,8 @@ public class Bluetooth {
      * Used to retrive data from Bluetooth messages that are longer then 12Bytes (>4Byte Data).
      * These messages do not follow the CANopen specification. Instead Field 6 tells the
      * additional length after then normal CANopen message (12B).
+     * @param input
+     * @return byte[] Array containing only the data part of the input-Array.
      */
     private byte[] retriveBigData(byte[] input){
         byte [] subArray = Arrays.copyOfRange(input, 9, input.length-3);
@@ -144,6 +174,11 @@ public class Bluetooth {
         return subArray;
     }
 
+    /**
+     * Decodes little endian byte[] arrays to int values.
+     * @param input
+     * @return decoded Int value of the input
+     */
     private int decodeByteArray(byte[] input){
         ByteBuffer buffer = ByteBuffer.wrap(input);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
