@@ -5,7 +5,8 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.Map;
 
-import ch.fluxron.fluxronapp.data.generated.GParamManager;
+import ch.fluxron.fluxronapp.data.generated.DeviceParameter;
+import ch.fluxron.fluxronapp.data.generated.ParamManager;
 
 /**
  * Encodes & decodes CANopen messages.
@@ -34,7 +35,7 @@ public class MessageFactory {
     public final static byte CCD_WRITE_RESPONSE =  (byte) 0x60;
 
     public MessageFactory() {
-        GParamManager paramManager = new GParamManager();
+        ParamManager paramManager = new ParamManager();
         this.parameterMap = paramManager.getParamMap();
     }
 

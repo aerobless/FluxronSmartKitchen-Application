@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 task generateParams (type: JavaExec) {
-    println rootDir
     classpath files("${rootDir}/buildSrc/build/classes/main/")
     main 'ch.fluxron.generator.ParamGenerator'
     args "${rootDir}"

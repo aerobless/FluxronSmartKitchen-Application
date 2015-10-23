@@ -5,10 +5,10 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.awt.SystemTray;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import javax.xml.xpath.XPathFactory;
  */
 public class ParamGenerator {
     final static String PACKAGE_NAME = "ch.fluxron.fluxronapp.data";
-    final static String CLASS_NAME = "GParamManager";
+    final static String CLASS_NAME = "ParamManager";
 
     public static void main(String[] args){
         System.out.println("Generating classes..");
@@ -42,17 +42,46 @@ public class ParamGenerator {
         /*for(DeviceParameter p:paramMap.values()){
             System.out.println(p.toString());
         }*/
-        generator.generateClass(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
+        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
+        generator.generateDeviceParameter(args[0]);
     }
 
-    private void generateClass(String outputPath, Map<String, DeviceParameter> paramMap){
+    private void generateDeviceParameter(String rootPath){
+        Path srcLocation = Paths.get(rootPath+"/buildSrc/src/main/java/ch/fluxron/generator/DeviceParameter.java");
+        Path dstLocation = Paths.get(rootPath+"/app/src/main/java/ch/fluxron/fluxronapp/data/generated/DeviceParameter.java");
+
+        try{
+            Files.createDirectories(dstLocation.getParent());
+            BufferedReader br = new BufferedReader(new FileReader(srcLocation.toFile()));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(dstLocation.toFile()));
+
+            String line;
+            boolean firstline = true;
+            while((line = br.readLine()) != null)
+            {
+                if(firstline) {
+                    bw.write("package ch.fluxron.fluxronapp.data.generated;");
+                    firstline = false;
+                } else {
+                    bw.write(line);
+                    bw.write("\n");
+                }
+            }
+            br.close();
+            bw.close();
+        }
+        catch(Exception e){
+            System.out.println("Exception caught : " + e);
+        }
+    }
+
+    private void generateParameterManager(String outputPath, Map<String, DeviceParameter> paramMap){
         StringBuilder paramManager = new StringBuilder();
 
         paramManager.append("package ch.fluxron.fluxronapp.data.generated;\n\n");
         //Imports
         paramManager.append("import java.util.Map;\n");
         paramManager.append("import java.util.HashMap;\n");
-        paramManager.append("import ch.fluxron.fluxronapp.data.DeviceParameter;\n");
         paramManager.append("\n");
 
         //Class
@@ -138,56 +167,5 @@ public class ParamGenerator {
             e.printStackTrace();
         }
         return parameterList;
-    }
-
-    public void loadOD(Document d){
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = null;
-        try {
-            builder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-
-        Document doc = d;
-        XPathFactory xPathfactory = XPathFactory.newInstance();
-        XPath xpath = xPathfactory.newXPath();
-        try {
-            XPathExpression expr = xpath.compile("/PyObject/attr");
-            NodeList nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-            printNodeList(nl, "");
-
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void printNodeList(NodeList nl, String space) {
-        for(int i=0; i<nl.getLength(); i++){
-            Node n = nl.item(i);
-            printNode(space, n);
-            if(n.getAttributes() != null) {
-                printAttributes(n.getAttributes(), space + "++");
-            }
-            if(n.getChildNodes() != null){
-                printNodeList(n.getChildNodes(), space + "--");
-            }
-        }
-    }
-
-    private void printNode(String space, Node n) {
-        System.out.println(space + "Name: " + n.getNodeName()
-                + "NodeType: " + n.getNodeType()
-                + "Value: " + n.getNodeValue()
-                +"TextContent: " + n.getTextContent());
-    }
-
-    private void printAttributes(NamedNodeMap nmap, String space) {
-        for (int i = 0; i < nmap.getLength(); i++) {
-            Node n = nmap.item(i);
-            System.out.println("Attribute " + i + ": " + n.getNodeName() + " " + n.getTextContent());
-            //printNode(space, n);
-        }
     }
 }

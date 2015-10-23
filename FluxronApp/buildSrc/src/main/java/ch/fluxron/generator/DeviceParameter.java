@@ -1,7 +1,10 @@
 package ch.fluxron.generator;
 
 /**
- * .
+ * DeviceParameter contains information such as index and subindex of a specific parameter.
+ *
+ * WARNING: This class is specified in buildSrc/java/ch.fluxron.generator.
+ * The version in app/java/ch.fluxron.fluxronapp/data/generated is overwritten on build.
  */
 public class DeviceParameter {
     private String name;

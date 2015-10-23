@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.Bluetooth;
-import ch.fluxron.fluxronapp.data.DeviceParameter;
 import ch.fluxron.fluxronapp.data.MessageFactory;
 
 /**
@@ -58,9 +57,6 @@ public class MessageFactoryTest extends TestCase {
     }
 
     public void testGenerateFullMessage(){
-        DeviceParameter dp = new DeviceParameter();
-        dp.setIndex(new byte[]{(byte) 0x30, (byte) 0x01});
-        dp.setSubindex((byte) 0x01);
         MessageFactory messageFactory = new MessageFactory();
         byte[] expectation = new byte[]{
                 (byte) 0xAA, (byte) 0xAA,
