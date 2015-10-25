@@ -6,6 +6,7 @@
 
     <!-- Activity titles -->
     <string name="activity_kitchen_overview">Kitchen overview</string>
+    <string name="activity_create_kitchen">Create a kitchen</string>
     <string name="activity_find_a_kitchen">Find a kitchen</string>
 
     <!-- Help texts -->

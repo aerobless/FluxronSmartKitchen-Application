@@ -22,9 +22,10 @@
 
             <ImageButton
                 style="@style/FluxronImageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_test_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_arrow_back"
+                android:scaleType="fitCenter"
                 android:onClick="onBackButtonClicked"
                 android:layout_gravity="start"/>
 
@@ -52,7 +53,8 @@
             android:text="Edit a device"
             android:id="@+id/buttonEditDevice"
             android:onClick="onEditDeviceClicked"
-            android:layout_gravity="end" />
+            android:layout_gravity="end"
+            android:visibility="gone"/>
 
     </android.support.design.widget.AppBarLayout>
 

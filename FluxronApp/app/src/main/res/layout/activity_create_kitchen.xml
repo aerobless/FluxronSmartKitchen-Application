@@ -8,7 +8,7 @@
     >
 
     <android.support.design.widget.AppBarLayout
-        android:layout_height="192dp"
+        android:layout_height="105dp"
         android:layout_width="match_parent"
         style="@style/FluxronAppBar"
         >
@@ -17,7 +17,8 @@
                 android:id="@+id/toolbar_create_kitchen"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@android:color/transparent">
+                android:background="@android:color/transparent"
+                android:visibility="gone">
                 <ImageButton
                     style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
@@ -33,11 +34,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="9dp"
+            android:layout_marginRight="9dp"
+            android:layout_marginBottom="9dp"
+            android:layout_marginTop="35dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="create a kitchen"
+                android:text="@string/activity_create_kitchen"
                 style="@style/FluxronTitleTextView"/>
         </LinearLayout>
 
