@@ -42,7 +42,7 @@
                 style="@style/FluxronImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_test_icon"
+                android:src="@drawable/ic_delete"
                 android:onClick="onDeleteButtonClicked"
                 android:layout_gravity="end"/>
         </android.support.v7.widget.Toolbar>
@@ -64,8 +64,7 @@
             <!-- TODO: Replace with Fragment -->
             <View
                 android:layout_width="350dp"
-                android:layout_height="350dp"
-                android:background="#11000000"/>
+                android:layout_height="350dp"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
