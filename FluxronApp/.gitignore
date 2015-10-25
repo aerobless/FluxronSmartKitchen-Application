@@ -88,3 +88,4 @@ app/src/main/java/ch/fluxron/fluxronapp/data/generated/
 
 # Memory profiler dumps
 .hprof
+captures/
