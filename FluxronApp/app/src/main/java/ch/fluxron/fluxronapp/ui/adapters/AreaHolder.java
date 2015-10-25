@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -23,6 +24,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
     private IEventBusProvider provider;
     private String imageRequestId;
     private KitchenArea boundData;
+    private Bitmap image;
 
     public AreaHolder(View itemView, IEventBusProvider provider) {
         super(itemView);
@@ -30,7 +32,6 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
         this.parent = itemView;
         this.img = (ImageView) itemView.findViewById(R.id.areaImage);
         this.provider = provider;
-        this.provider.getUiEventBus().register(this);
         this.card = (CardView) itemView.findViewById(R.id.areaCard);
 
         parent.setOnClickListener(this);
@@ -39,7 +40,12 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     public void onEventMainThread(ImageLoaded msg){
         if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
-            img.setImageBitmap(msg.getBmp());
+            if (image !=null) image.recycle();
+            image = msg.getBmp();
+            img.setImageBitmap(image);
+
+            // Image was loaded, no need to use the event bus anymore
+            this.provider.getUiEventBus().unregister(this);
         }
     }
 
@@ -64,6 +70,9 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
         LoadImageFromKitchenCommand command = new LoadImageFromKitchenCommand(k.getKitchenId(), k.getImageName());
         command.setImageSize(new Point(img.getWidth(), img.getHeight()));
         imageRequestId = command.getConnectionId();
+
+        // only register for messages, when we actually expect them
+        this.provider.getUiEventBus().register(this);
         provider.getUiEventBus().post(command);
     }
 

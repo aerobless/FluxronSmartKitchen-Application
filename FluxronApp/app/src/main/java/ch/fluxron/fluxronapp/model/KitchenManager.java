@@ -114,7 +114,12 @@ public class KitchenManager {
             }
 
             // Rescale to the newly calculated fitting bounds
-            return Bitmap.createScaledBitmap(loadedImage, (int)newWidth, (int)newHeight, false);
+            Bitmap result = Bitmap.createScaledBitmap(loadedImage, (int)newWidth, (int)newHeight, false);
+
+            // Free the space used by the loadedImage
+            loadedImage.recycle();
+
+            return result;
         }
     }
 

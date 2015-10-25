@@ -85,3 +85,6 @@ obj/
 
 #Generated classes
 app/src/main/java/ch/fluxron/fluxronapp/data/generated/
+
+# Memory profiler dumps
+.hprof
