@@ -45,7 +45,9 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
             img.setImageBitmap(image);
 
             // Image was loaded, no need to use the event bus anymore
-            this.provider.getUiEventBus().unregister(this);
+            if (this.provider.getUiEventBus().isRegistered(this)) {
+                this.provider.getUiEventBus().unregister(this);
+            }
         }
     }
 
@@ -72,7 +74,9 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
         imageRequestId = command.getConnectionId();
 
         // only register for messages, when we actually expect them
-        this.provider.getUiEventBus().register(this);
+        if (!this.provider.getUiEventBus().isRegistered(this)) {
+            this.provider.getUiEventBus().register(this);
+        }
         provider.getUiEventBus().post(command);
     }
 
