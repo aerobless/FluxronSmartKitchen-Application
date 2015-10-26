@@ -19,15 +19,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 /**
  * Generate a map of parameters based on the .eds file.
  */
@@ -44,6 +35,7 @@ public class ParamGenerator {
         }*/
         generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
         generator.generateDeviceParameter(args[0]);
+        System.out.println("SIZE"+paramMap.size());
     }
 
     private void generateDeviceParameter(String rootPath){

@@ -2,11 +2,8 @@ package ch.fluxron.fluxronapp;
 import junit.framework.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.MessageFactory;
+import ch.fluxron.fluxronapp.data.generated.ParamManager;
 
 /**
  * Unit tests for the bluetooth class.
@@ -64,7 +61,7 @@ public class MessageFactoryTest extends TestCase {
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x72, (byte) 0x00 };
         messageFactory.printUnsignedByteArray(expectation);
-        byte[] result = messageFactory.makeReadRequest(Bluetooth.F_KNOB_A_DIGITAL);
+        byte[] result = messageFactory.makeReadRequest(ParamManager.F_KNOB_A_DIGITAL3001SUB1);
         messageFactory.printUnsignedByteArray(result);
         assertTrue(Arrays.equals(expectation, result));
     }

@@ -18,7 +18,6 @@ import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
 public class DeviceManager {
     private IEventBusProvider provider;
     private Map<String, Device> deviceMap;
-    ParamManager paramManager = new ParamManager();
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -34,7 +33,7 @@ public class DeviceManager {
 
     public void onEventAsync(BluetoothTestCommand msg){
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-        String cmd = paramManager.F_MANUFACTURER_DEVICE_NAME1008;
+        String cmd = ParamManager.F_SERIAL_NUMBER1018SUB4;
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
     }
