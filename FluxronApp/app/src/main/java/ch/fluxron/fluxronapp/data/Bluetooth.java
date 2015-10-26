@@ -73,7 +73,7 @@ public class Bluetooth {
      * @return true if device name starts with FLX, DGL, HC-06 or HM-Soft, which identifies it as a potential Fluxron Device.
      */
     public boolean isFluxronDevice(BluetoothDevice device){
-        if(device.getName().matches("(FLX|DGL|HC-06|HM-Soft).*")){
+        if(device.getName().matches("(FLX|DGL|HC-06|HMSoft).*")){
             return true;
         }
         return false;
@@ -152,7 +152,9 @@ public class Bluetooth {
                 //messageFactory.printUnsignedByteArray(dataPayload);
                 //Log.d(TAG, "INT "+decodeByteArray(dataPayload));
                 //TODO: nicer method to generate/lookup field name
-                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), data[4]+data[3]+"sub"+data[5], decodeByteArray(dataPayload)));
+
+                String field = Integer.toHexString(0xFF & data[4])+Integer.toHexString(0xFF & data[3])+"sub"+Integer.toHexString(0xFF & data[5]);
+                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), messageFactory.getFieldname(field), decodeByteArray(dataPayload)));
             }
         } else {
             Log.d(TAG, "Invalid checksum!");
@@ -167,7 +169,7 @@ public class Bluetooth {
      * @return byte[] Array containing only the data part of the input-Array.
      */
     private byte[] retriveBigData(byte[] input){
-        byte [] subArray = Arrays.copyOfRange(input, 9, input.length-3);
+        byte [] subArray = Arrays.copyOfRange(input, 9, input.length - 3);
         if(subArray.length != input[6]){
             Log.d(TAG, "Length of extracted data doesn't match specified length!");
         }
@@ -189,10 +191,10 @@ public class Bluetooth {
         Log.d(TAG, "Trying to connect to " + btSocket.getRemoteDevice().getAddress());
         try {
             btSocket.connect();
-            Log.d(TAG, "Connection to "+btSocket.getRemoteDevice().getAddress()+" ok");
+            Log.d(TAG, "Connection to " + btSocket.getRemoteDevice().getAddress() + " established");
             return true;
         } catch (IOException e) {
-            Log.d(TAG, "Connection to "+btSocket.getRemoteDevice().getAddress()+" failed.");
+            Log.d(TAG, "Connection to " + btSocket.getRemoteDevice().getAddress() + " failed.");
             try {
                 btSocket.close();
             } catch (IOException e2) {
@@ -225,8 +227,10 @@ public class Bluetooth {
     }
 
     private void startDeviceDiscovery(){
-        stopDeviceDiscovery();
-        btAdapter.startDiscovery();
+        if(bluetoothEnabled()){
+            stopDeviceDiscovery();
+            btAdapter.startDiscovery();
+        }
     }
 
     private void stopDeviceDiscovery(){
@@ -253,7 +257,6 @@ public class Bluetooth {
             Log.d(TAG, "Bluetooth not supported (Are you running on emulator?)");
         } else {
             if (btAdapter.isEnabled()) {
-                Log.d(TAG, "Bluetooth is on");
                 return true;
             } else {
                 //TODO: Prompt user to turn on Bluetooth

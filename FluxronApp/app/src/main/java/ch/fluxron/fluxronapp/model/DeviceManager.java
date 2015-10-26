@@ -32,10 +32,27 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
+        Log.d("FLUXRON",                 "----------------------");
+        Log.println(Log.WARN, "FLUXRON", "DEVICE DISCOVERY DEMO:");
+        Log.d("FLUXRON",                 "----------------------");
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+        try {
+            Thread.sleep(5*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+        try {
+            Thread.sleep(5*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.d("FLUXRON",                 "--------------------------");
+        Log.println(Log.WARN, "FLUXRON", "DEVICE COMMUNICATION DEMO:");
+        Log.d("FLUXRON",                 "--------------------------");
         String cmd = ParamManager.F_SERIAL_NUMBER1018SUB4;
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
+        //provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
     }
 
     public void onEventAsync(BluetoothDeviceChanged msg){
@@ -45,7 +62,7 @@ public class DeviceManager {
     public void onEventAsync(BluetoothDeviceFound msg){
         if(deviceMap.get(msg.getAddress())==null){
             deviceMap.put(msg.getAddress(), new Device(msg.getName(), msg.getAddress()));
-            Log.d("FLUXRON", "New Device added: " + msg.getName() + " " + msg.getAddress());
+            Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
         }
     }
 }
