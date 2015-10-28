@@ -57,26 +57,12 @@ public class Bluetooth {
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if(isFluxronDevice(device)){
-                        provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
-                    }
+                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
                 }
             }
         };
         IntentFilter ifilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         context.registerReceiver(receiver, ifilter);
-    }
-
-    /**
-     * Light filter to prevent non-fluxron devices from getting listed.
-     * @param device
-     * @return true if device name starts with FLX, DGL, HC-06 or HM-Soft, which identifies it as a potential Fluxron Device.
-     */
-    public boolean isFluxronDevice(BluetoothDevice device){
-        if(device.getName().matches("(FLX|DGL|HC-06|HMSoft).*")){
-            return true;
-        }
-        return false;
     }
 
     /**

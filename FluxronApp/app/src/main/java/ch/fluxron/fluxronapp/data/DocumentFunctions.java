@@ -45,9 +45,19 @@ public class DocumentFunctions {
      * @param doc Document
      * @param properties New or updatable properties
      */
-    public void tryPutProperties(Document doc, Map<String, Object> properties){
+    public void tryPutProperties(Document doc, final Map<String, Object> properties){
         try {
-            doc.putProperties(properties);
+            doc.update(new Document.DocumentUpdater() {
+                @Override
+                public boolean update(UnsavedRevision newRevision) {
+                    Map<String,Object> props = newRevision.getUserProperties();
+                    for (Map.Entry<String, Object> property : properties.entrySet()) {
+                        props.put(property.getKey(), property.getValue());
+                    }
+                    newRevision.setUserProperties(props);
+                    return true;
+                }
+            });
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }

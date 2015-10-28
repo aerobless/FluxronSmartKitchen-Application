@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.objectBase;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class Kitchen {
         this.description = description;
     }
 
+    @JsonIgnore
     public List<KitchenArea> getAreaList(){
         return areas;
     }
