@@ -22,7 +22,7 @@ public class BTConnectionThread extends Thread{
     private final BluetoothDevice remoteDevice;
     private final IEventBusProvider provider;
     private final BluetoothSocket socket;
-    public AtomicBoolean keepRunning = new AtomicBoolean(true);
+    private AtomicBoolean keepRunning = new AtomicBoolean(true);
 
     public BTConnectionThread(BluetoothSocket btsocket, IEventBusProvider provider) {
         remoteDevice = btsocket.getRemoteDevice();
@@ -72,12 +72,15 @@ public class BTConnectionThread extends Thread{
         }
     }
 
-    public void write(byte[] message) {
+    public void write(byte[] message) throws IOException {
         Log.d("FLUXRON", "Sending message");
-        try {
-            mmOutStream.write(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mmOutStream.write(message);
+    }
+
+    /**
+     * End this connection.
+     */
+    public void end(){
+        keepRunning.set(false);
     }
 }

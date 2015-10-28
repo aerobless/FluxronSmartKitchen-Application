@@ -36,8 +36,8 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
-    private Map<String, BTConnectionThread> connectionMap;
-    private Queue<String> connectionQueue;
+    private final Map<String, BTConnectionThread> connectionMap;
+    private final Queue<String> connectionQueue;
 
     private static final String TAG = "FLUXRON";
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
@@ -96,13 +96,20 @@ public class Bluetooth {
 
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
 
-            BTConnectionThread connectionThread = getConnection(device);
+            BTConnectionThread connectionThread = getConnection(device, false);
 
             byte[] message = messageFactory.makeReadRequest(cmd.getField());
             messageFactory.printUnsignedByteArray(message);
-            connectionThread.write(message);
 
-            //setConnectionTimeout(connectionThread, READ_TIMEOUT_IN_SECONDS);
+            try {
+                connectionThread.write(message);
+            } catch (IOException e) {
+                if(e.getMessage().equals("Broken pipe")){
+                    Log.d(TAG, "Broken pipe");
+                }else {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -111,15 +118,29 @@ public class Bluetooth {
      * @param device
      * @return BTConnectionThread for the specified device
      */
-    private BTConnectionThread getConnection(BluetoothDevice device){
+    private BTConnectionThread getConnection(BluetoothDevice device, boolean clean){
         BTConnectionThread connectionThread = connectionMap.get(device.getAddress());
-        if(connectionThread == null){
+        if(connectionThread == null || clean){
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
                 if(connectSocket(btSocket)){
                     connectionThread = new BTConnectionThread(btSocket, provider);
                     connectionThread.start();
-                    synchronized (connectionMap){
+
+                    String deadConnection = null;
+                    synchronized (connectionQueue){
+                        connectionQueue.add(device.getAddress());
+                        if(connectionQueue.size() > MAX_CONCURRENT_CONNECTIONS){
+                            Log.d(TAG, "Killing a connection to make room for a new one");
+                            deadConnection = connectionQueue.poll();
+                        }
+                    }
+                    synchronized (connectionMap) {
+                        if (deadConnection != null) {
+                            connectionMap.get(deadConnection).end();
+                            connectionMap.remove(deadConnection);
+                            connectionMap.put(device.getAddress(), connectionThread);
+                        }
                         connectionMap.put(device.getAddress(), connectionThread);
                     }
                     return connectionThread;
@@ -217,16 +238,6 @@ public class Bluetooth {
             }
         }
         return false;
-    }
-
-    //Temporary setConnectionTimeout to keep reading thread from locking up the bluetooth adapter.
-    private void setConnectionTimeout(BTConnectionThread connectionThread, int time) {
-        try {
-            Thread.sleep(time*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        connectionThread.keepRunning.set(false);
     }
 
     private void discoverPairedDevices(){
