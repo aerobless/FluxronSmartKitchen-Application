@@ -20,6 +20,7 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.AreaListAdapter;
 import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
 import ch.fluxron.fluxronapp.ui.fragments.AreaDetailFragment;
+import ch.fluxron.fluxronapp.ui.fragments.AreaListFragment;
 
 /**
  * Activity to choose and add kitchen areas. Also contains a display of the respective area with
@@ -31,7 +32,6 @@ public class KitchenActivity extends FluxronBaseActivity {
     private static final String EXTRA_SAVED_FILEPATH = "path";
 
     private String kitchenId;
-    private AreaListAdapter listAdapter;
     private Uri tempFileName;
 
     /**
@@ -45,27 +45,15 @@ public class KitchenActivity extends FluxronBaseActivity {
 
         kitchenId = getIntent().getExtras().getString(PARAM_KITCHEN_ID);
 
-        // Set the list's properties
-        RecyclerView kitchenListView = (RecyclerView) findViewById(R.id.areaList);
+        // Initialize the area list fragment
+        Bundle par = new Bundle();
+        par.putString(AreaListFragment.KITCHEN_ID, kitchenId);
 
-        // Layout for the list
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        kitchenListView.setLayoutManager(layoutManager);
-
-        // Item decoration for the list
-        SpacesItemDecoration deco = new SpacesItemDecoration(10);
-        kitchenListView.addItemDecoration(deco);
-
-        // List adapter
-        listAdapter = new AreaListAdapter(this.busProvider);
-        kitchenListView.setAdapter(listAdapter);
-
-        // Initialize the area fragment
-        AreaDetailFragment fragment = new AreaDetailFragment();
+        AreaListFragment fragment = new AreaListFragment();
+        fragment.setArguments(par);
         fragment.setEventBusProvider(this.busProvider);
 
-        // Fade in the fragment for area
+        // Set the fragment for the area list
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.kitchenArea, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -134,9 +122,10 @@ public class KitchenActivity extends FluxronBaseActivity {
         // fill the list adapter with the data when the kitchen is loaded
         if (msg.getKitchen().getId().equals(kitchenId)) {
             ((TextView) findViewById(R.id.kitchenNameTitle)).setText(msg.getKitchen().getName());
+            AreaListFragment list = (AreaListFragment)getFragmentManager().findFragmentById(R.id.kitchenArea);
 
             for (KitchenArea a : msg.getKitchen().getAreaList()) {
-                listAdapter.addOrUpdate(a);
+                list.getListAdapter().addOrUpdate(a);
             }
         }
     }
