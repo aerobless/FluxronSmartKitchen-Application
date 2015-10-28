@@ -1,12 +1,12 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,8 +17,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
-import ch.fluxron.fluxronapp.ui.adapters.AreaListAdapter;
-import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
+import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
 import ch.fluxron.fluxronapp.ui.fragments.AreaDetailFragment;
 import ch.fluxron.fluxronapp.ui.fragments.AreaListFragment;
 
@@ -26,7 +25,7 @@ import ch.fluxron.fluxronapp.ui.fragments.AreaListFragment;
  * Activity to choose and add kitchen areas. Also contains a display of the respective area with
  * all its devices.
  */
-public class KitchenActivity extends FluxronBaseActivity {
+public class KitchenActivity extends FluxronBaseActivity implements IAreaClickedListener {
     public static final String PARAM_KITCHEN_ID = "KITCHEN_ID";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String EXTRA_SAVED_FILEPATH = "path";
@@ -52,12 +51,12 @@ public class KitchenActivity extends FluxronBaseActivity {
         AreaListFragment fragment = new AreaListFragment();
         fragment.setArguments(par);
         fragment.setEventBusProvider(this.busProvider);
+        fragment.setClickListener(this);
 
         // Set the fragment for the area list
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.kitchenArea, fragment);
+        ft.add(R.id.kitchenArea, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.addToBackStack("blub");
         ft.commit();
     }
 
@@ -68,7 +67,13 @@ public class KitchenActivity extends FluxronBaseActivity {
     public void onStart() {
         super.onStart();
 
-        // Request the load of the kitchen we are displaying
+        requestKitchenLoad();
+    }
+
+    /**
+     * Request the load of the kitchen
+     */
+    private void requestKitchenLoad() {
         postMessage(new LoadKitchenCommand(kitchenId));
     }
 
@@ -117,15 +122,19 @@ public class KitchenActivity extends FluxronBaseActivity {
      * Occurs when a kitchen was loaded
      * @param msg Event
      */
-        public void onEventMainThread(KitchenLoaded msg) {
+    public void onEventMainThread(KitchenLoaded msg) {
         // Set the name of the kitchen as title text and
         // fill the list adapter with the data when the kitchen is loaded
         if (msg.getKitchen().getId().equals(kitchenId)) {
             ((TextView) findViewById(R.id.kitchenNameTitle)).setText(msg.getKitchen().getName());
-            AreaListFragment list = (AreaListFragment)getFragmentManager().findFragmentById(R.id.kitchenArea);
+            Fragment listFragment = getFragmentManager().findFragmentById(R.id.kitchenArea);
 
-            for (KitchenArea a : msg.getKitchen().getAreaList()) {
-                list.getListAdapter().addOrUpdate(a);
+            if (listFragment instanceof AreaListFragment) {
+                AreaListFragment list = (AreaListFragment) listFragment;
+
+                for (KitchenArea a : msg.getKitchen().getAreaList()) {
+                    list.getListAdapter().addOrUpdate(a);
+                }
             }
         }
     }
@@ -170,5 +179,41 @@ public class KitchenActivity extends FluxronBaseActivity {
         tempFileName = getImageFileUri();
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileName);
         startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    /**
+     * A kitchen area was clicked: Navigate to the detail view
+     * @param a Area that was clicked
+     */
+    @Override
+    public void areaClicked(KitchenArea a) {
+        // Fragment transition to area detail fragment
+        AreaDetailFragment fragment = new AreaDetailFragment();
+
+        Bundle b = new Bundle();
+        b.putString(AreaDetailFragment.KITCHEN_ID, a.getKitchenId());
+        b.putInt(AreaDetailFragment.AREA_RELATIVE_ID, a.getRelativeId());
+        fragment.setArguments(b);
+        fragment.setEventBusProvider(this.busProvider);
+
+        getFragmentManager().beginTransaction()
+         .replace(R.id.kitchenArea, fragment)
+         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+         .addToBackStack(null)
+         .commit();
+    }
+
+    /**
+     * The back button was pressed, we need to decide if we navigate on the fragment or the
+     * activity stack
+     */
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+            requestKitchenLoad();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -25,10 +24,12 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
     private String imageRequestId;
     private KitchenArea boundData;
     private Bitmap image;
+    private IAreaClickedListener listener;
 
-    public AreaHolder(View itemView, IEventBusProvider provider) {
+    public AreaHolder(View itemView, IAreaClickedListener listener, IEventBusProvider provider) {
         super(itemView);
 
+        this.listener = listener;
         this.parent = itemView;
         this.img = (ImageView) itemView.findViewById(R.id.areaImage);
         this.provider = provider;
@@ -82,8 +83,8 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        /*if(listener != null){
-            listener.kitchenClicked(boundData);
-        }*/
+        if(listener != null){
+            listener.areaClicked(boundData);
+        }
     }
 }

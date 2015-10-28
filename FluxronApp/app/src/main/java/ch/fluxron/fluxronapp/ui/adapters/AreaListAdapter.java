@@ -20,6 +20,7 @@ public class AreaListAdapter extends RecyclerView.Adapter<AreaHolder> {
     private List<KitchenArea> areas = new ArrayList<>();
     private HashMap<Integer, Integer> areaIds = new HashMap<>();
     private IEventBusProvider provider;
+    private IAreaClickedListener listener;
 
     /**
      * Adds a new area to the list. If the area already exists,
@@ -46,8 +47,9 @@ public class AreaListAdapter extends RecyclerView.Adapter<AreaHolder> {
      * Sets the event bus
      * @param provider Event bus access
      */
-    public AreaListAdapter(IEventBusProvider provider) {
+    public AreaListAdapter(IAreaClickedListener listener, IEventBusProvider provider) {
         this.provider = provider;
+        this.listener = listener;
     }
 
     /**
@@ -65,7 +67,7 @@ public class AreaListAdapter extends RecyclerView.Adapter<AreaHolder> {
                 from(parent.getContext()).
                 inflate(R.layout.list_item_area_card, parent, false);
 
-        return new AreaHolder(itemView, this.provider);
+        return new AreaHolder(itemView, this.listener, this.provider);
     }
 
     @Override

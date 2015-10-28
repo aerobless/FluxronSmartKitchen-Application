@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.ui.adapters.AreaListAdapter;
+import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
 import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -23,6 +24,7 @@ public class AreaListFragment extends Fragment {
     private String kitchenId;
     private IEventBusProvider provider;
     private AreaListAdapter listAdapter;
+    private IAreaClickedListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,9 @@ public class AreaListFragment extends Fragment {
         this.provider = provider;
     }
 
+    public void setClickListener(IAreaClickedListener listener){
+        this.listener = listener;
+    }
 
     @Override
     public void onStart() {
@@ -75,7 +80,7 @@ public class AreaListFragment extends Fragment {
         kitchenListView.addItemDecoration(deco);
 
         // List adapter
-        listAdapter = new AreaListAdapter(this.provider);
+        listAdapter = new AreaListAdapter(this.listener, this.provider);
         kitchenListView.setAdapter(listAdapter);
 
         return listView;
