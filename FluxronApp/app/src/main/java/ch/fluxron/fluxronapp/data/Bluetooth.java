@@ -16,6 +16,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,9 +36,12 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
+    private Map<String, BTConnectionThread> connectionMap;
+    private Queue<String> connectionQueue;
 
     private static final String TAG = "FLUXRON";
     private static final int READ_TIMEOUT_IN_SECONDS = 1;
+    private static final int MAX_CONCURRENT_CONNECTIONS = 3;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
     public Bluetooth(IEventBusProvider provider, Context context) {
@@ -43,6 +50,8 @@ public class Bluetooth {
 
         messageFactory = new MessageFactory();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        connectionMap = new HashMap<String, BTConnectionThread>();
+        connectionQueue = new LinkedList<String>();
         setupDiscovery(context);
     }
 
@@ -86,16 +95,34 @@ public class Bluetooth {
             stopDeviceDiscovery();
 
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
+
+            BTConnectionThread connectionThread = getConnection(device);
+
+            byte[] message = messageFactory.makeReadRequest(cmd.getField());
+            messageFactory.printUnsignedByteArray(message);
+            connectionThread.write(message);
+
+            //setConnectionTimeout(connectionThread, READ_TIMEOUT_IN_SECONDS);
+        }
+    }
+
+    /**
+     * Get an existing connection to a device or establish a new one.
+     * @param device
+     * @return BTConnectionThread for the specified device
+     */
+    private BTConnectionThread getConnection(BluetoothDevice device){
+        BTConnectionThread connectionThread = connectionMap.get(device.getAddress());
+        if(connectionThread == null){
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
                 if(connectSocket(btSocket)){
-                    BTConnectionThread connectionThread = new BTConnectionThread(btSocket, provider);
+                    connectionThread = new BTConnectionThread(btSocket, provider);
                     connectionThread.start();
-                    byte[] message = messageFactory.makeReadRequest(cmd.getField());
-                    messageFactory.printUnsignedByteArray(message);
-                    connectionThread.write(message);
-
-                    setConnectionTimeout(connectionThread, READ_TIMEOUT_IN_SECONDS);
+                    synchronized (connectionMap){
+                        connectionMap.put(device.getAddress(), connectionThread);
+                    }
+                    return connectionThread;
                 } else {
                     Log.d(TAG, "Unable to connect to remote device. Are you sure it is turned on and noone else is connected to it?");
                 }
@@ -104,6 +131,7 @@ public class Bluetooth {
                 e.printStackTrace();
             }
         }
+        return connectionThread;
     }
 
     /**
