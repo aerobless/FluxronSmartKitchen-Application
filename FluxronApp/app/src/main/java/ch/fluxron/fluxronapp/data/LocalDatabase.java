@@ -119,6 +119,7 @@ public class LocalDatabase {
 
         loadObjectFromDocument(doc, cmd);
     }
+
     /**
      * Triggered when a LoadObjectByTypeCommand is issued.
      * @param cmd Command
