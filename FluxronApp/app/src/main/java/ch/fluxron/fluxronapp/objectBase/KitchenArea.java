@@ -39,6 +39,14 @@ public class KitchenArea {
     }
 
     /**
+     * Sets the kitchen Id of this area. Warning: This value will not be stored.
+     * @param kitchenId
+     */
+    public void setKitchenId(String kitchenId) {
+        this.kitchenId = kitchenId;
+    }
+
+    /**
      * Returns the id of the related kitchen
      * @return Kitchen id
      */

@@ -123,7 +123,7 @@ public class LocalDatabase {
     public void onEventAsync(LoadObjectByIdCommand cmd) {
         // load the document by Id
         Document doc = database.getExistingDocument(cmd.getId());
-        Log.d("flx_db", doc.getProperties().toString());
+
         loadObjectFromDocument(doc, cmd);
     }
 

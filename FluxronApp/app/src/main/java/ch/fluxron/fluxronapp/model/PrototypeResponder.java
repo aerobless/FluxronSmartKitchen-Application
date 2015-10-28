@@ -20,15 +20,6 @@ public class PrototypeResponder {
         provider.getUiEventBus().register(this);
     }
 
-    public void onEventAsync(ObjectLoaded msg) {
-        if (msg.getData() instanceof Kitchen) {
-            KitchenLoaded event = new KitchenLoaded((Kitchen) msg.getData());
-
-            event.setConnectionId(msg);
-            provider.getUiEventBus().post(event);
-        }
-    }
-
     public void onEventAsync(ObjectCreated msg) {
         if (msg.getData() instanceof Kitchen) {
             KitchenCreated event = new KitchenCreated((Kitchen) msg.getData());

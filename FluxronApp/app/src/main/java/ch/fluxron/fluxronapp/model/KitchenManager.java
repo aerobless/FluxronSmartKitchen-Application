@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromA
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
@@ -223,7 +224,6 @@ public class KitchenManager {
         k.getAreaList().add(a);
 
         // Save the kitchen
-        // TODO: Update instead of putProperties ??? http://developer.couchbase.com/documentation/mobile/current/develop/guides/couchbase-lite/native-api/document/index.html
         SaveObjectCommand saveCommand = new SaveObjectCommand();
         saveCommand.setDocumentId(k.getId());
         saveCommand.setData(k);
@@ -237,7 +237,7 @@ public class KitchenManager {
 
         // Attach the image to the kitchen
         AttachFileToObjectById attachCommand = new AttachFileToObjectById(k.getId(), imageName, storedImageName);
-        //this.provider.getDalEventBus().post(attachCommand);
+        this.provider.getDalEventBus().post(attachCommand);
 
         try {
             Thread.sleep(1000);
@@ -248,5 +248,22 @@ public class KitchenManager {
         // Fire a kitchen changed message to the UI
         KitchenLoaded change = new KitchenLoaded(k);
         this.provider.getUiEventBus().post(change);
+    }
+
+    /**
+     * An object was loaded. If it was a kitchen, prepare it and send it to the ui bus
+     * @param msg Message
+     */
+    public void onEventAsync(ObjectLoaded msg) {
+        if (msg.getData() instanceof Kitchen) {
+            KitchenLoaded event = new KitchenLoaded((Kitchen) msg.getData());
+
+            for(KitchenArea a : event.getKitchen().getAreaList()){
+                a.setKitchenId(event.getKitchen().getId());
+            }
+
+            event.setConnectionId(msg);
+            provider.getUiEventBus().post(event);
+        }
     }
 }
