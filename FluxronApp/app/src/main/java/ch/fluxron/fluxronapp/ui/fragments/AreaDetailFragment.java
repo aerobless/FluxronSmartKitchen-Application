@@ -17,7 +17,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 /**
  * Implements a fragment that displays a single kitchen area
  */
-public class KitchenAreaFragment extends Fragment {
+public class AreaDetailFragment extends Fragment {
     public static final String KITCHEN_ID = "kitchen_id";
     public static final String AREA_RELATIVE_ID = "area_id";
 

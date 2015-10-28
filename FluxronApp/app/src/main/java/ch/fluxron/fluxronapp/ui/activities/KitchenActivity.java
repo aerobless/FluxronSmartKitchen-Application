@@ -19,7 +19,7 @@ import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.AreaListAdapter;
 import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
-import ch.fluxron.fluxronapp.ui.fragments.KitchenAreaFragment;
+import ch.fluxron.fluxronapp.ui.fragments.AreaDetailFragment;
 
 /**
  * Activity to choose and add kitchen areas. Also contains a display of the respective area with
@@ -62,7 +62,7 @@ public class KitchenActivity extends FluxronBaseActivity {
         kitchenListView.setAdapter(listAdapter);
 
         // Initialize the area fragment
-        KitchenAreaFragment fragment = new KitchenAreaFragment();
+        AreaDetailFragment fragment = new AreaDetailFragment();
         fragment.setEventBusProvider(this.busProvider);
 
         // Fade in the fragment for area
