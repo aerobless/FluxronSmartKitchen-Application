@@ -24,9 +24,11 @@ import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
+import ch.fluxron.fluxronapp.model.Device;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**
@@ -116,6 +118,35 @@ public class LocalDatabase {
         Document doc = database.getExistingDocument(cmd.getId());
 
         loadObjectFromDocument(doc, cmd);
+    }
+    /**
+     * Triggered when a LoadObjectByTypeCommand is issued.
+     * @param cmd Command
+     */
+    public void onEventAsync(LoadObjectByTypeCommand cmd) {
+        if(cmd.getType().equals("device")){
+            retrieveDevices();
+        }
+    }
+
+    /**
+     * Retrieves all the devices and posts ObjectLoaded events.
+     */
+    public void retrieveDevices(){
+        Query orderedQuery = createTypeQuery(Device.class);
+        QueryEnumerator results;
+
+        try {
+            results = orderedQuery.run();
+            for (Iterator<QueryRow> it = results; it.hasNext();) {
+                QueryRow row = it.next();
+                Device o = (Device)converter.convertMapToObject(row.getDocument().getProperties(), Device.class);
+                ObjectLoaded loadedEvent = new ObjectLoaded(o.getAddress(), o);
+                provider.getDalEventBus().post(loadedEvent);
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

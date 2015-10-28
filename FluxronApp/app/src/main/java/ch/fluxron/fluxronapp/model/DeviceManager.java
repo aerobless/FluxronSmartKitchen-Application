@@ -2,11 +2,14 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.Log;
 
-import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import java.util.HashMap;
+import java.util.Map;
+
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothTestCommand;
 
@@ -15,6 +18,7 @@ import ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothTestCom
  */
 public class DeviceManager {
     private IEventBusProvider provider;
+    private Map<String, Device> deviceMap;
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -25,9 +29,11 @@ public class DeviceManager {
         this.provider = provider;
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
+        deviceMap = new HashMap<String, Device>();
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
+        loadDevices();
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
 
         //String cmd = ParamManager.F_SERIAL_NUMBER1018SUB4;
@@ -59,6 +65,29 @@ public class DeviceManager {
             cmd.setDocumentId(msg.getAddress());
             provider.getDalEventBus().post(cmd);
             Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
+            synchronized (deviceMap){
+                deviceMap.put(msg.getAddress(), device);
+            }
+        }
+    }
+
+    /**
+     * Request to load devices from DB.
+     */
+    private void loadDevices(){
+        provider.getDalEventBus().post(new LoadObjectByTypeCommand("device"));
+    }
+
+    /**
+     * Handles devices loaded from the DB.
+     * @param msg
+     */
+    public void onEventAsync(ObjectLoaded msg){
+        if (msg.getData() instanceof Device) {
+            Log.d("FLUXRON", "Device loaded from DB "+((Device) msg.getData()).getName());
+            synchronized (deviceMap){
+                deviceMap.put(((Device) msg.getData()).getAddress(), (Device) msg.getData());
+            }
         }
     }
 
