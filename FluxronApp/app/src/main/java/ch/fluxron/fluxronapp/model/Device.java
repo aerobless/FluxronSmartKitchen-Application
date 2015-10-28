@@ -1,12 +1,18 @@
 package ch.fluxron.fluxronapp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * A model for a bluetooth device.
  */
 public class Device {
     String name;
+
+    @JsonProperty("_id")
     String address;
-    int lastState;
+
+    public Device() {
+    }
 
     public Device(String name, String address) {
         this.name = name;
@@ -27,13 +33,5 @@ public class Device {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public int getLastState() {
-        return lastState;
-    }
-
-    public void setLastState(int lastState) {
-        this.lastState = lastState;
     }
 }

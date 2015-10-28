@@ -5,9 +5,11 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
@@ -34,10 +36,11 @@ public class DeviceManager {
 
     public void onEventAsync(BluetoothTestCommand msg){
         loadDevices();
-        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
 
-        //String cmd = ParamManager.F_SERIAL_NUMBER1018SUB4;
-        //provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
+       // provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
+
+        String cmd = ParamManager.F_SERIAL_NUMBER1018SUB4;
+        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
         //provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
     }
 
@@ -60,11 +63,11 @@ public class DeviceManager {
     public void onEventAsync(BluetoothDeviceFound msg){
         if(isFluxronDevice(msg.getName())){
             Device device = new Device(msg.getName(), msg.getAddress());
+            Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
             SaveObjectCommand cmd = new SaveObjectCommand();
             cmd.setData(device);
             cmd.setDocumentId(msg.getAddress());
             provider.getDalEventBus().post(cmd);
-            Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
             synchronized (deviceMap){
                 deviceMap.put(msg.getAddress(), device);
             }
