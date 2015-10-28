@@ -101,12 +101,22 @@ public class Bluetooth {
             byte[] message = messageFactory.makeReadRequest(cmd.getField());
             messageFactory.printUnsignedByteArray(message);
 
+            boolean retry = false;
             try {
                 connectionThread.write(message);
             } catch (IOException e) {
                 if(e.getMessage().equals("Broken pipe")){
                     Log.d(TAG, "Broken pipe");
+                    retry = true;
                 }else {
+                    e.printStackTrace();
+                }
+            }
+            if(retry){
+                connectionThread = getConnection(device, true);
+                try {
+                    connectionThread.write(message);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -119,8 +129,16 @@ public class Bluetooth {
      * @return BTConnectionThread for the specified device
      */
     private BTConnectionThread getConnection(BluetoothDevice device, boolean clean){
+        if(clean){
+            synchronized (connectionMap){
+                connectionMap.remove(device.getAddress());
+            }
+            synchronized (connectionQueue){
+                connectionQueue.remove(device.getAddress());
+            }
+        }
         BTConnectionThread connectionThread = connectionMap.get(device.getAddress());
-        if(connectionThread == null || clean){
+        if(connectionThread == null){
             try {
                 BluetoothSocket btSocket = createBluetoothSocket(device);
                 if(connectSocket(btSocket)){
