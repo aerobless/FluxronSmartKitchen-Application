@@ -1,62 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_height="120dp"
+    <LinearLayout
         android:layout_width="match_parent"
-        style="@style/FluxronAppBar"
-        >
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/kitchenView">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_create_kitchen"
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_height="120dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:layout_marginTop="35dp"
-            android:layout_marginRight="9dp">
+            style="@style/FluxronAppBar"
+            >
 
-            <ImageButton
-                style="@style/FluxronImageButton"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_arrow_back"
-                android:scaleType="fitCenter"
-                android:onClick="onBackButtonClicked"
-                android:layout_gravity="start"/>
-
-            <TextView
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_create_kitchen"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_kitchen_overview"
-                style="@style/FluxronTitleTextView"
-                android:id="@+id/kitchenNameTitle"
-                android:layout_gravity="start"
-                android:layout_marginLeft="20dp"/>
+                android:background="@android:color/transparent"
+                android:layout_marginTop="35dp"
+                android:layout_marginRight="9dp">
 
-            <ImageButton
-                style="@style/FluxronImageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_delete"
-                android:onClick="onDeleteButtonClicked"
-                android:layout_gravity="end"/>
-        </android.support.v7.widget.Toolbar>
+                <ImageButton
+                    style="@style/FluxronImageButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:scaleType="fitCenter"
+                    android:onClick="onBackButtonClicked"
+                    android:layout_gravity="start"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit a device"
-            android:id="@+id/buttonEditDevice"
-            android:onClick="onEditDeviceClicked"
-            android:layout_gravity="end"
-            android:visibility="gone"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/activity_kitchen_overview"
+                    style="@style/FluxronTitleTextView"
+                    android:id="@+id/kitchenNameTitle"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="20dp"/>
 
-    </android.support.design.widget.AppBarLayout>
+                <ImageButton
+                    style="@style/FluxronImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_delete"
+                    android:onClick="onDeleteButtonClicked"
+                    android:layout_gravity="end"/>
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -73,5 +70,17 @@
                 android:id="@+id/areaList"/>
 
         </FrameLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="createArea"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:layout_anchor="@id/kitchenView"
+        app:layout_anchorGravity="bottom|right|end"
+        android:src="@drawable/ic_action_add"
+        />
+
+</FrameLayout>

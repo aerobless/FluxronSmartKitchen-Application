@@ -1,7 +1,14 @@
 package ch.fluxron.fluxronapp.ui.activities.common;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -60,5 +67,21 @@ public class FluxronBaseActivity extends AppCompatActivity{
             return id;
         }
         return null;
+    }
+
+    /**
+     * Generates a temporary file name for image storage
+     * @return File name with the pattern flx_img_yyyyMMdd_HHmmss
+     */
+    protected Uri getImageFileUri(){
+        // Get safe storage directory for photos
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "flx_img_" );
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) mediaStorageDir.mkdirs();
+
+        // Return Uri from that file
+        return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + timeStamp + ".jpg"));
     }
 }

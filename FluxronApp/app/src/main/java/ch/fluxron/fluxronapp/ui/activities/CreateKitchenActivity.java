@@ -5,16 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
@@ -92,18 +86,6 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         tempFileName = getImageFileUri();
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileName);
         startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-    }
-
-    private Uri getImageFileUri(){
-        // Get safe storage directory for photos
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "prototype" );
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) mediaStorageDir.mkdirs();
-
-        // Return Uri from that file
-        return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + timeStamp + ".jpg"));
     }
 
     @Override
