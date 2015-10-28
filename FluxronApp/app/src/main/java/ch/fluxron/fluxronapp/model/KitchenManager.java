@@ -5,14 +5,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.util.Log;
 
+import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
+import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
@@ -210,7 +214,9 @@ public class KitchenManager {
      * @param k Kitchen
      * @param imageName Name of the image to attach
      */
-    public void addAreaToKitchen(Kitchen k, Uri imageName){
+    public void addAreaToKitchen(Kitchen k, final Uri imageName){
+        final String kitchenId = k.getId();
+
         // Determine new relative id for this object as
         // max(relativeId) + 1
         int maxId = 0;
@@ -219,35 +225,41 @@ public class KitchenManager {
         }
 
         // Create the area and add it to the kitchen
-        String storedImageName = "a_" + (maxId+1);
-        KitchenArea a = new KitchenArea(storedImageName, k.getId(), maxId+1);
+        final String storedImageName = "a_" + (maxId+1);
+        KitchenArea a = new KitchenArea(storedImageName, kitchenId, maxId+1);
         k.getAreaList().add(a);
 
-        // Save the kitchen
-        SaveObjectCommand saveCommand = new SaveObjectCommand();
+        // Command for saving the kitchen
+        final SaveObjectCommand saveCommand = new SaveObjectCommand();
         saveCommand.setDocumentId(k.getId());
         saveCommand.setData(k);
+
+        // Command for file attachment
+        final AttachFileToObjectById attachCommand = new AttachFileToObjectById(kitchenId, imageName, storedImageName);
+
+        // Command for notifying the UI
+        final KitchenLoaded change = new KitchenLoaded(k);
+
+        // Continue by attaching an Image
+        EventContinuation.createEventChain(provider.getDalEventBus(), saveCommand, ResponseOK.class, new ITypedCallback<ResponseOK>() {
+            @Override
+            public void call(ResponseOK value) {
+                Log.d("continue", "first");
+                KitchenManager.this.provider.getDalEventBus().post(attachCommand);
+            }
+        });
+
+        // Continue by notifying the ui bus about the newly created object
+        EventContinuation.createEventChain(provider.getDalEventBus(), attachCommand, ResponseOK.class, new ITypedCallback<ResponseOK>() {
+            @Override
+            public void call(ResponseOK value) {
+                Log.d("continue", "second");
+                KitchenManager.this.provider.getUiEventBus().post(change);
+            }
+        });
+
+        // Start the message chain
         this.provider.getDalEventBus().post(saveCommand);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Attach the image to the kitchen
-        AttachFileToObjectById attachCommand = new AttachFileToObjectById(k.getId(), imageName, storedImageName);
-        this.provider.getDalEventBus().post(attachCommand);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Fire a kitchen changed message to the UI
-        KitchenLoaded change = new KitchenLoaded(k);
-        this.provider.getUiEventBus().post(change);
     }
 
     /**

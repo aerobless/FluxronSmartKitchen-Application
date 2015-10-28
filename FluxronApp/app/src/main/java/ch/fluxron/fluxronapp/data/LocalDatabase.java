@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
@@ -78,6 +79,12 @@ public class LocalDatabase {
             ObjectCreated event = new ObjectCreated(getObjectFromDocument(doc));
             event.setConnectionId(cmd);
             provider.getDalEventBus().post(event);
+        } else
+        {
+            // Fire an event to signal that the save was successful
+            ResponseOK ok = new ResponseOK();
+            ok.setConnectionId(cmd);
+            provider.getDalEventBus().post(ok);
         }
     }
 
@@ -105,6 +112,11 @@ public class LocalDatabase {
         Document doc = database.getExistingDocument(cmd.getDocumentId());
         if(doc != null) {
             documents.attachFileToDocument(doc, cmd.getFileUri(), cmd.getAttachmentName(), resolver.getType(cmd.getFileUri()));
+
+            // Generic ok response if the attachment process went fine
+            ResponseOK ok = new ResponseOK();
+            ok.setConnectionId(cmd);
+            provider.getDalEventBus().post(ok);
         }
     }
 
