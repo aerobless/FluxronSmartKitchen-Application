@@ -57,7 +57,7 @@ public class LocalDatabase {
      * @param cmd Command message
      */
     public void onEventAsync(SaveObjectCommand cmd) {
-        boolean created = !documents.exists(cmd.getConnectionId());
+        boolean created = !documents.exists(cmd.getDocumentId());
         Document doc = documents.createDocumentOnNull(cmd.getDocumentId());
 
         if(doc != null){
@@ -65,12 +65,18 @@ public class LocalDatabase {
             properties.put(TYPE_PROPERTY, cmd.getData().getClass().getCanonicalName());
             documents.tryPutProperties(doc, properties);
 
-            // Fire an event if we created a new object
-            if(created) {
-                ObjectCreated event = new ObjectCreated(getObjectFromDocument(doc));
-                event.setConnectionId(cmd);
-                provider.getDalEventBus().post(event);
-            }
+        } else {
+            doc = new Document(database, cmd.getDocumentId());
+            Map<String, Object> properties = converter.convertObjectToMap(cmd.getData());
+            properties.put(TYPE_PROPERTY, cmd.getData().getClass().getCanonicalName());
+            documents.tryPutProperties(doc, properties);
+        }
+
+        // Fire an event if we created a new object
+        if(created) {
+            ObjectCreated event = new ObjectCreated(getObjectFromDocument(doc));
+            event.setConnectionId(cmd);
+            provider.getDalEventBus().post(event);
         }
     }
 
