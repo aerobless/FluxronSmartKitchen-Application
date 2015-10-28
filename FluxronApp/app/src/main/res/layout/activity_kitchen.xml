@@ -59,9 +59,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <!-- TODO: Replace with Fragment -->
-            <View
-                android:layout_width="350dp"
-                android:layout_height="350dp"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/kitchenArea"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"

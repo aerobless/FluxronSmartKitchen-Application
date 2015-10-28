@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.AreaListAdapter;
 import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
+import ch.fluxron.fluxronapp.ui.fragments.KitchenAreaFragment;
 
 /**
  * Activity to choose and add kitchen areas. Also contains a display of the respective area with
@@ -58,6 +60,17 @@ public class KitchenActivity extends FluxronBaseActivity {
         // List adapter
         listAdapter = new AreaListAdapter(this.busProvider);
         kitchenListView.setAdapter(listAdapter);
+
+        // Initialize the area fragment
+        KitchenAreaFragment fragment = new KitchenAreaFragment();
+        fragment.setEventBusProvider(this.busProvider);
+
+        // Fade in the fragment for area
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.kitchenArea, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.addToBackStack("blub");
+        ft.commit();
     }
 
     /**
@@ -116,7 +129,7 @@ public class KitchenActivity extends FluxronBaseActivity {
      * Occurs when a kitchen was loaded
      * @param msg Event
      */
-    public void onEventMainThread(KitchenLoaded msg) {
+        public void onEventMainThread(KitchenLoaded msg) {
         // Set the name of the kitchen as title text and
         // fill the list adapter with the data when the kitchen is loaded
         if (msg.getKitchen().getId().equals(kitchenId)) {
