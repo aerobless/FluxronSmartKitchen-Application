@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelUi;
+package ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations;
 
 /**
  * Used for testing bluetooth functionality, will be removed later on.

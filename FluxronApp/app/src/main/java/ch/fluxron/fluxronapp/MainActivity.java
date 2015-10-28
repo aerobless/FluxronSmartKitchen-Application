@@ -6,20 +6,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.events.modelUi.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 
-import ch.fluxron.fluxronapp.events.modelUi.SimpleMessageResponse;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
