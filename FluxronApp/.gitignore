@@ -83,8 +83,9 @@ build/
 #NDK
 obj/
 
-#Generated classes
+#Generated files
 app/src/main/java/ch/fluxron/fluxronapp/data/generated/
+app/src/main/res/values/parameters.xml
 
 # Memory profiler dumps
 .hprof

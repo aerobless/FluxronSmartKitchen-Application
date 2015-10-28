@@ -15,26 +15,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Generate a map of parameters based on the .eds file.
+ * Imports parameter data from .eds file and uses it to generate java classes and .xml files.
+ * ParamGenerator is automatically run before every build.
  */
 public class ParamGenerator {
-    final static String PACKAGE_NAME = "ch.fluxron.fluxronapp.data";
     final static String CLASS_NAME = "ParamManager";
 
     public static void main(String[] args){
         System.out.println("Generating classes..");
         ParamGenerator generator = new ParamGenerator();
         Map<String, DeviceParameter> paramMap = generator.loadParameters(args[0]);
-        /*for(DeviceParameter p:paramMap.values()){
-            System.out.println(p.toString());
-        }*/
-        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
         generator.generateDeviceParameter(args[0]);
-        System.out.println("SIZE"+paramMap.size());
+        generator.generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", paramMap);
+        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
     }
 
+    /**
+     * Generate DeviceParameter
+     * @param rootPath
+     */
     private void generateDeviceParameter(String rootPath){
-        Path srcLocation = Paths.get(rootPath+"/buildSrc/src/main/java/ch/fluxron/generator/DeviceParameter.java");
+        Path srcLocation = Paths.get(rootPath + "/buildSrc/src/main/java/ch/fluxron/generator/DeviceParameter.java");
         Path dstLocation = Paths.get(rootPath+"/app/src/main/java/ch/fluxron/fluxronapp/data/generated/DeviceParameter.java");
 
         try{
@@ -60,26 +61,44 @@ public class ParamGenerator {
         catch(Exception e){
             System.out.println("Exception caught : " + e);
         }
+        System.out.println("DeviceParameter.java successfully generated");
     }
 
+    /**
+     * Generate parameters.xml
+     * @param outputPath
+     * @param paramMap
+     */
+    private void generateUIParameters(String outputPath, Map<String, DeviceParameter> paramMap){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        sb.append("<!-- GENERATED RESOURCE FILE - DO NO CHANGE MANUALLY -->\n");
+        sb.append("<resources>\n");
+        for (DeviceParameter p:paramMap.values()) {
+            sb.append("    <string name=\"F_" + (p.getName()+"_"+p.getId()).toUpperCase() + "\">" + p.getId() + "</string>\n");
+        }
+        sb.append("</resources>");
+        writeToFile(outputPath, sb.toString());
+        System.out.println("parameters.xml successfully generated");
+    }
+
+    /**
+     * Generate ParamManager.java
+     * @param outputPath
+     * @param paramMap
+     */
     private void generateParameterManager(String outputPath, Map<String, DeviceParameter> paramMap){
         StringBuilder paramManager = new StringBuilder();
-
         paramManager.append("package ch.fluxron.fluxronapp.data.generated;\n\n");
-        //Imports
         paramManager.append("import java.util.Map;\n");
         paramManager.append("import java.util.HashMap;\n");
         paramManager.append("\n");
-
-        //Class
-        paramManager.append("//Generated Class\n");
+        paramManager.append("//GENERATED CLASS - DO NOT CHANGE MANUALLY\n");
         paramManager.append("public class "+CLASS_NAME+" {\n\n");
         for (DeviceParameter p:paramMap.values()) {
-            paramManager.append("    public final static String F_"+p.getName().toUpperCase()+p.getId().toUpperCase()+" = \""+p.getId()+"\";\n");
+            paramManager.append("    public final static String F_"+p.getName().toUpperCase()+"_"+p.getId().toUpperCase()+" = \""+p.getId()+"\";\n");
         }
-
         paramManager.append("    Map<String, DeviceParameter> paramMap;\n\n");
-
         paramManager.append("    public "+CLASS_NAME+"() {\n");
         paramManager.append("    paramMap = new HashMap<String, DeviceParameter>();\n");
         for (DeviceParameter p:paramMap.values()) {
@@ -88,21 +107,27 @@ public class ParamGenerator {
                     " "+p.getObjectType()+", "+p.getDataType()+", \""+p.getAccessType()+"\", \""+p.getDefaultValue()+
                     "\", "+p.getSubNumber()+", new byte[]{(byte)"+(p.getIndex()[0] & 0xff) +", (byte)"+(p.getIndex()[1] & 0xff)+"}, (byte)"+p.getSubindex()+"));\n");
         }
-
         paramManager.append("    }\n");
-
         paramManager.append("    public Map<String, DeviceParameter> getParamMap() {\n" +
                 "        return paramMap;\n" +
                 "    }\n");
-
         paramManager.append("}\n");
+        writeToFile(outputPath, paramManager.toString());
+        System.out.println(CLASS_NAME + ".java successfully generated");
+    }
 
+    /**
+     * Write generated data to text files.
+     * @param outputPath
+     * @param data
+     */
+    private void writeToFile(String outputPath, String data) {
         try {
             Path pathToFile = Paths.get(outputPath);
             Files.createDirectories(pathToFile.getParent());
             FileWriter fw = new FileWriter(outputPath);
             BufferedWriter writer = new BufferedWriter(fw);
-            writer.write(paramManager.toString());
+            writer.write(data);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -39,7 +39,7 @@ public class DeviceManager {
 
        // provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
 
-        String cmd = ParamManager.F_SERIAL_NUMBER1018SUB4;
+        String cmd = ParamManager.F_SERIAL_NUMBER_1018SUB4;
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
         provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
     }

@@ -61,7 +61,7 @@ public class MessageFactoryTest extends TestCase {
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x72, (byte) 0x00 };
         messageFactory.printUnsignedByteArray(expectation);
-        byte[] result = messageFactory.makeReadRequest(ParamManager.F_KNOB_A_DIGITAL3001SUB1);
+        byte[] result = messageFactory.makeReadRequest(ParamManager.F_KNOB_A_DIGITAL_3001SUB1);
         messageFactory.printUnsignedByteArray(result);
         assertTrue(Arrays.equals(expectation, result));
     }
