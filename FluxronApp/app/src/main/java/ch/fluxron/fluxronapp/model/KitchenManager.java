@@ -4,21 +4,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.net.Uri;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
+import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 
 /**
  * Manages all messages related to kitchens on a domain level
@@ -178,5 +184,69 @@ public class KitchenManager {
         DeleteObjectById delete = new DeleteObjectById(msg.getId());
         delete.setConnectionId(msg);
         provider.getDalEventBus().post(delete);
+    }
+
+    /**
+     * Triggered when a new image should be added as a kitchen area
+     * @param msg Message containing kitchen id and image path
+     */
+    public void onEventAsync(final CreateKitchenAreaCommand msg) {
+        // Load the kitchen and create the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    // Attach the area to the kitchen
+                    addAreaToKitchen((Kitchen) value, msg.getImagePath());
+                }
+            }
+        });
+        this.provider.getDalEventBus().post(getOp);
+    }
+
+    /**
+     * Adds a new kitchen area to a kitchen
+     * @param k Kitchen
+     * @param imageName Name of the image to attach
+     */
+    public void addAreaToKitchen(Kitchen k, Uri imageName){
+        // Determine new relative id for this object as
+        // max(relativeId) + 1
+        int maxId = 0;
+        for(KitchenArea area : k.getAreaList()){
+            maxId = Math.max(area.getRelativeId(), maxId);
+        }
+
+        // Create the area and add it to the kitchen
+        String storedImageName = "a_" + (maxId+1);
+        KitchenArea a = new KitchenArea(storedImageName, k.getId(), maxId+1);
+        k.getAreaList().add(a);
+
+        // Save the kitchen
+        // TODO: Update instead of putProperties ??? http://developer.couchbase.com/documentation/mobile/current/develop/guides/couchbase-lite/native-api/document/index.html
+        SaveObjectCommand saveCommand = new SaveObjectCommand();
+        saveCommand.setDocumentId(k.getId());
+        saveCommand.setData(k);
+        this.provider.getDalEventBus().post(saveCommand);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Attach the image to the kitchen
+        AttachFileToObjectById attachCommand = new AttachFileToObjectById(k.getId(), imageName, storedImageName);
+        //this.provider.getDalEventBus().post(attachCommand);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Fire a kitchen changed message to the UI
+        KitchenLoaded change = new KitchenLoaded(k);
+        this.provider.getUiEventBus().post(change);
     }
 }

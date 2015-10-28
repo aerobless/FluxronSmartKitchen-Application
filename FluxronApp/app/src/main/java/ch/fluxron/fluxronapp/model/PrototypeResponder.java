@@ -24,9 +24,6 @@ public class PrototypeResponder {
         if (msg.getData() instanceof Kitchen) {
             KitchenLoaded event = new KitchenLoaded((Kitchen) msg.getData());
 
-            for (int i = 1; i <= 10; i++) {
-                event.getKitchen().getAreaList().add(new KitchenArea("mainPicture", event.getKitchen().getId(), i));
-            }
             event.setConnectionId(msg);
             provider.getUiEventBus().post(event);
         }

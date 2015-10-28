@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.AreaListAdapter;
@@ -105,7 +106,8 @@ public class KitchenActivity extends FluxronBaseActivity {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 // Picture has been taken, create a new area
-                // TODO: Saving of Kitchen area
+                CreateKitchenAreaCommand cmd = new CreateKitchenAreaCommand(this.kitchenId, this.tempFileName);
+                postMessage(cmd);
             }
         }
     }
