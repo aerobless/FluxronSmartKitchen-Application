@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -48,6 +49,7 @@ public class DeviceListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View listView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_list, container, false);
         ScrollView scroller = new ScrollView(getActivity());
         TextView text = new TextView(getActivity());
         scroller.addView(text);
