@@ -1,8 +1,7 @@
 package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.model.Device;
-import ch.fluxron.fluxronapp.objectBase.Kitchen;
+import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
  * Notifies subscribers that a device has been loaded

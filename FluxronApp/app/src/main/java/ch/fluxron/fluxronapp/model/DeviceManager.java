@@ -15,6 +15,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
+import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
  * Manages bluetooth devices.

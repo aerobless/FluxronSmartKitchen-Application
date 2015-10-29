@@ -1,6 +1,6 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
-import ch.fluxron.fluxronapp.model.Device;
+import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
  * Listens to the click event on a device

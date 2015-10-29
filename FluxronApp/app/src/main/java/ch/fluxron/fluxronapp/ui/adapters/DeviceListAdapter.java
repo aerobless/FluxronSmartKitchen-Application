@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.model.Device;
+import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**

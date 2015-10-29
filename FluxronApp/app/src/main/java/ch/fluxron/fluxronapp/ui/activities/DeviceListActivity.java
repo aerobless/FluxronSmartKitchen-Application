@@ -6,8 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
-import ch.fluxron.fluxronapp.model.Device;
+import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IDeviceClickListener;
 import ch.fluxron.fluxronapp.ui.fragments.DeviceListFragment;

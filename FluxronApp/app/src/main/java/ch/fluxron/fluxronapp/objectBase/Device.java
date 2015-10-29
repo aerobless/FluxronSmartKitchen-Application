@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.model;
+package ch.fluxron.fluxronapp.objectBase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
