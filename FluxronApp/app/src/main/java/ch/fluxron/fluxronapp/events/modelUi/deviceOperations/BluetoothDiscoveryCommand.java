@@ -1,4 +1,4 @@
-package ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations;
+package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
 public class BluetoothDiscoveryCommand {
     private boolean enabled;

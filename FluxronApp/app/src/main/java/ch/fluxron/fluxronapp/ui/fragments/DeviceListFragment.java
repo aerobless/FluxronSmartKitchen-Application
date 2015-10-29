@@ -5,13 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceListAdapter;
-import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
 import ch.fluxron.fluxronapp.ui.adapters.IDeviceClickListener;
 import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -66,7 +68,6 @@ public class DeviceListFragment extends Fragment {
 
         // Layout for the list
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         deviceListView.setLayoutManager(layoutManager);
 
         // Item decoration for the list
@@ -77,10 +78,14 @@ public class DeviceListFragment extends Fragment {
         listAdapter = new DeviceListAdapter(this.listener, this.provider);
         deviceListView.setAdapter(listAdapter);
 
+        Log.d("FLUXRON", "HERE onCreateDeviceListFra done!");
+        provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
+
         return deviceView;
     }
 
-    public void onEventMainThread(Object msg){
-
+    public void onEventMainThread(DeviceLoaded msg){
+        Log.d("Fluxron","received new DEVICE, trying to add");
+        listAdapter.addOrUpdate(msg.getDevice());
     }
 }

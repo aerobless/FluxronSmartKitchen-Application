@@ -17,7 +17,7 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
     private View parent;
     private Device boundData;
     private IDeviceClickListener listener;
-    private IEventBusProvider provider;
+    //private IEventBusProvider provider;
 
     public DeviceHolder(View itemView, IDeviceClickListener listener, IEventBusProvider provider) {
         super(itemView);
@@ -26,8 +26,8 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
         this.deviceName = (TextView) itemView.findViewById(R.id.deviceName);
         this.deviceAddress = (TextView) itemView.findViewById(R.id.deviceAddress);
         this.listener = listener;
-        this.provider = provider;
-        this.provider.getUiEventBus().register(this);
+       // this.provider = provider;
+        //this.provider.getUiEventBus().register(this);
 
         parent.setOnClickListener(this);
 

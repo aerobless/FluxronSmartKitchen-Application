@@ -13,7 +13,8 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
-import ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 
 /**
  * Manages bluetooth devices.
@@ -48,8 +49,13 @@ public class DeviceManager {
      * Enables or disables the discovery of bluetooth devices.
      * @param msg
      */
-    public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothDiscoveryCommand msg){
+    public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand msg){
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
+        //Send all stored devices up
+        for (Device d:deviceMap.values()){
+            Log.d("FLUXRON","SENT DEVICE UP!");
+            provider.getUiEventBus().post(new DeviceLoaded(d));
+        }
     }
 
     public void onEventAsync(BluetoothDeviceChanged msg){
@@ -71,6 +77,7 @@ public class DeviceManager {
             synchronized (deviceMap){
                 deviceMap.put(msg.getAddress(), device);
             }
+            provider.getUiEventBus().post(new DeviceLoaded(device));
         }
     }
 

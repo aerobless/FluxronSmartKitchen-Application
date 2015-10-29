@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 
