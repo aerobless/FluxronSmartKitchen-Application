@@ -7,6 +7,7 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.TextView;
 
@@ -201,6 +202,22 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
          .addToBackStack(null)
          .commit();
+
+        // Hide the FAB
+        animateFabAlpha(false);
+    }
+
+    /**
+     * Animates the FAB alpha to the desired value
+     * @param visible Button visibility after the animation
+     */
+    private void animateFabAlpha(boolean visible) {
+        final FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.areaFAB);
+        if (visible) {
+            fab.show();
+        }else{
+            fab.hide();
+        }
     }
 
     /**
@@ -212,6 +229,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
             requestKitchenLoad();
+            animateFabAlpha(true);
         } else {
             super.onBackPressed();
         }

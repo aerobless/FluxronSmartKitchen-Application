@@ -70,6 +70,7 @@
         app:layout_anchor="@id/kitchenView"
         app:layout_anchorGravity="bottom|right|end"
         android:src="@drawable/ic_action_add"
+        android:id="@+id/areaFAB"
         />
 
 </FrameLayout>
