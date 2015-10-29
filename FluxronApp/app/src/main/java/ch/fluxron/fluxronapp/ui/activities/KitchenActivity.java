@@ -19,6 +19,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaC
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
+import ch.fluxron.fluxronapp.ui.components.ListBubbleControl;
 import ch.fluxron.fluxronapp.ui.fragments.AreaDetailFragment;
 import ch.fluxron.fluxronapp.ui.fragments.AreaListFragment;
 
@@ -129,6 +130,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         if (msg.getKitchen().getId().equals(kitchenId)) {
             ((TextView) findViewById(R.id.kitchenNameTitle)).setText(msg.getKitchen().getName());
             Fragment listFragment = getFragmentManager().findFragmentById(R.id.kitchenArea);
+
+            ListBubbleControl listBubbles = (ListBubbleControl)findViewById(R.id.bubbleControl);
+            listBubbles.setNumberOfBubbles(msg.getKitchen().getAreaList().size());
 
             if (listFragment instanceof AreaListFragment) {
                 AreaListFragment list = (AreaListFragment) listFragment;
