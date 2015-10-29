@@ -1,7 +1,6 @@
 package ch.fluxron.fluxronapp.data;
 
 import android.content.ContentResolver;
-import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -30,7 +29,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCo
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
-import ch.fluxron.fluxronapp.model.Device;
+import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**

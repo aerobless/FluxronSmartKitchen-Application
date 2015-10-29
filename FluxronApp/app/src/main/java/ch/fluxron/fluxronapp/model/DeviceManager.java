@@ -13,7 +13,9 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
-import ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
+import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
  * Manages bluetooth devices.
@@ -35,21 +37,22 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        loadDevices();
-
-       // provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-
         String cmd = ParamManager.F_SERIAL_NUMBER_1018SUB4;
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
+        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
     }
 
     /**
      * Enables or disables the discovery of bluetooth devices.
      * @param msg
      */
-    public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.bluetoothOperations.BluetoothDiscoveryCommand msg){
+    public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand msg){
+        loadDevices();
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
+        //Send all stored devices up
+        for (Device d:deviceMap.values()){
+            Log.d("FLUXRON","SENT DEVICE UP!");
+            provider.getUiEventBus().post(new DeviceLoaded(d));
+        }
     }
 
     public void onEventAsync(BluetoothDeviceChanged msg){
@@ -71,6 +74,7 @@ public class DeviceManager {
             synchronized (deviceMap){
                 deviceMap.put(msg.getAddress(), device);
             }
+            provider.getUiEventBus().post(new DeviceLoaded(device));
         }
     }
 
