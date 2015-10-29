@@ -18,6 +18,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
+import ch.fluxron.fluxronapp.ui.activities.DeviceListActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IKitchenClickListener;
@@ -92,7 +93,9 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
     }
 
     public void sendBluetoothTestMessage(View btn){
-        postMessage(new BluetoothTestCommand());
+        Intent startOther = new Intent(this, DeviceListActivity.class);
+        startActivity(startOther);
+        //postMessage(new BluetoothTestCommand());
     }
 
     public void sendSearchMessage(){
