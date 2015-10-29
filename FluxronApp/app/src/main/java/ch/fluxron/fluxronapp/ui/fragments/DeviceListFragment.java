@@ -44,18 +44,19 @@ public class DeviceListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         provider.getUiEventBus().register(this);
+        provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        provider.getUiEventBus().post(new BluetoothDiscoveryCommand(false));
         provider.getUiEventBus().unregister(this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
     }
 
     @Nullable
@@ -85,7 +86,6 @@ public class DeviceListFragment extends Fragment {
     }
 
     public void onEventMainThread(DeviceLoaded msg){
-        Log.d("Fluxron","received new DEVICE, trying to add");
         listAdapter.addOrUpdate(msg.getDevice());
     }
 }
