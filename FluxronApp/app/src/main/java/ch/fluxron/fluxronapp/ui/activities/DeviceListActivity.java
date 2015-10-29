@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IDeviceClickListener;
@@ -48,6 +49,7 @@ public class DeviceListActivity extends FluxronBaseActivity implements IDeviceCl
 
     @Override
     public void deviceClicked(Device d) {
-        Log.d("Fluxron", "CLICKED!!");
+        Log.d("Fluxron", "Requesting data from "+d.getAddress());
+        busProvider.getUiEventBus().post(new BluetoothTestCommand(d.getAddress()));
     }
 }

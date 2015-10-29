@@ -37,13 +37,8 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        loadDevices();
-
-       // provider.getDalEventBus().post(new BluetoothDiscoveryCommand(true));
-
         String cmd = ParamManager.F_SERIAL_NUMBER_1018SUB4;
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_GTZ_196_ADDRESS, cmd));
-        provider.getDalEventBus().post(new BluetoothReadRequest(FLX_BAX_5206_ADDRESS, cmd));
+        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
     }
 
     /**
@@ -51,6 +46,7 @@ public class DeviceManager {
      * @param msg
      */
     public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand msg){
+        loadDevices();
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
         //Send all stored devices up
         for (Device d:deviceMap.values()){
