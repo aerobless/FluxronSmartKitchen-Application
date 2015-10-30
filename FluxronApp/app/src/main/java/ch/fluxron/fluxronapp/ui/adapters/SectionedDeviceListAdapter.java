@@ -128,10 +128,8 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
             int i = 0;
             int position = 0;
             for(Map.Entry<String, Integer> e:categories.entrySet()){
-                if(i!=0){
-                    position += e.getValue();
-                }
                 sections[i] = new Section(position, e.getKey());
+                position += e.getValue();
                 i++;
             }
             setSections(sections);

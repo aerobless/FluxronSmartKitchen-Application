@@ -101,7 +101,6 @@ public class DeviceListFragment extends Fragment {
 
     public void onEventMainThread(DeviceLoaded msg){
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
-        //sectionedAdapter.setSections(new SectionedDeviceListAdapter.Section[]{new SectionedDeviceListAdapter.Section(0, "FLX"), new SectionedDeviceListAdapter.Section(2, "HMS")});
         sectionedAdapter.updateSections(deviceCategories);
     }
 
