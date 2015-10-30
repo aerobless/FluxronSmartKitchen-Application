@@ -6,8 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.objectBase.Device;
@@ -40,6 +43,22 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
             deviceIds.put(d.getAddress(), newPosition);
             notifyItemInserted(newPosition);
         }
+        sortList();
+    }
+
+    public void sortList(){
+        Collections.sort(devices, new Comparator<Device>() {
+            @Override
+            public int compare(Device dev1, Device dev2) {
+                return dev1.getCategory().compareTo(dev2.getCategory());
+            }
+        });
+        int i = 1;
+        for(Device d: devices){
+            deviceIds.put(d.getAddress(), i);
+            notifyItemChanged(i);
+            i++;
+        }
     }
 
     /**
@@ -70,7 +89,9 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
 
     @Override
     public void onBindViewHolder(DeviceHolder holder, int position) {
-        holder.bind(devices.get(position));
+        if(devices.size()>position){
+            holder.bind(devices.get(position));
+        }
     }
 
     @Override

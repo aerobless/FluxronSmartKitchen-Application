@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Device {
     String name;
+    String category;
 
     @JsonProperty("_id")
     String address;
@@ -17,6 +18,7 @@ public class Device {
     public Device(String name, String address) {
         this.name = name;
         this.address = address;
+        this.category = name.substring(0,3); //TODO: get real device category
     }
 
     public String getName() {
@@ -33,5 +35,9 @@ public class Device {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }

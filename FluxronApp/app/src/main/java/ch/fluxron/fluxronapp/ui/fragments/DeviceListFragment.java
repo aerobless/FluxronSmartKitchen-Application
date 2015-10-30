@@ -10,11 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceListAdapter;
 import ch.fluxron.fluxronapp.ui.adapters.IDeviceClickListener;
+import ch.fluxron.fluxronapp.ui.adapters.SectionedDeviceListAdapter;
 import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -24,6 +28,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 public class DeviceListFragment extends Fragment {
     private IEventBusProvider provider;
     private DeviceListAdapter listAdapter;
+    private SectionedDeviceListAdapter sectionedAdapter;
     private IDeviceClickListener listener;
 
     @Override
@@ -77,10 +82,17 @@ public class DeviceListFragment extends Fragment {
 
         // List adapter
         listAdapter = new DeviceListAdapter(this.listener, this.provider);
-        deviceListView.setAdapter(listAdapter);
 
-        Log.d("FLUXRON", "HERE onCreateDeviceListFra done!");
-        provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
+        //TODO: sectioned list
+        /*List<SectionedDeviceListAdapter.Section> sections = new ArrayList<>();
+        sections.add(new SectionedDeviceListAdapter.Section(0,"Section 1"));
+        sections.add(new SectionedDeviceListAdapter.Section(3,"Section 2"));*/
+
+        //SectionedDeviceListAdapter.Section[] dummy = new SectionedDeviceListAdapter.Section[sections.size()];
+        sectionedAdapter = new SectionedDeviceListAdapter(this.getActivity(), R.layout.section, R.id.section_text, listAdapter);
+        //sectionedAdapter.setSections(sections.toArray(dummy));
+
+        deviceListView.setAdapter(sectionedAdapter);
 
         return deviceView;
     }
