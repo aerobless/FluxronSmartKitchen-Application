@@ -15,10 +15,10 @@ public class Device {
     public Device() {
     }
 
-    public Device(String name, String address) {
+    public Device(String name, String address, String category) {
         this.name = name;
         this.address = address;
-        this.category = name.substring(0,3); //TODO: get real device category
+        this.category = category;
     }
 
     public String getName() {
@@ -39,5 +39,9 @@ public class Device {
 
     public String getCategory() {
         return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

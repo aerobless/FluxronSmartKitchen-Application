@@ -65,7 +65,7 @@ public class DeviceManager {
      */
     public void onEventAsync(BluetoothDeviceFound msg){
         if(msg.getName()!= null && isFluxronDevice(msg.getName())){
-            Device device = new Device(msg.getName(), msg.getAddress());
+            Device device = new Device(msg.getName(), msg.getAddress(), "Unkown");
             Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
             SaveObjectCommand cmd = new SaveObjectCommand();
             cmd.setData(device);

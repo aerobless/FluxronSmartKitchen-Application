@@ -123,7 +123,7 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     public void updateSections(Map<String, Integer> categories){
-        if(categories.size()>=2){
+        if(categories.size()>=1){
             Section[] sections = new Section[categories.size()];
             int i = 0;
             int position = 0;
