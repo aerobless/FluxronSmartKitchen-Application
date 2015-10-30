@@ -17,6 +17,7 @@ import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceListAdapter;
 import ch.fluxron.fluxronapp.ui.adapters.IDeviceClickListener;
@@ -101,6 +102,11 @@ public class DeviceListFragment extends Fragment {
     public void onEventMainThread(DeviceLoaded msg){
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         //sectionedAdapter.setSections(new SectionedDeviceListAdapter.Section[]{new SectionedDeviceListAdapter.Section(0, "FLX"), new SectionedDeviceListAdapter.Section(2, "HMS")});
+        sectionedAdapter.updateSections(deviceCategories);
+    }
+
+    public void onEventMainThread(DeviceChanged msg){
+        Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
     }
 }

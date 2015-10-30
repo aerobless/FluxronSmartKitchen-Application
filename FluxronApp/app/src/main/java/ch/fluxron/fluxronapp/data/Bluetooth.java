@@ -92,7 +92,7 @@ public class Bluetooth {
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
         if(bluetoothEnabled()){
-            stopDeviceDiscovery();
+            //stopDeviceDiscovery();
 
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
 
@@ -213,11 +213,11 @@ public class Bluetooth {
                     lsb = "0"+lsb;
                 }
                 String field = msb+lsb+"sub"+sub;
-                String fieldName = messageFactory.getFieldname(field);
-                if(fieldName == null){
-                    fieldName = messageFactory.getFieldname(field.substring(0, 4));
+                String fieldID = messageFactory.getParamID(field);
+                if(fieldID == null){
+                    fieldID = messageFactory.getParamID(field.substring(0, 4));
                 }
-                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), fieldName, decodeByteArray(dataPayload)));
+                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), fieldID, decodeByteArray(dataPayload)));
             }
         } else {
             Log.d(TAG, "Invalid checksum!");

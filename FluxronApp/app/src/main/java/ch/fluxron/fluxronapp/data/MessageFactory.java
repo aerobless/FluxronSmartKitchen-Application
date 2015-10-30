@@ -112,9 +112,9 @@ public class MessageFactory {
         Log.d("FLUXRON", hexMessage);
     }
 
-    public String getFieldname(String input){
+    public String getParamID(String input){
         if(parameterMap.get(input)!= null){
-            return parameterMap.get(input).getName();
+            return parameterMap.get(input).getId();
         } else {
             return null;
         }

@@ -57,8 +57,14 @@ public class DeviceManager {
 
     public void onEventAsync(BluetoothDeviceChanged msg){
         Log.d("FLUXRON", "Device " + msg.getAddress() + " has reported " + msg.getValue() + " for field " + msg.getField());
-        if(msg.getField().equals("1008")){
-            deviceMap.get(msg.getAddress()).setCategory(msg.getValue()+"");
+        if(msg.getField().equals(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008)){
+            synchronized (deviceMap){
+                deviceMap.get(msg.getAddress()).setCategory(msg.getValue()+"");
+            }
+            SaveObjectCommand cmd = new SaveObjectCommand();
+            cmd.setData(deviceMap.get(msg.getAddress()));
+            cmd.setDocumentId(msg.getAddress());
+            provider.getDalEventBus().post(cmd);
             provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
         }
     }
@@ -78,7 +84,8 @@ public class DeviceManager {
             synchronized (deviceMap){
                 deviceMap.put(msg.getAddress(), device);
             }
-            provider.getUiEventBus().post(new DeviceLoaded(device));
+            provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
+            //provider.getUiEventBus().post(new DeviceLoaded(device));
         }
     }
 
@@ -95,7 +102,7 @@ public class DeviceManager {
      */
     public void onEventAsync(ObjectLoaded msg){
         if (msg.getData() instanceof Device) {
-            Log.d("FLUXRON", "Device loaded from DB "+((Device) msg.getData()).getName());
+            Log.d("FLUXRON", "Device loaded from DB "+((Device) msg.getData()).getName()+" "+((Device) msg.getData()).getCategory());
             synchronized (deviceMap){
                 deviceMap.put(((Device) msg.getData()).getAddress(), (Device) msg.getData());
             }
