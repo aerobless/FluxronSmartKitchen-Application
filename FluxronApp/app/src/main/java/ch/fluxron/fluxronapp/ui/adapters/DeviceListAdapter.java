@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.objectBase.Device;
@@ -30,7 +33,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
      * its cached values will be updated. Device equality is determined by using getAddress().
      * @param d device to add or update.
      */
-    public void addOrUpdate(Device d){
+    public Map<String, Integer> addOrUpdate(Device d){
         if (deviceIds.containsKey(d.getAddress()))
         {
             int position = deviceIds.get(d.getAddress());
@@ -43,10 +46,11 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
             deviceIds.put(d.getAddress(), newPosition);
             notifyItemInserted(newPosition);
         }
-        sortList();
+        return sortList();
     }
 
-    public void sortList(){
+    public Map<String, Integer> sortList(){
+        Map<String, Integer> deviceCategories = new LinkedHashMap<>();
         Collections.sort(devices, new Comparator<Device>() {
             @Override
             public int compare(Device dev1, Device dev2) {
@@ -55,10 +59,17 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         });
         int i = 1;
         for(Device d: devices){
+            Integer deviceCountPerCategory = deviceCategories.get(d.getCategory());
+            if(deviceCountPerCategory == null){
+                deviceCategories.put(d.getCategory(), 1);
+            } else {
+                deviceCategories.put(d.getCategory(), deviceCountPerCategory+1);
+            }
             deviceIds.put(d.getAddress(), i);
             notifyItemChanged(i);
             i++;
         }
+        return deviceCategories;
     }
 
     /**

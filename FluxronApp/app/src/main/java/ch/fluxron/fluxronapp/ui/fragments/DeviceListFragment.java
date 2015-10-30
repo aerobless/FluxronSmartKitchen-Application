@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
@@ -91,13 +93,14 @@ public class DeviceListFragment extends Fragment {
         //SectionedDeviceListAdapter.Section[] dummy = new SectionedDeviceListAdapter.Section[sections.size()];
         sectionedAdapter = new SectionedDeviceListAdapter(this.getActivity(), R.layout.section, R.id.section_text, listAdapter);
         //sectionedAdapter.setSections(sections.toArray(dummy));
-
         deviceListView.setAdapter(sectionedAdapter);
 
         return deviceView;
     }
 
     public void onEventMainThread(DeviceLoaded msg){
-        listAdapter.addOrUpdate(msg.getDevice());
+        Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
+        //sectionedAdapter.setSections(new SectionedDeviceListAdapter.Section[]{new SectionedDeviceListAdapter.Section(0, "FLX"), new SectionedDeviceListAdapter.Section(2, "HMS")});
+        sectionedAdapter.updateSections(deviceCategories);
     }
 }

@@ -64,7 +64,7 @@ public class DeviceManager {
      * @param msg
      */
     public void onEventAsync(BluetoothDeviceFound msg){
-        if(isFluxronDevice(msg.getName())){
+        if(msg.getName()!= null && isFluxronDevice(msg.getName())){
             Device device = new Device(msg.getName(), msg.getAddress());
             Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
             SaveObjectCommand cmd = new SaveObjectCommand();
@@ -104,9 +104,6 @@ public class DeviceManager {
      * @return true if deviceName starts with FLX, DGL, HC-06 or HM-Soft, which identifies it as a potential Fluxron Device.
      */
     public boolean isFluxronDevice(String deviceName){
-        if(deviceName.matches("(FLX|DGL|HC-06|HMSoft).*")){
-            return true;
-        }
-        return false;
+        return deviceName.matches("(FLX|DGL|HC-06|HMSoft).*");
     }
 }

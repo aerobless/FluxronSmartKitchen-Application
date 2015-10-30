@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Create sections in the device list.
@@ -120,6 +122,21 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    public void updateSections(Map<String, Integer> categories){
+        if(categories.size()>=2){
+            Section[] sections = new Section[categories.size()];
+            int i = 0;
+            int position = 0;
+            for(Map.Entry<String, Integer> e:categories.entrySet()){
+                if(i!=0){
+                    position += e.getValue();
+                }
+                sections[i] = new Section(position, e.getKey());
+                i++;
+            }
+            setSections(sections);
+        }
+    }
 
     public void setSections(Section[] sections) {
         deviceSections.clear();
