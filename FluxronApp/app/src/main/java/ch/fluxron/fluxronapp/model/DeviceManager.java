@@ -14,6 +14,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCo
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
@@ -37,7 +38,7 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        String cmd = ParamManager.F_SERIAL_NUMBER_1018SUB4;
+        String cmd = ParamManager.F_MANUFACTURER_DEVICE_NAME_1008;
         provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
     }
 
@@ -50,13 +51,16 @@ public class DeviceManager {
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
         //Send all stored devices up
         for (Device d:deviceMap.values()){
-            Log.d("FLUXRON","SENT DEVICE UP!");
             provider.getUiEventBus().post(new DeviceLoaded(d));
         }
     }
 
     public void onEventAsync(BluetoothDeviceChanged msg){
         Log.d("FLUXRON", "Device " + msg.getAddress() + " has reported " + msg.getValue() + " for field " + msg.getField());
+        if(msg.getField().equals("1008")){
+            deviceMap.get(msg.getAddress()).setCategory(msg.getValue()+"");
+            provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
+        }
     }
 
     /**

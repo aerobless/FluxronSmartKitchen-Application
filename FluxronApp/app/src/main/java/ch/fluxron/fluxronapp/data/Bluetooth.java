@@ -206,8 +206,18 @@ public class Bluetooth {
                 //Log.d(TAG, "INT "+decodeByteArray(dataPayload));
                 //TODO: nicer method to generate/lookup field name
 
-                String field = Integer.toHexString(0xFF & data[4])+Integer.toHexString(0xFF & data[3])+"sub"+Integer.toHexString(0xFF & data[5]);
-                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), messageFactory.getFieldname(field), decodeByteArray(dataPayload)));
+                String msb = Integer.toHexString(0xFF & data[4]);
+                String lsb = Integer.toHexString(0xFF & data[3]);
+                String sub = Integer.toHexString(0xFF & data[5]);
+                if(lsb.length()==1){
+                    lsb = "0"+lsb;
+                }
+                String field = msb+lsb+"sub"+sub;
+                String fieldName = messageFactory.getFieldname(field);
+                if(fieldName == null){
+                    fieldName = messageFactory.getFieldname(field.substring(0, 4));
+                }
+                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), fieldName, decodeByteArray(dataPayload)));
             }
         } else {
             Log.d(TAG, "Invalid checksum!");

@@ -1,19 +1,18 @@
 package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
-import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
- * Notifies subscribers that a device has been loaded
+ * Notifies subscribers that a device has changed.
  */
-public class DeviceLoaded extends RequestResponseConnection{
+public class DeviceChanged {
     private Device device;
 
     /**
      * Creates a new event containing device data
      * @param device Device data
      */
-    public DeviceLoaded(Device device) {
+    public DeviceChanged(Device device) {
         this.device = device;
     }
 

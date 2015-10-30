@@ -113,6 +113,10 @@ public class MessageFactory {
     }
 
     public String getFieldname(String input){
-        return parameterMap.get(input).getName();
+        if(parameterMap.get(input)!= null){
+            return parameterMap.get(input).getName();
+        } else {
+            return null;
+        }
     }
 }
