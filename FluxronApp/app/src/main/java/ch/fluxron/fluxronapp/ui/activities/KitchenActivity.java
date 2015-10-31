@@ -87,7 +87,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(EXTRA_SAVED_FILEPATH, tempFileName.getPath());
+        if(tempFileName!=null) outState.putString(EXTRA_SAVED_FILEPATH, tempFileName.getPath());
     }
 
     /**
