@@ -23,7 +23,6 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
     private IEventBusProvider provider;
     private String imageRequestId;
     private KitchenArea boundData;
-    private Bitmap image;
     private IAreaClickedListener listener;
 
     public AreaHolder(View itemView, IAreaClickedListener listener, IEventBusProvider provider) {
@@ -41,9 +40,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     public void onEventMainThread(ImageLoaded msg){
         if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
-            if (image !=null) image.recycle();
-            image = msg.getBmp();
-            img.setImageBitmap(image);
+            img.setImageBitmap(msg.getBmp());
 
             // Image was loaded, no need to use the event bus anymore
             if (this.provider.getUiEventBus().isRegistered(this)) {
@@ -58,6 +55,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
      */
     public void bind(final KitchenArea k){
         boundData = k;
+        img.setImageBitmap(null);
         parent.post(new Runnable() {
             @Override
             public void run() {
@@ -71,7 +69,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
      */
     private void loadImage(KitchenArea k) {
         LoadImageFromKitchenCommand command = new LoadImageFromKitchenCommand(k.getKitchenId(), k.getImageName());
-        command.setImageSize(new Point(img.getWidth(), img.getHeight()));
+        command.setImageSize(new Point(0, img.getHeight())); // 0 for dynamic width
         imageRequestId = command.getConnectionId();
 
         // only register for messages, when we actually expect them

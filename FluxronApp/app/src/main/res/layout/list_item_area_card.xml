@@ -22,6 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/areaImage"
+            android:minWidth="50dp"
             android:scaleX="1.04"
             android:scaleY="1.04"
             />

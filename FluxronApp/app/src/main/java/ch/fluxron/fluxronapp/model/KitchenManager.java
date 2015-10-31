@@ -9,6 +9,7 @@ import android.util.Log;
 
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
@@ -16,7 +17,6 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromA
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
@@ -36,6 +36,7 @@ import ch.fluxron.fluxronapp.objectBase.KitchenArea;
  */
 public class KitchenManager {
     private IEventBusProvider provider;
+    private BitmapCache kitchenImageCache;
 
     /**
      * Sets the event bus this manager should be operating on
@@ -43,6 +44,8 @@ public class KitchenManager {
      */
     public KitchenManager(IEventBusProvider provider) {
         this.provider = provider;
+        this.kitchenImageCache = new BitmapCache(1024*20); // 20 MBytes
+
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
     }
@@ -74,16 +77,34 @@ public class KitchenManager {
      * @param msg Message containing the loading request
      */
     public void onEventAsync(final LoadImageFromKitchenCommand msg) {
+        // Check if the image is in the cache and return instantly if needed
+        final String cacheId = msg.getKitchenId() + "/" + msg.getImageName() + "(" + msg.getImageSize().x + "," + msg.getImageSize().y + ")";
+        Bitmap cachedEntry = kitchenImageCache.get(cacheId);
+        if(cachedEntry != null){
+            fireImageLoaded(cachedEntry, msg);
+            return;
+        }
+
         GetFileStreamFromAttachment cmd = new GetFileStreamFromAttachment(msg.getKitchenId(), msg.getImageName(), new ITypedCallback<IStreamProvider>() {
             @Override
             public void call(IStreamProvider streamProvider) {
                 Bitmap bmp = getFittingBitmap(streamProvider, msg.getImageSize());
-                ImageLoaded event = new ImageLoaded(bmp);
-                event.setConnectionId(msg);
-                provider.getUiEventBus().post(event);
+                kitchenImageCache.put(cacheId, bmp);
+                fireImageLoaded(bmp, msg);
             }
         });
         provider.getDalEventBus().post(cmd);
+    }
+
+    /**
+     * Sends a message to the UI containing a loaded bitmap
+     * @param bmp Bitmap that was loaded
+     * @param msg Message that triggered the load
+     */
+    private void fireImageLoaded(Bitmap bmp, RequestResponseConnection msg) {
+        ImageLoaded event = new ImageLoaded(bmp);
+        event.setConnectionId(msg);
+        provider.getUiEventBus().post(event);
     }
 
     /**
@@ -244,7 +265,6 @@ public class KitchenManager {
         EventContinuation.createEventChain(provider.getDalEventBus(), saveCommand, ResponseOK.class, new ITypedCallback<ResponseOK>() {
             @Override
             public void call(ResponseOK value) {
-                Log.d("continue", "first");
                 KitchenManager.this.provider.getDalEventBus().post(attachCommand);
             }
         });
@@ -253,7 +273,6 @@ public class KitchenManager {
         EventContinuation.createEventChain(provider.getDalEventBus(), attachCommand, ResponseOK.class, new ITypedCallback<ResponseOK>() {
             @Override
             public void call(ResponseOK value) {
-                Log.d("continue", "second");
                 KitchenManager.this.provider.getUiEventBus().post(change);
             }
         });
