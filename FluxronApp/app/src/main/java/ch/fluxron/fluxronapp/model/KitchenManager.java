@@ -126,7 +126,7 @@ public class KitchenManager {
         if (imageSize == null) {
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.RGB_565;
-            return BitmapFactory.decodeStream(stream.openStream());
+            return BitmapFactory.decodeStream(stream.openStream(), new Rect(0,0,0,0), options);
         }
         else {
             // Check the dimensions of the image
