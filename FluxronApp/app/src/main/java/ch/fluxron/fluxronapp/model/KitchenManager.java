@@ -1,12 +1,10 @@
 package ch.fluxron.fluxronapp.model;
 
-import android.bluetooth.BluetoothClass;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.Random;
 

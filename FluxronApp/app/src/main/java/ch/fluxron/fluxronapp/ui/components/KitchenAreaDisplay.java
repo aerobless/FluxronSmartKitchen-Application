@@ -22,6 +22,8 @@ public class KitchenAreaDisplay extends View {
     private float currentY;
     private float scrollPosX;
     private float scrollPosY;
+    private float maxScrollX;
+    private float maxScrollY;
     private List<DevicePosition> devices;
     private Paint deviceDefaultPaint;
 
@@ -42,6 +44,13 @@ public class KitchenAreaDisplay extends View {
      * @param bmp
      */
     public void setBitmap(Bitmap bmp){
+        // Position the scrolling position so the image starts out at the center
+        this.scrollPosY =-(bmp.getHeight() / 2 - getMeasuredHeight() / 2);
+        this.scrollPosX =-(bmp.getWidth() / 2 - getMeasuredWidth() / 2);
+
+        this.maxScrollX = bmp.getWidth() - getMeasuredWidth();
+        this.maxScrollY = bmp.getHeight() - getMeasuredHeight();
+
         int splitArraySide = (int)Math.sqrt(splitMaps.length);
         int splitHeight = bmp.getHeight() / splitArraySide;
         int splitWidth = bmp.getWidth() / splitArraySide;
@@ -110,9 +119,10 @@ public class KitchenAreaDisplay extends View {
             float x = event.getRawX();
             float y = event.getRawY();
 
-            // Update absolute values with delta
-            scrollPosX += x - currentX;
-            scrollPosY += y - currentY;
+            // Update absolute values with delta and clip inside maximum
+            // scrolling rectangle
+            scrollPosX = Math.max(-maxScrollX, Math.min(0, scrollPosX + x - currentX));
+            scrollPosY = Math.max(-maxScrollY, Math.min(0, scrollPosY + y - currentY));
 
             // Store last touch position for next delta calculation
             currentX = x;
