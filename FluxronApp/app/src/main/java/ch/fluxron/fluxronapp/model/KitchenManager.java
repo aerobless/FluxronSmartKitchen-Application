@@ -1,11 +1,14 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.bluetooth.BluetoothClass;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.util.Log;
+
+import java.util.Random;
 
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
@@ -28,6 +31,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
+import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 
@@ -302,6 +306,16 @@ public class KitchenManager {
 
             for(KitchenArea a : event.getKitchen().getAreaList()){
                 a.setKitchenId(event.getKitchen().getId());
+
+                // Give every area one device at position 100/100
+                // Todo: Creation of device positions
+                Random r = new Random();
+                for(int i = 0; i < 10; i++) {
+                    DevicePosition p = new DevicePosition();
+                    p.setDeviceId("mac:mac:mac");
+                    p.setPosition(new Point(r.nextInt(1000),r.nextInt(1000)));
+                    a.getDevicePositionList().add(p);
+                }
             }
 
             event.setConnectionId(msg);

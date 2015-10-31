@@ -3,29 +3,37 @@ package ch.fluxron.fluxronapp.ui.components;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.List;
+
+import ch.fluxron.fluxronapp.objectBase.DevicePosition;
+
 /**
  * Displays a big image or parts of it
  */
-public class BigImageDisplay extends View {
+public class KitchenAreaDisplay extends View {
     private Bitmap[] splitMaps = new Bitmap[4];
     private float currentX;
     private float currentY;
     private float scrollPosX;
     private float scrollPosY;
+    private List<DevicePosition> devices;
+    private Paint deviceDefaultPaint;
 
-    public BigImageDisplay(Context context) {
+    public KitchenAreaDisplay(Context context) {
         super(context);
     }
 
-    public BigImageDisplay(Context context, AttributeSet attrs) {
+    public KitchenAreaDisplay(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BigImageDisplay(Context context, AttributeSet attrs, int defStyleAttr) {
+    public KitchenAreaDisplay(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -47,8 +55,14 @@ public class BigImageDisplay extends View {
         invalidate();
     }
 
+    public void setDevicePositions(List<DevicePosition> devices){
+        this.devices = devices;
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
+        // render the image consisting out of the parts
         if(splitMaps.length > 0 && splitMaps[0] != null) {
             int splitArraySide = (int)Math.sqrt(splitMaps.length);
             int imageWidth = splitMaps[0].getWidth();
@@ -57,6 +71,16 @@ public class BigImageDisplay extends View {
                 for (int y = 0; y < splitArraySide; y++) {
                     canvas.drawBitmap(splitMaps[y * splitArraySide + x], scrollPosX+x*imageWidth, scrollPosY+y*imageHeight, null);
                 }
+            }
+        }
+
+        deviceDefaultPaint = new Paint();
+        deviceDefaultPaint.setColor(Color.rgb(255,0,50));
+
+        // Draw the positions for the devices
+        if (devices!= null) {
+            for (DevicePosition p : devices){
+                canvas.drawCircle(scrollPosX + p.getPosition().x, scrollPosY + p.getPosition().y, 30, deviceDefaultPaint);
             }
         }
     }

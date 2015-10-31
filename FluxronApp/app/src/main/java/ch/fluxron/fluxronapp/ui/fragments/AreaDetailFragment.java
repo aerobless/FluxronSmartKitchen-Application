@@ -1,7 +1,6 @@
 package ch.fluxron.fluxronapp.ui.fragments;
 
 import android.app.Fragment;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.view.ViewGroup;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
-import ch.fluxron.fluxronapp.ui.components.BigImageDisplay;
+import ch.fluxron.fluxronapp.ui.components.KitchenAreaDisplay;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -24,7 +23,7 @@ public class AreaDetailFragment extends Fragment {
     private String kitchenId;
     private int areaId;
     private IEventBusProvider provider;
-    private BigImageDisplay display;
+    private KitchenAreaDisplay display;
     private KitchenArea kitchenArea;
     private String imageLoadConnection;
 
@@ -70,13 +69,17 @@ public class AreaDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        display = new BigImageDisplay(getActivity());
+        display = new KitchenAreaDisplay(getActivity());
         return display;
     }
 
     public void onEventMainThread(ImageLoaded msg){
         if (msg.getConnectionId().equals(imageLoadConnection)){
+            // Set the bitmap to the display
             display.setBitmap(msg.getBmp());
+
+            // Set the device positions to the display
+            display.setDevicePositions(kitchenArea.getDevicePositionList());
         }
     }
 
