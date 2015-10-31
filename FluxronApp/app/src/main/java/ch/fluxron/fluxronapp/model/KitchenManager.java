@@ -78,7 +78,15 @@ public class KitchenManager {
      */
     public void onEventAsync(final LoadImageFromKitchenCommand msg) {
         // Check if the image is in the cache and return instantly if needed
-        final String cacheId = msg.getKitchenId() + "/" + msg.getImageName() + "(" + msg.getImageSize().x + "," + msg.getImageSize().y + ")";
+        String tmpCacheId = msg.getKitchenId() + "/" + msg.getImageName();
+
+        if (msg.getImageSize() == null) {
+            tmpCacheId += "(full)";
+        }else{
+            tmpCacheId += "(" + msg.getImageSize().x + "," + msg.getImageSize().y + ")";
+        }
+        final String cacheId = tmpCacheId;
+
         Bitmap cachedEntry = kitchenImageCache.get(cacheId);
         if(cachedEntry != null){
             fireImageLoaded(cachedEntry, msg);
@@ -116,12 +124,15 @@ public class KitchenManager {
      */
     private Bitmap getFittingBitmap(IStreamProvider stream, Point imageSize) {
         if (imageSize == null) {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
             return BitmapFactory.decodeStream(stream.openStream());
         }
         else {
             // Check the dimensions of the image
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
             BitmapFactory.decodeStream(stream.openStream(), null, options);
 
             // Calculate the sample size for the requested size

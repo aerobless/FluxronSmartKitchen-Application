@@ -1,17 +1,17 @@
 package ch.fluxron.fluxronapp.ui.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
-import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
+import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
+import ch.fluxron.fluxronapp.objectBase.KitchenArea;
+import ch.fluxron.fluxronapp.ui.components.BigImageDisplay;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -24,6 +24,9 @@ public class AreaDetailFragment extends Fragment {
     private String kitchenId;
     private int areaId;
     private IEventBusProvider provider;
+    private BigImageDisplay display;
+    private KitchenArea kitchenArea;
+    private String imageLoadConnection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,14 +70,23 @@ public class AreaDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ScrollView scroller = new ScrollView(getActivity());
-        TextView text = new TextView(getActivity());
-        scroller.addView(text);
-        text.setText("Activity Test text");
-        return scroller;
+        display = new BigImageDisplay(getActivity());
+        return display;
     }
 
-    public void onEventMainThread(Object msg){
+    public void onEventMainThread(ImageLoaded msg){
+        if (msg.getConnectionId().equals(imageLoadConnection)){
+            display.setBitmap(msg.getBmp());
+        }
+    }
 
+    public void setKitchenArea(KitchenArea kitchenArea) {
+        this.kitchenArea = kitchenArea;
+
+        // request the full size image
+        LoadImageFromKitchenCommand cmd = new LoadImageFromKitchenCommand(kitchenArea.getKitchenId(), kitchenArea.getImageName());
+        cmd.setImageSize(null); // no size limit
+        this.imageLoadConnection = cmd.getConnectionId();
+        provider.getUiEventBus().post(cmd);
     }
 }

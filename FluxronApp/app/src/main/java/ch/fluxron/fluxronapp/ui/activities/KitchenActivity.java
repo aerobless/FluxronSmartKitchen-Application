@@ -200,6 +200,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         b.putInt(AreaDetailFragment.AREA_RELATIVE_ID, a.getRelativeId());
         fragment.setArguments(b);
         fragment.setEventBusProvider(this.busProvider);
+        fragment.setKitchenArea(a);
 
         getFragmentManager().beginTransaction()
          .replace(R.id.kitchenArea, fragment)
