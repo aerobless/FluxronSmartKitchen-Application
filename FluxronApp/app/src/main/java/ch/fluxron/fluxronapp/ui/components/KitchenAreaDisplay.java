@@ -29,7 +29,6 @@ public class KitchenAreaDisplay extends View {
     private float maxZoom = 1;
     private float minZoom = 0.5f;
     private Camera cam;
-    private int currentAction;
     private PointF currentDragStart;
     private PointF cameraDragStartTranslation;
     private ScaleGestureDetector detector;
@@ -52,15 +51,6 @@ public class KitchenAreaDisplay extends View {
     public KitchenAreaDisplay(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setUp();
-    }
-
-    private float getDragDistanceFromStart(MotionEvent event) {
-        if (currentDragStart != null) {
-            float dx = currentDragStart.x - event.getX();
-            float dy = currentDragStart.y - event.getY();
-            return (float)Math.sqrt(dx * dx + dy * dy);
-        }
-        return 0.0f;
     }
 
     @Override
@@ -115,7 +105,6 @@ public class KitchenAreaDisplay extends View {
             case MotionEvent.ACTION_DOWN:
                 currentDragStart = new PointF(event.getX(), event.getY());
                 cameraDragStartTranslation = cam.copyTranslation();
-                currentAction = ACTION_MODE_DRAG;
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -126,17 +115,6 @@ public class KitchenAreaDisplay extends View {
                 dragTranslation.y /= cam.getScale();
                 cam.setTranslation(cameraDragStartTranslation.x + dragTranslation.x, cameraDragStartTranslation.y + dragTranslation.y);
                 invalidate();
-                break;
-
-            case MotionEvent.ACTION_POINTER_DOWN:
-                currentAction = ACTION_MODE_ZOOM;
-                break;
-
-            case MotionEvent.ACTION_UP:
-                currentAction = ACTION_MODE_NONE;
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                currentAction = ACTION_MODE_NONE;
                 break;
         }
 
