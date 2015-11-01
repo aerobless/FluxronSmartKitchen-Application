@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -32,6 +33,8 @@ public class KitchenAreaDisplay extends View {
     private PointF currentDragStart;
     private PointF cameraDragStartTranslation;
     private ScaleGestureDetector detector;
+    private float bmpWidth;
+    private float bmpHeight;
 
     // Bitmaps and device positions
     private Bitmap[] splitMaps = new Bitmap[4];
@@ -57,6 +60,7 @@ public class KitchenAreaDisplay extends View {
     protected void onDraw(Canvas canvas) {
         canvas.save();
 
+        limitTranslation();
         canvas.concat(cam.getTransformMatrix());
 
         // render the image consisting out of the parts
@@ -82,6 +86,18 @@ public class KitchenAreaDisplay extends View {
         }
 
         canvas.restore();
+    }
+
+    private void limitTranslation() {
+        PointF f = cam.copyTranslation();
+
+        f.x = Math.min(0, f.x);
+        f.x = Math.max(-bmpWidth*cam.getScale()+getWidth(), f.x);
+
+        f.y = Math.min(0, f.y);
+        f.y = Math.max(-bmpHeight*cam.getScale()+getHeight(), f.y);
+
+        cam.setTranslation(f.x, f.y);
     }
 
     @Override
@@ -114,10 +130,10 @@ public class KitchenAreaDisplay extends View {
                 dragTranslation.x /= cam.getScale();
                 dragTranslation.y /= cam.getScale();
                 cam.setTranslation(cameraDragStartTranslation.x + dragTranslation.x, cameraDragStartTranslation.y + dragTranslation.y);
-                invalidate();
                 break;
         }
 
+        invalidate();
         detector.onTouchEvent(event);
         return true;
     }
@@ -156,6 +172,9 @@ public class KitchenAreaDisplay extends View {
         int splitArraySide = (int)Math.sqrt(splitMaps.length);
         int splitHeight = bmp.getHeight() / splitArraySide;
         int splitWidth = bmp.getWidth() / splitArraySide;
+
+        bmpWidth = bmp.getWidth();
+        bmpHeight = bmp.getHeight();
 
         minZoom = bmp.getWidth() > bmp.getHeight() ? (float)getHeight() / (float)bmp.getHeight() : (float)getWidth() / (float)bmp.getWidth();
         cam.setScale(minZoom);
