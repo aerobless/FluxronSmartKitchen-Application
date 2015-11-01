@@ -179,6 +179,9 @@ public class KitchenAreaDisplay extends View {
         int splitHeight = bmp.getHeight() / splitArraySide;
         int splitWidth = bmp.getWidth() / splitArraySide;
 
+        minZoom = bmp.getWidth() > bmp.getHeight() ? (float)getHeight() / (float)bmp.getHeight() : (float)getWidth() / (float)bmp.getWidth();
+        cam.setScale(minZoom);
+
         for(int x = 0; x < splitArraySide; x++){
             for(int y = 0; y < splitArraySide; y++){
                 splitMaps[y * splitArraySide + x] = Bitmap.createBitmap(bmp, x * splitWidth, y * splitHeight, splitWidth, splitHeight);
