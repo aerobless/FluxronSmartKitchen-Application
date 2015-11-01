@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -16,90 +14,60 @@ import android.view.View;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
+import ch.fluxron.fluxronapp.ui.util.Camera;
 
 /**
  * Displays a big image or parts of it
  */
 public class KitchenAreaDisplay extends View {
+    // States
+    protected static int ACTION_MODE_NONE = 0;
+    protected static int ACTION_MODE_DRAG = 1;
+    protected static int ACTION_MODE_ZOOM = 2;
+
+    // Zoom variables
+    private float maxZoom = 1;
+    private float minZoom = 0.5f;
+    private Camera cam;
+    private int currentAction;
+    private PointF currentDragStart;
+    private PointF cameraDragStartTranslation;
+    private ScaleGestureDetector detector;
+
+    // Bitmaps and device positions
     private Bitmap[] splitMaps = new Bitmap[4];
-    private float zoom = 1;
-    private float currentX;
-    private float currentY;
-    private float scrollPosX;
-    private float scrollPosY;
-    private float maxScrollX;
-    private float maxScrollY;
-    private float bmpWidth;
-    private float bmpHeight;
     private List<DevicePosition> devices;
     private Paint deviceDefaultPaint;
-    private ScaleGestureDetector gestureDetector;
 
     public KitchenAreaDisplay(Context context) {
         super(context);
-        setUpDetector();
+        setUp();
     }
 
     public KitchenAreaDisplay(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setUpDetector();
+        setUp();
     }
 
     public KitchenAreaDisplay(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setUpDetector();
+        setUp();
     }
 
-    private void setUpDetector() {
-        gestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener(){
-            @Override
-            public boolean onScale(ScaleGestureDetector detector) {
-                zoom = Math.max(0.1f, Math.min(1, zoom * detector.getScaleFactor()));
-                maxScrollX = bmpWidth*zoom - getMeasuredWidth();
-                maxScrollY = bmpHeight*zoom - getMeasuredHeight();
-                invalidate();
-                return true;
-            }
-        });
-    }
-
-    /**
-     * Sets the full sized bitmap to display
-     * @param bmp
-     */
-    public void setBitmap(Bitmap bmp){
-        // Position the scrolling position so the image starts out at the center
-        this.scrollPosY =-(bmp.getHeight() / 2 - getMeasuredHeight() / 2);
-        this.scrollPosX =-(bmp.getWidth() / 2 - getMeasuredWidth() / 2);
-
-        this.maxScrollX = bmp.getWidth() - getMeasuredWidth();
-        this.maxScrollY = bmp.getHeight() - getMeasuredHeight();
-
-        bmpWidth = bmp.getWidth();
-        bmpHeight = bmp.getHeight();
-
-        int splitArraySide = (int)Math.sqrt(splitMaps.length);
-        int splitHeight = bmp.getHeight() / splitArraySide;
-        int splitWidth = bmp.getWidth() / splitArraySide;
-
-        for(int x = 0; x < splitArraySide; x++){
-            for(int y = 0; y < splitArraySide; y++){
-                splitMaps[y * splitArraySide + x] = Bitmap.createBitmap(bmp, x * splitWidth, y * splitHeight, splitWidth, splitHeight);
-            }
+    private float getDragDistanceFromStart(MotionEvent event) {
+        if (currentDragStart != null) {
+            float dx = currentDragStart.x - event.getX();
+            float dy = currentDragStart.y - event.getY();
+            return (float)Math.sqrt(dx * dx + dy * dy);
         }
-
-        invalidate();
-    }
-
-    public void setDevicePositions(List<DevicePosition> devices){
-        this.devices = devices;
-        invalidate();
+        return 0.0f;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.translate(scrollPosX, scrollPosY);
-        canvas.scale(zoom,zoom);
+        canvas.save();
+
+        canvas.concat(cam.getTransformMatrix());
 
         // render the image consisting out of the parts
         if(splitMaps.length > 0 && splitMaps[0] != null) {
@@ -122,6 +90,8 @@ public class KitchenAreaDisplay extends View {
                 canvas.drawCircle((p.getPosition().x), (p.getPosition().y), 30, deviceDefaultPaint);
             }
         }
+
+        canvas.restore();
     }
 
     @Override
@@ -140,29 +110,87 @@ public class KitchenAreaDisplay extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        gestureDetector.onTouchEvent(event);
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN && !gestureDetector.isInProgress()) {
-            currentX = event.getRawX();
-            currentY = event.getRawY();
+            case MotionEvent.ACTION_DOWN:
+                currentDragStart = new PointF(event.getX(), event.getY());
+                cameraDragStartTranslation = cam.copyTranslation();
+                currentAction = ACTION_MODE_DRAG;
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                PointF dragTranslation = new PointF();
+                dragTranslation.x = event.getX() - currentDragStart.x;
+                dragTranslation.y = event.getY() - currentDragStart.y;
+                dragTranslation.x /= cam.getScale();
+                dragTranslation.y /= cam.getScale();
+                cam.setTranslation(cameraDragStartTranslation.x + dragTranslation.x, cameraDragStartTranslation.y + dragTranslation.y);
+                invalidate();
+                break;
+
+            case MotionEvent.ACTION_POINTER_DOWN:
+                currentAction = ACTION_MODE_ZOOM;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                currentAction = ACTION_MODE_NONE;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                currentAction = ACTION_MODE_NONE;
+                break;
         }
-        else if (event.getAction() == MotionEvent.ACTION_MOVE && !gestureDetector.isInProgress()) {
-            float x = event.getRawX();
-            float y = event.getRawY();
 
-            // Update absolute values with delta and clip inside maximum
-            // scrolling rectangle
-            scrollPosX = Math.min(0, Math.max(-maxScrollX, scrollPosX + x - currentX));
-            scrollPosY = Math.min(0, Math.max(-maxScrollY, scrollPosY + y - currentY));
-
-            // Store last touch position for next delta calculation
-            currentX = x;
-            currentY = y;
-
-            invalidate();
-        }
-
-        // Consume the event
+        detector.onTouchEvent(event);
         return true;
     }
+
+    private void setUp() {
+        cam = new Camera();
+        cam.setScale(1);
+
+        detector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener(){
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                    float oldScaleFactor = cam.getScale();
+                    float scaleFactor = oldScaleFactor * detector.getScaleFactor();
+                    scaleFactor = Math.max(minZoom, Math.min(scaleFactor, maxZoom));
+                    if (scaleFactor != oldScaleFactor) {
+                        float scaleDifference = scaleFactor / oldScaleFactor;
+                        float zoomTranslationX = (1 - scaleDifference) * detector.getFocusX() / scaleFactor;
+                        float zoomTranslationY = (1 - scaleDifference) * detector.getFocusY() / scaleFactor;
+                        cam.setScaleAndRelativeTranslate(scaleFactor,
+                                zoomTranslationX,
+                                zoomTranslationY);
+                        invalidate();
+                    }
+                    return true;
+
+                }
+        });
+    }
+
+
+    /**
+     * Sets the full sized bitmap to display
+     * @param bmp
+     */
+    public void setBitmap(Bitmap bmp){
+        int splitArraySide = (int)Math.sqrt(splitMaps.length);
+        int splitHeight = bmp.getHeight() / splitArraySide;
+        int splitWidth = bmp.getWidth() / splitArraySide;
+
+        for(int x = 0; x < splitArraySide; x++){
+            for(int y = 0; y < splitArraySide; y++){
+                splitMaps[y * splitArraySide + x] = Bitmap.createBitmap(bmp, x * splitWidth, y * splitHeight, splitWidth, splitHeight);
+            }
+        }
+
+        invalidate();
+    }
+
+    public void setDevicePositions(List<DevicePosition> devices){
+        this.devices = devices;
+        invalidate();
+    }
+
 }
