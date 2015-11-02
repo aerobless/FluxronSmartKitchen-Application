@@ -208,6 +208,21 @@ public class Bluetooth {
     }
 
     /**
+     * Kill all existing connections.
+     */
+    private void disconnectAllDevices(){
+        synchronized (connectionMap){
+            for(Map.Entry<String, BTConnectionThread> entry : connectionMap.entrySet()){
+                entry.getValue().end();
+            }
+            connectionMap.clear();
+        }
+        synchronized (connectionQueue){
+            connectionQueue.clear();
+        }
+    }
+
+    /**
      * Get an existing connection to a device or establish a new one.
      * @param device
      * @return BTConnectionThread for the specified device
@@ -350,6 +365,7 @@ public class Bluetooth {
     private void startDeviceDiscovery(){
         if(bluetoothEnabled()){
             stopDeviceDiscovery();
+            disconnectAllDevices();
             btAdapter.startDiscovery();
         }
     }
