@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Device {
     String name;
     String category;
+    boolean bonded;
 
     @JsonProperty("_id")
     String address;
@@ -15,10 +16,19 @@ public class Device {
     public Device() {
     }
 
-    public Device(String name, String address, String category) {
+    public Device(String name, String address, boolean bonded) {
         this.name = name;
         this.address = address;
-        this.category = category;
+        this.category = "unkown";
+        this.bonded = bonded;
+    }
+
+    public boolean isBonded() {
+        return bonded;
+    }
+
+    public void setBonded(boolean bonded) {
+        this.bonded = bonded;
     }
 
     public String getName() {

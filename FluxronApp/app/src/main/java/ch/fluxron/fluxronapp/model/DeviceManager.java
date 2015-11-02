@@ -74,17 +74,16 @@ public class DeviceManager {
      * @param msg
      */
     public void onEventAsync(BluetoothDeviceFound msg){
-        if(msg.getName()!= null && isFluxronDevice(msg.getName())){
-            Device device = new Device(msg.getName(), msg.getAddress(), "Unkown");
-            Log.d("FLUXRON", "New Device found: " + msg.getName() + " " + msg.getAddress());
+        if(msg.getDevice()!= null && isFluxronDevice(msg.getDevice().getName())){
+            Log.d("FLUXRON", "New Device found: " + msg.getDevice().getName() + " " + msg.getDevice().getAddress());
             SaveObjectCommand cmd = new SaveObjectCommand();
-            cmd.setData(device);
-            cmd.setDocumentId(msg.getAddress());
+            cmd.setData(msg.getDevice());
+            cmd.setDocumentId(msg.getDevice().getAddress());
             provider.getDalEventBus().post(cmd);
             synchronized (deviceMap){
-                deviceMap.put(msg.getAddress(), device);
+                deviceMap.put(msg.getDevice().getAddress(), msg.getDevice());
             }
-            provider.getUiEventBus().post(new DeviceLoaded(device));
+            provider.getUiEventBus().post(new DeviceLoaded(msg.getDevice()));
             //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
         }
     }

@@ -15,12 +15,10 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.UUID;
 
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
@@ -28,6 +26,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessag
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
  * Listens to eventbus messages. Provides access to bluetooth devices.
@@ -94,10 +93,9 @@ public class Bluetooth {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
+                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Device(device.getName(), device.getAddress(),device.getBondState()==BluetoothDevice.BOND_BONDED)));
                 }
             }
         };
@@ -119,9 +117,8 @@ public class Bluetooth {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     setDevicePin(device);
                 } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
-                    final int state        = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
-                    final int prevState    = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
-
+                    final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                    final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
                     if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                         Log.d(TAG, "DEVICE PAIRED");
                     } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
@@ -135,7 +132,6 @@ public class Bluetooth {
         context.registerReceiver(receiver, ifilter);
         context.registerReceiver(receiver, ifilter2);
     }
-
 
     /**
      * Starts/Stops the discovery of new devices via bluetooth.
@@ -162,6 +158,7 @@ public class Bluetooth {
                 Log.d(TAG, "UNBONDED Device, trying to bond");
                 pairDevice(device);
             }
+
 
             if(device.getBondState() == BluetoothDevice.BOND_BONDED){
                 BTConnectionThread connectionThread = null;
@@ -198,6 +195,15 @@ public class Bluetooth {
                     }
                 }
             }
+        }
+    }
+
+    private void pairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("createBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -339,26 +345,6 @@ public class Bluetooth {
             }
         }
         return false;
-    }
-
-    private void discoverPairedDevices(){
-        if(bluetoothEnabled()) {
-            Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
-            if (pairedDevices != null) {
-                for (BluetoothDevice device : pairedDevices) {
-                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
-                }
-            }
-        }
-    }
-
-    private void pairDevice(BluetoothDevice device) {
-        try {
-            Method method = device.getClass().getMethod("createBond", (Class[]) null);
-            method.invoke(device, (Object[]) null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void startDeviceDiscovery(){
