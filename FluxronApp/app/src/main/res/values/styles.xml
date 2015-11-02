@@ -30,6 +30,26 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="FluxronDeviceNameTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/titleForeground</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FluxronDeviceDescTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/titleForeground</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:alpha">0.75</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FluxronDeviceStatusTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/titleForeground</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="FluxronSearchBar" parent="android:Widget.TextView">
         <item name="android:textColor">@color/contentBackground</item>
         <item name="android:textSize">20sp</item>
@@ -41,4 +61,21 @@
     <style name="FluxronImageButton" parent="android:Widget.ImageButton">
         <item name="android:background">#00000000</item>
     </style>
+
+    <style name="FluxronTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/titleForeground</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="FluxronTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/accentColor1</item>
+        <item name="tabIndicatorHeight">3dp</item>
+        <item name="tabBackground">@color/primaryColorDark</item>
+        <item name="tabTextAppearance">@style/FluxronTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@color/titleForeground</item>
+        <item name="android:background">@color/primaryColorDark</item>
+    </style>
+
 </resources>

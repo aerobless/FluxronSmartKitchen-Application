@@ -1,46 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.design.widget.AppBarLayout
-        android:layout_height="192dp"
+        android:layout_height="100dp"
         android:layout_width="match_parent"
         style="@style/FluxronAppBar"
         >
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_create_kitchen"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent">
-            <ImageButton
-                style="?android:borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_test_icon"
-                android:onClick="onBackButtonClicked"/>
-            <ImageButton
-                style="?android:borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_test_icon" />
-        </android.support.v7.widget.Toolbar>
+            android:layout_height="match_parent"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="9dp"
+            android:layout_marginLeft="9dp">
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/status_ok_background"
+                    android:id="@+id/statusOrb"
+                    android:text="@string/ok_check"
+                    style="@style/FluxronDeviceStatusTextView"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DEVICE ACTIVITY"
-                style="@style/FluxronTitleTextView"/>
-        </LinearLayout>
-
+                <TextView
+                    android:id="@+id/deviceStatusName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FLX_GTZ4899"
+                    android:layout_toRightOf="@id/statusOrb"
+                    style="@style/FluxronDeviceNameTextView"
+                    android:layout_marginLeft="9dp"
+                    />
+                <TextView
+                    android:id="@+id/deviceStatusDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="00:FF:DD:33:32:BB"
+                    android:layout_toRightOf="@id/statusOrb"
+                    android:layout_below="@id/deviceStatusName"
+                    style="@style/FluxronDeviceDescTextView"
+                    android:layout_marginLeft="9dp"
+                    />
+            </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.design.widget.TabLayout
+        android:id="@+id/deviceTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/FluxronTabLayout"
+        />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/deviceViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+<!--
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -78,8 +99,8 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-</android.support.design.widget.CoordinatorLayout>
+-->
+</LinearLayout>
 
 
 

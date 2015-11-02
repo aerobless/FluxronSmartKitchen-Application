@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.components;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.view.View;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
+import ch.fluxron.fluxronapp.ui.activities.DeviceActivity;
 import ch.fluxron.fluxronapp.ui.util.Camera;
 
 /**
@@ -130,6 +132,17 @@ public class KitchenAreaDisplay extends View {
                 dragTranslation.x /= cam.getScale();
                 dragTranslation.y /= cam.getScale();
                 cam.setTranslation(cameraDragStartTranslation.x + dragTranslation.x, cameraDragStartTranslation.y + dragTranslation.y);
+                break;
+            case MotionEvent.ACTION_UP:
+
+                float dx = event.getX() - currentDragStart.x;
+                float dy = event.getY() - currentDragStart.y;
+
+                if ((dx * dx + dy * dy) <= 5) {
+                    Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
+                    getContext().startActivity(startActivity);
+                }
+
                 break;
         }
 

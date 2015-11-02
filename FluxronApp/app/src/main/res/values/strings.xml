@@ -11,4 +11,13 @@
 
     <!-- Help texts -->
     <string name="no_image_here">No image here. Tap this to take a snapshot.</string>
+
+    <!-- Device tab titles -->
+    <string name="device_tab_status">Status</string>
+    <string name="device_tab_usage">Status</string>
+    <string name="device_tab_errors">Status</string>
+    <string name="device_tab_params">Status</string>
+
+    <!-- Single characters -->
+    <string name="ok_check">&#10003;</string>
 </resources>
