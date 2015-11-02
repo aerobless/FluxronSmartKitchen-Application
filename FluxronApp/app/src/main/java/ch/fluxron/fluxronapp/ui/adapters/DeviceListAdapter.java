@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,9 @@ import java.util.Map;
 import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.objectBase.Device;
+import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -54,16 +57,21 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         Collections.sort(devices, new Comparator<Device>() {
             @Override
             public int compare(Device dev1, Device dev2) {
-                return dev1.getCategory().compareTo(dev2.getCategory());
+                String cat1 = dev1.getDeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008).getValue();
+                String cat2 = dev2.getDeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008).getValue();
+                return cat1.compareTo(cat2);
             }
         });
         int i = 1;
         for(Device d: devices){
-            Integer deviceCountPerCategory = deviceCategories.get(d.getCategory());
+            DeviceParameter dp = d.getDeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008);
+            Log.d("FLUXRON", dp.getValue());
+            String cat = dp.getValue();
+            Integer deviceCountPerCategory = deviceCategories.get(cat);
             if(deviceCountPerCategory == null){
-                deviceCategories.put(d.getCategory(), 1);
+                deviceCategories.put(cat, 1);
             } else {
-                deviceCategories.put(d.getCategory(), deviceCountPerCategory+1);
+                deviceCategories.put(cat, deviceCountPerCategory+1);
             }
             deviceIds.put(d.getAddress(), i);
             notifyItemChanged(i);

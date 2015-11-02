@@ -18,6 +18,7 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestComman
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.objectBase.Device;
+import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 
 /**
  * Manages & caches bluetooth devices.
@@ -63,10 +64,18 @@ public class DeviceManager {
      */
     public void onEventAsync(BluetoothDeviceChanged msg){
         Log.d("FLUXRON", "Device " + msg.getAddress() + " has reported " + msg.getValue() + " for field " + msg.getField());
+        Device device = deviceMap.get(msg.getAddress());
+        device.setDeviceParameter(new DeviceParameter(msg.getField(), msg.getValue()+""));
+        saveDevice(device);
+        provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
+
+        /*
         if(msg.getField().equals(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008)){
-            saveDevice(deviceMap.get(msg.getAddress()), msg.getAddress());
+            Device device = deviceMap.get(msg.getAddress());
+            device.setCategory(msg.getValue()+"");
+            saveDevice(device);
             provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
-        }
+        }*/
     }
 
     /**
@@ -77,7 +86,7 @@ public class DeviceManager {
         Device device = msg.getDevice();
         if(device != null && isFluxronDevice(device.getName())){
             Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
-            saveDevice(device, device.getAddress());
+            saveDevice(device);
             provider.getUiEventBus().post(new DeviceLoaded(device));
             //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
         }
@@ -86,9 +95,8 @@ public class DeviceManager {
     /**
      * Save a device to Cache & DB.
      * @param device
-     * @param address
      */
-    private void saveDevice(Device device, String address) {
+    private void saveDevice(Device device) {
         device.setLastContact(new Date());
 
         //TODO: Device Cache
@@ -98,7 +106,7 @@ public class DeviceManager {
         //Send to DB
         SaveObjectCommand cmd = new SaveObjectCommand();
         cmd.setData(device);
-        cmd.setDocumentId(address);
+        cmd.setDocumentId(device.getAddress());
         provider.getDalEventBus().post(cmd);
     }
 
@@ -115,7 +123,7 @@ public class DeviceManager {
      */
     public void onEventAsync(ObjectLoaded msg){
         if (msg.getData() instanceof Device) {
-            Log.d("FLUXRON", "Device loaded from DB "+((Device) msg.getData()).getName()+" "+((Device) msg.getData()).getCategory());
+            Log.d("FLUXRON", "Device loaded from DB "+((Device) msg.getData()).getName());
             synchronized (deviceMap){
                 deviceMap.put(((Device) msg.getData()).getAddress(), (Device) msg.getData());
             }
