@@ -1,7 +1,5 @@
 package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 
-import java.util.Date;
-
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**

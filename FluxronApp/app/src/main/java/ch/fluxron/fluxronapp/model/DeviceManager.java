@@ -2,6 +2,7 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.Log;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +20,12 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
- * Manages bluetooth devices.
+ * Manages & caches bluetooth devices.
  */
 public class DeviceManager {
     private IEventBusProvider provider;
     private Map<String, Device> deviceMap;
+    //TODO: Proper Device Cache
 
     //Fluxron Demo Devices
     public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
@@ -55,37 +57,49 @@ public class DeviceManager {
         }
     }
 
+    /**
+     * Handles BluetoothDeviceChanged event. Stores device to DB and notifies UI
+     * @param msg
+     */
     public void onEventAsync(BluetoothDeviceChanged msg){
         Log.d("FLUXRON", "Device " + msg.getAddress() + " has reported " + msg.getValue() + " for field " + msg.getField());
         if(msg.getField().equals(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008)){
-            synchronized (deviceMap){
-                deviceMap.get(msg.getAddress()).setCategory(msg.getValue()+"");
-            }
-            SaveObjectCommand cmd = new SaveObjectCommand();
-            cmd.setData(deviceMap.get(msg.getAddress()));
-            cmd.setDocumentId(msg.getAddress());
-            provider.getDalEventBus().post(cmd);
+            saveDevice(deviceMap.get(msg.getAddress()), msg.getAddress());
             provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
         }
     }
 
     /**
-     * Handles BluetoothDeviceFound event. Validates device and stores it in the DB.
+     * Handles BluetoothDeviceFound event. Validates devices, stores it to DB and notifies UI
      * @param msg
      */
     public void onEventAsync(BluetoothDeviceFound msg){
-        if(msg.getDevice()!= null && isFluxronDevice(msg.getDevice().getName())){
-            Log.d("FLUXRON", "New Device found: " + msg.getDevice().getName() + " " + msg.getDevice().getAddress());
-            SaveObjectCommand cmd = new SaveObjectCommand();
-            cmd.setData(msg.getDevice());
-            cmd.setDocumentId(msg.getDevice().getAddress());
-            provider.getDalEventBus().post(cmd);
-            synchronized (deviceMap){
-                deviceMap.put(msg.getDevice().getAddress(), msg.getDevice());
-            }
-            provider.getUiEventBus().post(new DeviceLoaded(msg.getDevice()));
+        Device device = msg.getDevice();
+        if(device != null && isFluxronDevice(device.getName())){
+            Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
+            saveDevice(device, device.getAddress());
+            provider.getUiEventBus().post(new DeviceLoaded(device));
             //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
         }
+    }
+
+    /**
+     * Save a device to Cache & DB.
+     * @param device
+     * @param address
+     */
+    private void saveDevice(Device device, String address) {
+        device.setLastContact(new Date());
+
+        //TODO: Device Cache
+        synchronized (deviceMap){
+            deviceMap.put(device.getAddress(), device);
+        }
+        //Send to DB
+        SaveObjectCommand cmd = new SaveObjectCommand();
+        cmd.setData(device);
+        cmd.setDocumentId(address);
+        provider.getDalEventBus().post(cmd);
     }
 
     /**

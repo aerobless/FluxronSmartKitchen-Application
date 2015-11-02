@@ -2,6 +2,8 @@ package ch.fluxron.fluxronapp.objectBase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
+
 /**
  * A model for a bluetooth device.
  */
@@ -9,6 +11,7 @@ public class Device {
     String name;
     String category;
     boolean bonded;
+    Date lastContact;
 
     @JsonProperty("_id")
     String address;
@@ -53,5 +56,13 @@ public class Device {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Date getLastContact() {
+        return lastContact;
+    }
+
+    public void setLastContact(Date lastContact) {
+        this.lastContact = lastContact;
     }
 }
