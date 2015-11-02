@@ -11,29 +11,21 @@
         android:orientation="vertical"
         android:id="@+id/kitchenView">
 
-
         <android.support.design.widget.AppBarLayout
-            android:layout_height="120dp"
+            android:layout_height="80dp"
             android:layout_width="match_parent"
             style="@style/FluxronAppBar"
             >
 
-            <android.support.v7.widget.Toolbar
+            <FrameLayout
                 android:id="@+id/toolbar_create_kitchen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:layout_marginTop="35dp"
-                android:layout_marginRight="9dp">
-
-                <ImageButton
-                    style="@style/FluxronImageButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_arrow_back"
-                    android:scaleType="fitCenter"
-                    android:onClick="onBackButtonClicked"
-                    android:layout_gravity="start"/>
+                android:layout_marginRight="9dp"
+                android:layout_marginLeft="9dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -41,8 +33,7 @@
                     android:text="@string/activity_kitchen_overview"
                     style="@style/FluxronTitleTextView"
                     android:id="@+id/kitchenNameTitle"
-                    android:layout_gravity="start"
-                    android:layout_marginLeft="20dp"/>
+                    android:layout_gravity="start|center_vertical"/>
 
                 <ImageButton
                     style="@style/FluxronImageButton"
@@ -50,8 +41,8 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_delete"
                     android:onClick="onDeleteButtonClicked"
-                    android:layout_gravity="end"/>
-            </android.support.v7.widget.Toolbar>
+                    android:layout_gravity="end|center_vertical"/>
+            </FrameLayout>
 
         </android.support.design.widget.AppBarLayout>
 
