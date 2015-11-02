@@ -51,7 +51,7 @@ public class DeviceManager {
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
         //Send all stored devices up
         for (Device d:deviceMap.values()){
-            provider.getUiEventBus().post(new DeviceLoaded(d));
+           // provider.getUiEventBus().post(new DeviceLoaded(d));
         }
     }
 
@@ -84,8 +84,8 @@ public class DeviceManager {
             synchronized (deviceMap){
                 deviceMap.put(msg.getAddress(), device);
             }
-            provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
-            //provider.getUiEventBus().post(new DeviceLoaded(device));
+            provider.getUiEventBus().post(new DeviceLoaded(device));
+            //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
         }
     }
 

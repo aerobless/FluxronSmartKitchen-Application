@@ -40,7 +40,7 @@ public class Bluetooth {
     private final Queue<String> connectionQueue;
 
     private static final String TAG = "FLUXRON";
-    private static final int READ_TIMEOUT_IN_SECONDS = 1;
+    private static final String DEVICE_PIN = "1234";
     private static final int MAX_CONCURRENT_CONNECTIONS = 3;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
@@ -53,6 +53,36 @@ public class Bluetooth {
         connectionMap = new HashMap<String, BTConnectionThread>();
         connectionQueue = new LinkedList<String>();
         setupDiscovery(context);
+        setupBonding(context);
+    }
+
+    /**
+     * Set the Bluetooth PIN of a device. This method should only be run after a attempt at bonding
+     * has been made.
+     * @param device
+     */
+    public void setDevicePin(BluetoothDevice device)
+    {
+        Log.d(TAG, "SETTING PIN FOR " + device.getName());
+        try {
+            byte[] pinBytes = (byte[]) BluetoothDevice.class.getMethod("convertPinToBytes", String.class).invoke(BluetoothDevice.class, DEVICE_PIN);
+            Log.d(TAG, "Try to set the PIN");
+            Method m = device.getClass().getMethod("setPin", byte[].class);
+            m.invoke(device, pinBytes);
+            Log.d(TAG, "Success to add the PIN.");
+            try {
+                device.getClass().getMethod("setPairingConfirmation", boolean.class).invoke(device, true);
+                Log.d(TAG, "Success to setPairingConfirmation.");
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+            //TODO: proper exception
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -64,6 +94,7 @@ public class Bluetooth {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
+
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
@@ -73,6 +104,38 @@ public class Bluetooth {
         IntentFilter ifilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         context.registerReceiver(receiver, ifilter);
     }
+
+    /**
+     * Sets up a BroadcastReceiver to listen to bonding events.
+     * @param context
+     */
+    private void setupBonding(Context context){
+        final String ACTION_PAIRING_REQUEST = "android.bluetooth.device.action.PAIRING_REQUEST"; //to support api18
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ACTION_PAIRING_REQUEST.equals(action)){
+                    Log.d(TAG, "TRYING TO PAIR");
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    setDevicePin(device);
+                } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+                    final int state        = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                    final int prevState    = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+
+                    if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
+                        Log.d(TAG, "DEVICE PAIRED");
+                    } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
+                        Log.d(TAG, "DEVICE UNPAIRED");
+                    }
+                }
+            }
+        };
+        IntentFilter ifilter = new IntentFilter(ACTION_PAIRING_REQUEST);
+        IntentFilter ifilter2 = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        context.registerReceiver(receiver, ifilter);
+        context.registerReceiver(receiver, ifilter2);
+    }
+
 
     /**
      * Starts/Stops the discovery of new devices via bluetooth.
@@ -95,29 +158,44 @@ public class Bluetooth {
             //stopDeviceDiscovery();
 
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
-
-            BTConnectionThread connectionThread = getConnection(device, false);
-
-            byte[] message = messageFactory.makeReadRequest(cmd.getField());
-            messageFactory.printUnsignedByteArray(message);
-
-            boolean retry = false;
-            try {
-                connectionThread.write(message);
-            } catch (IOException e) {
-                if(e.getMessage().equals("Broken pipe")){
-                    Log.d(TAG, "Broken pipe");
-                    retry = true;
-                }else {
-                    e.printStackTrace();
-                }
+            if(device.getBondState()== BluetoothDevice.BOND_NONE){
+                Log.d(TAG, "UNBONDED Device, trying to bond");
+                pairDevice(device);
             }
-            if(retry){
-                connectionThread = getConnection(device, true);
+
+            if(device.getBondState() == BluetoothDevice.BOND_BONDED){
+                BTConnectionThread connectionThread = null;
+                try {
+                    connectionThread = getConnection(device, false);
+                } catch (IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+
+                byte[] message = messageFactory.makeReadRequest(cmd.getField());
+                messageFactory.printUnsignedByteArray(message);
+
+                boolean retry = false;
                 try {
                     connectionThread.write(message);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    if(e.getMessage().equals("Broken pipe")){
+                        Log.d(TAG, "Broken pipe");
+                        retry = true;
+                    }else {
+                        e.printStackTrace();
+                    }
+                }
+                if(retry){
+                    try {
+                        connectionThread = getConnection(device, true);
+                        try {
+                            connectionThread.write(message);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
                 }
             }
         }
@@ -128,7 +206,7 @@ public class Bluetooth {
      * @param device
      * @return BTConnectionThread for the specified device
      */
-    private BTConnectionThread getConnection(BluetoothDevice device, boolean clean){
+    private BTConnectionThread getConnection(BluetoothDevice device, boolean clean) throws IOException {
         if(clean){
             synchronized (connectionMap){
                 connectionMap.remove(device.getAddress());
@@ -139,35 +217,30 @@ public class Bluetooth {
         }
         BTConnectionThread connectionThread = connectionMap.get(device.getAddress());
         if(connectionThread == null){
-            try {
-                BluetoothSocket btSocket = createBluetoothSocket(device);
-                if(connectSocket(btSocket)){
-                    connectionThread = new BTConnectionThread(btSocket, provider);
-                    connectionThread.start();
+            BluetoothSocket btSocket = createBluetoothSocket(device);
+            if(connectSocket(btSocket)){
+                connectionThread = new BTConnectionThread(btSocket, provider);
+                connectionThread.start();
 
-                    String deadConnection = null;
-                    synchronized (connectionQueue){
-                        connectionQueue.add(device.getAddress());
-                        if(connectionQueue.size() > MAX_CONCURRENT_CONNECTIONS){
-                            Log.d(TAG, "Killing a connection to make room for a new one");
-                            deadConnection = connectionQueue.poll();
-                        }
+                String deadConnection = null;
+                synchronized (connectionQueue){
+                    connectionQueue.add(device.getAddress());
+                    if(connectionQueue.size() > MAX_CONCURRENT_CONNECTIONS){
+                        Log.d(TAG, "Killing a connection to make room for a new one");
+                        deadConnection = connectionQueue.poll();
                     }
-                    synchronized (connectionMap) {
-                        if (deadConnection != null) {
-                            connectionMap.get(deadConnection).end();
-                            connectionMap.remove(deadConnection);
-                            connectionMap.put(device.getAddress(), connectionThread);
-                        }
+                }
+                synchronized (connectionMap) {
+                    if (deadConnection != null) {
+                        connectionMap.get(deadConnection).end();
+                        connectionMap.remove(deadConnection);
                         connectionMap.put(device.getAddress(), connectionThread);
                     }
-                    return connectionThread;
-                } else {
-                    Log.d(TAG, "Unable to connect to remote device. Are you sure it is turned on and noone else is connected to it?");
+                    connectionMap.put(device.getAddress(), connectionThread);
                 }
-            } catch (IOException e) {
-                Log.d(TAG, "In onResume() and socket create failed");
-                e.printStackTrace();
+                return connectionThread;
+            } else {
+                throw new IOException("Unable to connect to remote device. Are you sure it is turned on and noone else is connected to it?");
             }
         }
         return connectionThread;
@@ -276,6 +349,15 @@ public class Bluetooth {
                     provider.getDalEventBus().post(new BluetoothDeviceFound(new Date(), device.getName(), device.getAddress()));
                 }
             }
+        }
+    }
+
+    private void pairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("createBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
