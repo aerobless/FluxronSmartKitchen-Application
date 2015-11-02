@@ -50,7 +50,8 @@
                 android:layout_marginBottom="15dp"
                 style="@style/FluxronSearchBar"
                 android:id="@+id/kitchenName"
-                android:drawableLeft="@drawable/ic_test_icon"/>
+                android:drawableLeft="@drawable/ic_search"
+                android:paddingLeft="8dp"/>
 
                 <Button android:text="bluetooth test" android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
