@@ -11,6 +11,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
@@ -41,8 +42,19 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        String cmd = ParamManager.F_MANUFACTURER_DEVICE_NAME_1008;
+        //String cmd = ParamManager.F_MANUFACTURER_DEVICE_NAME_1008;
+        //provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
+
+        String cmd = ParamManager.F_INHIBIT_TIME_1400SUB3;
+        provider.getDalEventBus().post(new BluetoothWriteRequest(msg.getDeviceID(), cmd, 55));
+
+        try {
+            Thread.sleep(1000*2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
+
     }
 
     /**

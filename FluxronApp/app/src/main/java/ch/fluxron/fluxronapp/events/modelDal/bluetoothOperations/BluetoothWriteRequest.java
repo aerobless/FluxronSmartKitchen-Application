@@ -8,7 +8,7 @@ public class BluetoothWriteRequest {
     private String field;
     private Object value;
 
-    public BluetoothWriteRequest(String address, String field, int value) {
+    public BluetoothWriteRequest(String address, String field, Object value) {
         this.address = address;
         this.field = field;
         this.value = value;

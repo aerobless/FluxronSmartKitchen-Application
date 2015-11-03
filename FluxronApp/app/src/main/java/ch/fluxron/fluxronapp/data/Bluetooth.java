@@ -151,7 +151,7 @@ public class Bluetooth {
      * @param cmd
      */
     public void onEventAsync(BluetoothWriteRequest cmd) {
-        byte[] message = messageFactory.makeReadRequest(cmd.getField());
+        byte[] message = messageFactory.makeWriteRequest(cmd.getField(), cmd.getValue());
         messageFactory.printUnsignedByteArray(message);
         sendData(cmd.getAddress(), message);
     }
