@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
@@ -40,8 +41,8 @@ public class KitchenAreaDisplay extends View {
 
     // Bitmaps and device positions
     private Bitmap[] splitMaps = new Bitmap[4];
-    private List<DevicePosition> devices;
     private Paint deviceDefaultPaint;
+    private List<DeviceView> views;
 
     public KitchenAreaDisplay(Context context) {
         super(context);
@@ -81,9 +82,12 @@ public class KitchenAreaDisplay extends View {
         deviceDefaultPaint.setColor(Color.rgb(255, 0, 50));
 
         // Draw the positions for the devices
-        if (devices!= null) {
-            for (DevicePosition p : devices){
-                canvas.drawCircle((p.getPosition().x), (p.getPosition().y), 30, deviceDefaultPaint);
+        if (views!= null) {
+            for (DeviceView p : views){
+                canvas.save();
+                canvas.translate(p.getPosition().getPosition().x - p.getWidth() / 2, p.getPosition().getPosition().y -p.getHeight()/2);
+                p.draw(canvas);
+                canvas.restore();
             }
         }
 
@@ -155,6 +159,8 @@ public class KitchenAreaDisplay extends View {
         cam = new Camera();
         cam.setScale(1);
 
+        views = new ArrayList<>();
+
         detector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener(){
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
@@ -202,7 +208,12 @@ public class KitchenAreaDisplay extends View {
     }
 
     public void setDevicePositions(List<DevicePosition> devices){
-        this.devices = devices;
+        for(DevicePosition d : devices){
+            DeviceView deviceRenderer = new DeviceView(getContext());
+            deviceRenderer.setPosition(d);
+            views.add(deviceRenderer);
+        }
+
         invalidate();
     }
 
