@@ -22,7 +22,6 @@ public class DeviceListActivity extends FluxronBaseActivity implements IDeviceCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devicelist);
 
-
         // Initialize the area fragment
         DeviceListFragment fragment = new DeviceListFragment();
         fragment.setEventBusProvider(this.busProvider);
@@ -32,7 +31,6 @@ public class DeviceListActivity extends FluxronBaseActivity implements IDeviceCl
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.deviceListFragment, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.addToBackStack("blub");
         ft.commit();
     }
 

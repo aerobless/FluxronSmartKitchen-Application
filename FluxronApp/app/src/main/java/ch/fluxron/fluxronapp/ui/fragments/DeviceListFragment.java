@@ -86,14 +86,7 @@ public class DeviceListFragment extends Fragment {
         // List adapter
         listAdapter = new DeviceListAdapter(this.listener, this.provider);
 
-        //TODO: sectioned list
-        /*List<SectionedDeviceListAdapter.Section> sections = new ArrayList<>();
-        sections.add(new SectionedDeviceListAdapter.Section(0,"Section 1"));
-        sections.add(new SectionedDeviceListAdapter.Section(3,"Section 2"));*/
-
-        //SectionedDeviceListAdapter.Section[] dummy = new SectionedDeviceListAdapter.Section[sections.size()];
         sectionedAdapter = new SectionedDeviceListAdapter(this.getActivity(), R.layout.section, R.id.section_text, listAdapter);
-        //sectionedAdapter.setSections(sections.toArray(dummy));
         deviceListView.setAdapter(sectionedAdapter);
 
         return deviceView;
