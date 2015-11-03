@@ -1,9 +1,11 @@
 package ch.fluxron.fluxronapp.ui.components;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
@@ -11,7 +13,7 @@ import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 /**
  * Renders a device
  */
-public class DeviceView extends View {
+public class DeviceView extends RelativeLayout {
 
     private DevicePosition position;
 
@@ -45,11 +47,6 @@ public class DeviceView extends View {
         setUp();
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        // do nothing
-    }
-
     /**
      * Gets the position of the device
      * @return Position
@@ -70,15 +67,10 @@ public class DeviceView extends View {
      * Set up the state
      */
     private void setUp() {
-        this.setBackgroundResource(R.drawable.status_ok_background);
-        this.setLayoutParams(new ViewGroup.LayoutParams(150, 150));
-        layout(0,0,150,150);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        setMeasuredDimension(150,150);
+        LayoutInflater.from(getContext()).inflate(R.layout.component_device_view, this, true);
+        this.setWillNotDraw(false);
+        this.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
+        measure(50,50);
+        layout(0, 0, 50, 50);
     }
 }

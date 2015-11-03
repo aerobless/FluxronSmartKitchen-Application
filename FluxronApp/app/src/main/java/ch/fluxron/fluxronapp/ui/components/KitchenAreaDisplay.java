@@ -85,7 +85,7 @@ public class KitchenAreaDisplay extends View {
         if (views!= null) {
             for (DeviceView p : views){
                 canvas.save();
-                canvas.translate(p.getPosition().getPosition().x - p.getWidth() / 2, p.getPosition().getPosition().y -p.getHeight()/2);
+                canvas.translate(p.getPosition().getPosition().x, p.getPosition().getPosition().y);
                 p.draw(canvas);
                 canvas.restore();
             }

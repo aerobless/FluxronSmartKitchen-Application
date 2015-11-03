@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    >
-    <View android:layout_width="10dip" android:background="#0ff000" android:layout_height="match_parent">
-
-    </View>
-    <View android:layout_width="10dip" android:background="#ff0000" android:layout_height="match_parent" android:id="@+id/middleSegment">
-
-    </View>
-    <View android:layout_width="10dip" android:background="#0000ff" android:layout_height="match_parent">
-
-    </View>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/status_ok_background"
+        android:text="@string/ok_check"
+        style="@style/FluxronDeviceStatusTextView"/>
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#ff0000"
+        android:text="x"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="105dp"
+        android:textColor="@color/titleForeground"/>
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/status_ok_background"
+        android:text="x"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:layout_marginTop="05dp"
+        android:layout_marginLeft="105dp"
+        android:textColor="@color/titleForeground"/>
 </merge>
