@@ -2,7 +2,6 @@ package ch.fluxron.fluxronapp.data;
 
 import android.util.Log;
 
-import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 
 import java.util.Arrays;

@@ -291,13 +291,9 @@ public class Bluetooth {
         messageFactory.printUnsignedByteArray(data);
         if(messageFactory.isChecksumValid(data)){
             Log.d(TAG, "and its checksum is valid.");
-            if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B){
-                dataPayload = new byte[]{data[6]};
-            } else if (data[2] == MessageFactory.CCD_READ_RESPONSE_2B){
-                dataPayload = new byte[]{data[6],data[7]};
-            } else if (data[2] == MessageFactory.CCD_READ_RESPONSE_3B){
-                dataPayload = new byte[]{data[6],data[7],data[8]};
-            } else if (data[2] == MessageFactory.CCD_READ_RESPONSE_4B){
+            if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B){
+                //Java Ints are 32bits, so we need 4Bytes anyway. That's why we don't care
+                //how long the payload really is.
                 dataPayload = new byte[]{data[6],data[7],data[8],data[9]};
             } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE){
                 //Doesn't contain data
