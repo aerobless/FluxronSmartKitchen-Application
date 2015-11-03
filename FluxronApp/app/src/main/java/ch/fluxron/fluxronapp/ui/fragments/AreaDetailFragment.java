@@ -50,6 +50,12 @@ public class AreaDetailFragment extends Fragment {
         super.onStart();
 
         provider.getUiEventBus().register(this);
+
+        // request the full size image
+        LoadImageFromKitchenCommand cmd = new LoadImageFromKitchenCommand(kitchenArea.getKitchenId(), kitchenArea.getImageName());
+        cmd.setImageSize(null); // no size limit
+        this.imageLoadConnection = cmd.getConnectionId();
+        provider.getUiEventBus().post(cmd);
     }
 
     @Override
@@ -85,11 +91,5 @@ public class AreaDetailFragment extends Fragment {
 
     public void setKitchenArea(KitchenArea kitchenArea) {
         this.kitchenArea = kitchenArea;
-
-        // request the full size image
-        LoadImageFromKitchenCommand cmd = new LoadImageFromKitchenCommand(kitchenArea.getKitchenId(), kitchenArea.getImageName());
-        cmd.setImageSize(null); // no size limit
-        this.imageLoadConnection = cmd.getConnectionId();
-        provider.getUiEventBus().post(cmd);
     }
 }
