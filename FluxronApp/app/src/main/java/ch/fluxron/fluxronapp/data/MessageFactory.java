@@ -2,6 +2,9 @@ package ch.fluxron.fluxronapp.data;
 
 import android.util.Log;
 
+import com.google.common.primitives.Floats;
+import com.google.common.primitives.Ints;
+
 import java.util.Arrays;
 import java.util.Map;
 
@@ -34,6 +37,32 @@ public class MessageFactory {
     public final static byte CCD_READ_RESPONSE_4B =  (byte) 0x43;
     public final static byte CCD_WRITE_RESPONSE =  (byte) 0x60;
 
+    //Access Types
+    public final static String ACCESS_CONST = "const"; //read only, will not change
+    public final static String ACCESS_READ_ONLY = "ro"; //read-only, can change
+    public final static String ACCESS_WRITE_ONLY = "wo"; //write-only
+    public final static String ACCESS_READ_WRITE = "rw"; //read/writeable
+
+    //Data Types
+    public final static int DATA_TYPE_BOOLEAN = 1;
+    public final static int DATA_TYPE_8BIT_SIGNED_INT = 2;
+    public final static int DATA_TYPE_16BIT_SIGNED_INT = 3;
+    public final static int DATA_TYPE_32BIT_SIGNED_INT = 4;
+    public final static int DATA_TYPE_8BIT_UNSIGNED_INT = 5;
+    public final static int DATA_TYPE_16BIT_UNSIGNED_INT =6;
+    public final static int DATA_TYPE_32BIT_UNSIGNED_INT = 7;
+    public final static int DATA_TYPE_FLOAT = 8;
+    public final static int DATA_TYPE_VISIBLE_STRING = 9;
+    public final static int DATA_TYPE_OCTET_STRING = 10;
+    public final static int DATA_TYPE_DATE = 11;
+    public final static int DATA_TYPE_TIME_OF_DAY = 12;
+    public final static int DATA_TYPE_TIME_DIFFERENCE = 13;
+    public final static int DATA_TYPE_BIT_STRING = 14;
+    public final static int DATA_TYPE_DOMAIN = 15;
+    public final static int DATA_TYPE_PDO_COMM_PAR = 20;
+    public final static int DATA_TYPE_PDO_MAPPING = 21;
+    public final static int DATA_TYPE_SDO_PARAMETER = 22;
+
     public MessageFactory() {
         ParamManager paramManager = new ParamManager();
         this.parameterMap = paramManager.getParamMap();
@@ -46,6 +75,87 @@ public class MessageFactory {
         messageBody[1] = index[0]; //MSB
         messageBody[2] = parameterMap.get(paramID).getSubindex();
         return buildMessage(CCD_READ_REQUEST, messageBody);
+    }
+
+    //TODO: eventuell payload länge anhand datentyp bestimmen statt konvertierung..
+    //TODO: perhaps move rw check to DeviceManager
+    public byte[] makeWriteRequest(String paramID, Object data){
+        String accessType = parameterMap.get(paramID).getAccessType();
+
+        if(accessType.equals(ACCESS_READ_WRITE) || accessType.equals(ACCESS_WRITE_ONLY)){
+
+            //Set Index & subindex
+            byte[] index = parameterMap.get(paramID).getIndex();
+            byte[] messageBody = new byte[7];
+            messageBody[0] = index[1]; //LSB
+            messageBody[1] = index[0]; //MSB
+            messageBody[2] = parameterMap.get(paramID).getSubindex();
+
+            //Create & copy payload to Little Endian
+            byte[] dataArray = convertDataObjectToByte(paramID, data);
+            if(dataArray.length >= 4 && dataArray.length >= 1){
+                int dataIndex = dataArray.length-1;
+                for(int i=3; i< dataArray.length; i++){
+                    messageBody[i] = dataArray[dataIndex];
+                    dataIndex--;
+                }
+            }
+
+            //Set message type
+            if(dataArray.length<=4){
+                byte messageType = CCD_WRITE_REQUEST_4B;
+                switch (dataArray.length){
+                    case 3:
+                        messageType = CCD_WRITE_REQUEST_3B;
+                    case 2:
+                        messageType = CCD_WRITE_REQUEST_2B;
+                    case 1:
+                        messageType = CCD_WRITE_REQUEST_1B;
+                }
+                return buildMessage(messageType, messageBody);
+            } else {
+                throw new UnsupportedOperationException("Support to write messages longer than 4Bytes hasn't been implemented yet");
+            }
+        } else {
+            throw new IllegalArgumentException("Unable to create a write message for a read-only parameter.");
+        }
+    }
+
+    /**
+     * Converts  Parameter Data Objects to a byte arrays.
+     * @param paramID
+     * @param data
+     * @return
+     * @throws UnsupportedOperationException
+     */
+    public byte[] convertDataObjectToByte(String paramID, Object data) throws UnsupportedOperationException{
+        int dataType = parameterMap.get(paramID).getDataType();
+        byte[] dataByte;
+
+        if(dataType == DATA_TYPE_BOOLEAN){
+            int val = ((Boolean) data) ? 1 : 0;
+            dataByte = new byte[val];
+        } else if(isSignedInt(dataType) || isUnsignedInt(dataType) ){
+            dataByte = Ints.toByteArray((Integer) data);
+        } else if(dataType == DATA_TYPE_VISIBLE_STRING){
+            String val = (String)data;
+            dataByte = val.getBytes();
+        } else {
+            throw new UnsupportedOperationException("The datatype for this class hasn't been implemented yet.");
+        }
+        return dataByte;
+    }
+
+    private boolean isSignedInt(int dataType){
+        return (dataType == DATA_TYPE_8BIT_SIGNED_INT
+        || dataType == DATA_TYPE_16BIT_SIGNED_INT
+        || dataType == DATA_TYPE_32BIT_SIGNED_INT);
+    }
+
+    private boolean isUnsignedInt(int dataType){
+        return (dataType == DATA_TYPE_8BIT_UNSIGNED_INT
+                || dataType == DATA_TYPE_16BIT_UNSIGNED_INT
+                || dataType == DATA_TYPE_32BIT_UNSIGNED_INT);
     }
 
     /*
@@ -63,7 +173,7 @@ public class MessageFactory {
         message[1] = (byte)0xAA;
         message[2] = requestCode;
         for (int c = 0; c < (canMessage.length); c++) {
-            message[c+3] = canMessage[c];
+            message[c + 3] = canMessage[c];
         }
         message = setChecksum(message);
         return message;

@@ -1,4 +1,6 @@
 package ch.fluxron.fluxronapp;
+import android.util.Log;
+
 import junit.framework.*;
 
 import java.util.Arrays;
@@ -84,5 +86,36 @@ public class MessageFactoryTest extends TestCase {
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x00, (byte) 0x00 };
         assertFalse(messageFactory.isChecksumValid(someMessage));
+    }
+
+    public void testObjectConvertInt(){
+        MessageFactory messageFactory = new MessageFactory();
+        byte[] result = messageFactory.convertDataObjectToByte(ParamManager.F_FLX_TEMP_FAN_LEVEL_MAX_3035SUB17, 5);
+        messageFactory.printUnsignedByteArray(result);
+        assertTrue(Arrays.equals(new byte[]{0x00, 0x00, 0x00, 0x05}, result));
+
+        byte[] result2 = messageFactory.convertDataObjectToByte(ParamManager.F_PDO_1_MAPPING_FOR_A_PROCESS_DATA_VARIABLE_3_1A00SUB3, 12345);
+        messageFactory.printUnsignedByteArray(result2);
+        assertTrue(Arrays.equals(new byte[]{0x00, 0x00, 0x30, 0x39}, result2));
+    }
+
+    public void testObjectConvertString(){
+        MessageFactory messageFactory = new MessageFactory();
+        byte[] result = messageFactory.convertDataObjectToByte(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008, "TROLL");
+        messageFactory.printUnsignedByteArray(result);
+        assertTrue(Arrays.equals(new byte[]{0x54, 0x52, 0x04f, 0x4c, 0x4c}, result));
+    }
+
+    public void testGenerateWriteMessage(){
+        MessageFactory messageFactory = new MessageFactory();
+        byte[] expectation = new byte[]{
+                (byte) 0xAA, (byte) 0xAA,
+                (byte) 0x23, (byte) 0x00, (byte) 0x14, (byte) 0x03,
+                (byte) 0x37, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x71, (byte) 0x00 };
+        messageFactory.printUnsignedByteArray(expectation);
+        byte[] result = messageFactory.makeWriteRequest(ParamManager.F_INHIBIT_TIME_1400SUB3, 55);
+        messageFactory.printUnsignedByteArray(result);
+        assertTrue(Arrays.equals(expectation, result));
     }
 }

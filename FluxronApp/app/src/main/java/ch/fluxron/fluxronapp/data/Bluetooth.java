@@ -26,6 +26,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessag
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
@@ -146,19 +147,32 @@ public class Bluetooth {
     }
 
     /**
+     * Connects to a bluetooth device and writes data to the field specified in the command.
+     * @param cmd
+     */
+    public void onEventAsync(BluetoothWriteRequest cmd) {
+        byte[] message = messageFactory.makeReadRequest(cmd.getField());
+        messageFactory.printUnsignedByteArray(message);
+        sendData(cmd.getAddress(), message);
+    }
+
+    /**
      * Connects to a bluetooth device and reads the field specified in the command.
      * @param cmd
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
-        if(bluetoothEnabled()){
-            //stopDeviceDiscovery();
+        byte[] message = messageFactory.makeReadRequest(cmd.getField());
+        messageFactory.printUnsignedByteArray(message);
+        sendData(cmd.getAddress(), message);
+    }
 
-            BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
+    private void sendData(String address, byte[] message) {
+        if(bluetoothEnabled()){
+            BluetoothDevice device = btAdapter.getRemoteDevice(address);
             if(device.getBondState()== BluetoothDevice.BOND_NONE){
                 Log.d(TAG, "UNBONDED Device, trying to bond");
                 pairDevice(device);
             }
-
 
             if(device.getBondState() == BluetoothDevice.BOND_BONDED){
                 BTConnectionThread connectionThread = null;
@@ -167,9 +181,6 @@ public class Bluetooth {
                 } catch (IOException e) {
                     Log.d(TAG, e.getMessage());
                 }
-
-                byte[] message = messageFactory.makeReadRequest(cmd.getField());
-                messageFactory.printUnsignedByteArray(message);
 
                 boolean retry = false;
                 try {
@@ -194,6 +205,8 @@ public class Bluetooth {
                         Log.d(TAG, e.getMessage());
                     }
                 }
+            } else {
+                Log.d(TAG, "Device isn't bonded yet. Unable to send data");
             }
         }
     }

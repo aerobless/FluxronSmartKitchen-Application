@@ -6,7 +6,7 @@ package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 public class BluetoothWriteRequest {
     private String address;
     private String field;
-    private int value;
+    private Object value;
 
     public BluetoothWriteRequest(String address, String field, int value) {
         this.address = address;
@@ -30,11 +30,11 @@ public class BluetoothWriteRequest {
         this.field = field;
     }
 
-    public int getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 }
