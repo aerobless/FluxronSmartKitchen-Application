@@ -1,7 +1,5 @@
 package ch.fluxron.fluxronapp.objectBase;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -29,14 +27,6 @@ public class Device {
         this.name = name;
         this.address = address;
         this.bonded = bonded;
-        initDevice();
-    }
-
-    /**
-     * Sets initial values for certain parameters
-     */
-    private void initDevice(){
-        setDeviceParameter(new DeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008, "Unkown Device Type"));
     }
 
     public boolean isBonded() {
@@ -77,5 +67,22 @@ public class Device {
 
     public void setDeviceParameter(DeviceParameter param) {
         deviceParameters.put(param.getName(), param);
+    }
+
+    public String getDeviceType(){
+        DeviceParameter product_code = deviceParameters.get(ParamManager.F_PRODUCT_CODE_1018SUB2);
+        if(product_code != null){
+            if(product_code.getValue().equals("2573")){
+                return "BAX-3500-C";
+            } else if(product_code.getValue().equals("12815")){
+                return "REX-5000-C";
+            } else if(product_code.getValue().equals("2575")){
+                return "BAC-5000-C";
+            } else {
+                return "Unknown Product ID: "+product_code.getValue();
+            }
+        } else {
+            return "Unkown Device Type";
+        }
     }
 }

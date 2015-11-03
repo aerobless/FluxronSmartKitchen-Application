@@ -42,9 +42,11 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        //String cmd = ParamManager.F_MANUFACTURER_DEVICE_NAME_1008;
-        //provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
+        String cmd = ParamManager.F_PRODUCT_CODE_1018SUB2;
+        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
 
+        /*
+        //Writing to device test
         String cmd = ParamManager.F_INHIBIT_TIME_1400SUB3;
         provider.getDalEventBus().post(new BluetoothWriteRequest(msg.getDeviceID(), cmd, 55));
 
@@ -54,7 +56,7 @@ public class DeviceManager {
             e.printStackTrace();
         }
         provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
-
+        */
     }
 
     /**

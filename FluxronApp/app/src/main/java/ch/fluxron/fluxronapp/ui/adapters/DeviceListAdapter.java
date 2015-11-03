@@ -57,16 +57,14 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         Collections.sort(devices, new Comparator<Device>() {
             @Override
             public int compare(Device dev1, Device dev2) {
-                String cat1 = dev1.getDeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008).getValue();
-                String cat2 = dev2.getDeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008).getValue();
+                String cat1 = dev1.getDeviceType();
+                String cat2 = dev2.getDeviceType();
                 return cat1.compareTo(cat2);
             }
         });
         int i = 1;
         for(Device d: devices){
-            DeviceParameter dp = d.getDeviceParameter(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008);
-            Log.d("FLUXRON", dp.getValue());
-            String cat = dp.getValue();
+            String cat = d.getDeviceType();
             Integer deviceCountPerCategory = deviceCategories.get(cat);
             if(deviceCountPerCategory == null){
                 deviceCategories.put(cat, 1);
