@@ -208,8 +208,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
          .addToBackStack(null)
          .commit();
 
-        // Hide the FAB
+        // Hide the FAB and bubble bar
         animateFabAlpha(false);
+        animateBubbleBar(false);
     }
 
     /**
@@ -226,6 +227,20 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
+     * Shows or hides the bubble bar depending on the given boolean value
+     * @param visible Visible or not
+     */
+    private void animateBubbleBar(boolean visible){
+        final ListBubbleControl bubble = (ListBubbleControl)findViewById(R.id.bubbleControl);
+        if(visible){
+            bubble.setVisibility(View.VISIBLE);
+        }
+        else {
+            bubble.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * The back button was pressed, we need to decide if we navigate on the fragment or the
      * activity stack
      */
@@ -235,6 +250,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
             getFragmentManager().popBackStack();
             requestKitchenLoad();
             animateFabAlpha(true);
+            animateBubbleBar(true);
         } else {
             super.onBackPressed();
         }
