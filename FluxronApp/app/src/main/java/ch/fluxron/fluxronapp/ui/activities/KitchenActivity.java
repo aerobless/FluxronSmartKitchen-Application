@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
@@ -165,6 +166,14 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
+     * The user requested to switch to the edit mode
+     * @param button Button that was pressed
+     */
+    public void onEditButtonClicked(View button) {
+        animateDeviceSelectionList(true);
+    }
+
+    /**
      * The user requested the deletion of the kitchen
      * @param button Button that was pressed
      */
@@ -241,6 +250,20 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
+     * Shows or hides the device selection list
+     * @param visible Visible or not
+     */
+    private void animateDeviceSelectionList(boolean visible){
+        final View listContainer = findViewById(R.id.deviceListLayout);
+        if(visible){
+            listContainer.setVisibility(View.VISIBLE);
+        }
+        else {
+            listContainer.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * The back button was pressed, we need to decide if we navigate on the fragment or the
      * activity stack
      */
@@ -251,6 +274,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
             requestKitchenLoad();
             animateFabAlpha(true);
             animateBubbleBar(true);
+            animateDeviceSelectionList(false);
         } else {
             super.onBackPressed();
         }
