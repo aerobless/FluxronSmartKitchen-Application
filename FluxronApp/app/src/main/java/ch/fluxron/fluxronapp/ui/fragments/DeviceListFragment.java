@@ -93,10 +93,6 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         });
         deviceListView.setLayoutManager(layoutManager);
 
-        // Item decoration for the list
-        SpacesItemDecoration deco = new SpacesItemDecoration(30);
-        deviceListView.addItemDecoration(deco);
-
         // List adapter
         listAdapter = new DeviceListAdapter(this.listener, this.provider);
 
