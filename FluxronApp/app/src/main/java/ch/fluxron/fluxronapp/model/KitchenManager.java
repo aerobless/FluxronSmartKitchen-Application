@@ -6,8 +6,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 
-import java.util.Random;
-
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
@@ -21,6 +19,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdComm
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
@@ -304,20 +303,57 @@ public class KitchenManager {
 
             for(KitchenArea a : event.getKitchen().getAreaList()){
                 a.setKitchenId(event.getKitchen().getId());
-
-                // Give every area one device at position 100/100
-                // Todo: Creation of device positions
-                Random r = new Random();
-                for(int i = 0; i < 10; i++) {
-                    DevicePosition p = new DevicePosition();
-                    p.setDeviceId("mac:mac:mac");
-                    p.setPosition(new Point(r.nextInt(1000),r.nextInt(1000)));
-                    a.getDevicePositionList().add(p);
-                }
             }
 
             event.setConnectionId(msg);
             provider.getUiEventBus().post(event);
+        }
+    }
+
+    /**
+     * Triggered when a device should be added to an area
+     * @param msg command
+     */
+    public void onEventAsync(final AddDeviceToAreaCommand msg){
+        // Load the kitchen and attach the device to the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenArea().getKitchenId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    // Attach the device to the area
+                    addDeviceToArea((Kitchen) value, msg);
+                }
+            }
+        });
+        this.provider.getDalEventBus().post(getOp);
+    }
+
+    /**
+     * Adds a device to a loaded kitchen
+     * @param kitchen Kitchen to use
+     * @param msg Message containing the area and the device
+     */
+    private void addDeviceToArea(Kitchen kitchen, AddDeviceToAreaCommand msg) {
+        // Find the area
+        KitchenArea found = null;
+        for(KitchenArea a : kitchen.getAreaList()){
+            if (a.getRelativeId() == msg.getKitchenArea().getRelativeId()) {
+                found = a;
+                break;
+            }
+        }
+
+        if(found!=null) {
+            DevicePosition pos = new DevicePosition();
+            pos.setPosition(new Point(100,100));
+            pos.setDeviceId(msg.getDevice().getAddress());
+            found.getDevicePositionList().add(pos);
+
+            // Save the kitchen
+            final SaveObjectCommand saveCommand = new SaveObjectCommand();
+            saveCommand.setDocumentId(kitchen.getId());
+            saveCommand.setData(kitchen);
+            provider.getDalEventBus().post(saveCommand);
         }
     }
 }
