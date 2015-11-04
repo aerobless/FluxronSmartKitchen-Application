@@ -41,10 +41,11 @@ public class FakeBluetooth {
      */
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
         if(cmd.isEnabled()){
+            discoveryActive = true;
            startDeviceDiscovery();
             Log.d("Fluxron","Fake Discovery Request");
         } else {
-           stopDeviceDiscovery();
+            discoveryActive = false;
         }
     }
 
@@ -75,10 +76,6 @@ public class FakeBluetooth {
         DeviceParameter productCodeParam = new DeviceParameter(ParamManager.F_PRODUCT_CODE_1018SUB2, deviceType+"");
         unreal.setDeviceParameter(productCodeParam);
         return unreal;
-    }
-
-    private void stopDeviceDiscovery(){
-        discoveryActive = false;
     }
 
     private int randInt(int min, int max) {
