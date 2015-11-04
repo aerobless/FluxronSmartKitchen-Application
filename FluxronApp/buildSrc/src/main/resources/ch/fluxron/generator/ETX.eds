@@ -1,0 +1,1631 @@
+[FileInfo]
+FileName=ETX_OD.eds
+FileVersion=1
+FileRevision=1
+EDSVersion=4.0
+Description=
+CreationTime=10:34AM
+CreationDate=11-04-2015
+CreatedBy=CANFestival
+ModificationTime=10:34AM
+ModificationDate=11-04-2015
+ModifiedBy=CANFestival
+
+[DeviceInfo]
+VendorName=CANFestival
+VendorNumber=0xFFFFFFFF
+ProductName=ETX_OD
+ProductNumber=0x00000001
+RevisionNumber=0x00000001
+BaudRate_10=1
+BaudRate_20=1
+BaudRate_50=1
+BaudRate_125=1
+BaudRate_250=1
+BaudRate_500=1
+BaudRate_800=1
+BaudRate_1000=1
+SimpleBootUpMaster=0
+SimpleBootUpSlave=1
+Granularity=8
+DynamicChannelsSupported=0
+CompactPDO=0
+GroupMessaging=0
+NrOfRXPDO=0
+NrOfTXPDO=0
+LSS_Supported=0
+
+[DummyUsage]
+Dummy0001=0
+Dummy0002=1
+Dummy0003=1
+Dummy0004=1
+Dummy0005=1
+Dummy0006=1
+Dummy0007=1
+
+[Comments]
+Lines=0
+
+[MandatoryObjects]
+SupportedObjects=3
+1=0x1000
+2=0x1001
+3=0x1018
+
+[1000]
+ParameterName=Device Type
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=0
+
+[1001]
+ParameterName=Error Register
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[1018]
+ParameterName=Identity
+ObjectType=0x9
+SubNumber=5
+
+[1018sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[1018sub1]
+ParameterName=Vendor ID
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=4294967295
+PDOMapping=0
+
+[1018sub2]
+ParameterName=Product Code
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=1
+PDOMapping=0
+
+[1018sub3]
+ParameterName=Revision Number
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=1
+PDOMapping=0
+
+[1018sub4]
+ParameterName=Serial Number
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=1
+PDOMapping=0
+
+[OptionalObjects]
+SupportedObjects=3
+1=0x00A0
+2=0x1008
+3=0x100A
+
+[A0]
+ParameterName=UNSIGNED16[1000-9999]
+ObjectType=0x9
+SubNumber=4
+
+[A0sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=3
+PDOMapping=0
+
+[A0sub1]
+ParameterName=Type
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=6
+PDOMapping=0
+
+[A0sub2]
+ParameterName=Minimum Value
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=1000
+PDOMapping=0
+
+[A0sub3]
+ParameterName=Maximum Value
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=9999
+PDOMapping=0
+
+[1008]
+ParameterName=Manufacturer Device Name
+ObjectType=0x7
+DataType=0x0009
+AccessType=ro
+DefaultValue=ETX
+PDOMapping=0
+
+[100A]
+ParameterName=Manufacturer Software Version
+ObjectType=0x7
+DataType=0x0009
+AccessType=ro
+DefaultValue=None
+PDOMapping=0
+
+[ManufacturerObjects]
+SupportedObjects=25
+1=0x2000
+2=0x3000
+3=0x3005
+4=0x3006
+5=0x3021
+6=0x3022
+7=0x3027
+8=0x304F
+9=0x3050
+10=0x3051
+11=0x3052
+12=0x3053
+13=0x3054
+14=0x3055
+15=0x3056
+16=0x3057
+17=0x3058
+18=0x3059
+19=0x305A
+20=0x305B
+21=0x305C
+22=0x305D
+23=0x305E
+24=0x305F
+25=0x3127
+
+[2000]
+ParameterName=Config operation
+ObjectType=0x9
+SubNumber=4
+
+[2000sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=3
+PDOMapping=0
+
+[2000sub1]
+ParameterName=BLT Visibility
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[2000sub2]
+ParameterName=BLT Pin
+ObjectType=0x7
+DataType=0x00A0
+AccessType=rw
+DefaultValue=1234
+PDOMapping=1
+
+[2000sub3]
+ParameterName=BLT OscCal
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3000]
+ParameterName=Non volatile memory
+ObjectType=0x9
+SubNumber=6
+
+[3000sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=5
+PDOMapping=0
+
+[3000sub1]
+ParameterName=NVM Amount of stored bytes
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3000sub2]
+ParameterName=NVM Reserved
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3000sub3]
+ParameterName=NVM Password
+ObjectType=0x7
+DataType=0x0006
+AccessType=wo
+DefaultValue=0
+PDOMapping=1
+
+[3000sub4]
+ParameterName=NVM Restore default values
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3000sub5]
+ParameterName=NVM Store counter
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3005]
+ParameterName=Error History
+ObjectType=0x9
+SubNumber=5
+
+[3005sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3005sub1]
+ParameterName=Error 1
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3005sub2]
+ParameterName=Error 2
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3005sub3]
+ParameterName=Error 3
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3005sub4]
+ParameterName=Error 4
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3006]
+ParameterName=Operating Hours
+ObjectType=0x9
+SubNumber=7
+
+[3006sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=6
+PDOMapping=0
+
+[3006sub1]
+ParameterName=Power on time
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3006sub2]
+ParameterName=Working time
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3006sub3]
+ParameterName=Ambient high
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3006sub4]
+ParameterName=Temperature high
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3006sub5]
+ParameterName=Temperature gradient neg
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3006sub6]
+ParameterName=Temperature gradient pos
+ObjectType=0x7
+DataType=0x0007
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3021]
+ParameterName=Analog Input
+ObjectType=0x9
+SubNumber=6
+
+[3021sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=5
+PDOMapping=0
+
+[3021sub1]
+ParameterName=AnalogInput1
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3021sub2]
+ParameterName=AnalogInput2
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3021sub3]
+ParameterName=AnalogInput3
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3021sub4]
+ParameterName=KnobAIn
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3021sub5]
+ParameterName=CPUTemp
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3022]
+ParameterName=Analog Input Calibration
+ObjectType=0x9
+SubNumber=11
+
+[3022sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=10
+PDOMapping=0
+
+[3022sub1]
+ParameterName=AnalogInput1 Offset
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3022sub2]
+ParameterName=AnalogInput1 Gain
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=2048
+PDOMapping=1
+
+[3022sub3]
+ParameterName=AnalogInput2 Offset
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3022sub4]
+ParameterName=AnalogInput2 Gain
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=2048
+PDOMapping=1
+
+[3022sub5]
+ParameterName=AnalogInput3 Offset
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3022sub6]
+ParameterName=AnalogInput3 Gain
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=2048
+PDOMapping=1
+
+[3022sub7]
+ParameterName=KnobAIn Offset
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3022sub8]
+ParameterName=KnobAIn Gain
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=2048
+PDOMapping=1
+
+[3022sub9]
+ParameterName=CPUTemp Offset
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3022subA]
+ParameterName=CPUTemp Gain
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=2244
+PDOMapping=1
+
+[3027]
+ParameterName=Touch
+ObjectType=0x9
+SubNumber=8
+
+[3027sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=7
+PDOMapping=0
+
+[3027sub1]
+ParameterName=TCH status
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3027sub2]
+ParameterName=TCH slider position
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3027sub3]
+ParameterName=TCH LED dim
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=31
+PDOMapping=1
+
+[3027sub4]
+ParameterName=TCH state
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3027sub5]
+ParameterName=TCH sysFlags
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3027sub6]
+ParameterName=TCH ATItime
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=18000
+PDOMapping=1
+
+[3027sub7]
+ParameterName=TCH ATImethod
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[304F]
+ParameterName=Cook and Hold
+ObjectType=0x9
+SubNumber=5
+
+[304Fsub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[304Fsub1]
+ParameterName=CAH state
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[304Fsub2]
+ParameterName=CAH temperature Oven set
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[304Fsub3]
+ParameterName=CAH temperature Core set
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[304Fsub4]
+ParameterName=CAH temperature Ref
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050]
+ParameterName=Electronic thermostat
+ObjectType=0x9
+SubNumber=27
+
+[3050sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=26
+PDOMapping=0
+
+[3050sub1]
+ParameterName=ETX temperature 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub2]
+ParameterName=ETX temperature 2
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub3]
+ParameterName=ETX temperature 3
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub4]
+ParameterName=ETX temperature Ref
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub5]
+ParameterName=ETX temperature CPU
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub6]
+ParameterName=ETX display
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3050sub7]
+ParameterName=ETX operation timer
+ObjectType=0x7
+DataType=0x0007
+AccessType=rw
+DefaultValue=4294967295
+PDOMapping=1
+
+[3050sub8]
+ParameterName=ETX application number
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub9]
+ParameterName=ETX preset 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=100
+PDOMapping=1
+
+[3050subA]
+ParameterName=ETX preset 2
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=150
+PDOMapping=1
+
+[3050subB]
+ParameterName=ETX preset 3
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=200
+PDOMapping=1
+
+[3050subC]
+ParameterName=ETX output polarity
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3050subD]
+ParameterName=ETX status
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050subE]
+ParameterName=ETX preset timer 1
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=240
+PDOMapping=1
+
+[3050subF]
+ParameterName=ETX preset timer 2
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=300
+PDOMapping=1
+
+[3050sub10]
+ParameterName=ETX preset timer 3
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=360
+PDOMapping=1
+
+[3050sub11]
+ParameterName=ETX timer 1
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub12]
+ParameterName=ETX timer 2
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub13]
+ParameterName=ETX timer 3
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub14]
+ParameterName=ETX timer Ref
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub15]
+ParameterName=ETX test
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3050sub16]
+ParameterName=ETX hysteresis 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub17]
+ParameterName=ETX gradient 1
+ObjectType=0x7
+DataType=0x0002
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub18]
+ParameterName=ETX gradient 1 slow
+ObjectType=0x7
+DataType=0x0002
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub19]
+ParameterName=ETX flickerCnt 1
+ObjectType=0x7
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3050sub1A]
+ParameterName=ETX temp observed 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3051]
+ParameterName=AppPara1
+ObjectType=0x9
+SubNumber=5
+
+[3051sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3051sub1]
+ParameterName=Nominal current 0
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[3051sub2]
+ParameterName=Nominal current 1
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[3051sub3]
+ParameterName=Nominal current 2
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[3051sub4]
+ParameterName=Nominal current 3
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[3052]
+ParameterName=AppPara2
+ObjectType=0x9
+SubNumber=5
+
+[3052sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3052sub1]
+ParameterName=Controlled temperature high limit 0
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=90
+PDOMapping=1
+
+[3052sub2]
+ParameterName=Controlled temperature high limit 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=185
+PDOMapping=1
+
+[3052sub3]
+ParameterName=Controlled temperature high limit 2
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=220
+PDOMapping=1
+
+[3052sub4]
+ParameterName=Controlled temperature high limit 3
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=350
+PDOMapping=1
+
+[3053]
+ParameterName=AppPara3
+ObjectType=0x9
+SubNumber=5
+
+[3053sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3053sub1]
+ParameterName=Controlled temperature max limit 0
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=100
+PDOMapping=1
+
+[3053sub2]
+ParameterName=Controlled temperature max limit 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=200
+PDOMapping=1
+
+[3053sub3]
+ParameterName=Controlled temperature max limit 2
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=300
+PDOMapping=1
+
+[3053sub4]
+ParameterName=Controlled temperature max limit 3
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=400
+PDOMapping=1
+
+[3054]
+ParameterName=AppPara4
+ObjectType=0x9
+SubNumber=5
+
+[3054sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3054sub1]
+ParameterName=Neg Gradient limit 0
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=-20
+PDOMapping=1
+
+[3054sub2]
+ParameterName=Neg Gradient limit 1
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=-20
+PDOMapping=1
+
+[3054sub3]
+ParameterName=Neg Gradient limit 2
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=-20
+PDOMapping=1
+
+[3054sub4]
+ParameterName=Neg Gradient limit 3
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=-20
+PDOMapping=1
+
+[3055]
+ParameterName=AppPara5
+ObjectType=0x9
+SubNumber=5
+
+[3055sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3055sub1]
+ParameterName=Pos Gradient limit 0
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=20
+PDOMapping=1
+
+[3055sub2]
+ParameterName=Pos Gradient limit 1
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=20
+PDOMapping=1
+
+[3055sub3]
+ParameterName=Pos Gradient limit 2
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=20
+PDOMapping=1
+
+[3055sub4]
+ParameterName=Pos Gradient limit 3
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=20
+PDOMapping=1
+
+[3056]
+ParameterName=AppPara6
+ObjectType=0x9
+SubNumber=5
+
+[3056sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3056sub1]
+ParameterName=Reference temperature at 90 degree 0
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=33
+PDOMapping=1
+
+[3056sub2]
+ParameterName=Reference temperature at 90 degree 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=50
+PDOMapping=1
+
+[3056sub3]
+ParameterName=Reference temperature at 90 degree 2
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=75
+PDOMapping=1
+
+[3056sub4]
+ParameterName=Reference temperature at 90 degree 3
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=100
+PDOMapping=1
+
+[3057]
+ParameterName=AppPara7
+ObjectType=0x9
+SubNumber=5
+
+[3057sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3057sub1]
+ParameterName=Reference temperature at 270 degree 0
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=87
+PDOMapping=1
+
+[3057sub2]
+ParameterName=Reference temperature at 270 degree 1
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=170
+PDOMapping=1
+
+[3057sub3]
+ParameterName=Reference temperature at 270 degree 2
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=253
+PDOMapping=1
+
+[3057sub4]
+ParameterName=Reference temperature at 270 degree 3
+ObjectType=0x7
+DataType=0x0003
+AccessType=rw
+DefaultValue=336
+PDOMapping=1
+
+[3058]
+ParameterName=AppPara8
+ObjectType=0x9
+SubNumber=5
+
+[3058sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3058sub1]
+ParameterName=Display hysteresis 0
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=2
+PDOMapping=1
+
+[3058sub2]
+ParameterName=Display hysteresis 1
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=2
+PDOMapping=1
+
+[3058sub3]
+ParameterName=Display hysteresis 2
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=2
+PDOMapping=1
+
+[3058sub4]
+ParameterName=Display hysteresis 3
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=2
+PDOMapping=1
+
+[3059]
+ParameterName=AppPara9
+ObjectType=0x9
+SubNumber=5
+
+[3059sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[3059sub1]
+ParameterName=Temperature offset 0
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3059sub2]
+ParameterName=Temperature offset 1
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3059sub3]
+ParameterName=Temperature offset 2
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[3059sub4]
+ParameterName=Temperature offset 3
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[305A]
+ParameterName=AppPara10
+ObjectType=0x9
+SubNumber=5
+
+[305Asub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[305Asub1]
+ParameterName=PT sensor config 0
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305Asub2]
+ParameterName=PT sensor config 1
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305Asub3]
+ParameterName=PT sensor config 2
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305Asub4]
+ParameterName=PT sensor config 3
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305B]
+ParameterName=AppPara11
+ObjectType=0x9
+SubNumber=5
+
+[305Bsub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[305Bsub1]
+ParameterName=Controller config 0
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=49
+PDOMapping=1
+
+[305Bsub2]
+ParameterName=Controller config 1
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=49
+PDOMapping=1
+
+[305Bsub3]
+ParameterName=Controller config 2
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=49
+PDOMapping=1
+
+[305Bsub4]
+ParameterName=Controller config 3
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=49
+PDOMapping=1
+
+[305C]
+ParameterName=AppPara12
+ObjectType=0x9
+SubNumber=5
+
+[305Csub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[305Csub1]
+ParameterName=Switching hysteresis max 0
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305Csub2]
+ParameterName=Switching hysteresis max 1
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305Csub3]
+ParameterName=Switching hysteresis max 2
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305Csub4]
+ParameterName=Switching hysteresis max 3
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=1
+PDOMapping=1
+
+[305D]
+ParameterName=AppPara13
+ObjectType=0x9
+SubNumber=5
+
+[305Dsub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[305Dsub1]
+ParameterName=Switching hysteresis length 0
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=15
+PDOMapping=1
+
+[305Dsub2]
+ParameterName=Switching hysteresis length 1
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=15
+PDOMapping=1
+
+[305Dsub3]
+ParameterName=Switching hysteresis length 2
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=15
+PDOMapping=1
+
+[305Dsub4]
+ParameterName=Switching hysteresis length 3
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=15
+PDOMapping=1
+
+[305E]
+ParameterName=AppPara14
+ObjectType=0x9
+SubNumber=5
+
+[305Esub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[305Esub1]
+ParameterName=Temp gradient feed forward 0
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[305Esub2]
+ParameterName=Temp gradient feed forward 1
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[305Esub3]
+ParameterName=Temp gradient feed forward 2
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[305Esub4]
+ParameterName=Temp gradient feed forward 3
+ObjectType=0x7
+DataType=0x0002
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[305F]
+ParameterName=AppPara15
+ObjectType=0x9
+SubNumber=5
+
+[305Fsub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+
+[305Fsub1]
+ParameterName=Temp gradient filt 0
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[305Fsub2]
+ParameterName=Temp gradient filt 1
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[305Fsub3]
+ParameterName=Temp gradient filt 2
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[305Fsub4]
+ParameterName=Temp gradient filt 3
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=10
+PDOMapping=1
+
+[3127]
+ParameterName=Touch Debug
+ObjectType=0x9
+SubNumber=9
+
+[3127sub0]
+ParameterName=Number of Entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=8
+PDOMapping=0
+
+[3127sub1]
+ParameterName=CH1 Multiplier
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub2]
+ParameterName=CH2 Multiplier
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub3]
+ParameterName=CH3 Multiplier
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub4]
+ParameterName=CH7 Multiplier
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub5]
+ParameterName=CH1 Compensation
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub6]
+ParameterName=CH2 Compensation
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub7]
+ParameterName=CH3 Compensation
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3127sub8]
+ParameterName=CH7 Compensation
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=0
+PDOMapping=1

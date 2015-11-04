@@ -14,6 +14,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 
@@ -93,12 +94,31 @@ public class DeviceManager {
      */
     public void onEventAsync(BluetoothDeviceFound msg){
         Device device = msg.getDevice();
-        if(device != null && isFluxronDevice(device.getName()) && (deviceCache.get(device.getAddress()) == null)){
-            Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
-            updateDeviceCache(device);
-            provider.getUiEventBus().post(new DeviceLoaded(device));
-            //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
+        if(device != null && isFluxronDevice(device.getName())){
+            boolean cached;
+            synchronized (deviceCache){
+                cached = deviceCache.get(device.getAddress())!=null;
+            }
+            if(!cached){
+                Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
+                updateDeviceCache(device);
+                provider.getUiEventBus().post(new DeviceLoaded(device));
+                Log.d("FLUXRON", "BOND STATUS: " +device.isBonded());
+                //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
+            }
+            /*synchronized (deviceCache){
+                //TODO: handle unbonded devices?
+                if(deviceCache.get(device.getAddress()).getDeviceType()==Device.UNKNOWN_DEVICE_TYPE && device.isBonded()){
+                    provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_PRODUCT_CODE_1018SUB2));
+                }
+            }*/
         }
+    }
+
+    public void onEventAsync(DeviceParamRequestCommand cmd){
+        //TODO: check if cached?
+        //TODO: make sure that device is bonded first?
+        provider.getDalEventBus().post(new BluetoothReadRequest(cmd.getDeviceID(), cmd.getParamID()));
     }
 
     /**

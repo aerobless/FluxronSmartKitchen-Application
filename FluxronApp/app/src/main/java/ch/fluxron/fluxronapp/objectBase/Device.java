@@ -17,6 +17,8 @@ public class Device {
     private Date lastContact;
     private Map<String, DeviceParameter> deviceParameters = new HashMap<>();
 
+    public final static String UNKNOWN_DEVICE_TYPE = "Unknown Device Type";
+
     @JsonProperty("_id")
     String address;
 
@@ -82,7 +84,7 @@ public class Device {
                 return "Unknown Product ID: "+product_code.getValue();
             }
         } else {
-            return "Unkown Device Type";
+            return UNKNOWN_DEVICE_TYPE;
         }
     }
 }

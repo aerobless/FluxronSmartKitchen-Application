@@ -91,12 +91,6 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendBluetoothTestMessage(View btn){
-        Intent startOther = new Intent(this, DeviceListActivity.class);
-        startActivity(startOther);
-        //postMessage(new BluetoothTestCommand());
-    }
-
     public void sendSearchMessage(){
         String searchQuery = ((TextView)findViewById(R.id.kitchenName)).getText().toString();
         FindKitchenCommand cmd = new FindKitchenCommand(searchQuery);

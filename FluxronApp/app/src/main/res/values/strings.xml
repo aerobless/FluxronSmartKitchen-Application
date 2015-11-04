@@ -18,6 +18,10 @@
     <string name="device_tab_errors">Errors</string>
     <string name="device_tab_params">Config</string>
 
+    <!-- Device List -->
+    <string name="btn_pause_discovery">Pause Discovery</string>
+    <string name="btn_start_discovery">Start Discovery</string>
+
     <!-- Single characters -->
     <string name="ok_check">&#10003;</string>
 </resources>
