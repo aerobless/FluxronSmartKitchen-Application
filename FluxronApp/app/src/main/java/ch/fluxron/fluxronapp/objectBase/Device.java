@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 /**
  * A model for a bluetooth device.
@@ -16,8 +17,10 @@ public class Device {
     private boolean bonded;
     private Date lastContact;
     private Map<String, DeviceParameter> deviceParameters = new HashMap<>();
+    private DeviceTypeConverter dtConverter = new DeviceTypeConverter();
 
     public final static String UNKNOWN_DEVICE_TYPE = "Unknown Device Type";
+    public final static String INVALID_DEVICE_TYPE = "Invalid Device Type";
 
     @JsonProperty("_id")
     String address;
@@ -71,17 +74,20 @@ public class Device {
         deviceParameters.put(param.getName(), param);
     }
 
+    /**
+     * Returns the device type if "F_PRODUCT_CODE_1018SUB2" is stored for this device.
+     * Otherwise it will return UNKNOWN_DEVICE_TYPE. If the value stored in param "F_PRODUCT_CODE_1018SUB2"
+     * is invalid it will return INVALID_DEVICE_TYPE.
+     * @return
+     */
     public String getDeviceType(){
         DeviceParameter product_code = deviceParameters.get(ParamManager.F_PRODUCT_CODE_1018SUB2);
         if(product_code != null){
-            if(product_code.getValue().equals("2573")){
-                return "BAX-3500-C";
-            } else if(product_code.getValue().equals("12815")){
-                return "REX-5000-C";
-            } else if(product_code.getValue().equals("2575")){
-                return "BAC-5000-C";
-            } else {
-                return "Unknown Product ID: "+product_code.getValue();
+            try{
+                int productCode = Integer.parseInt(product_code.getValue());
+                return dtConverter.toDeviceType(productCode);
+            } catch(NumberFormatException e){
+                return INVALID_DEVICE_TYPE;
             }
         } else {
             return UNKNOWN_DEVICE_TYPE;
