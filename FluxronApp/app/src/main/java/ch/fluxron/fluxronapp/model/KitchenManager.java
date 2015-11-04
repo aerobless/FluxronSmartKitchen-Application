@@ -21,6 +21,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
@@ -326,6 +327,61 @@ public class KitchenManager {
             }
         });
         this.provider.getDalEventBus().post(getOp);
+    }
+
+
+    /**
+     * Triggered when a device should be added to an area
+     * @param msg command
+     */
+    public void onEventAsync(final ChangeDevicePosition msg){
+        // Load the kitchen and attach the device to the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    // Attach the device to the area
+                    moveDevicePosition((Kitchen)value, msg);
+                }
+            }
+        });
+        this.provider.getDalEventBus().post(getOp);
+    }
+
+    /**
+     * Changes the device position according to the message
+     * @param msg Message
+     */
+    private void moveDevicePosition(Kitchen kitchen, ChangeDevicePosition msg) {
+        // Find the area
+        KitchenArea foundKitchen = null;
+        for(KitchenArea a : kitchen.getAreaList()){
+            if (a.getRelativeId() == msg.getAreaId()) {
+                foundKitchen = a;
+                break;
+            }
+        }
+
+        if(foundKitchen!=null) {
+            DevicePosition foundPosition = null;
+
+            for(DevicePosition pos : foundKitchen.getDevicePositionList()){
+                if (pos.getDeviceId().equals(msg.getDeviceId())) {
+                    foundPosition = pos;
+                    break;
+                }
+            }
+
+            if (foundPosition != null){
+                foundPosition.setPosition(new Point(msg.getPos()));
+
+                // Save the kitchen
+                final SaveObjectCommand saveCommand = new SaveObjectCommand();
+                saveCommand.setDocumentId(kitchen.getId());
+                saveCommand.setData(kitchen);
+                provider.getDalEventBus().post(saveCommand);
+            }
+        }
     }
 
     /**

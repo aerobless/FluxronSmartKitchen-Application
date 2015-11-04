@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
@@ -23,6 +25,7 @@ import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
+import ch.fluxron.fluxronapp.ui.components.KitchenAreaDisplay;
 import ch.fluxron.fluxronapp.ui.components.ListBubbleControl;
 import ch.fluxron.fluxronapp.ui.fragments.AreaDetailFragment;
 import ch.fluxron.fluxronapp.ui.fragments.AreaListFragment;
@@ -32,7 +35,7 @@ import ch.fluxron.fluxronapp.ui.fragments.DeviceListFragment;
  * Activity to choose and add kitchen areas. Also contains a display of the respective area with
  * all its devices.
  */
-public class KitchenActivity extends FluxronBaseActivity implements IAreaClickedListener, DeviceListFragment.IDeviceAddedListener {
+public class KitchenActivity extends FluxronBaseActivity implements IAreaClickedListener, DeviceListFragment.IDeviceAddedListener, KitchenAreaDisplay.IKitchenAreaListener {
     public static final String PARAM_KITCHEN_ID = "KITCHEN_ID";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String EXTRA_SAVED_FILEPATH = "path";
@@ -218,6 +221,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         fragment.setArguments(b);
         fragment.setEventBusProvider(this.busProvider);
         fragment.setKitchenArea(a);
+        fragment.setAreaListener(this);
 
         getFragmentManager().beginTransaction()
          .replace(R.id.kitchenArea, fragment)
@@ -319,6 +323,13 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         AddDeviceToAreaCommand command = new AddDeviceToAreaCommand();
         command.setKitchenArea(currentArea);
         command.setDevice(d);
+        postMessage(command);
+    }
+
+    @Override
+    public void devicePositionChanged(KitchenArea area, String deviceId, int x, int y) {
+        // Send a message to the business logic that the device should be moved
+        ChangeDevicePosition command = new ChangeDevicePosition(new Point(x,y), area.getKitchenId(), area.getRelativeId(), deviceId);
         postMessage(command);
     }
 }
