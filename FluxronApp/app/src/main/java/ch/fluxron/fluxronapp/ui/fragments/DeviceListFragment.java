@@ -38,6 +38,7 @@ public class DeviceListFragment extends Fragment {
 
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;
+        provider.getUiEventBus().register(this);
     }
 
     public void setClickListener(IDeviceClickListener listener){
@@ -47,7 +48,6 @@ public class DeviceListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        provider.getUiEventBus().register(this);
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
     }
 
