@@ -24,7 +24,7 @@ import ch.fluxron.fluxronapp.ui.util.Camera;
 /**
  * Displays a big image or parts of it
  */
-public class KitchenAreaDisplay extends View {
+public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     // States
     protected static int ACTION_MODE_NONE = 0;
     protected static int ACTION_MODE_DRAG = 1;
@@ -165,17 +165,6 @@ public class KitchenAreaDisplay extends View {
                 dragTranslation.y /= cam.getScale();
                 cam.setTranslation(cameraDragStartTranslation.x + dragTranslation.x, cameraDragStartTranslation.y + dragTranslation.y);
                 break;
-            case MotionEvent.ACTION_UP:
-
-                float dx = event.getX() - currentDragStart.x;
-                float dy = event.getY() - currentDragStart.y;
-
-                if ((dx * dx + dy * dy) <= 5) {
-                    Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
-                    getContext().startActivity(startActivity);
-                }
-
-                break;
         }
 
         invalidate();
@@ -239,10 +228,21 @@ public class KitchenAreaDisplay extends View {
         for(DevicePosition d : devices){
             DeviceView deviceRenderer = new DeviceView(getContext());
             deviceRenderer.setPosition(d);
+            deviceRenderer.setListener(this);
             views.add(deviceRenderer);
         }
 
         invalidate();
     }
 
+    @Override
+    public void moveRequested(DeviceView v, int dx, int dy) {
+
+    }
+
+    @Override
+    public void openRequested(DeviceView v) {
+        Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
+        getContext().startActivity(startActivity);
+    }
 }

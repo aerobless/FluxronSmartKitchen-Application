@@ -18,6 +18,7 @@ import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 public class DeviceView extends RelativeLayout {
 
     private DevicePosition position;
+    private IDeviceViewListener listener;
 
     /**
      * Creates a new device view
@@ -50,6 +51,14 @@ public class DeviceView extends RelativeLayout {
     }
 
     /**
+     * Sets a listener to listen for events
+     * @param l Event listener
+     */
+    public void setListener(IDeviceViewListener l){
+        this.listener = l;
+    }
+
+    /**
      * Gets the position of the device
      * @return Position
      */
@@ -79,8 +88,17 @@ public class DeviceView extends RelativeLayout {
         this.findViewById(R.id.theStatusOrb).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("clicked","clicked");
+                fireOpenRequested();
             }
         });
+    }
+
+    /**
+     * Notify the listener of an opening request if it is existing
+     */
+    private void fireOpenRequested() {
+        if(listener!=null){
+            listener.openRequested(this);
+        }
     }
 }
