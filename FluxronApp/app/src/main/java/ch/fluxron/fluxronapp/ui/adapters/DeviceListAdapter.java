@@ -78,6 +78,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         return deviceCategories;
     }
 
+    public int size(){
+        return devices.size();
+    }
+
     /**
      * Sets the instance listening to device clicks
      * @param listener Listener

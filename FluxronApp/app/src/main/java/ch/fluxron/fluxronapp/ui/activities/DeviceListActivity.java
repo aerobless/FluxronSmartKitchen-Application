@@ -16,7 +16,7 @@ import ch.fluxron.fluxronapp.ui.fragments.DeviceListFragment;
  * Temporary activity, created to work on the deviceList fragment. Can be removed once
  * the fragment is working and added to its correct activity.
  */
-public class DeviceListActivity extends FluxronBaseActivity implements IDeviceClickListener {
+public class DeviceListActivity extends FluxronBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +25,6 @@ public class DeviceListActivity extends FluxronBaseActivity implements IDeviceCl
         // Initialize the area fragment
         DeviceListFragment fragment = new DeviceListFragment();
         fragment.setEventBusProvider(this.busProvider);
-        fragment.setClickListener(this);
 
         // Fade in the fragment for area
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -43,11 +42,5 @@ public class DeviceListActivity extends FluxronBaseActivity implements IDeviceCl
         // Close this activity and navigate back to the activity
         // that is below on the stack.
         finish();
-    }
-
-    @Override
-    public void deviceClicked(Device d) {
-        Log.d("Fluxron", "Requesting data from "+d.getAddress());
-        busProvider.getUiEventBus().post(new BluetoothTestCommand(d.getAddress()));
     }
 }
