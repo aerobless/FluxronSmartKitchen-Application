@@ -9,7 +9,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -147,6 +146,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         // We do not want to scroll and touch child controls at the same time
         if (touchHandled){
             invalidate();
+            invalidate();
             return true;
         }
 
@@ -236,8 +236,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     }
 
     @Override
-    public void moveRequested(DeviceView v, int dx, int dy) {
-
+    public boolean moveRequested(DeviceView v, int dx, int dy) {
+        v.getPosition().getPosition().x += dx;
+        v.getPosition().getPosition().y += dy;
+        return true;
     }
 
     @Override

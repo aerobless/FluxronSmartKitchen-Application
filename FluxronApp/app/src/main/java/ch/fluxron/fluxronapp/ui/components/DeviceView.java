@@ -1,10 +1,9 @@
 package ch.fluxron.fluxronapp.ui.components;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -15,10 +14,16 @@ import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 /**
  * Renders a device
  */
-public class DeviceView extends RelativeLayout {
+public class DeviceView extends RelativeLayout implements View.OnTouchListener {
 
     private DevicePosition position;
     private IDeviceViewListener listener;
+
+    private float lastTouchX;
+    private float lastTouchY;
+
+    private float draggingX;
+    private float draggingY;
 
     /**
      * Creates a new device view
@@ -85,12 +90,7 @@ public class DeviceView extends RelativeLayout {
         this.measure(145, 100);
         this.layout(0, 0, 145, 100);
 
-        this.findViewById(R.id.theStatusOrb).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fireOpenRequested();
-            }
-        });
+        this.findViewById(R.id.theStatusOrb).setOnTouchListener(this);
     }
 
     /**
@@ -100,5 +100,37 @@ public class DeviceView extends RelativeLayout {
         if(listener!=null){
             listener.openRequested(this);
         }
+    }
+
+    private boolean fireRequestMove(float dx, float dy) {
+        if(listener!=null){
+            return listener.moveRequested(this, (int)dx, (int)dy);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                lastTouchX = event.getX();
+                lastTouchY = event.getY();
+                draggingX = 0;
+                draggingY = 0;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                draggingX += event.getX() - lastTouchX;
+                draggingY += event.getY() - lastTouchY;
+                fireRequestMove(event.getX() - lastTouchX, event.getY() - lastTouchY);
+                break;
+            case MotionEvent.ACTION_UP:
+                float dTotalDrag = draggingX*draggingX+draggingY*draggingY;
+
+                if (dTotalDrag  < 10) {
+                    fireOpenRequested();
+                }
+                break;
+        }
+        return true;
     }
 }
