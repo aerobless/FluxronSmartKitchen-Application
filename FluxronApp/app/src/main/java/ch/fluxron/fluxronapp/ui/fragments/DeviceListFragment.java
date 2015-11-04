@@ -31,12 +31,17 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Implements a fragment that displays the list of discovered devices
  */
 public class DeviceListFragment extends Fragment implements IDeviceClickListener{
+    public interface IDeviceAddedListener{
+        void onDeviceAddRequested(Device d);
+    }
+
     private IEventBusProvider provider;
     private DeviceListAdapter listAdapter;
     private SectionedDeviceListAdapter sectionedAdapter;
     private IDeviceClickListener listener;
     private boolean discoveryActive = true;
     private TextView discoveryStatus;
+    private IDeviceAddedListener addListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,10 +149,22 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         provider.getUiEventBus().post(new BluetoothTestCommand(d.getAddress()));
     }
 
+    @Override
+    public void deviceButtonPressed(Device d) {
+        // Add the device to the kitchen area !!!!
+        if (addListener != null) {
+            addListener.onDeviceAddRequested(d);
+        }
+    }
+
     public boolean toggleDiscovery(){
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(!discoveryActive));
         discoveryActive = !discoveryActive;
 
         return discoveryActive;
+    }
+
+    public void setListener(IDeviceAddedListener l) {
+        this.addListener = l;
     }
 }

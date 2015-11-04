@@ -7,4 +7,5 @@ import ch.fluxron.fluxronapp.objectBase.Device;
  */
 public interface IDeviceClickListener {
     void deviceClicked(Device d);
+    void deviceButtonPressed(Device d);
 }
