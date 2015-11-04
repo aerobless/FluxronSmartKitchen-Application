@@ -47,11 +47,6 @@
                 android:singleLine="true"
                 android:drawableLeft="@drawable/ic_search"
                 android:paddingLeft="8dp"/>
-
-                <Button android:text="bluetooth test" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/prototypeBluetoothButton"
-                    android:onClick="sendBluetoothTestMessage"/>
         </LinearLayout>
     </android.support.design.widget.AppBarLayout>
 
