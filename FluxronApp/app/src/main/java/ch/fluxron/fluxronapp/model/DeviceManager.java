@@ -1,9 +1,9 @@
 package ch.fluxron.fluxronapp.model;
 
 import android.util.Log;
+import android.util.LruCache;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
@@ -11,10 +11,6 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByTypeCommand;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
@@ -26,7 +22,7 @@ import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
  */
 public class DeviceManager {
     private IEventBusProvider provider;
-    private Map<String, Device> deviceMap;
+    private LruCache<String, Device> deviceCache;
     //TODO: Proper Device Cache
 
     //Fluxron Demo Devices
@@ -38,7 +34,7 @@ public class DeviceManager {
         this.provider = provider;
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
-        deviceMap = new HashMap<String, Device>();
+        deviceCache = new LruCache<>(150);
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
@@ -64,11 +60,15 @@ public class DeviceManager {
      * @param msg
      */
     public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand msg){
-        loadDevices();
         provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
-        //Send all stored devices up
-        for (Device d:deviceMap.values()){
-           // provider.getUiEventBus().post(new DeviceLoaded(d));
+
+        //Send all cached devices up
+        Map<String, Device> deviceCacheSnapshot;
+        synchronized (deviceCache){
+            deviceCacheSnapshot = deviceCache.snapshot();
+        }
+        for (Device d: deviceCacheSnapshot.values()){
+           provider.getUiEventBus().post(new DeviceLoaded(d));
         }
     }
 
@@ -78,18 +78,13 @@ public class DeviceManager {
      */
     public void onEventAsync(BluetoothDeviceChanged msg){
         Log.d("FLUXRON", "Device " + msg.getAddress() + " has reported " + msg.getValue() + " for field " + msg.getField());
-        Device device = deviceMap.get(msg.getAddress());
-        device.setDeviceParameter(new DeviceParameter(msg.getField(), msg.getValue()+""));
-        saveDevice(device);
-        provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
-
-        /*
-        if(msg.getField().equals(ParamManager.F_MANUFACTURER_DEVICE_NAME_1008)){
-            Device device = deviceMap.get(msg.getAddress());
-            device.setCategory(msg.getValue()+"");
-            saveDevice(device);
-            provider.getUiEventBus().post(new DeviceChanged(deviceMap.get(msg.getAddress())));
-        }*/
+        Device device;
+        synchronized (deviceCache){
+            device = deviceCache.get(msg.getAddress());
+            device.setDeviceParameter(new DeviceParameter(msg.getField(), msg.getValue()+""));
+        }
+        updateDeviceCache(device);
+        provider.getUiEventBus().post(new DeviceChanged(deviceCache.get(msg.getAddress())));
     }
 
     /**
@@ -98,9 +93,9 @@ public class DeviceManager {
      */
     public void onEventAsync(BluetoothDeviceFound msg){
         Device device = msg.getDevice();
-        if(device != null && isFluxronDevice(device.getName())){
+        if(device != null && isFluxronDevice(device.getName()) && (deviceCache.get(device.getAddress()) == null)){
             Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
-            saveDevice(device);
+            updateDeviceCache(device);
             provider.getUiEventBus().post(new DeviceLoaded(device));
             //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
         }
@@ -110,37 +105,12 @@ public class DeviceManager {
      * Save a device to Cache & DB.
      * @param device
      */
-    private void saveDevice(Device device) {
+    private void updateDeviceCache(Device device) {
         device.setLastContact(new Date());
 
         //TODO: Device Cache
-        synchronized (deviceMap){
-            deviceMap.put(device.getAddress(), device);
-        }
-        //Send to DB
-        SaveObjectCommand cmd = new SaveObjectCommand();
-        cmd.setData(device);
-        cmd.setDocumentId(device.getAddress());
-        provider.getDalEventBus().post(cmd);
-    }
-
-    /**
-     * Request to load devices from DB.
-     */
-    private void loadDevices(){
-        provider.getDalEventBus().post(new LoadObjectByTypeCommand("device"));
-    }
-
-    /**
-     * Handles devices loaded from the DB.
-     * @param msg
-     */
-    public void onEventAsync(ObjectLoaded msg){
-        if (msg.getData() instanceof Device) {
-            Log.d("FLUXRON", "Device loaded from DB "+((Device) msg.getData()).getName());
-            synchronized (deviceMap){
-                deviceMap.put(((Device) msg.getData()).getAddress(), (Device) msg.getData());
-            }
+        synchronized (deviceCache){
+            deviceCache.put(device.getAddress(), device);
         }
     }
 
