@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -23,6 +24,7 @@ import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
 import ch.fluxron.fluxronapp.ui.components.ListBubbleControl;
 import ch.fluxron.fluxronapp.ui.fragments.AreaDetailFragment;
 import ch.fluxron.fluxronapp.ui.fragments.AreaListFragment;
+import ch.fluxron.fluxronapp.ui.fragments.DeviceListFragment;
 
 /**
  * Activity to choose and add kitchen areas. Also contains a display of the respective area with
@@ -170,7 +172,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      * @param button Button that was pressed
      */
     public void onEditButtonClicked(View button) {
-        animateDeviceSelectionList(true);
+        showDeviceSelectionList();
     }
 
     /**
@@ -214,7 +216,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         getFragmentManager().beginTransaction()
          .replace(R.id.kitchenArea, fragment)
          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-         .addToBackStack(null)
+         .addToBackStack(AreaDetailFragment.class.getName())
          .commit();
 
         // Hide the FAB and bubble bar
@@ -250,17 +252,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
-     * Shows or hides the device selection list
-     * @param visible Visible or not
+     * Shows the device selection list via fragment transactions
      */
-    private void animateDeviceSelectionList(boolean visible){
-        final View listContainer = findViewById(R.id.deviceListLayout);
-        if(visible){
-            listContainer.setVisibility(View.VISIBLE);
-        }
-        else {
-            listContainer.setVisibility(View.GONE);
-        }
+    private void showDeviceSelectionList(){
+
+
+        DeviceListFragment fragment = new DeviceListFragment();
+        fragment.setEventBusProvider(this.busProvider);
+        findViewById(R.id.deviceListLayout).setVisibility(View.VISIBLE);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.deviceListLayout, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(DeviceListFragment.class.getName())
+                .commit();
     }
 
     /**
@@ -269,12 +273,22 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      */
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        FragmentManager manager = getFragmentManager();
+        int currentCount = manager.getBackStackEntryCount();
+        if (currentCount > 0) {
+            String currentName = manager.getBackStackEntryAt(currentCount-1).getName();
+
+            // Pop the last fragment transaction off of the stack
+            // and change all the overlaying controls into their correct state
             getFragmentManager().popBackStack();
-            requestKitchenLoad();
-            animateFabAlpha(true);
-            animateBubbleBar(true);
-            animateDeviceSelectionList(false);
+            if (DeviceListFragment.class.getName().equals(currentName)) {
+                findViewById(R.id.deviceListLayout).setVisibility(View.GONE);
+            }
+            else if (AreaDetailFragment.class.getName().equals(currentName)){
+                requestKitchenLoad();
+                animateFabAlpha(true);
+                animateBubbleBar(true);
+            }
         } else {
             super.onBackPressed();
         }
