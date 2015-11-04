@@ -25,9 +25,7 @@ import ch.fluxron.fluxronapp.ui.util.Camera;
  */
 public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     // States
-    protected static int ACTION_MODE_NONE = 0;
-    protected static int ACTION_MODE_DRAG = 1;
-    protected static int ACTION_MODE_ZOOM = 2;
+    private boolean editMode = false;
 
     // Zoom variables
     private float maxZoom = 1;
@@ -237,14 +235,27 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     @Override
     public boolean moveRequested(DeviceView v, int dx, int dy) {
-        v.getPosition().getPosition().x += dx;
-        v.getPosition().getPosition().y += dy;
-        return true;
+        if (editMode){
+            v.getPosition().getPosition().x += dx;
+            v.getPosition().getPosition().y += dy;
+        }
+
+        return editMode;
     }
 
     @Override
-    public void openRequested(DeviceView v) {
+    public void actionRequested(DeviceView v) {
+        if(editMode)return;
+        
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         getContext().startActivity(startActivity);
+    }
+
+    /**
+     * Sets wether the display should allow editing or not
+     * @param edit Editing or not
+     */
+    public void setEditMode(boolean edit){
+        editMode = edit;
     }
 }

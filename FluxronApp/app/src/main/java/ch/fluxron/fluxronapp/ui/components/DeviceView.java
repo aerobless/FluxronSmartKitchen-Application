@@ -96,9 +96,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener {
     /**
      * Notify the listener of an opening request if it is existing
      */
-    private void fireOpenRequested() {
+    private void fireActionRequested() {
         if(listener!=null){
-            listener.openRequested(this);
+            listener.actionRequested(this);
         }
     }
 
@@ -127,7 +127,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener {
                 float dTotalDrag = draggingX*draggingX+draggingY*draggingY;
 
                 if (dTotalDrag  < 10) {
-                    fireOpenRequested();
+                    fireActionRequested();
                 }
                 break;
         }

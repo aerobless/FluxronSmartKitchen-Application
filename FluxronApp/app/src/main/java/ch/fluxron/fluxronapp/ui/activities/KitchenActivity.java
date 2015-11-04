@@ -255,8 +255,6 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      * Shows the device selection list via fragment transactions
      */
     private void showDeviceSelectionList(){
-
-
         DeviceListFragment fragment = new DeviceListFragment();
         fragment.setEventBusProvider(this.busProvider);
         findViewById(R.id.deviceListLayout).setVisibility(View.VISIBLE);
@@ -265,6 +263,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(DeviceListFragment.class.getName())
                 .commit();
+
+        // Set to edit mode
+        setEditMode(true);
+    }
+
+    /**
+     * Sets the edit mode of the area detail fragment
+     */
+    private void setEditMode(boolean canEdit) {
+        Fragment f = getFragmentManager().findFragmentById(R.id.kitchenArea);
+        if (f instanceof AreaDetailFragment) {
+            ((AreaDetailFragment)f).setEditMode(canEdit);
+        }
     }
 
     /**
@@ -283,6 +294,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
             getFragmentManager().popBackStack();
             if (DeviceListFragment.class.getName().equals(currentName)) {
                 findViewById(R.id.deviceListLayout).setVisibility(View.GONE);
+                setEditMode(false);
             }
             else if (AreaDetailFragment.class.getName().equals(currentName)){
                 requestKitchenLoad();

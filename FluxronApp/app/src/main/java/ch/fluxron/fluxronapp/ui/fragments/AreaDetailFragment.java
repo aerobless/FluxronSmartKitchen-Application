@@ -92,4 +92,12 @@ public class AreaDetailFragment extends Fragment {
     public void setKitchenArea(KitchenArea kitchenArea) {
         this.kitchenArea = kitchenArea;
     }
+
+    /**
+     * Sets whether this area is in edit mode or not
+     * @param edit Edit mode
+     */
+    public void setEditMode(boolean edit){
+        display.setEditMode(edit);
+    }
 }
