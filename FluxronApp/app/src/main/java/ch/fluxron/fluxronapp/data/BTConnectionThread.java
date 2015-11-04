@@ -18,7 +18,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessag
 public class BTConnectionThread extends Thread{
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    private final int msgLength = 12;
+    private final static int MESSAGE_LENGTH = 12;
     private final BluetoothDevice remoteDevice;
     private final IEventBusProvider provider;
     private final BluetoothSocket socket;
@@ -44,6 +44,7 @@ public class BTConnectionThread extends Thread{
         byte[] buffer = new byte[128];
         int nofBytes;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        int messageLength = MESSAGE_LENGTH;
 
         while (keepRunning.get()) {
             try {
@@ -52,8 +53,20 @@ public class BTConnectionThread extends Thread{
                     outputStream.write(buffer, 0, nofBytes);
                     Log.d("FLUXRON", nofBytes + " Bytes received!!!");
 
-                    //TODO: need a better way to decide when a message is ended
-                    if(outputStream.size() >= msgLength){
+                    //For a message >=7 we can be sure that it includes the actual length of the message in the payload
+                    if(outputStream.size() >= 7){
+                        byte[] partialMsg = outputStream.toByteArray();
+                        /* Returning messages with CCD 0x40_READ_REQUEST (64) are longer then 12Bytes.
+                           Their actual length is set in the payload. */
+                        if (partialMsg[2] == 64){
+                            messageLength = MESSAGE_LENGTH + partialMsg[6];
+                            Log.d("FLUXRON","Message length set to "+messageLength);
+                        } else {
+                            messageLength = MESSAGE_LENGTH;
+                        }
+                    }
+
+                    if(outputStream.size() >= messageLength){
                         byte[] responseMsg = outputStream.toByteArray();
                         provider.getDalEventBus().post(new BluetoothMessageReceived(remoteDevice.getAddress(), responseMsg));
                         outputStream.reset();
