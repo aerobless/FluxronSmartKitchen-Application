@@ -11,6 +11,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
@@ -39,21 +40,21 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        String cmd = ParamManager.F_PRODUCT_CODE_1018SUB2;
-        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
+        //String cmd = ParamManager.F_PRODUCT_CODE_1018SUB2;
+        //provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
 
-        /*
+
         //Writing to device test
-        String cmd = ParamManager.F_INHIBIT_TIME_1400SUB3;
-        provider.getDalEventBus().post(new BluetoothWriteRequest(msg.getDeviceID(), cmd, 55));
+        String cmd = ParamManager.F_TST_ENABLE_TEST_3100SUB1;
+        provider.getDalEventBus().post(new BluetoothWriteRequest(msg.getDeviceID(), cmd, 0));
 
         try {
-            Thread.sleep(1000*2);
+            Thread.sleep(10000*2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
-        */
+
     }
 
     /**
@@ -140,6 +141,6 @@ public class DeviceManager {
      * @return true if deviceName starts with FLX, DGL, HC-06 or HM-Soft, which identifies it as a potential Fluxron Device.
      */
     public boolean isFluxronDevice(String deviceName){
-        return deviceName.matches("(FLX|DGL|HC-06|HMSoft).*");
+        return deviceName.matches("(FLX|DGL|HC-06|HMSoft|FAKE).*");
     }
 }

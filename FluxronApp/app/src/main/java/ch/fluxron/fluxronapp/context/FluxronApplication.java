@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.LocalDatabase;
+import ch.fluxron.fluxronapp.data.mocking.FakeBluetooth;
 import ch.fluxron.fluxronapp.model.DeviceManager;
 import ch.fluxron.fluxronapp.model.KitchenManager;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
@@ -31,6 +32,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private Database couchbaseDB;
     private LocalDatabase localDatabase;
     private Bluetooth bluetooth;
+    private FakeBluetooth fakeBluetooth;
     private KitchenManager kitchenManger;
 
     @Override
@@ -87,6 +89,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
             couchbaseDB = couchbaseManager.getDatabase("protobase");
             localDatabase = new LocalDatabase(dalToModelProvider, couchbaseDB, this.getContentResolver());
             bluetooth = new Bluetooth(dalToModelProvider, this.getApplicationContext());
+            fakeBluetooth = new FakeBluetooth(dalToModelProvider);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {

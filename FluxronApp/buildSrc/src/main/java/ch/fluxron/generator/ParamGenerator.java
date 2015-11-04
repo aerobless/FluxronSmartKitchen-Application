@@ -141,7 +141,7 @@ public class ParamGenerator {
         Map<String, DeviceParameter> parameterList = new HashMap<String, DeviceParameter>();
 
         try {
-            InputStream is = new FileInputStream("/"+rootPath+"/buildSrc/build/resources/main/ch/fluxron/generator/FLUXRON_parameter.eds");
+            InputStream is = new FileInputStream("/"+rootPath+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds");
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
             String line = null;
             StringBuilder responseData = new StringBuilder();
