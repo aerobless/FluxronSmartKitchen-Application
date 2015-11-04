@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
@@ -122,6 +123,33 @@ public class KitchenAreaDisplay extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        boolean touchHandled = false;
+
+        // Map from cam space to world space
+        float[] p = {event.getX(), event.getY()};
+        Matrix camSpaceToWorldSpace = new Matrix();
+        cam.getTransformMatrix().invert(camSpaceToWorldSpace);
+        camSpaceToWorldSpace.mapPoints(p);
+
+        // Notify child views of the touch event in reverse order
+        // because the last one drawn is the topmost element
+        for(int i = views.size()-1; i>= 0 && !touchHandled;i--) {
+            DeviceView child = views.get(i);
+
+            // Copy the click event and translate it to the control space
+            MotionEvent translatedCopy = MotionEvent.obtain(event);
+            translatedCopy.setLocation(p[0]-child.getPosition().getPosition().x,p[1]-child.getPosition().getPosition().y);
+
+            // Send to the child
+            touchHandled = child.dispatchTouchEvent(translatedCopy);
+        }
+
+        // We do not want to scroll and touch child controls at the same time
+        if (touchHandled){
+            invalidate();
+            return true;
+        }
+
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN:

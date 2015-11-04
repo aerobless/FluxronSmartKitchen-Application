@@ -3,7 +3,9 @@ package ch.fluxron.fluxronapp.ui.components;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -69,8 +71,16 @@ public class DeviceView extends RelativeLayout {
     private void setUp() {
         LayoutInflater.from(getContext()).inflate(R.layout.component_device_view, this, true);
         this.setWillNotDraw(false);
-        this.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
-        measure(50,50);
-        layout(0, 0, 50, 50);
+        this.setLayoutParams(new ViewGroup.LayoutParams(145, 100));
+
+        this.measure(145, 100);
+        this.layout(0, 0, 145, 100);
+
+        this.findViewById(R.id.theStatusOrb).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("clicked","clicked");
+            }
+        });
     }
 }
