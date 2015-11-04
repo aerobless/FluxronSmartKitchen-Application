@@ -3,6 +3,7 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -82,7 +83,14 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         final RecyclerView deviceListView = (RecyclerView) deviceView.findViewById(R.id.deviceList);
 
         // Layout for the list
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        final int layoutColumnCount = 3;
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), layoutColumnCount);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return sectionedAdapter.isSectionHeaderPosition(position) ? layoutColumnCount : 1;
+            }
+        });
         deviceListView.setLayoutManager(layoutManager);
 
         // Item decoration for the list
