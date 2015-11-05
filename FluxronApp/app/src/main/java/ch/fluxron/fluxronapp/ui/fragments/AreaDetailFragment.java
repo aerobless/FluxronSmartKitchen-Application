@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
+import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.components.KitchenAreaDisplay;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -26,6 +27,7 @@ public class AreaDetailFragment extends Fragment {
     private KitchenAreaDisplay display;
     private KitchenArea kitchenArea;
     private String imageLoadConnection;
+    private KitchenActivity areaListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,7 @@ public class AreaDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         display = new KitchenAreaDisplay(getActivity());
+        display.setListener(this.areaListener);
         return display;
     }
 
@@ -85,7 +88,7 @@ public class AreaDetailFragment extends Fragment {
             display.setBitmap(msg.getBmp());
 
             // Set the device positions to the display
-            display.setDevicePositions(kitchenArea.getDevicePositionList());
+            display.setDevicePositions(kitchenArea);
         }
     }
 
@@ -99,5 +102,9 @@ public class AreaDetailFragment extends Fragment {
      */
     public void setEditMode(boolean edit){
         display.setEditMode(edit);
+    }
+
+    public void setAreaListener(KitchenActivity areaListener) {
+        this.areaListener = areaListener;
     }
 }

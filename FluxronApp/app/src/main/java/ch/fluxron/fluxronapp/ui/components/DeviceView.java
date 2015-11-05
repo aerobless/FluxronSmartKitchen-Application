@@ -102,9 +102,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener {
         }
     }
 
-    private boolean fireRequestMove(float dx, float dy) {
+    private boolean fireRequestMove(float dx, float dy, boolean lastPosition) {
         if(listener!=null){
-            return listener.moveRequested(this, (int)dx, (int)dy);
+            return listener.moveRequested(this, (int)dx, (int)dy, lastPosition);
         }
         return false;
     }
@@ -121,13 +121,16 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener {
             case MotionEvent.ACTION_MOVE:
                 draggingX += event.getX() - lastTouchX;
                 draggingY += event.getY() - lastTouchY;
-                fireRequestMove(event.getX() - lastTouchX, event.getY() - lastTouchY);
+                fireRequestMove(event.getX() - lastTouchX, event.getY() - lastTouchY, false);
                 break;
             case MotionEvent.ACTION_UP:
                 float dTotalDrag = draggingX*draggingX+draggingY*draggingY;
 
                 if (dTotalDrag  < 10) {
                     fireActionRequested();
+                }
+                else {
+                    fireRequestMove(0, 0, true); // Do not move further, this is the final position
                 }
                 break;
         }

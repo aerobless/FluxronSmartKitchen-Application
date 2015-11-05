@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
+import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.DeviceActivity;
 import ch.fluxron.fluxronapp.ui.util.Camera;
 
@@ -24,6 +25,10 @@ import ch.fluxron.fluxronapp.ui.util.Camera;
  * Displays a big image or parts of it
  */
 public class KitchenAreaDisplay extends View implements IDeviceViewListener {
+    public interface IKitchenAreaListener {
+        void devicePositionChanged(KitchenArea area, String deviceId, int x, int y);
+    }
+
     // States
     private boolean editMode = false;
 
@@ -37,10 +42,14 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     private float bmpWidth;
     private float bmpHeight;
 
+    // Listener
+    private IKitchenAreaListener listener;
+
     // Bitmaps and device positions
     private Bitmap[] splitMaps = new Bitmap[4];
     private Paint deviceDefaultPaint;
     private List<DeviceView> views;
+    private KitchenArea area;
 
     public KitchenAreaDisplay(Context context) {
         super(context);
@@ -222,8 +231,13 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         invalidate();
     }
 
-    public void setDevicePositions(List<DevicePosition> devices){
-        for(DevicePosition d : devices){
+    public void setListener(IKitchenAreaListener listener) {
+        this.listener = listener;
+    }
+
+    public void setDevicePositions(KitchenArea area){
+        this.area = area;
+        for(DevicePosition d : area.getDevicePositionList()){
             DeviceView deviceRenderer = new DeviceView(getContext());
             deviceRenderer.setPosition(d);
             deviceRenderer.setListener(this);
@@ -234,10 +248,14 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     }
 
     @Override
-    public boolean moveRequested(DeviceView v, int dx, int dy) {
+    public boolean moveRequested(DeviceView v, int dx, int dy, boolean finalPosition) {
         if (editMode){
-            v.getPosition().getPosition().x += dx;
-            v.getPosition().getPosition().y += dy;
+            int x = v.getPosition().getPosition().x += dx;
+            int y = v.getPosition().getPosition().y += dy;
+
+            if (finalPosition && listener!=null){
+                listener.devicePositionChanged(this.area, v.getPosition().getDeviceId(), x, y);
+            }
         }
 
         return editMode;
@@ -245,7 +263,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     @Override
     public void actionRequested(DeviceView v) {
-        if(editMode)return;
+        if(editMode) return;
         
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         getContext().startActivity(startActivity);
