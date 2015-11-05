@@ -5,6 +5,7 @@ import android.util.LruCache;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
@@ -25,13 +26,14 @@ import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 public class DeviceManager {
     private IEventBusProvider provider;
     private LruCache<String, Device> deviceCache;
-
+    CyclicRefresh cyclicRefresh;
 
     public DeviceManager(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
-        deviceCache = new LruCache<>(150);
+        deviceCache = new LruCache<>(256);
+        cyclicRefresh = new CyclicRefresh(provider, deviceCache);
     }
 
     /**
