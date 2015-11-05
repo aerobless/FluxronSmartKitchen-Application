@@ -23,7 +23,7 @@ public class CyclicRefresh extends Thread{
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
         this.deviceCache = deviceCache;
-        provider.getDalEventBus().register(this);
+//        provider.getDalEventBus().register(this);
     }
 
     public void run() {

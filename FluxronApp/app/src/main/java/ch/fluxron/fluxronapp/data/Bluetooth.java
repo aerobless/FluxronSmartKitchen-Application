@@ -9,16 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
+import android.util.LruCache;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
 import java.util.UUID;
 
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
@@ -27,6 +24,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
+import ch.fluxron.fluxronapp.model.ConnectionCache;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
@@ -36,12 +34,10 @@ public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothAdapter btAdapter = null;
-    private final Map<String, BTConnectionThread> connectionMap;
-    private final Queue<String> connectionQueue;
+    private final LruCache<String, BTConnectionThread> connectionCache;
 
     private static final String TAG = "FLUXRON";
     private static final String DEVICE_PIN = "1234";
-    private static final int MAX_CONCURRENT_CONNECTIONS = 3;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
 
     public Bluetooth(IEventBusProvider provider, Context context) {
@@ -50,10 +46,9 @@ public class Bluetooth {
 
         messageFactory = new MessageFactory();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        connectionMap = new HashMap<String, BTConnectionThread>();
-        connectionQueue = new LinkedList<String>();
         setupDiscovery(context);
         setupBonding(context);
+        connectionCache = new ConnectionCache(3);
     }
 
     /**
@@ -224,14 +219,8 @@ public class Bluetooth {
      * Kill all existing connections.
      */
     private void disconnectAllDevices(){
-        synchronized (connectionMap){
-            for(Map.Entry<String, BTConnectionThread> entry : connectionMap.entrySet()){
-                entry.getValue().end();
-            }
-            connectionMap.clear();
-        }
-        synchronized (connectionQueue){
-            connectionQueue.clear();
+        synchronized (connectionCache){
+            connectionCache.evictAll();
         }
     }
 
@@ -242,37 +231,22 @@ public class Bluetooth {
      */
     private BTConnectionThread getConnection(BluetoothDevice device, boolean clean) throws IOException {
         if(clean){
-            synchronized (connectionMap){
-                connectionMap.remove(device.getAddress());
-            }
-            synchronized (connectionQueue){
-                connectionQueue.remove(device.getAddress());
+            synchronized (connectionCache){
+                connectionCache.remove(device.getAddress());
             }
         }
-        BTConnectionThread connectionThread = connectionMap.get(device.getAddress());
+        BTConnectionThread connectionThread = null;
+        synchronized (connectionCache){
+            connectionThread = connectionCache.get(device.getAddress());
+        }
         if(connectionThread == null){
             BluetoothSocket btSocket = createBluetoothSocket(device);
             if(connectSocket(btSocket)){
                 connectionThread = new BTConnectionThread(btSocket, provider);
                 connectionThread.start();
-
-                String deadConnection = null;
-                synchronized (connectionQueue){
-                    connectionQueue.add(device.getAddress());
-                    if(connectionQueue.size() > MAX_CONCURRENT_CONNECTIONS){
-                        Log.d(TAG, "Killing a connection to make room for a new one");
-                        deadConnection = connectionQueue.poll();
-                    }
+                synchronized (connectionCache) {
+                    connectionCache.put(device.getAddress(), connectionThread);
                 }
-                synchronized (connectionMap) {
-                    if (deadConnection != null) {
-                        connectionMap.get(deadConnection).end();
-                        connectionMap.remove(deadConnection);
-                        connectionMap.put(device.getAddress(), connectionThread);
-                    }
-                    connectionMap.put(device.getAddress(), connectionThread);
-                }
-                return connectionThread;
             } else {
                 throw new IOException("Unable to connect to remote device. Are you sure it is turned on and noone else is connected to it?");
             }
