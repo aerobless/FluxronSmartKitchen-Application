@@ -75,13 +75,13 @@ public class Device {
     }
 
     /**
-     * Returns the device type if "F_PRODUCT_CODE_1018SUB2" is stored for this device.
-     * Otherwise it will return UNKNOWN_DEVICE_TYPE. If the value stored in param "F_PRODUCT_CODE_1018SUB2"
+     * Returns the device type if "F_SCLASS_1018SUB2_PRODUCT_CODE" is stored for this device.
+     * Otherwise it will return UNKNOWN_DEVICE_TYPE. If the value stored in param "F_SCLASS_1018SUB2_PRODUCT_CODE"
      * is invalid it will return INVALID_DEVICE_TYPE.
      * @return
      */
     public String getDeviceType(){
-        DeviceParameter product_code = deviceParameters.get(ParamManager.F_PRODUCT_CODE_1018SUB2);
+        DeviceParameter product_code = deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
         if(product_code != null){
             try{
                 int productCode = Integer.parseInt(product_code.getValue());

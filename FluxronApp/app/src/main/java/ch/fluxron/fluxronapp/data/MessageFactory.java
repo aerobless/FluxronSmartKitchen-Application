@@ -221,9 +221,11 @@ public class MessageFactory {
         Log.d("FLUXRON", hexMessage);
     }
 
+    //TODO: proper distinction between SClass etc. based on communication ID.. will probably be done in Device Manager in the future.
+    //This is a simple fix to not break device discovery after adding multiple EDSs.
     public String getParamID(String input){
-        if(parameterMap.get(input)!= null){
-            return parameterMap.get(input).getId();
+        if(parameterMap.get("SClass_"+input)!= null){
+            return parameterMap.get("SClass_"+input).getId();
         } else {
             return null;
         }

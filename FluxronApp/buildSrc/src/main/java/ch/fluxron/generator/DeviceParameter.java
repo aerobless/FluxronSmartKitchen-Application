@@ -14,6 +14,7 @@ public class DeviceParameter {
     private String accessType;
     private String defaultValue;
     private int subNumber;
+    private String deviceClass;
 
     private byte[] index;
     private byte subindex = 0;
@@ -21,7 +22,7 @@ public class DeviceParameter {
     public DeviceParameter() {
     }
 
-    public DeviceParameter(String name, String id, int objectType, int dataType, String accessType, String defaultValue, int subNumber, byte[] index, byte subindex) {
+    public DeviceParameter(String name, String id, int objectType, int dataType, String accessType, String defaultValue, int subNumber, byte[] index, byte subindex, String deviceClass) {
         this.name = name;
         this.id = id;
         this.objectType = objectType;
@@ -31,6 +32,7 @@ public class DeviceParameter {
         this.subNumber = subNumber;
         this.index = index;
         this.subindex = subindex;
+        this.deviceClass = deviceClass;
     }
 
     public String getName() {
@@ -105,6 +107,14 @@ public class DeviceParameter {
         this.subindex = subindex;
     }
 
+    public String getDeviceClass() {
+        return deviceClass;
+    }
+
+    public void setDeviceClass(String deviceClass) {
+        this.deviceClass = deviceClass;
+    }
+
     @Override
     public String toString() {
         return "DeviceParameter{" +
@@ -116,10 +126,11 @@ public class DeviceParameter {
                 ", subNumber=" + subNumber +
                 ", index=" + printUnsignedByteArray(index) +
                 ", subindex=" + subindex +
+                ", deviceClass=" + deviceClass +
                 '}';
     }
 
-    public String printUnsignedByteArray(byte[] message) {
+    private String printUnsignedByteArray(byte[] message) {
         String hexMessage = "";
         for (int i = 0; i < message.length; i++) {
             hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";

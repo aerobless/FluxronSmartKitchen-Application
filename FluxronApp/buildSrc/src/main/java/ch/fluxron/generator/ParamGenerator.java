@@ -24,10 +24,14 @@ public class ParamGenerator {
     public static void main(String[] args){
         System.out.println("Generating classes..");
         ParamGenerator generator = new ParamGenerator();
-        Map<String, DeviceParameter> paramMap = generator.loadParameters(args[0]);
+        Map<String, DeviceParameter> parameterList = new HashMap<String, DeviceParameter>();
+        parameterList = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds", parameterList, "CClass");
+        parameterList = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/ETX.eds", parameterList, "ETX");
+        parameterList = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/S-Class.eds", parameterList, "SClass");
+
         generator.generateDeviceParameter(args[0]);
-        generator.generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", paramMap);
-        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", paramMap);
+        generator.generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", parameterList);
+        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", parameterList);
     }
 
     /**
@@ -75,7 +79,7 @@ public class ParamGenerator {
         sb.append("<!-- GENERATED RESOURCE FILE - DO NO CHANGE MANUALLY -->\n");
         sb.append("<resources>\n");
         for (DeviceParameter p:paramMap.values()) {
-            sb.append("    <string name=\"F_" + (p.getName()+"_"+p.getId()).toUpperCase() + "\">" + p.getId() + "</string>\n");
+            sb.append("    <string name=\"F_" + (p.getId()+"_"+p.getName()).toUpperCase() + "\">" +p.getId() + "</string>\n");
         }
         sb.append("</resources>");
         writeToFile(outputPath, sb.toString());
@@ -96,7 +100,7 @@ public class ParamGenerator {
         paramManager.append("//GENERATED CLASS - DO NOT CHANGE MANUALLY\n");
         paramManager.append("public class "+CLASS_NAME+" {\n\n");
         for (DeviceParameter p:paramMap.values()) {
-            paramManager.append("    public final static String F_"+p.getName().toUpperCase()+"_"+p.getId().toUpperCase()+" = \""+p.getId()+"\";\n");
+            paramManager.append("    public final static String F_"+p.getId().toUpperCase()+"_"+p.getName().toUpperCase()+" = \""+p.getId()+"\";\n");
         }
         paramManager.append("    Map<String, DeviceParameter> paramMap;\n\n");
         paramManager.append("    public "+CLASS_NAME+"() {\n");
@@ -105,7 +109,7 @@ public class ParamGenerator {
             paramManager.append("            paramMap.put(\""+p.getId()+
                     "\", new DeviceParameter(\""+p.getName()+ "\",\""+p.getId()+"\"," +
                     " "+p.getObjectType()+", "+p.getDataType()+", \""+p.getAccessType()+"\", \""+p.getDefaultValue()+
-                    "\", "+p.getSubNumber()+", new byte[]{(byte)"+(p.getIndex()[0] & 0xff) +", (byte)"+(p.getIndex()[1] & 0xff)+"}, (byte)"+p.getSubindex()+"));\n");
+                    "\", "+p.getSubNumber()+", new byte[]{(byte)"+(p.getIndex()[0] & 0xff) +", (byte)"+(p.getIndex()[1] & 0xff)+"}, (byte)"+p.getSubindex()+",\""+p.getDeviceClass()+"\"));\n");
         }
         paramManager.append("    }\n");
         paramManager.append("    public Map<String, DeviceParameter> getParamMap() {\n" +
@@ -137,11 +141,9 @@ public class ParamGenerator {
     /**
      * Read device parameters from a .eds file, containing information such as index, subindex etc.
      */
-    public Map<String, DeviceParameter> loadParameters(String rootPath){
-        Map<String, DeviceParameter> parameterList = new HashMap<String, DeviceParameter>();
-
+    public Map<String, DeviceParameter> loadParameters(String path, Map<String, DeviceParameter> parameterList, String prefix){
         try {
-            InputStream is = new FileInputStream("/"+rootPath+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds");
+            InputStream is = new FileInputStream(path);
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
             String line = null;
             StringBuilder responseData = new StringBuilder();
@@ -161,7 +163,8 @@ public class ParamGenerator {
                     if(parts.length>1){
                         param.setSubindex(Byte.decode("0x" + parts[1]));
                     }
-                    param.setId(line);
+                    param.setId(prefix+"_"+line);
+                    param.setDeviceClass(prefix);
                     parameterList.put(line, param);
                 } else if (line.contains("ParameterName=") && (param!=null)){
                     param.setName(line.substring(line.lastIndexOf("=") + 1).replaceAll(" |-", "_").replaceAll("\\(|\\)|\\[|\\]",""));

@@ -25,12 +25,6 @@ import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 public class DeviceManager {
     private IEventBusProvider provider;
     private LruCache<String, Device> deviceCache;
-    //TODO: Proper Device Cache
-
-    //Fluxron Demo Devices
-    public static final String FLX_GTZ_196_ADDRESS = "00:13:04:12:06:20";
-    public static final String FLX_BAX_5206_ADDRESS = "30:14:10:31:11:85";
-    public static final String HMSoft_ADDRESS = "00:0E:0E:00:A8:A2";
 
     public DeviceManager(IEventBusProvider provider) {
         this.provider = provider;
@@ -40,12 +34,12 @@ public class DeviceManager {
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
-        //String cmd = ParamManager.F_PRODUCT_CODE_1018SUB2;
-        //provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
+        String cmd = ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE;
+        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
 
-
+/*
         //Writing to device test
-        String cmd = ParamManager.F_TST_ENABLE_TEST_3100SUB1;
+        String cmd = ParamManager.F_CCLASS_3100SUB1_TST_ENABLE_TEST;
         provider.getDalEventBus().post(new BluetoothWriteRequest(msg.getDeviceID(), cmd, 0));
 
         try {
@@ -54,7 +48,7 @@ public class DeviceManager {
             e.printStackTrace();
         }
         provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
-
+*/
     }
 
     /**

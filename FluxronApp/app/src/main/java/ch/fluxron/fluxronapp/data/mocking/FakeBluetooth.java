@@ -73,7 +73,7 @@ public class FakeBluetooth {
         String deviceMac = randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99);
         Device unreal = new Device("FAKE_"+deviceID, deviceMac, false);
         int deviceType = deviceTypes.get(randInt(0, 3));
-        DeviceParameter productCodeParam = new DeviceParameter(ParamManager.F_PRODUCT_CODE_1018SUB2, deviceType+"");
+        DeviceParameter productCodeParam = new DeviceParameter(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE, deviceType+"");
         unreal.setDeviceParameter(productCodeParam);
         return unreal;
     }
