@@ -2,6 +2,8 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.LruCache;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,12 +23,26 @@ public class CyclicRefresh extends Thread{
     private String currentConnection;
     private Object lock = new Object();
     private AtomicBoolean doNext = new AtomicBoolean(false);
+    private List<String> listOfInterestingParameters;
 
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
         this.deviceCache = deviceCache;
         this.currentConnection = new String();
         provider.getDalEventBus().register(this);
+        listOfInterestingParameters = initLoiP();
+    }
+
+    //TODO: differentiate between device type, currently all S-Class
+    private List<String> initLoiP(){
+        List<String> list = new ArrayList<>();
+        list.add(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
+        list.add(ParamManager.F_SCLASS_1008_MANUFACTURER_DEVICE_NAME);
+        list.add(ParamManager.F_SCLASS_1009_MANUFACTURER_HARDWARE_VERSION);
+        list.add(ParamManager.F_SCLASS_100A_MANUFACTURER_SOFTWARE_VERSION);
+        list.add(ParamManager.F_SCLASS_3038_SAFETY);
+        list.add(ParamManager.F_SCLASS_3035SUB7_FLX_ACTIVE_POWER);
+        return list;
     }
 
     public void run() {
@@ -41,7 +57,7 @@ public class CyclicRefresh extends Thread{
                 }
                 if(device.isBonded()){
                     //TODO: replace one param with list of interesting params
-                    RequestResponseConnection req = new BluetoothReadRequest(device.getAddress(), ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
+                    RequestResponseConnection req = new BluetoothReadRequest(device.getAddress(), listOfInterestingParameters);
                     synchronized (lock){
                         currentConnection = req.getConnectionId();
                         provider.getDalEventBus().post(req);
