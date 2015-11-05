@@ -1,6 +1,8 @@
 package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
-public class BluetoothDiscoveryCommand {
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+
+public class BluetoothDiscoveryCommand extends RequestResponseConnection{
     private boolean enabled;
 
     public BluetoothDiscoveryCommand(boolean enabled) {

@@ -1,9 +1,11 @@
 package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+
 /**
  * Sends a read request to a specific bluetooth device.
  */
-public class BluetoothWriteRequest {
+public class BluetoothWriteRequest extends RequestResponseConnection{
     private String address;
     private String field;
     private Object value;

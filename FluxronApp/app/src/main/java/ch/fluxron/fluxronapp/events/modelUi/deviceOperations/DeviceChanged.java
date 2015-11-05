@@ -1,11 +1,12 @@
 package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
  * Notifies subscribers that a device has changed.
  */
-public class DeviceChanged {
+public class DeviceChanged extends RequestResponseConnection{
     private Device device;
 
     /**

@@ -1,9 +1,11 @@
 package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+
 /**
  * The bluetooth response of a device.
  */
-public class BluetoothDeviceChanged {
+public class BluetoothDeviceChanged extends RequestResponseConnection{
     String address;
     String field;
     int value;
