@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,13 +17,13 @@ import java.util.Map;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceListAdapter;
 import ch.fluxron.fluxronapp.ui.adapters.IDeviceClickListener;
 import ch.fluxron.fluxronapp.ui.adapters.SectionedDeviceListAdapter;
-import ch.fluxron.fluxronapp.ui.decorators.SpacesItemDecoration;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -63,6 +62,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     public void onStart() {
         super.onStart();
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
+        provider.getUiEventBus().post(new CyclicRefreshCommand(true));
         discoveryActive = true;
     }
 
@@ -70,6 +70,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     public void onStop() {
         super.onStop();
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(false));
+        provider.getUiEventBus().post(new CyclicRefreshCommand(false));
         discoveryActive = false;
         provider.getUiEventBus().unregister(this);
     }

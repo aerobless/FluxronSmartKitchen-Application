@@ -2,12 +2,12 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.LruCache;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
@@ -19,11 +19,14 @@ public class CyclicRefresh extends Thread{
     private LruCache<String, Device> deviceCache;
     private IEventBusProvider provider;
     private String currentConnection;
+    private Object lock = new Object();
+    private AtomicBoolean doNext = new AtomicBoolean(false);
 
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
         this.deviceCache = deviceCache;
-//        provider.getDalEventBus().register(this);
+        this.currentConnection = new String();
+        provider.getDalEventBus().register(this);
     }
 
     public void run() {
@@ -39,27 +42,40 @@ public class CyclicRefresh extends Thread{
                 if(device.isBonded()){
                     //TODO: replace one param with list of interesting params
                     RequestResponseConnection req = new BluetoothReadRequest(device.getAddress(), ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
-                    synchronized (currentConnection){
+                    synchronized (lock){
                         currentConnection = req.getConnectionId();
                         provider.getDalEventBus().post(req);
-                        try {
-                            currentConnection.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        while(!doNext.get()){
+                            try {
+                                lock.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        doNext.set(false);
                     }
                 }
             }
         }
     }
 
+    /**
+     * Checks BluetoothDeviceChanged messages to see if it originated from the CyclicRefresh.
+     * If it did originate here, it wakes the CyclicRefresh to update the next device.
+     * @param inputMsg
+     */
+    public void onEventAsync(BluetoothDeviceChanged inputMsg){
+        String connectionID = inputMsg.getConnectionId();
 
-
-    public void setEnabled(){
-        enabled.set(true);
+        synchronized (lock){
+            if(connectionID.equals(currentConnection)){
+                doNext.set(true);
+                lock.notifyAll();
+            }
+        }
     }
 
-    public void setDisabled(){
-        enabled.set(false);
+    public void setEnabled(boolean val){
+        enabled.set(val);
     }
 }

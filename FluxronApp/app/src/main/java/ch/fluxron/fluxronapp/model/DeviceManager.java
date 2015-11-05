@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscov
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
@@ -46,12 +47,26 @@ public class DeviceManager {
         }
     }
 
+    /**
+     * Used to inject devices loaded with a kitchen into the device manager.
+     * @param cmd
+     */
+    public void onEventAsync(CyclicRefreshCommand cmd){
+        synchronized (cyclicRefresh){
+            cyclicRefresh.setEnabled(cmd.isEnabled());
+            if(cmd.isEnabled()){
+                cyclicRefresh.run();
+            }
+        }
+    }
+
+    /*
     public void onEventAsync(BluetoothTestCommand inputCmd){
         String cmd = ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE;
         RequestResponseConnection readRequest = new BluetoothReadRequest(inputCmd.getDeviceID(), cmd);
         readRequest.setConnectionId(inputCmd);
         provider.getDalEventBus().post(readRequest);
-    }
+    }*/
 
     /**
      * Enables or disables the discovery of bluetooth devices.
