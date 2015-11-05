@@ -131,7 +131,8 @@ public class DeviceManager {
     public void onEventAsync(DeviceParamRequestCommand inputCmd){
         //TODO: check if cached?
         //TODO: make sure that device is bonded first?
-        RequestResponseConnection readRequest = new BluetoothReadRequest(inputCmd.getDeviceID(), inputCmd.getParamID());
+        BluetoothReadRequest readRequest = new BluetoothReadRequest(inputCmd.getDeviceID());
+        readRequest.addParam(inputCmd.getParamID());
         readRequest.setConnectionId(inputCmd);
         provider.getDalEventBus().post(readRequest);
     }

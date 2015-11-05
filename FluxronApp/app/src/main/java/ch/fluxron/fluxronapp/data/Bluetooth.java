@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
@@ -153,13 +154,16 @@ public class Bluetooth {
     }
 
     /**
-     * Connects to a bluetooth device and reads the field specified in the command.
+     * Connects to a bluetooth device and requests the parameters specified in the command.
      * @param cmd
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
-        byte[] message = messageFactory.makeReadRequest(cmd.getField());
-        messageFactory.printUnsignedByteArray(message);
-        sendData(cmd.getAddress(), message, cmd);
+        List<String> parameters = cmd.getParameters();
+        for (String p:parameters){
+            byte[] message = messageFactory.makeReadRequest(p);
+            messageFactory.printUnsignedByteArray(message);
+            sendData(cmd.getAddress(), message, cmd);
+        }
     }
 
     private void sendData(String address, byte[] message, RequestResponseConnection connection) {
