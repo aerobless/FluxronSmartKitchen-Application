@@ -20,6 +20,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private TextView title;
     private TextView description;
+    private TextView deviceCount;
     private View parent;
     private ImageView img;
     private String imageRequestId;
@@ -34,6 +35,8 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
         this.title = (TextView) itemView.findViewById(R.id.titleText);
         this.img = (ImageView) itemView.findViewById(R.id.kitchenImage);
         this.description = (TextView) itemView.findViewById(R.id.descriptionText);
+        this.deviceCount = (TextView)itemView.findViewById(R.id.deviceCount);
+
         this.listener = listener;
         this.provider = provider;
         this.provider.getUiEventBus().register(this);
@@ -52,6 +55,7 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
         boundData = k;
         title.setText(k.getName());
         description.setText(k.getDescription());
+        deviceCount.setText(String.format(deviceCount.getResources().getString(R.string.device_count), k.getDeviceCount()));
 
         parent.post(new Runnable() {
             @Override

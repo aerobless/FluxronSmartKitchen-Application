@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -58,5 +60,21 @@ public class Kitchen {
     @JsonIgnore
     public List<KitchenArea> getAreaList(){
         return areas;
+    }
+
+    @JsonIgnore
+    private int deviceCountCache =0;
+    @JsonIgnore
+    public int getDeviceCount(){
+        if (deviceCountCache > 0) return deviceCountCache;
+        deviceCountCache=0;
+        HashSet<String> deviceIds = new HashSet<>(200);
+        for(KitchenArea a : areas) {
+            for(DevicePosition p : a.getDevicePositionList()){
+                deviceIds.add(p.getDeviceId());
+            }
+        }
+
+        return deviceCountCache = deviceIds.size();
     }
 }

@@ -24,4 +24,7 @@
 
     <!-- Single characters -->
     <string name="ok_check">&#10003;</string>
+
+    <!-- Other texts -->
+    <string name="device_count">%d device(s)</string>
 </resources>
