@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
 
 /**
@@ -18,17 +19,22 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessag
 public class BTConnectionThread extends Thread{
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    private final static int MESSAGE_LENGTH = 12;
     private final BluetoothDevice remoteDevice;
     private final IEventBusProvider provider;
     private final BluetoothSocket socket;
-    private AtomicBoolean keepRunning = new AtomicBoolean(true);
+    private final AtomicBoolean keepRunning;
+    private RequestResponseConnection requestResponseConnection;
+
+    private final static int MESSAGE_LENGTH = 12;
 
     public BTConnectionThread(BluetoothSocket btsocket, IEventBusProvider provider) {
         remoteDevice = btsocket.getRemoteDevice();
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
         socket = btsocket;
+        keepRunning = new AtomicBoolean(true);
+        requestResponseConnection = new RequestResponseConnection();
+
         this.provider = provider;
 
         try {
@@ -68,7 +74,9 @@ public class BTConnectionThread extends Thread{
 
                     if(outputStream.size() >= messageLength){
                         byte[] responseMsg = outputStream.toByteArray();
-                        provider.getDalEventBus().post(new BluetoothMessageReceived(remoteDevice.getAddress(), responseMsg));
+                        RequestResponseConnection msg = new BluetoothMessageReceived(remoteDevice.getAddress(), responseMsg);
+                        msg.setConnectionId(requestResponseConnection);
+                        provider.getDalEventBus().post(msg);
                         outputStream.reset();
                     }
                 }
@@ -85,9 +93,12 @@ public class BTConnectionThread extends Thread{
         }
     }
 
-    public void write(byte[] message) throws IOException {
+    public void write(byte[] message, RequestResponseConnection requestResponseConnection) throws IOException {
         Log.d("FLUXRON", "Sending message");
         mmOutStream.write(message);
+        synchronized (this.requestResponseConnection){
+            this.requestResponseConnection = requestResponseConnection;
+        }
     }
 
     /**

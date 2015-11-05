@@ -5,9 +5,9 @@ import android.util.LruCache;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -46,30 +46,21 @@ public class DeviceManager {
         }
     }
 
-    public void onEventAsync(BluetoothTestCommand msg){
+    public void onEventAsync(BluetoothTestCommand inputCmd){
         String cmd = ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE;
-        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
-
-/*
-        //Writing to device test
-        String cmd = ParamManager.F_CCLASS_3100SUB1_TST_ENABLE_TEST;
-        provider.getDalEventBus().post(new BluetoothWriteRequest(msg.getDeviceID(), cmd, 0));
-
-        try {
-            Thread.sleep(10000*2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        provider.getDalEventBus().post(new BluetoothReadRequest(msg.getDeviceID(), cmd));
-*/
+        RequestResponseConnection readRequest = new BluetoothReadRequest(inputCmd.getDeviceID(), cmd);
+        readRequest.setConnectionId(inputCmd);
+        provider.getDalEventBus().post(readRequest);
     }
 
     /**
      * Enables or disables the discovery of bluetooth devices.
-     * @param msg
+     * @param inputCmd
      */
-    public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand msg){
-        provider.getDalEventBus().post(new BluetoothDiscoveryCommand(msg.isEnabled()));
+    public void onEventAsync(ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand inputCmd){
+        RequestResponseConnection btDiscoveryCmd = new BluetoothDiscoveryCommand(inputCmd.isEnabled());
+        btDiscoveryCmd.setConnectionId(inputCmd);
+        provider.getDalEventBus().post(btDiscoveryCmd);
 
         //Send all cached devices up
         Map<String, Device> deviceCacheSnapshot;
@@ -77,31 +68,35 @@ public class DeviceManager {
             deviceCacheSnapshot = deviceCache.snapshot();
         }
         for (Device d: deviceCacheSnapshot.values()){
-           provider.getUiEventBus().post(new DeviceLoaded(d));
+            RequestResponseConnection deviceLoaded = new DeviceLoaded(d);
+            deviceLoaded.setConnectionId(inputCmd);
+           provider.getUiEventBus().post(deviceLoaded);
         }
     }
 
     /**
-     * Handles BluetoothDeviceChanged event. Stores device to DB and notifies UI
-     * @param msg
+     * Handles BluetoothDeviceChanged event. Stores device in cache and notifies UI
+     * @param inputMsg
      */
-    public void onEventAsync(BluetoothDeviceChanged msg){
-        Log.d("FLUXRON", "Device " + msg.getAddress() + " has reported " + msg.getValue() + " for field " + msg.getField());
+    public void onEventAsync(BluetoothDeviceChanged inputMsg){
+        Log.d("FLUXRON", "Device " + inputMsg.getAddress() + " has reported " + inputMsg.getValue() + " for field " + inputMsg.getField());
         Device device;
         synchronized (deviceCache){
-            device = deviceCache.get(msg.getAddress());
-            device.setDeviceParameter(new DeviceParameter(msg.getField(), msg.getValue()+""));
+            device = deviceCache.get(inputMsg.getAddress());
+            device.setDeviceParameter(new DeviceParameter(inputMsg.getField(), inputMsg.getValue()+""));
         }
         updateDeviceCache(device);
-        provider.getUiEventBus().post(new DeviceChanged(deviceCache.get(msg.getAddress())));
+        RequestResponseConnection deviceChanged = new DeviceChanged(deviceCache.get(inputMsg.getAddress()));
+        deviceChanged.setConnectionId(inputMsg);
+        provider.getUiEventBus().post(deviceChanged);
     }
 
     /**
      * Handles BluetoothDeviceFound event. Validates devices, stores it to DB and notifies UI
-     * @param msg
+     * @param inputMsg
      */
-    public void onEventAsync(BluetoothDeviceFound msg){
-        Device device = msg.getDevice();
+    public void onEventAsync(BluetoothDeviceFound inputMsg){
+        Device device = inputMsg.getDevice();
         if(device != null && isFluxronDevice(device.getName())){
             boolean cached;
             synchronized (deviceCache){
@@ -110,23 +105,20 @@ public class DeviceManager {
             if(!cached){
                 Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
                 updateDeviceCache(device);
-                provider.getUiEventBus().post(new DeviceLoaded(device));
+                RequestResponseConnection deviceLoaded = new DeviceLoaded(device);
+                deviceLoaded.setConnectionId(inputMsg);
+                provider.getUiEventBus().post(deviceLoaded);
                 Log.d("FLUXRON", "BOND STATUS: " +device.isBonded());
-                //provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_MANUFACTURER_DEVICE_NAME_1008));
             }
-            /*synchronized (deviceCache){
-                //TODO: handle unbonded devices?
-                if(deviceCache.get(device.getAddress()).getDeviceType()==Device.UNKNOWN_DEVICE_TYPE && device.isBonded()){
-                    provider.getDalEventBus().post(new BluetoothReadRequest(device.getAddress(), ParamManager.F_PRODUCT_CODE_1018SUB2));
-                }
-            }*/
         }
     }
 
-    public void onEventAsync(DeviceParamRequestCommand cmd){
+    public void onEventAsync(DeviceParamRequestCommand inputCmd){
         //TODO: check if cached?
         //TODO: make sure that device is bonded first?
-        provider.getDalEventBus().post(new BluetoothReadRequest(cmd.getDeviceID(), cmd.getParamID()));
+        RequestResponseConnection readRequest = new BluetoothReadRequest(inputCmd.getDeviceID(), inputCmd.getParamID());
+        readRequest.setConnectionId(inputCmd);
+        provider.getDalEventBus().post(readRequest);
     }
 
     /**

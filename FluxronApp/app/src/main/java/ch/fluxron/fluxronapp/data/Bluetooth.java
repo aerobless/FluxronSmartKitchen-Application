@@ -18,6 +18,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.UUID;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
@@ -148,7 +149,7 @@ public class Bluetooth {
     public void onEventAsync(BluetoothWriteRequest cmd) {
         byte[] message = messageFactory.makeWriteRequest(cmd.getField(), cmd.getValue());
         messageFactory.printUnsignedByteArray(message);
-        sendData(cmd.getAddress(), message);
+        sendData(cmd.getAddress(), message, cmd);
     }
 
     /**
@@ -158,10 +159,10 @@ public class Bluetooth {
     public void onEventAsync(BluetoothReadRequest cmd) {
         byte[] message = messageFactory.makeReadRequest(cmd.getField());
         messageFactory.printUnsignedByteArray(message);
-        sendData(cmd.getAddress(), message);
+        sendData(cmd.getAddress(), message, cmd);
     }
 
-    private void sendData(String address, byte[] message) {
+    private void sendData(String address, byte[] message, RequestResponseConnection connection) {
         if(bluetoothEnabled()){
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
             if(device.getBondState()== BluetoothDevice.BOND_NONE){
@@ -179,7 +180,7 @@ public class Bluetooth {
 
                 boolean retry = false;
                 try {
-                    connectionThread.write(message);
+                    connectionThread.write(message, connection);
                 } catch (IOException e) {
                     if(e.getMessage().equals("Broken pipe")){
                         Log.d(TAG, "Broken pipe");
@@ -192,7 +193,7 @@ public class Bluetooth {
                     try {
                         connectionThread = getConnection(device, true);
                         try {
-                            connectionThread.write(message);
+                            connectionThread.write(message, connection);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -256,11 +257,11 @@ public class Bluetooth {
 
     /**
      * Handles (verifies, interprets) messages received from BTConnectionThread and sends them on to the business layer.
-     * @param msg
+     * @param inputMsg
      */
-    public void onEventAsync(BluetoothMessageReceived msg) {
-        Log.d(TAG, "Message from " + msg.getAddress());
-        byte[] data = msg.getData();
+    public void onEventAsync(BluetoothMessageReceived inputMsg) {
+        Log.d(TAG, "Message from " + inputMsg.getAddress());
+        byte[] data = inputMsg.getData();
         byte[] dataPayload = null;
         messageFactory.printUnsignedByteArray(data);
         if(messageFactory.isChecksumValid(data)){
@@ -294,7 +295,9 @@ public class Bluetooth {
                 if(fieldID == null){
                     fieldID = messageFactory.getParamID(field.substring(0, 4));
                 }
-                provider.getDalEventBus().post(new BluetoothDeviceChanged(msg.getAddress(), fieldID, decodeByteArray(dataPayload)));
+                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(inputMsg.getAddress(), fieldID, decodeByteArray(dataPayload));
+                deviceChanged.setConnectionId(inputMsg);
+                provider.getDalEventBus().post(deviceChanged);
             }
         } else {
             Log.d(TAG, "Invalid checksum!");
