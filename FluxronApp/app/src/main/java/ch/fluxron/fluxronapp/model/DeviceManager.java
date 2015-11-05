@@ -11,11 +11,11 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 
@@ -26,11 +26,22 @@ public class DeviceManager {
     private IEventBusProvider provider;
     private LruCache<String, Device> deviceCache;
 
+
     public DeviceManager(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
         deviceCache = new LruCache<>(150);
+    }
+
+    /**
+     * Used to inject devices loaded with a kitchen into the device manager.
+     * @param cmd
+     */
+    public void onEventAsync(InjectDevicesCommand cmd){
+        for(Device d:cmd.getDeviceList()){
+            deviceCache.put(d.getAddress(), d);
+        }
     }
 
     public void onEventAsync(BluetoothTestCommand msg){
