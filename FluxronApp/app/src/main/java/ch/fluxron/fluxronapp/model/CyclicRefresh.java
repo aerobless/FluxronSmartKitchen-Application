@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.objectBase.Device;
@@ -81,6 +82,22 @@ public class CyclicRefresh extends Thread{
      * @param inputMsg
      */
     public void onEventAsync(BluetoothDeviceChanged inputMsg){
+        String connectionID = inputMsg.getConnectionId();
+
+        synchronized (lock){
+            if(connectionID.equals(currentConnection)){
+                doNext.set(true);
+                lock.notifyAll();
+            }
+        }
+    }
+
+    /**
+     * If the pipe broke or the connection could not be established for other reasons.
+     * Skips the current device. It will be automatically retried in the next cycle.
+     * @param inputMsg
+     */
+    public void onEventAsync(BluetoothConnectionFailure inputMsg){
         String connectionID = inputMsg.getConnectionId();
 
         synchronized (lock){
