@@ -14,7 +14,7 @@ import ch.fluxron.fluxronapp.data.generated.ParamManager;
  * Encodes & decodes CANopen messages.
  */
 public class MessageFactory {
-    Map<String, DeviceParameter> parameterMap;
+    private Map<String, DeviceParameter> parameterMap;
 
     /**
      * Command Code:
@@ -181,7 +181,7 @@ public class MessageFactory {
     /**
      * Calculate the checksum for byte 2-9 and set it in byte 10 & 11.
      */
-    private byte[] setChecksum(byte[] message) {
+    protected byte[] setChecksum(byte[] message) {
         if(message.length >= 5){
             byte[] checkedMessage = message.clone();
             int checksum = 0;
@@ -201,17 +201,6 @@ public class MessageFactory {
         }
     }
 
-    public boolean isChecksumValid(byte[] originalMsg){
-        if(originalMsg.length >= 12){
-            byte[] checkMsg = setChecksum(originalMsg);
-            if(Arrays.equals(originalMsg, checkMsg)){
-                return true;
-            }
-        }else {
-            Log.d("FLUXRON", "Only messages with length 12 can be verified. This message has length "+originalMsg.length);
-        }
-        return false;
-    }
 
     public void printUnsignedByteArray(byte[] message) {
         String hexMessage = "";
@@ -221,13 +210,12 @@ public class MessageFactory {
         Log.d("FLUXRON", hexMessage);
     }
 
-    //TODO: proper distinction between SClass etc. based on communication ID.. will probably be done in Device Manager in the future.
-    //This is a simple fix to not break device discovery after adding multiple EDSs.
-    public String getParamID(String input){
-        if(parameterMap.get("SClass_"+input)!= null){
-            return parameterMap.get("SClass_"+input).getId();
-        } else {
-            return null;
-        }
+    /**
+     * Returns a DeviceParameter if the key exists. Otherwise null.
+     * @param key
+     * @return
+     */
+    public DeviceParameter getParameter(String key){
+        return parameterMap.get(key);
     }
 }

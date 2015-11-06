@@ -13,15 +13,11 @@ import android.util.LruCache;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
@@ -35,6 +31,7 @@ import ch.fluxron.fluxronapp.objectBase.Device;
 public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
+    private MessageInterpreter messageInterpreter;
     private BluetoothAdapter btAdapter = null;
     private final LruCache<String, BTConnectionThread> connectionCache;
 
@@ -47,6 +44,7 @@ public class Bluetooth {
         this.provider.getDalEventBus().register(this);
 
         messageFactory = new MessageFactory();
+        messageInterpreter = new MessageInterpreter(provider, messageFactory);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
         setupBonding(context);
@@ -150,7 +148,13 @@ public class Bluetooth {
     public void onEventAsync(BluetoothWriteRequest cmd) {
         byte[] message = messageFactory.makeWriteRequest(cmd.getField(), cmd.getValue());
         messageFactory.printUnsignedByteArray(message);
-        sendData(cmd.getAddress(), message, cmd);
+        try {
+            sendData(cmd.getAddress(), message, cmd);
+        } catch (IOException e) {
+            BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure();
+            connectionFailure.setConnectionId(cmd);
+            provider.getDalEventBus().post(connectionFailure);
+        }
     }
 
     /**
@@ -162,11 +166,17 @@ public class Bluetooth {
         for (String p:parameters){
             byte[] message = messageFactory.makeReadRequest(p);
             messageFactory.printUnsignedByteArray(message);
-            sendData(cmd.getAddress(), message, cmd);
+            try {
+                sendData(cmd.getAddress(), message, cmd);
+            } catch (IOException e) {
+                BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure();
+                connectionFailure.setConnectionId(cmd);
+                provider.getDalEventBus().post(connectionFailure);
+            }
         }
     }
 
-    private void sendData(String address, byte[] message, RequestResponseConnection connection) {
+    private void sendData(String address, byte[] message, RequestResponseConnection connection) throws IOException {
         if(bluetoothEnabled()){
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
             if(device.getBondState()== BluetoothDevice.BOND_NONE){
@@ -190,19 +200,15 @@ public class Bluetooth {
                         Log.d(TAG, "Broken pipe");
                         retry = true;
                     }else {
-                        e.printStackTrace();
+                        throw new IOException("Unable establish connection");
                     }
                 }
                 if(retry){
                     try {
                         connectionThread = getConnection(device, true);
-                        try {
-                            connectionThread.write(message, connection);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        connectionThread.write(message, connection);
                     } catch (IOException e) {
-                        Log.d(TAG, e.getMessage());
+                        throw new IOException("Unable establish connection");
                     }
                 }
             } else {
@@ -257,81 +263,6 @@ public class Bluetooth {
             }
         }
         return connectionThread;
-    }
-
-    /**
-     * Handles (verifies, interprets) messages received from BTConnectionThread and sends them on to the business layer.
-     * @param inputMsg
-     */
-    public void onEventAsync(BluetoothMessageReceived inputMsg) {
-        Log.d(TAG, "Message from " + inputMsg.getAddress());
-        byte[] data = inputMsg.getData();
-        byte[] dataPayload = null;
-        messageFactory.printUnsignedByteArray(data);
-        if(messageFactory.isChecksumValid(data)){
-            Log.d(TAG, "and its checksum is valid.");
-            if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B){
-                //Java Ints are 32bits, so we need 4Bytes anyway. That's why we don't care
-                //how long the payload really is.
-                dataPayload = new byte[]{data[6],data[7],data[8],data[9]};
-            } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE){
-                //Doesn't contain data
-            } else if (data[2] == MessageFactory.CCD_READ_REQUEST){
-                dataPayload = retriveBigData(data);
-            } else if (data[2] == MessageFactory.CCD_ERROR_RESPONSE){
-                Log.d(TAG, "Received ERROR bluetooth message");
-            } else {
-                Log.d(TAG, "Unkown Command Code"+ data[2]);
-            }
-            if (dataPayload != null){
-                //messageFactory.printUnsignedByteArray(dataPayload);
-                //Log.d(TAG, "INT "+decodeByteArray(dataPayload));
-                //TODO: nicer method to generate/lookup field name
-
-                String msb = Integer.toHexString(0xFF & data[4]);
-                String lsb = Integer.toHexString(0xFF & data[3]);
-                String sub = Integer.toHexString(0xFF & data[5]);
-                if(lsb.length()==1){
-                    lsb = "0"+lsb;
-                }
-                String field = msb+lsb+"sub"+sub;
-                String fieldID = messageFactory.getParamID(field);
-                if(fieldID == null){
-                    fieldID = messageFactory.getParamID(field.substring(0, 4));
-                }
-                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(inputMsg.getAddress(), fieldID, decodeByteArray(dataPayload));
-                deviceChanged.setConnectionId(inputMsg);
-                provider.getDalEventBus().post(deviceChanged);
-            }
-        } else {
-            Log.d(TAG, "Invalid checksum!");
-        }
-    }
-
-    /**
-     * Used to retrive data from Bluetooth messages that are longer then 12Bytes (>4Byte Data).
-     * These messages do not follow the CANopen specification. Instead Field 6 tells the
-     * additional length after then normal CANopen message (12B).
-     * @param input
-     * @return byte[] Array containing only the data part of the input-Array.
-     */
-    private byte[] retriveBigData(byte[] input){
-        byte [] subArray = Arrays.copyOfRange(input, 9, input.length - 3);
-        if(subArray.length != input[6]){
-            Log.d(TAG, "Length of extracted data doesn't match specified length!");
-        }
-        return subArray;
-    }
-
-    /**
-     * Decodes little endian byte[] arrays to int values.
-     * @param input
-     * @return decoded Int value of the input
-     */
-    private int decodeByteArray(byte[] input){
-        ByteBuffer buffer = ByteBuffer.wrap(input);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        return buffer.getInt();
     }
 
     private boolean connectSocket(BluetoothSocket btSocket) {

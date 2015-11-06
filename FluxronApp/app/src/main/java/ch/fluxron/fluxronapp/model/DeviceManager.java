@@ -123,7 +123,6 @@ public class DeviceManager {
                 RequestResponseConnection deviceLoaded = new DeviceLoaded(device);
                 deviceLoaded.setConnectionId(inputMsg);
                 provider.getUiEventBus().post(deviceLoaded);
-                Log.d("FLUXRON", "BOND STATUS: " +device.isBonded());
             }
         }
     }
