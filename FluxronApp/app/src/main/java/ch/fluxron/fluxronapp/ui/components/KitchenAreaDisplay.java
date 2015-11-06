@@ -51,6 +51,9 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     private List<DeviceView> views;
     private KitchenArea area;
 
+    // Last render time to optimize framerate
+    private long lastRenderTimeMilliseconds;
+
     public KitchenAreaDisplay(Context context) {
         super(context);
         setUp();
@@ -241,6 +244,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             DeviceView deviceRenderer = new DeviceView(getContext());
             deviceRenderer.setPosition(d);
             deviceRenderer.setListener(this);
+            deviceRenderer.popUp();
             views.add(deviceRenderer);
         }
 
@@ -267,6 +271,17 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         getContext().startActivity(startActivity);
+    }
+
+    @Override
+    public void needsRepaint(boolean force) {
+        long deltaMillis = System.currentTimeMillis() - lastRenderTimeMilliseconds ;
+
+        // it's either a forced redraw, or we need to check if we are over 60 fps
+        if (force || deltaMillis > (1000/60)) {
+            invalidate();
+            lastRenderTimeMilliseconds = System.currentTimeMillis();
+        }
     }
 
     /**

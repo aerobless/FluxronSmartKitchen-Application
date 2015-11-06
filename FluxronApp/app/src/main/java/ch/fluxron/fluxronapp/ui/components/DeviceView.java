@@ -1,7 +1,11 @@
 package ch.fluxron.fluxronapp.ui.components;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -135,5 +139,24 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener {
                 break;
         }
         return true;
+    }
+
+    public void popUp(){
+        findViewById(R.id.theStatusOrb).setAlpha(0);
+        ObjectAnimator oa = ObjectAnimator.ofFloat(findViewById(R.id.theStatusOrb), View.ALPHA, 1).setDuration(4000);
+
+        oa.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                fireNeedUpdate();
+            }
+        });
+        oa.start();
+    }
+
+    private void fireNeedUpdate() {
+        if(listener!=null){
+            listener.needsRepaint(false);
+        }
     }
 }
