@@ -29,7 +29,7 @@ public class MessageInterpreter {
         Log.d("Fluxron", "Message from " + address);
 
         byte[] dataPayload = null;
-        //messageFactory.printUnsignedByteArray(data);
+        messageFactory.printUnsignedByteArray(data);
         if(isChecksumValid(data)){
             Log.d("Fluxron", "and its checksum is valid.");
             if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B){

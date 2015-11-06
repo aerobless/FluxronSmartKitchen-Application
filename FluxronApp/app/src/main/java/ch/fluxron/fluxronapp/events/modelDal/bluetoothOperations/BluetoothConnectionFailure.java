@@ -11,8 +11,7 @@ public class BluetoothConnectionFailure extends RequestResponseConnection{
     }
     FailureType failuretype = FailureType.GENERIC_CONECTION_FAILURE;
 
-    public BluetoothConnectionFailure() {
-    }
+    public BluetoothConnectionFailure() {}
 
     public BluetoothConnectionFailure(FailureType failuretype) {
         this.failuretype = failuretype;

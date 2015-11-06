@@ -38,6 +38,7 @@ public class Bluetooth {
     private static final String TAG = "FLUXRON";
     private static final String DEVICE_PIN = "1234";
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
+    private static final String ACTION_PAIRING_REQUEST = "android.bluetooth.device.action.PAIRING_REQUEST"; //to support api18
 
     public Bluetooth(IEventBusProvider provider, Context context) {
         this.provider = provider;
@@ -104,7 +105,6 @@ public class Bluetooth {
      * @param context
      */
     private void setupBonding(Context context){
-        final String ACTION_PAIRING_REQUEST = "android.bluetooth.device.action.PAIRING_REQUEST"; //to support api18
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -246,7 +246,7 @@ public class Bluetooth {
                 connectionCache.remove(device.getAddress());
             }
         }
-        BTConnectionThread connectionThread = null;
+        BTConnectionThread connectionThread;
         synchronized (connectionCache){
             connectionThread = connectionCache.get(device.getAddress());
         }
@@ -277,7 +277,6 @@ public class Bluetooth {
                 btSocket.close();
             } catch (IOException e2) {
                 Log.d(TAG, "In onResume() and unable to close socket during connection failure");
-                e.printStackTrace();
             }
         }
         return false;

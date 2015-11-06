@@ -127,7 +127,7 @@ public class MessageFactory {
      * @return
      * @throws UnsupportedOperationException
      */
-    public byte[] convertDataObjectToByte(String paramID, Object data) throws UnsupportedOperationException{
+    public byte[] convertDataObjectToByte(String paramID, Object data){
         int dataType = parameterMap.get(paramID).getDataType();
         byte[] dataByte;
 
@@ -145,16 +145,16 @@ public class MessageFactory {
         return dataByte;
     }
 
-    private boolean isSignedInt(int dataType){
-        return (dataType == DATA_TYPE_8BIT_SIGNED_INT
+    private static boolean isSignedInt(int dataType){
+        return dataType == DATA_TYPE_8BIT_SIGNED_INT
         || dataType == DATA_TYPE_16BIT_SIGNED_INT
-        || dataType == DATA_TYPE_32BIT_SIGNED_INT);
+        || dataType == DATA_TYPE_32BIT_SIGNED_INT;
     }
 
-    private boolean isUnsignedInt(int dataType){
-        return (dataType == DATA_TYPE_8BIT_UNSIGNED_INT
+    private static boolean isUnsignedInt(int dataType){
+        return dataType == DATA_TYPE_8BIT_UNSIGNED_INT
                 || dataType == DATA_TYPE_16BIT_UNSIGNED_INT
-                || dataType == DATA_TYPE_32BIT_UNSIGNED_INT);
+                || dataType == DATA_TYPE_32BIT_UNSIGNED_INT;
     }
 
     /*
