@@ -17,6 +17,10 @@ public class MessageInterpreter {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
 
+    public MessageInterpreter(MessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
+    }
+
     public MessageInterpreter(IEventBusProvider provider, MessageFactory messageFactory) {
         this.provider = provider;
         this.messageFactory = messageFactory;
