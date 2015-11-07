@@ -75,6 +75,8 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     protected void onDraw(Canvas canvas) {
         canvas.save();
 
+        canvas.clipRect(0, 0, getWidth(), getHeight());
+
         limitTranslation();
         canvas.concat(cam.getTransformMatrix());
 
