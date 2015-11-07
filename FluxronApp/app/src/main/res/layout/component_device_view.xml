@@ -3,22 +3,22 @@
     <TextView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@drawable/status_ok_background"
-        android:text="@string/ok_check"
+        android:background="@drawable/device_background"
+        android:text="MIA"
         style="@style/FluxronDeviceStatusTextView"
         android:id="@+id/theStatusOrb"
         />
     <TextView
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="#ff0000"
-        android:text="x"
+        android:background="@drawable/status_ok_background"
+        android:text="@string/ok_check"
         android:gravity="center"
-        android:textSize="12sp"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="105dp"
+        android:textSize="16sp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="60dp"
         android:textColor="@color/titleForeground"
-        android:visibility="gone"/>
+        />
     <TextView
         android:layout_width="40dp"
         android:layout_height="40dp"
