@@ -2,10 +2,12 @@ package ch.fluxron.fluxronapp.events.modelUi.kitchenOperations;
 
 import android.graphics.Point;
 
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+
 /**
  * Request the storage of a changed device position
  */
-public class ChangeDevicePosition {
+public class ChangeDevicePosition extends RequestResponseConnection {
     private Point pos;
     private String deviceId;
     private String kitchenId;

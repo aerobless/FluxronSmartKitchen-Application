@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
@@ -89,6 +90,13 @@ public class AreaDetailFragment extends Fragment {
 
             // Set the device positions to the display
             display.setDevicePositions(kitchenArea);
+        }
+    }
+
+    public void onEventMainThread(DevicePositionChanged msg) {
+        // Check if we handle this kitchen and this area at the moment
+        if (msg.getKitchenId().equals(kitchenId) && kitchenArea!= null && kitchenArea.getRelativeId() == msg.getAreaId()) {
+            display.setDevicePosition(msg.getPosition());
         }
     }
 

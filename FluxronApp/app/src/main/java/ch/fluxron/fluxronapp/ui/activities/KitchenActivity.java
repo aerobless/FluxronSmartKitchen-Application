@@ -5,13 +5,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;

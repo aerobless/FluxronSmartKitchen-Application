@@ -8,7 +8,9 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -156,7 +158,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         // We do not want to scroll and touch child controls at the same time
         if (touchHandled){
             invalidate();
-            invalidate();
             return true;
         }
 
@@ -177,7 +178,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
                 break;
         }
 
-        invalidate();
+        needsRepaint(false);
         detector.onTouchEvent(event);
         return true;
     }
@@ -231,7 +232,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             }
         }
 
-        invalidate();
+        needsRepaint(true);
     }
 
     public void setListener(IKitchenAreaListener listener) {
@@ -241,14 +242,19 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     public void setDevicePositions(KitchenArea area){
         this.area = area;
         for(DevicePosition d : area.getDevicePositionList()){
-            DeviceView deviceRenderer = new DeviceView(getContext());
-            deviceRenderer.setPosition(d);
-            deviceRenderer.setListener(this);
-            deviceRenderer.popUp();
+            DeviceView deviceRenderer = createDeviceView(d);
             views.add(deviceRenderer);
         }
 
-        invalidate();
+        needsRepaint(true);
+    }
+
+    @NonNull
+    private DeviceView createDeviceView(DevicePosition d) {
+        DeviceView deviceRenderer = new DeviceView(getContext());
+        deviceRenderer.setPosition(d);
+        deviceRenderer.setListener(this);
+        return deviceRenderer;
     }
 
     @Override
@@ -290,5 +296,33 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
      */
     public void setEditMode(boolean edit){
         editMode = edit;
+    }
+
+    /**
+     * Adds or changes the position of a device
+     * @param devicePosition Position of a device
+     */
+    public void setDevicePosition(DevicePosition devicePosition) {
+        // Find the view with the changed position
+        DevicePosition found = null;
+        for(DeviceView deviceView : views) {
+            if(deviceView.getPosition().getDeviceId().equals(devicePosition.getDeviceId())) {
+                found = deviceView.getPosition();
+                break;
+            }
+        }
+
+        // If we found the view, update it's position,
+        // otherwise we'll need to create a new one
+        if (found!=null) {
+            found.setPosition(devicePosition.getPosition());
+            needsRepaint(false);
+        }
+        else {
+            DeviceView deviceRenderer = createDeviceView(devicePosition);
+            deviceRenderer.popUp();
+            views.add(deviceRenderer);
+            needsRepaint(true);
+        }
     }
 }

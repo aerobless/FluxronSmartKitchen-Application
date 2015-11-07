@@ -24,6 +24,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitch
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
@@ -354,18 +355,18 @@ public class KitchenManager {
      */
     private void moveDevicePosition(Kitchen kitchen, ChangeDevicePosition msg) {
         // Find the area
-        KitchenArea foundKitchen = null;
+        KitchenArea foundArea = null;
         for(KitchenArea a : kitchen.getAreaList()){
             if (a.getRelativeId() == msg.getAreaId()) {
-                foundKitchen = a;
+                foundArea = a;
                 break;
             }
         }
 
-        if(foundKitchen!=null) {
+        if(foundArea!=null) {
             DevicePosition foundPosition = null;
 
-            for(DevicePosition pos : foundKitchen.getDevicePositionList()){
+            for(DevicePosition pos : foundArea.getDevicePositionList()){
                 if (pos.getDeviceId().equals(msg.getDeviceId())) {
                     foundPosition = pos;
                     break;
@@ -380,6 +381,11 @@ public class KitchenManager {
                 saveCommand.setDocumentId(kitchen.getId());
                 saveCommand.setData(kitchen);
                 provider.getDalEventBus().post(saveCommand);
+
+                // Notify the change of position
+                DevicePositionChanged event = new DevicePositionChanged(kitchen.getId(), foundArea.getRelativeId(), foundPosition);
+                event.setConnectionId(msg);
+                provider.getUiEventBus().post(event);
             }
         }
     }
@@ -410,6 +416,11 @@ public class KitchenManager {
             saveCommand.setDocumentId(kitchen.getId());
             saveCommand.setData(kitchen);
             provider.getDalEventBus().post(saveCommand);
+
+            // Notify the change of position
+            DevicePositionChanged event = new DevicePositionChanged(kitchen.getId(), found.getRelativeId(), pos);
+            event.setConnectionId(msg);
+            provider.getUiEventBus().post(event);
         }
     }
 }
