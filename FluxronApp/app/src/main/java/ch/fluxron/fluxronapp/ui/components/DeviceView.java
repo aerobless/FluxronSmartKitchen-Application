@@ -1,6 +1,8 @@
 package ch.fluxron.fluxronapp.ui.components;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -10,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.widget.RelativeLayout;
 
 import ch.fluxron.fluxronapp.R;
@@ -18,7 +23,7 @@ import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 /**
  * Renders a device
  */
-public class DeviceView extends RelativeLayout implements View.OnTouchListener {
+public class DeviceView extends RelativeLayout implements View.OnTouchListener, ObjectAnimator.AnimatorUpdateListener {
 
     private DevicePosition position;
     private IDeviceViewListener listener;
@@ -142,21 +147,20 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener {
     }
 
     public void popUp(){
-        findViewById(R.id.theStatusOrb).setAlpha(0);
-        ObjectAnimator oa = ObjectAnimator.ofFloat(findViewById(R.id.theStatusOrb), View.ALPHA, 1).setDuration(4000);
-
-        oa.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                fireNeedUpdate();
-            }
-        });
-        oa.start();
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
+        set.setTarget(findViewById(R.id.theStatusOrb));
+        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
+        set.start();
     }
 
     private void fireNeedUpdate() {
         if(listener!=null){
             listener.needsRepaint(false);
         }
+    }
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+        fireNeedUpdate();
     }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set android:ordering="together"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:propertyName="scaleX"
+        android:duration="320"
+        android:valueFrom="0.01"
+        android:valueTo="1"
+        android:valueType="floatType"
+        android:interpolator="@android:anim/bounce_interpolator"/>
+    <objectAnimator
+        android:propertyName="scaleY"
+        android:duration="320"
+        android:valueFrom="0.01"
+        android:valueTo="1"
+        android:valueType="floatType"
+        android:interpolator="@android:anim/bounce_interpolator"/>
+    <objectAnimator
+        android:propertyName="alpha"
+        android:duration="320"
+        android:valueFrom="0"
+        android:valueTo="1f"
+        android:valueType="floatType"
+        android:interpolator="@android:anim/bounce_interpolator"/>
+</set>
