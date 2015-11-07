@@ -29,7 +29,6 @@
         style="@style/FluxronDeviceStatusTextView"
         android:textSize="25dp"
         android:id="@+id/theCancelOrb"
-        android:visibility="gone"
         />
     <TextView
         android:layout_width="70dp"
