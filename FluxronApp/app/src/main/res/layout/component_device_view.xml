@@ -6,7 +6,8 @@
         android:background="@drawable/device_background"
         android:text="MIA"
         style="@style/FluxronDeviceStatusTextView"
-        android:id="@+id/theStatusOrb"
+        android:textSize="25dp"
+        android:id="@+id/theDeviceOrb"
         />
     <TextView
         android:layout_width="40dp"
@@ -18,16 +19,29 @@
         android:layout_marginTop="0dp"
         android:layout_marginLeft="60dp"
         android:textColor="@color/titleForeground"
+        android:id="@+id/theStatusOrb"
         />
     <TextView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/status_ok_background"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/device_background"
         android:text="x"
+        style="@style/FluxronDeviceStatusTextView"
+        android:textSize="25dp"
+        android:id="@+id/theCancelOrb"
+        android:visibility="gone"
+        />
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/delete_background"
+        android:drawableLeft="@drawable/ic_delete"
+        android:paddingLeft="24dp"
         android:gravity="center"
-        android:textSize="12sp"
-        android:layout_marginTop="05dp"
+        android:textSize="40sp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="105dp"
         android:textColor="@color/titleForeground"
-        android:visibility="gone"/>
+        android:id="@+id/theDeleteOrb"
+        />
 </merge>

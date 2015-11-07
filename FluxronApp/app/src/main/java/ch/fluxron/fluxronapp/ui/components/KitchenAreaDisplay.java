@@ -272,7 +272,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     @Override
     public void actionRequested(DeviceView v) {
-        if(editMode) return;
+        if(editMode) {
+            v.askForDelete();
+            return;
+        }
         
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         getContext().startActivity(startActivity);
