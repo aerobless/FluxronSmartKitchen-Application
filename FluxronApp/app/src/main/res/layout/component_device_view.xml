@@ -17,7 +17,8 @@
         android:textSize="12sp"
         android:layout_marginTop="50dp"
         android:layout_marginLeft="105dp"
-        android:textColor="@color/titleForeground"/>
+        android:textColor="@color/titleForeground"
+        android:visibility="gone"/>
     <TextView
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -27,5 +28,6 @@
         android:textSize="12sp"
         android:layout_marginTop="05dp"
         android:layout_marginLeft="105dp"
-        android:textColor="@color/titleForeground"/>
+        android:textColor="@color/titleForeground"
+        android:visibility="gone"/>
 </merge>

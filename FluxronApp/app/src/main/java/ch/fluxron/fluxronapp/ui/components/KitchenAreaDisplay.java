@@ -49,9 +49,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     // Bitmaps and device positions
     private Bitmap[] splitMaps = new Bitmap[4];
-    private Paint deviceDefaultPaint;
     private List<DeviceView> views;
     private KitchenArea area;
+    private int splitArraySide;
+    private int splitHeight;
+    private int splitWidth;
 
     // Last render time to optimize framerate
     private long lastRenderTimeMilliseconds;
@@ -73,27 +75,20 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        long start = System.currentTimeMillis();
         canvas.save();
 
         canvas.clipRect(0, 0, getWidth(), getHeight());
-
-        limitTranslation();
         canvas.concat(cam.getTransformMatrix());
 
         // render the image consisting out of the parts
         if(splitMaps.length > 0 && splitMaps[0] != null) {
-            int splitArraySide = (int)Math.sqrt(splitMaps.length);
-            int imageWidth = splitMaps[0].getWidth();
-            int imageHeight = splitMaps[0].getHeight();
             for(int x = 0; x < splitArraySide; x++) {
                 for (int y = 0; y < splitArraySide; y++) {
-                    canvas.drawBitmap(splitMaps[y * splitArraySide + x], (x*imageWidth), (y*imageHeight), null);
+                    canvas.drawBitmap(splitMaps[y * splitArraySide + x], (x*splitWidth), (y*splitHeight), null);
                 }
             }
         }
-
-        deviceDefaultPaint = new Paint();
-        deviceDefaultPaint.setColor(Color.rgb(255, 0, 50));
 
         // Draw the positions for the devices
         if (views!= null) {
@@ -106,6 +101,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
 
         canvas.restore();
+        Log.d("rt",(System.currentTimeMillis()-start)+"ms");
     }
 
     private void limitTranslation() {
@@ -180,6 +176,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
                 break;
         }
 
+        limitTranslation();
         needsRepaint(false);
         detector.onTouchEvent(event);
         return true;
@@ -218,9 +215,9 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
      * @param bmp
      */
     public void setBitmap(Bitmap bmp){
-        int splitArraySide = (int)Math.sqrt(splitMaps.length);
-        int splitHeight = bmp.getHeight() / splitArraySide;
-        int splitWidth = bmp.getWidth() / splitArraySide;
+        splitArraySide = (int)Math.sqrt(splitMaps.length);
+        splitHeight = bmp.getHeight() / splitArraySide;
+        splitWidth = bmp.getWidth() / splitArraySide;
 
         bmpWidth = bmp.getWidth();
         bmpHeight = bmp.getHeight();
