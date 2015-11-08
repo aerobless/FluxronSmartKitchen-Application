@@ -22,6 +22,7 @@ import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettings;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
@@ -342,11 +343,45 @@ public class KitchenManager {
             public void call(Object value) {
                 if (value != null && value instanceof Kitchen) {
                     // Attach the device to the area
-                    moveDevicePosition((Kitchen)value, msg);
+                    moveDevicePosition((Kitchen) value, msg);
                 }
             }
         });
         this.provider.getDalEventBus().post(getOp);
+    }
+
+    /**
+     * Triggered when a kitchens settings should be changed
+     * @param msg command
+     */
+    public void onEventAsync(final ChangeKitchenSettings msg){
+        // Load the kitchen and attach the device to the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    // Attach the device to the area
+                    changeKitchenSettings((Kitchen) value, msg);
+                }
+            }
+        });
+        this.provider.getDalEventBus().post(getOp);
+    }
+
+    /**
+     * Changes the kitchen settings as requested in the message
+     * @param value kitchen
+     * @param msg message
+     */
+    private void changeKitchenSettings(Kitchen value, ChangeKitchenSettings msg) {
+        value.setName(msg.getKitchenName());
+        value.setDescription(msg.getKitchenDescription());
+
+        // Save the kitchen
+        final SaveObjectCommand saveCommand = new SaveObjectCommand();
+        saveCommand.setDocumentId(value.getId());
+        saveCommand.setData(value);
+        provider.getDalEventBus().post(saveCommand);
     }
 
     /**

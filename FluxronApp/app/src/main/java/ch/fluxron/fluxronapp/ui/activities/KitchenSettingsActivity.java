@@ -1,9 +1,12 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettings;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -11,7 +14,7 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 /**
  * Activity to change settings for the kitchen
  */
-public class KitchenSettingsActivity extends FluxronBaseActivity {
+public class KitchenSettingsActivity extends FluxronBaseActivity implements TextWatcher {
     public static final String PARAM_KITCHEN_ID = "KITCHEN_ID";
 
     private String kitchenId;
@@ -27,6 +30,9 @@ public class KitchenSettingsActivity extends FluxronBaseActivity {
         setContentView(R.layout.activity_kitchen_settings);
 
         kitchenId = getIntent().getExtras().getString(PARAM_KITCHEN_ID);
+
+        ((TextView) findViewById(R.id.settingsEditName)).addTextChangedListener(this);
+        ((TextView) findViewById(R.id.settingsEditDescription)).addTextChangedListener(this);
     }
 
     /**
@@ -79,5 +85,25 @@ public class KitchenSettingsActivity extends FluxronBaseActivity {
             ((TextView) findViewById(R.id.settingsEditName)).setText(msg.getKitchen().getName());
             ((TextView) findViewById(R.id.settingsEditDescription)).setText(msg.getKitchen().getDescription());
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // Nothing to do here, only for interface compat
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Nothing to do here, only for interface compat
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        String name = ((TextView) findViewById(R.id.settingsEditName)).getText().toString();
+        String description = ((TextView) findViewById(R.id.settingsEditDescription)).getText().toString();
+
+        // Text changed, send the changes
+        ChangeKitchenSettings cmd = new ChangeKitchenSettings(kitchenId, name, description);
+        postMessage(cmd);
     }
 }
