@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.LruCache;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class CyclicRefresh extends Thread{
     private LruCache<String, Device> deviceCache;
     private IEventBusProvider provider;
     private String currentConnection;
-    private Object lock = new Object();
+    private final Object lock = new Object();
     private AtomicBoolean doNext = new AtomicBoolean(false);
     private List<String> listOfInterestingParameters;
 
@@ -46,12 +48,10 @@ public class CyclicRefresh extends Thread{
         return list;
     }
 
+    @Override
     public void run() {
         while(enabled.get()){
-            Map<String, Device> deviceList;
-            synchronized (deviceCache){
-                deviceList = deviceCache.snapshot();
-            }
+            Map<String, Device> deviceList = getUpdatedDeviceList();
             for(Device device: deviceList.values()){
                 if(!enabled.get()){
                     break;
@@ -66,7 +66,7 @@ public class CyclicRefresh extends Thread{
                             try {
                                 lock.wait();
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Log.d("FLUXRON", "Interruped exception in CyclicRefresh");
                             }
                         }
                         doNext.set(false);
@@ -74,6 +74,25 @@ public class CyclicRefresh extends Thread{
                 }
             }
         }
+    }
+
+    /**
+     * Returns an updated device list and makes sure that the CyclicRefresh doesn't uselessly
+     * chew memory when there are no bonded devices.
+     * @return
+     */
+    @NonNull
+    private Map<String, Device> getUpdatedDeviceList() {
+        try {
+            Thread.sleep(1000); //Cooldown after a device-cycle.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Map<String, Device> deviceList;
+        synchronized (deviceCache){
+            deviceList = deviceCache.snapshot();
+        }
+        return deviceList;
     }
 
     /**
