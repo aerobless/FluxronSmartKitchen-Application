@@ -43,8 +43,18 @@
                         style="@style/FluxronImageButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:src="@drawable/ic_settings"
+                        android:onClick="onSettingsButtonClicked"
+                        android:id="@+id/settingsButton"/>
+
+                    <ImageButton
+                        style="@style/FluxronImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_build"
-                        android:onClick="onEditButtonClicked"/>
+                        android:onClick="onEditButtonClicked"
+                        android:id="@+id/editViewButton"
+                        android:layout_marginStart="12dp"/>
 
                     <ImageButton
                         style="@style/FluxronImageButton"

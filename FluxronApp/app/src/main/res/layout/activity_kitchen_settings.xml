@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_create_kitchen"
+                android:text="@string/activity_kitchen_settings"
                 style="@style/FluxronTitleTextView"/>
         </LinearLayout>
 
@@ -42,19 +42,20 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/kitchen_property_name"
-                android:id="@+id/textViewName"
                 android:layout_marginTop="4dp"/>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editTextName" />
+                android:id="@+id/settingsEditName"
+                android:inputType="text"
+                android:singleLine="true"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Description"
+                android:text="@string/kitchen_property_description"
                 android:id="@+id/textViewDescription"
                 android:layout_marginTop="8dp"/>
 
@@ -63,41 +64,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
                 android:singleLine="false"
-                android:id="@+id/editTextDescription"
+                android:id="@+id/settingsEditDescription"
                 />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:minHeight="100dp"
-                >
-                <ch.fluxron.fluxronapp.ui.components.NoImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/noImageInformation">
-
-                </ch.fluxron.fluxronapp.ui.components.NoImageView>
-                <ImageView
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
-                    android:id="@+id/imagePreview"
-                    android:onClick="onCreatePictureClicked"
-                    />
-            </FrameLayout>
-
-
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create >"
-                android:id="@+id/buttonCreate"
-                android:onClick="createNewKitchen"
-                android:layout_gravity="bottom|right" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
-<!--
--->

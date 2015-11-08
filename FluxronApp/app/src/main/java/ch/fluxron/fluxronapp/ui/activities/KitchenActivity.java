@@ -67,6 +67,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         ft.add(R.id.kitchenArea, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
+
+        // Hide the area edit button
+        animateEditButton(false);
     }
 
     /**
@@ -162,22 +165,22 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
-     * Not in use currently
-     * @param button Button that was pressed
-     */
-    public void onEditDeviceClicked(View button) {
-        // Edit this device
-        Intent editDevice = new Intent(this, DeviceActivity.class);
-        editDevice.putExtra("DEVICE_ID", "xxx-dsf-er22-34234-d00");
-        startActivity(editDevice);
-    }
-
-    /**
      * The user requested to switch to the edit mode
      * @param button Button that was pressed
      */
     public void onEditButtonClicked(View button) {
         showDeviceSelectionList();
+        animateEditButton(false);
+    }
+
+    /**
+     * The user requested to edit the kitchen settings
+     * @param button Button that was pressed
+     */
+    public void onSettingsButtonClicked(View button) {
+        Intent editSettings = new Intent(this, KitchenSettingsActivity.class);
+        editSettings.putExtra(KitchenSettingsActivity.PARAM_KITCHEN_ID, kitchenId);
+        startActivity(editSettings);
     }
 
     /**
@@ -230,6 +233,36 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         // Hide the FAB and bubble bar
         animateFabAlpha(false);
         animateBubbleBar(false);
+        animateSettingsIcon(false);
+
+        // Show the button for area editing
+        animateEditButton(true);
+    }
+
+    /**
+     * Changes the state of the area edit button
+     * @param visible Visible or not
+     */
+    private void animateEditButton(boolean visible) {
+        if(visible){
+            findViewById(R.id.editViewButton).setVisibility(View.VISIBLE);
+        }else
+        {
+            findViewById(R.id.editViewButton).setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Changes the state of the settings button
+     * @param visible Visible or not
+     */
+    private void animateSettingsIcon(boolean visible) {
+        if(visible){
+            findViewById(R.id.settingsButton).setVisibility(View.VISIBLE);
+        }else
+        {
+            findViewById(R.id.settingsButton).setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -304,11 +337,14 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
             if (DeviceListFragment.class.getName().equals(currentName)) {
                 findViewById(R.id.deviceListLayout).setVisibility(View.GONE);
                 setEditMode(false);
+                animateEditButton(true);
             }
             else if (AreaDetailFragment.class.getName().equals(currentName)){
                 requestKitchenLoad();
                 animateFabAlpha(true);
                 animateBubbleBar(true);
+                animateSettingsIcon(true);
+                animateEditButton(false);
             }
         } else {
             super.onBackPressed();
