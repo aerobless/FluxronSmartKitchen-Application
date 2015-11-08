@@ -29,6 +29,7 @@ import ch.fluxron.fluxronapp.ui.util.Camera;
 public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     public interface IKitchenAreaListener {
         void devicePositionChanged(KitchenArea area, String deviceId, int x, int y);
+        void deviceDeleted(KitchenArea area, String deviceId);
     }
 
     // States
@@ -101,7 +102,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
 
         canvas.restore();
-        Log.d("rt",(System.currentTimeMillis()-start)+"ms");
+        Log.d("rt", (System.currentTimeMillis() - start) + "ms");
     }
 
     private void limitTranslation() {
@@ -272,7 +273,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     @Override
     public void actionRequested(DeviceView v) {
-        if(editMode) return;
+        if(editMode) {
+            v.askForDelete();
+            return;
+        }
         
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         getContext().startActivity(startActivity);
@@ -286,6 +290,13 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         if (force || deltaMillis > (1000/60)) {
             invalidate();
             lastRenderTimeMilliseconds = System.currentTimeMillis();
+        }
+    }
+
+    @Override
+    public void deleteRequested(DeviceView v) {
+        if(listener != null){
+            listener.deviceDeleted(area, v.getPosition().getDeviceId());
         }
     }
 
@@ -322,6 +333,15 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             deviceRenderer.popUp();
             views.add(deviceRenderer);
             needsRepaint(true);
+        }
+    }
+
+    public void removePosition(String deviceId) {
+        for(DeviceView deviceView : views) {
+            if(deviceView.getPosition().getDeviceId().equals(deviceId)) {
+                deviceView.remove();
+                break;
+            }
         }
     }
 }

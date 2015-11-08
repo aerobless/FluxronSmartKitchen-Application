@@ -115,4 +115,12 @@ public class AreaDetailFragment extends Fragment {
     public void setAreaListener(KitchenActivity areaListener) {
         this.areaListener = areaListener;
     }
+
+    /**
+     * Removes the device
+     * @param deviceId Id of the device
+     */
+    public void removeDevice(String deviceId) {
+        display.removePosition(deviceId);
+    }
 }

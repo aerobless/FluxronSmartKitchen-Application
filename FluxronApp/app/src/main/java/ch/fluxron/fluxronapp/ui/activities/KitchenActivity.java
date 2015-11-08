@@ -15,7 +15,9 @@ import android.widget.TextView;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceDeletedFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
@@ -67,6 +69,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         ft.add(R.id.kitchenArea, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
+
+        // Hide the area edit button
+        animateEditButton(false);
     }
 
     /**
@@ -153,6 +158,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
+     * Occurs when a device was removed from an area
+     * @param msg Event
+     */
+    public void onEventMainThread(DeviceDeletedFromArea msg) {
+        if (currentArea!= null && currentArea.getKitchenId().equals(msg.getKitchenId()) && currentArea.getRelativeId() == msg.getAreaId()){
+            Fragment f = getFragmentManager().findFragmentById(R.id.kitchenArea);
+            if (f instanceof AreaDetailFragment) {
+                ((AreaDetailFragment)f).removeDevice(msg.getDeviceId());
+            }
+        }
+    }
+
+    /**
      * Back button was pressed
      * @param button Button that was pressed
      */
@@ -162,22 +180,22 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
-     * Not in use currently
-     * @param button Button that was pressed
-     */
-    public void onEditDeviceClicked(View button) {
-        // Edit this device
-        Intent editDevice = new Intent(this, DeviceActivity.class);
-        editDevice.putExtra("DEVICE_ID", "xxx-dsf-er22-34234-d00");
-        startActivity(editDevice);
-    }
-
-    /**
      * The user requested to switch to the edit mode
      * @param button Button that was pressed
      */
     public void onEditButtonClicked(View button) {
         showDeviceSelectionList();
+        animateEditButton(false);
+    }
+
+    /**
+     * The user requested to edit the kitchen settings
+     * @param button Button that was pressed
+     */
+    public void onSettingsButtonClicked(View button) {
+        Intent editSettings = new Intent(this, KitchenSettingsActivity.class);
+        editSettings.putExtra(KitchenSettingsActivity.PARAM_KITCHEN_ID, kitchenId);
+        startActivity(editSettings);
     }
 
     /**
@@ -230,6 +248,36 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         // Hide the FAB and bubble bar
         animateFabAlpha(false);
         animateBubbleBar(false);
+        animateSettingsIcon(false);
+
+        // Show the button for area editing
+        animateEditButton(true);
+    }
+
+    /**
+     * Changes the state of the area edit button
+     * @param visible Visible or not
+     */
+    private void animateEditButton(boolean visible) {
+        if(visible){
+            findViewById(R.id.editViewButton).setVisibility(View.VISIBLE);
+        }else
+        {
+            findViewById(R.id.editViewButton).setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Changes the state of the settings button
+     * @param visible Visible or not
+     */
+    private void animateSettingsIcon(boolean visible) {
+        if(visible){
+            findViewById(R.id.settingsButton).setVisibility(View.VISIBLE);
+        }else
+        {
+            findViewById(R.id.settingsButton).setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -304,11 +352,14 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
             if (DeviceListFragment.class.getName().equals(currentName)) {
                 findViewById(R.id.deviceListLayout).setVisibility(View.GONE);
                 setEditMode(false);
+                animateEditButton(true);
             }
             else if (AreaDetailFragment.class.getName().equals(currentName)){
                 requestKitchenLoad();
                 animateFabAlpha(true);
                 animateBubbleBar(true);
+                animateSettingsIcon(true);
+                animateEditButton(false);
             }
         } else {
             super.onBackPressed();
@@ -328,6 +379,13 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     public void devicePositionChanged(KitchenArea area, String deviceId, int x, int y) {
         // Send a message to the business logic that the device should be moved
         ChangeDevicePosition command = new ChangeDevicePosition(new Point(x,y), area.getKitchenId(), area.getRelativeId(), deviceId);
+        postMessage(command);
+    }
+
+    @Override
+    public void deviceDeleted(KitchenArea area, String deviceId) {
+        // Device should be removed from the kitchen area
+        DeleteDeviceFromArea command = new DeleteDeviceFromArea(area.getKitchenId(), area.getRelativeId(), deviceId);
         postMessage(command);
     }
 }

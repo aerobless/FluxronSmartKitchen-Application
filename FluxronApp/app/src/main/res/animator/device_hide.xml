@@ -4,22 +4,22 @@
     <objectAnimator
         android:propertyName="scaleX"
         android:duration="320"
-        android:valueFrom="0.01"
-        android:valueTo="1"
+        android:valueTo="0.01"
+        android:valueFrom="1"
         android:valueType="floatType"
         android:interpolator="@android:anim/accelerate_interpolator"/>
     <objectAnimator
         android:propertyName="scaleY"
         android:duration="320"
-        android:valueFrom="0.01"
-        android:valueTo="1"
+        android:valueTo="0.01"
+        android:valueFrom="1"
         android:valueType="floatType"
         android:interpolator="@android:anim/accelerate_interpolator"/>
     <objectAnimator
         android:propertyName="alpha"
         android:duration="320"
-        android:valueFrom="0"
-        android:valueTo="1f"
+        android:valueTo="0"
+        android:valueFrom="1f"
         android:valueType="floatType"
         android:interpolator="@android:anim/accelerate_interpolator"/>
 </set>

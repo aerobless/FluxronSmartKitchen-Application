@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private float draggingX;
     private float draggingY;
+
+    private boolean deleted = false;
 
     /**
      * Creates a new device view
@@ -99,7 +102,23 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         this.measure(145, 100);
         this.layout(0, 0, 145, 100);
 
-        this.findViewById(R.id.theStatusOrb).setOnTouchListener(this);
+        this.findViewById(R.id.theDeviceOrb).setOnTouchListener(this);
+        this.findViewById(R.id.theDeleteOrb).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteClicked();
+            }
+        });
+
+        // hide controls that are only situational
+        findViewById(R.id.theDeleteOrb).setVisibility(ViewGroup.GONE);
+        findViewById(R.id.theCancelOrb).setVisibility(ViewGroup.GONE);
+    }
+
+    private void deleteClicked() {
+        if (listener!=null){
+            listener.deleteRequested(this);
+        }
     }
 
     /**
@@ -147,10 +166,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     public void popUp(){
-        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
-        set.setTarget(findViewById(R.id.theStatusOrb));
-        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
-        set.start();
+        animateIn(findViewById(R.id.theDeviceOrb));
+        animateIn(findViewById(R.id.theStatusOrb));
     }
 
     private void fireNeedUpdate() {
@@ -162,5 +179,74 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         fireNeedUpdate();
+    }
+
+    public void askForDelete() {
+        // Pop up the delete and cancel icon
+        animateIn(findViewById(R.id.theDeleteOrb));
+        animateIn(findViewById(R.id.theCancelOrb));
+
+        // hide the status orb
+        animateOut(findViewById(R.id.theStatusOrb));
+
+        // Remove the delete icon after 2 seconds
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                removeDeleteStatusViews();
+            }
+        }, 2000);
+    }
+
+    private void removeDeleteStatusViews() {
+        // Hide the delete icon and the cancel icon
+        animateOut(findViewById(R.id.theDeleteOrb));
+        animateOut(findViewById(R.id.theCancelOrb));
+
+        // show the status orb
+        if (!deleted) animateIn(findViewById(R.id.theStatusOrb));
+    }
+
+    public void remove() {
+        deleted = true;
+
+        // animate everything out, we are not needed anymore
+        animateOut(findViewById(R.id.theDeleteOrb));
+        animateOut(findViewById(R.id.theCancelOrb));
+        animateOut(findViewById(R.id.theStatusOrb));
+        animateOut(findViewById(R.id.theDeviceOrb));
+    }
+
+    private void animateIn(View target) {
+        target.setVisibility(ViewGroup.VISIBLE);
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
+        set.setTarget(target);
+        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
+        set.start();
+    }
+
+    private void animateOut(final View target) {
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_hide);
+        set.setTarget(target);
+        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
+        set.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                target.setVisibility(ViewGroup.GONE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        set.start();
     }
 }
