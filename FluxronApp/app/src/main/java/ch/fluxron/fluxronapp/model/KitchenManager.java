@@ -24,7 +24,9 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitch
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettings;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceDeletedFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
@@ -366,6 +368,59 @@ public class KitchenManager {
             }
         });
         this.provider.getDalEventBus().post(getOp);
+    }
+
+    /**
+     * Triggered when a device should be deleted
+     * @param msg command
+     */
+    public void onEventAsync(final DeleteDeviceFromArea msg){
+        // Load the kitchen and attach the device to the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    deleteDevice((Kitchen) value, msg);
+                }
+            }
+        });
+        this.provider.getDalEventBus().post(getOp);
+    }
+
+    private void deleteDevice(Kitchen kitchen, DeleteDeviceFromArea msg) {
+        // Find the area
+        KitchenArea foundArea = null;
+        for(KitchenArea a : kitchen.getAreaList()){
+            if (a.getRelativeId() == msg.getAreaId()) {
+                foundArea = a;
+                break;
+            }
+        }
+
+        // Find the position
+        if(foundArea!=null) {
+            DevicePosition foundPosition = null;
+
+            for (DevicePosition pos : foundArea.getDevicePositionList()) {
+                if (pos.getDeviceId().equals(msg.getDeviceId())) {
+                    foundPosition = pos;
+                    break;
+                }
+            }
+
+            // Remove
+            foundArea.getDevicePositionList().remove(foundPosition);
+
+            // Save the kitchen
+            final SaveObjectCommand saveCommand = new SaveObjectCommand();
+            saveCommand.setDocumentId(kitchen.getId());
+            saveCommand.setData(kitchen);
+            provider.getDalEventBus().post(saveCommand);
+
+            // Notify the deletion
+            DeviceDeletedFromArea event = new DeviceDeletedFromArea(msg.getKitchenId(), msg.getAreaId(), msg.getDeviceId());
+            provider.getUiEventBus().post(event);
+        }
     }
 
     /**

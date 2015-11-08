@@ -15,7 +15,9 @@ import android.widget.TextView;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceDeletedFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
@@ -151,6 +153,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                 for (KitchenArea a : msg.getKitchen().getAreaList()) {
                     list.getListAdapter().addOrUpdate(a);
                 }
+            }
+        }
+    }
+
+    /**
+     * Occurs when a device was removed from an area
+     * @param msg Event
+     */
+    public void onEventMainThread(DeviceDeletedFromArea msg) {
+        if (currentArea!= null && currentArea.getKitchenId().equals(msg.getKitchenId()) && currentArea.getRelativeId() == msg.getAreaId()){
+            Fragment f = getFragmentManager().findFragmentById(R.id.kitchenArea);
+            if (f instanceof AreaDetailFragment) {
+                ((AreaDetailFragment)f).removeDevice(msg.getDeviceId());
             }
         }
     }
@@ -364,6 +379,13 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     public void devicePositionChanged(KitchenArea area, String deviceId, int x, int y) {
         // Send a message to the business logic that the device should be moved
         ChangeDevicePosition command = new ChangeDevicePosition(new Point(x,y), area.getKitchenId(), area.getRelativeId(), deviceId);
+        postMessage(command);
+    }
+
+    @Override
+    public void deviceDeleted(KitchenArea area, String deviceId) {
+        // Device should be removed from the kitchen area
+        DeleteDeviceFromArea command = new DeleteDeviceFromArea(area.getKitchenId(), area.getRelativeId(), deviceId);
         postMessage(command);
     }
 }

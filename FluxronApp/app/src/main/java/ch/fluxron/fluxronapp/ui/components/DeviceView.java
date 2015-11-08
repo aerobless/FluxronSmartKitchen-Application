@@ -35,6 +35,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     private float draggingX;
     private float draggingY;
 
+    private boolean deleted = false;
+
     /**
      * Creates a new device view
      * @param context Context
@@ -104,7 +106,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         this.findViewById(R.id.theDeleteOrb).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                deleteClicked();
             }
         });
 
@@ -115,7 +117,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private void deleteClicked() {
         if (listener!=null){
-
+            listener.deleteRequested(this);
         }
     }
 
@@ -164,15 +166,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     public void popUp(){
-        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
-        set.setTarget(findViewById(R.id.theDeviceOrb));
-        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
-        set.start();
-
-        AnimatorSet set2 = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
-        set2.setTarget(findViewById(R.id.theStatusOrb));
-        ((ObjectAnimator)set2.getChildAnimations().get(0)).addUpdateListener(this);
-        set2.start();
+        animateIn(findViewById(R.id.theDeviceOrb));
+        animateIn(findViewById(R.id.theStatusOrb));
     }
 
     private void fireNeedUpdate() {
@@ -187,27 +182,12 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     public void askForDelete() {
-        fireNeedUpdate();
-
-        // Pop up the delete icon
-        findViewById(R.id.theDeleteOrb).setVisibility(ViewGroup.VISIBLE);
-        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
-        set.setTarget(findViewById(R.id.theDeleteOrb));
-        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
-        set.start();
-
-        // Pop up the cancel icon
-        findViewById(R.id.theCancelOrb).setVisibility(View.VISIBLE);
-        AnimatorSet setCancel = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
-        setCancel.setTarget(findViewById(R.id.theCancelOrb));
-        ((ObjectAnimator)setCancel.getChildAnimations().get(0)).addUpdateListener(this);
-        setCancel.start();
+        // Pop up the delete and cancel icon
+        animateIn(findViewById(R.id.theDeleteOrb));
+        animateIn(findViewById(R.id.theCancelOrb));
 
         // hide the status orb
-        AnimatorSet hideSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_hide);
-        hideSet.setTarget(findViewById(R.id.theStatusOrb));
-        ((ObjectAnimator)hideSet.getChildAnimations().get(0)).addUpdateListener(this);
-        hideSet.start();
+        animateOut(findViewById(R.id.theStatusOrb));
 
         // Remove the delete icon after 2 seconds
         new Handler().postDelayed(new Runnable() {
@@ -219,9 +199,35 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     private void removeDeleteStatusViews() {
-        // Hide the delete icon
+        // Hide the delete icon and the cancel icon
+        animateOut(findViewById(R.id.theDeleteOrb));
+        animateOut(findViewById(R.id.theCancelOrb));
+
+        // show the status orb
+        if (!deleted) animateIn(findViewById(R.id.theStatusOrb));
+    }
+
+    public void remove() {
+        deleted = true;
+
+        // animate everything out, we are not needed anymore
+        animateOut(findViewById(R.id.theDeleteOrb));
+        animateOut(findViewById(R.id.theCancelOrb));
+        animateOut(findViewById(R.id.theStatusOrb));
+        animateOut(findViewById(R.id.theDeviceOrb));
+    }
+
+    private void animateIn(View target) {
+        target.setVisibility(ViewGroup.VISIBLE);
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
+        set.setTarget(target);
+        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
+        set.start();
+    }
+
+    private void animateOut(final View target) {
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_hide);
-        set.setTarget(findViewById(R.id.theDeleteOrb));
+        set.setTarget(target);
         ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
         set.addListener(new Animator.AnimatorListener() {
             @Override
@@ -230,7 +236,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                findViewById(R.id.theDeleteOrb).setVisibility(ViewGroup.GONE);
+                target.setVisibility(ViewGroup.GONE);
             }
 
             @Override
@@ -242,32 +248,5 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             }
         });
         set.start();
-
-        // hide the cancel icon
-        AnimatorSet setCancel = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_hide);
-        setCancel.setTarget(findViewById(R.id.theCancelOrb));
-        ((ObjectAnimator)setCancel.getChildAnimations().get(0)).addUpdateListener(this);
-        setCancel.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {}
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                findViewById(R.id.theCancelOrb).setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {}
-        });
-        setCancel.start();
-
-        // show the status orb
-        AnimatorSet hideSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
-        hideSet.setTarget(findViewById(R.id.theStatusOrb));
-        ((ObjectAnimator)hideSet.getChildAnimations().get(0)).addUpdateListener(this);
-        hideSet.start();
     }
 }
