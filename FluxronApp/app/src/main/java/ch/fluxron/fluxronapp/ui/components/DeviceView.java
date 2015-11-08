@@ -36,6 +36,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     private float draggingY;
 
     private boolean deleted = false;
+    private boolean cancelAnimation = false;
 
     /**
      * Creates a new device view
@@ -107,6 +108,13 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             @Override
             public void onClick(View v) {
                 deleteClicked();
+            }
+        });
+        this.findViewById(R.id.theCancelOrb).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeDeleteStatusViews();
+                cancelAnimation = true;
             }
         });
 
@@ -204,7 +212,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         animateOut(findViewById(R.id.theCancelOrb));
 
         // show the status orb
-        if (!deleted) animateIn(findViewById(R.id.theStatusOrb));
+        if (!deleted && !cancelAnimation) animateIn(findViewById(R.id.theStatusOrb));
+        cancelAnimation = false;
     }
 
     public void remove() {
