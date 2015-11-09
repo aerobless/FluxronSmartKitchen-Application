@@ -23,20 +23,22 @@ public class DeviceActivity extends FluxronBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
-        viewPager.setAdapter(new DeviceFragmentAdapter(getSupportFragmentManager(), this));
-
-        TabLayout tabs = (TabLayout)findViewById(R.id.deviceTabs);
-        tabs.setupWithViewPager(viewPager);
-        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplicationContext();
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             address = extras.getString("DEVICE_ID");
             type = extras.getString("DEVICE_TYPE");
         }
 
-        ((TextView)findViewById(R.id.deviceStatusName)).setText(type); //TODO: replace with Device Name once we have it
+        ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
+        DeviceFragmentAdapter dfa = new DeviceFragmentAdapter(getSupportFragmentManager(), this);
+        dfa.setAddress(address);
+        viewPager.setAdapter(dfa);
+
+        TabLayout tabs = (TabLayout)findViewById(R.id.deviceTabs);
+        tabs.setupWithViewPager(viewPager);
+        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplicationContext();
+
+        ((TextView)findViewById(R.id.deviceStatusName)).setText(type);
         ((TextView)findViewById(R.id.deviceStatusDescription)).setText(address);
     }
 

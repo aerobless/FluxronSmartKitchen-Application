@@ -14,6 +14,7 @@ import ch.fluxron.fluxronapp.ui.fragments.SimpleTextFragment;
  */
 public class DeviceFragmentAdapter extends FragmentPagerAdapter {
     private Context context;
+    private String address;
     private int[] tabTitleResIds = new int[] { R.string.device_tab_status, R.string.device_tab_usage, R.string.device_tab_errors, R.string.device_tab_params };
 
     public DeviceFragmentAdapter(FragmentManager fm, Context context) {
@@ -25,7 +26,9 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new DeviceStatusFragment();
+                DeviceStatusFragment dfs = new DeviceStatusFragment();
+                dfs.setDeviceAddress(address);
+                return dfs;
             default:
                 return new SimpleTextFragment();
         }
@@ -39,5 +42,9 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return context.getResources().getString(tabTitleResIds[position]);
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
