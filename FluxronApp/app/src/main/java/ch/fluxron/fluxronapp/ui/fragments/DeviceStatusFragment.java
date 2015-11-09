@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -54,13 +53,9 @@ public class DeviceStatusFragment extends Fragment {
         this.deviceAddress = address;
     }
 
-    public void onEventAsync(DeviceChanged inputMsg){
+    public void onEventMainThread(DeviceChanged inputMsg){
         if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
-
+            //TODO:
         }
-    }
-
-    private void registerParameter(String param){
-        provider.getUiEventBus().post(new RegisterParameterCommand(param));
     }
 }

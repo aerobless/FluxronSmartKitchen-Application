@@ -22,7 +22,7 @@
                     android:layout_height="60dp"
                     android:background="@drawable/status_ok_background"
                     android:id="@+id/statusOrb"
-                    android:text="@string/ok_check"
+                    android:text="@string/unkown_check"
                     style="@style/FluxronDeviceStatusTextView"/>
 
                 <TextView

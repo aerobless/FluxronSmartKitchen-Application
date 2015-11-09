@@ -7,12 +7,16 @@ import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
+import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class DeviceActivity extends FluxronBaseActivity {
-    String address = "Unkown";
-    String type = "Unkown";
+    private IEventBusProvider provider;
+    private String address = "Unkown";
+    private String type = "Unkown";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,7 @@ public class DeviceActivity extends FluxronBaseActivity {
 
         TabLayout tabs = (TabLayout)findViewById(R.id.deviceTabs);
         tabs.setupWithViewPager(viewPager);
+        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplicationContext();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -49,5 +54,16 @@ public class DeviceActivity extends FluxronBaseActivity {
     public void onSampleText(View btn){
         //TemperatureBar tb = (TemperatureBar) findViewById(R.id.barTemp);
         //tb.setMinMax(0,0);
+    }
+
+    /**
+     * Sets the full name instead of just the type in the header.
+     * @param inputMsg
+     */
+    public void onEventMainThread(DeviceChanged inputMsg){
+        if(inputMsg.getDevice().getAddress().equals(address)){
+            ((TextView)findViewById(R.id.deviceStatusName)).setText(inputMsg.getDevice().getName());
+            ((TextView)findViewById(R.id.statusOrb)).setText(R.string.ok_check);
+        }
     }
 }
