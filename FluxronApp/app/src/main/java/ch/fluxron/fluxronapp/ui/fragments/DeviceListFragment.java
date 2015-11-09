@@ -42,11 +42,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     private TextView discoveryStatus;
     private IDeviceAddedListener addListener;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-    }
 
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;

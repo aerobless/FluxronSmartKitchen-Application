@@ -13,8 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 
 /**
@@ -98,6 +100,11 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
+        if(deviceType.equals(Device.UNKNOWN_DEVICE_TYPE)){
+            ((TextView)this.findViewById(R.id.theDeviceOrb)).setText("?");
+        } else {
+            ((TextView)this.findViewById(R.id.theDeviceOrb)).setText(getDeviceType());
+        }
     }
 
     public String getDeviceAddress() {

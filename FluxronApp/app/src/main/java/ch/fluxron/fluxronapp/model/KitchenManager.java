@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.util.Log;
 
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
