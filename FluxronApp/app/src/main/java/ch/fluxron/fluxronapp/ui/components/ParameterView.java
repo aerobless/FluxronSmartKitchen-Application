@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
+import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class ParameterView extends RelativeLayout {
     TypedArray arguments;
@@ -30,6 +32,9 @@ public class ParameterView extends RelativeLayout {
         paramValue = (TextView) this.findViewById(R.id.paramValue);
 
         setDisplayText();
+
+        IEventBusProvider busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
+        busProvider.getUiEventBus().post(new RegisterParameterCommand(parameter));
     }
 
     /**
@@ -47,5 +52,13 @@ public class ParameterView extends RelativeLayout {
     public ParameterView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(R.layout.component_parameter_view, this, true);
+    }
+
+    /**
+     * Returns the id of the parameter thats registered for this view.
+     * @return
+     */
+    public String getParameter(){
+        return parameter;
     }
 }

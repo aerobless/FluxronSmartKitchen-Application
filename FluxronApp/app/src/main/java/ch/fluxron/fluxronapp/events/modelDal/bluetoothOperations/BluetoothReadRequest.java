@@ -1,7 +1,9 @@
 package ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 
@@ -10,20 +12,20 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
  */
 public class BluetoothReadRequest extends RequestResponseConnection{
     private String address;
-    private List<String> params;
+    private Set<String> params;
 
     public BluetoothReadRequest(String address) {
         this.address = address;
-        this.params = new ArrayList<>();
+        this.params = new HashSet<>();
     }
 
     public BluetoothReadRequest(String address, String singleParam) {
         this.address = address;
-        params = new ArrayList<>();
+        params = new HashSet<>();
         params.add(singleParam);
     }
 
-    public BluetoothReadRequest(String address, List<String> paramList) {
+    public BluetoothReadRequest(String address, Set<String> paramList) {
         this.address = address;
         this.params = paramList;
     }
@@ -36,7 +38,7 @@ public class BluetoothReadRequest extends RequestResponseConnection{
         this.address = address;
     }
 
-    public List<String> getParameters() {
+    public Set<String> getParameters() {
         return params;
     }
 

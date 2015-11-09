@@ -14,6 +14,7 @@ import android.util.LruCache;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
@@ -162,7 +163,7 @@ public class Bluetooth {
      * @param cmd
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
-        List<String> parameters = cmd.getParameters();
+        Set<String> parameters = cmd.getParameters();
         for (String p:parameters){
             byte[] message = messageFactory.makeReadRequest(p);
             messageFactory.printUnsignedByteArray(message);

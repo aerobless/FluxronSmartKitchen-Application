@@ -5,8 +5,10 @@ import android.util.Log;
 import android.util.LruCache;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
@@ -14,6 +16,7 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
@@ -26,19 +29,20 @@ public class CyclicRefresh extends Thread{
     private String currentConnection;
     private final Object lock = new Object();
     private AtomicBoolean doNext = new AtomicBoolean(false);
-    private List<String> listOfInterestingParameters;
+    private Set<String> listOfInterestingParameters;
 
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
         this.deviceCache = deviceCache;
         this.currentConnection = new String();
         provider.getDalEventBus().register(this);
+        provider.getUiEventBus().register(this);
         listOfInterestingParameters = initLoiP();
     }
 
     //TODO: differentiate between device type, currently all S-Class
-    private List<String> initLoiP(){
-        List<String> list = new ArrayList<>();
+    private Set<String> initLoiP(){
+        Set<String> list = new HashSet<>();
         list.add(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
         list.add(ParamManager.F_SCLASS_1008_MANUFACTURER_DEVICE_NAME);
         list.add(ParamManager.F_SCLASS_1009_MANUFACTURER_HARDWARE_VERSION);
@@ -124,6 +128,17 @@ public class CyclicRefresh extends Thread{
                 doNext.set(true);
                 lock.notifyAll();
             }
+        }
+    }
+
+    /**
+     * Listens to RegisterParameterCommand and adds it to the List of interesting parameters.
+     * @param inputMsg
+     */
+    public void onEventAsync(RegisterParameterCommand inputMsg){
+        Log.d("FLUXRON","REGISTERED REGISTERED!!!!!!!");
+        synchronized (listOfInterestingParameters){
+            listOfInterestingParameters.add(inputMsg.getParameter());
         }
     }
 
