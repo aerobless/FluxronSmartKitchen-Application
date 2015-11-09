@@ -245,7 +245,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             DeviceView deviceRenderer = createDeviceView(d);
             views.add(deviceRenderer);
         }
-
         needsRepaint(true);
     }
 
@@ -277,7 +276,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             v.askForDelete();
             return;
         }
-        
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         getContext().startActivity(startActivity);
     }

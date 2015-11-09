@@ -136,7 +136,6 @@ public class CyclicRefresh extends Thread{
      * @param inputMsg
      */
     public void onEventAsync(RegisterParameterCommand inputMsg){
-        Log.d("FLUXRON","REGISTERED REGISTERED!!!!!!!");
         synchronized (listOfInterestingParameters){
             listOfInterestingParameters.add(inputMsg.getParameter());
         }

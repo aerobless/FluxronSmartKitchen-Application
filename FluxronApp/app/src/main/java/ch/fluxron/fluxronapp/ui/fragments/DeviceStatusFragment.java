@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -16,6 +17,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 public class DeviceStatusFragment extends Fragment {
     IEventBusProvider provider;
     ParameterView heatsink1;
+    String deviceAddress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,10 +42,21 @@ public class DeviceStatusFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
         View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_status, container, false);
         heatsink1 = (ParameterView) deviceView.findViewById(R.id.heatsink1);
+        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
+        provider.getUiEventBus().register(this);
         return deviceView;
+    }
+
+    public void setDeviceAddress(String address){
+        this.deviceAddress = address;
+    }
+
+    public void onEventAsync(DeviceChanged inputMsg){
+        if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
+
+        }
     }
 
     private void registerParameter(String param){
