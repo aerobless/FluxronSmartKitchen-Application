@@ -84,4 +84,8 @@ public class FluxronBaseActivity extends AppCompatActivity{
         // Return Uri from that file
         return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + timeStamp + ".jpg"));
     }
+
+    public IEventBusProvider getBusProvider() {
+        return busProvider;
+    }
 }

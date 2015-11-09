@@ -56,7 +56,13 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
         kitchenId = getIntent().getExtras().getString(PARAM_KITCHEN_ID);
 
-        // Initialize the area list fragment
+        // Initialize the area list fragment only if no instance state is stored
+        if (savedInstanceState == null) {
+            createAreaList();
+        }
+    }
+
+    private void createAreaList() {
         Bundle par = new Bundle();
         par.putString(AreaListFragment.KITCHEN_ID, kitchenId);
 
@@ -70,9 +76,6 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         ft.add(R.id.kitchenArea, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
-
-        // Hide the area edit button
-        animateEditButton(false);
     }
 
     /**
@@ -82,7 +85,25 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     public void onStart() {
         super.onStart();
 
+        changeChildDisplayState();
+
         requestKitchenLoad();
+    }
+
+    private void changeChildDisplayState() {
+        boolean bIsDetailView = false;
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count > 0) {
+            String currentName = getFragmentManager().getBackStackEntryAt(count - 1).getName();
+
+            bIsDetailView = AreaDetailFragment.class.getName().equals(currentName);
+        }
+        
+        animateEditButton(bIsDetailView);
+        animateFabAlpha(!bIsDetailView);
+        animateSettingsIcon(!bIsDetailView);
+        animateBubbleBar(!bIsDetailView);
     }
 
     /**
@@ -356,6 +377,11 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                 animateEditButton(true);
             }
             else if (AreaDetailFragment.class.getName().equals(currentName)){
+
+                if (currentCount == 1) {
+                    createAreaList();
+                }
+
                 requestKitchenLoad();
                 animateFabAlpha(true);
                 animateBubbleBar(true);

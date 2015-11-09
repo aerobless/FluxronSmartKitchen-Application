@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenAreaLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenArea;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
+import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.components.KitchenAreaDisplay;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -30,16 +33,16 @@ public class AreaDetailFragment extends Fragment {
     private KitchenArea kitchenArea;
     private String imageLoadConnection;
     private KitchenActivity areaListener;
+    private String areaLoadConnection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             kitchenId = savedInstanceState.getString(KITCHEN_ID);
             areaId = savedInstanceState.getInt(AREA_RELATIVE_ID);
-        }
-        else if (getArguments() != null) {
+        } else if (getArguments() != null) {
             kitchenId = getArguments().getString(KITCHEN_ID);
             areaId = getArguments().getInt(AREA_RELATIVE_ID);
         }
@@ -53,13 +56,28 @@ public class AreaDetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        if (provider == null) {
+            provider = ((FluxronBaseActivity) getActivity()).getBusProvider();
+        }
+
         provider.getUiEventBus().register(this);
 
-        // request the full size image
-        LoadImageFromKitchenCommand cmd = new LoadImageFromKitchenCommand(kitchenArea.getKitchenId(), kitchenArea.getImageName());
-        cmd.setImageSize(null); // no size limit
-        this.imageLoadConnection = cmd.getConnectionId();
+        // Request the load of a kitchen area
+        LoadKitchenArea cmd = new LoadKitchenArea(kitchenId, areaId);
+        areaLoadConnection = cmd.getConnectionId();
         provider.getUiEventBus().post(cmd);
+    }
+
+    public void onEventMainThread(KitchenAreaLoaded msg) {
+        if (msg.getConnectionId().equals(areaLoadConnection)) {
+            this.kitchenArea = msg.getArea();
+
+            // request the full size image
+            LoadImageFromKitchenCommand cmd = new LoadImageFromKitchenCommand(kitchenArea.getKitchenId(), kitchenArea.getImageName());
+            cmd.setImageSize(null); // no size limit
+            this.imageLoadConnection = cmd.getConnectionId();
+            provider.getUiEventBus().post(cmd);
+        }
     }
 
     @Override

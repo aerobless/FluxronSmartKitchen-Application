@@ -30,8 +30,10 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenComma
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceDeletedFromArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenAreaLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenArea;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
@@ -478,6 +480,41 @@ public class KitchenManager {
                 event.setConnectionId(msg);
                 provider.getUiEventBus().post(event);
             }
+        }
+    }
+
+    /**
+     * Triggered when an area should be loaded
+     * @param msg command
+     */
+    public void onEventAsync(final LoadKitchenArea msg){
+        // Load the kitchen and attach the device to the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    loadArea((Kitchen) value, msg);
+                }
+            }
+        });
+        this.provider.getDalEventBus().post(getOp);
+    }
+
+    private void loadArea(Kitchen kitchen, LoadKitchenArea msg) {
+        // Find the area
+        KitchenArea found = null;
+        for(KitchenArea a : kitchen.getAreaList()){
+            if (a.getRelativeId() == msg.getRelativeId()) {
+                found = a;
+                break;
+            }
+        }
+
+        if (found != null) {
+            KitchenAreaLoaded event = new KitchenAreaLoaded(found);
+            found.setKitchenId(msg.getKitchenId());
+            event.setConnectionId(msg);
+            this.provider.getUiEventBus().post(event);
         }
     }
 
