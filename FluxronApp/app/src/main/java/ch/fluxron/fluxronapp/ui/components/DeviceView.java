@@ -8,14 +8,10 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
 import android.widget.RelativeLayout;
 
 import ch.fluxron.fluxronapp.R;
@@ -28,6 +24,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private DevicePosition position;
     private IDeviceViewListener listener;
+
+    private String deviceType;
+    private String deviceAddress;
 
     private float lastTouchX;
     private float lastTouchY;
@@ -90,6 +89,23 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
      */
     public void setPosition(DevicePosition pos) {
         this.position = pos;
+    }
+
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getDeviceAddress() {
+        return deviceAddress;
+    }
+
+    public void setDeviceAddress(String deviceAddress) {
+        this.deviceAddress = deviceAddress;
     }
 
     /**

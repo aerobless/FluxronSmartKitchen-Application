@@ -510,6 +510,7 @@ public class KitchenManager {
                 DevicePosition pos = new DevicePosition();
                 pos.setPosition(new Point(100, 100));
                 pos.setDeviceId(msg.getDevice().getAddress());
+                pos.setCategory(msg.getDevice().getDeviceType());
                 found.getDevicePositionList().add(pos);
 
                 // Save the kitchen

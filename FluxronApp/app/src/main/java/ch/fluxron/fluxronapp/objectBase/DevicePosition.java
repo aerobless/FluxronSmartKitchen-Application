@@ -8,6 +8,7 @@ import android.graphics.Point;
 public class DevicePosition {
     private String deviceId;
     private Point position;
+    private String category;
 
     /**
      * Gets the id of the device
@@ -39,5 +40,13 @@ public class DevicePosition {
      */
     public void setPosition(Point position) {
         this.position = position;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

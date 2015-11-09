@@ -251,6 +251,8 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     @NonNull
     private DeviceView createDeviceView(DevicePosition d) {
         DeviceView deviceRenderer = new DeviceView(getContext());
+        deviceRenderer.setDeviceAddress(d.getDeviceId());
+        deviceRenderer.setDeviceType(d.getCategory());
         deviceRenderer.setPosition(d);
         deviceRenderer.setListener(this);
         return deviceRenderer;
