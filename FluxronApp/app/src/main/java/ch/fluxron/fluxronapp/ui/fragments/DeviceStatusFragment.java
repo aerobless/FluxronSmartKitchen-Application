@@ -56,12 +56,9 @@ public class DeviceStatusFragment extends Fragment {
     }
 
     public void onEventMainThread(DeviceChanged inputMsg){
-        Log.d("FLUXRON DOOD", "GOT DECHANGE" + inputMsg.getDevice().getAddress()+" VS "+deviceAddress);
         if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
-            Log.d("FLUXRON DOOD", "GOT DECHANGE FOR THIS DEVICE");
             DeviceParameter pHeatSink1 = inputMsg.getDevice().getDeviceParameter(heatsink1.getParameter());
             if(pHeatSink1 != null){
-                Log.d("FLUXRON DOOD", "GOT HEAT SINK VALUE"+pHeatSink1.getValue());
                 heatsink1.setValue(pHeatSink1.getValue());
             }
         }

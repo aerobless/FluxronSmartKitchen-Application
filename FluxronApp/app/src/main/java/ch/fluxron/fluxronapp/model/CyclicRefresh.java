@@ -16,6 +16,7 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
@@ -100,6 +101,19 @@ public class CyclicRefresh extends Thread{
     }
 
     /**
+     * Used to inject devices loaded with a kitchen into the device manager.
+     * @param cmd
+     */
+    public void onEventAsync(CyclicRefreshCommand cmd){
+        if(cmd.isEnabled()){
+            enabled.set(true);
+            this.run();
+        } else {
+            enabled.set(false);
+        }
+    }
+
+    /**
      * Checks BluetoothDeviceChanged messages to see if it originated from the CyclicRefresh.
      * If it did originate here, it wakes the CyclicRefresh to update the next device.
      * @param inputMsg
@@ -139,9 +153,5 @@ public class CyclicRefresh extends Thread{
         synchronized (listOfInterestingParameters){
             listOfInterestingParameters.add(inputMsg.getParameter());
         }
-    }
-
-    public void setEnabled(boolean val){
-        enabled.set(val);
     }
 }
