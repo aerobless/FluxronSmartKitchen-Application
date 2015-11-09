@@ -13,7 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromArea;
@@ -23,6 +29,8 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
+import ch.fluxron.fluxronapp.objectBase.DevicePosition;
+import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
@@ -177,6 +185,17 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                 }
             }
         }
+
+        // Send all the devices contained in this kitchen to the device manager
+        List<KitchenArea> kitchenAreas = msg.getKitchen().getAreaList();
+        Set<String> devices = new HashSet<String>();
+        for(KitchenArea area:kitchenAreas){
+            for(DevicePosition dp:area.getDevicePositionList()){
+                devices.add(dp.getDeviceId());
+            }
+        }
+        InjectDevicesCommand idf = new InjectDevicesCommand(devices);
+        busProvider.getUiEventBus().post(idf);
     }
 
     /**

@@ -6,14 +6,11 @@ import android.util.LruCache;
 import java.util.Date;
 import java.util.Map;
 
-import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
@@ -42,20 +39,12 @@ public class DeviceManager {
      * @param cmd
      */
     public void onEventAsync(InjectDevicesCommand cmd){
-        for(Device d:cmd.getDeviceList()){
-            deviceCache.put(d.getAddress(), d);
-        }
-    }
-
-    /**
-     * Used to inject devices loaded with a kitchen into the device manager.
-     * @param cmd
-     */
-    public void onEventAsync(CyclicRefreshCommand cmd){
-        synchronized (cyclicRefresh){
-            cyclicRefresh.setEnabled(cmd.isEnabled());
-            if(cmd.isEnabled()){
-                cyclicRefresh.run();
+        synchronized (deviceCache){
+            deviceCache.evictAll();
+            for(String d:cmd.getDeviceList()){
+                if(deviceCache.get(d) == null){
+                    deviceCache.put(d, new Device("Unkown", d, false));
+                }
             }
         }
     }
@@ -128,7 +117,6 @@ public class DeviceManager {
     }
 
     public void onEventAsync(DeviceParamRequestCommand inputCmd){
-        //TODO: check if cached?
         //TODO: make sure that device is bonded first?
         BluetoothReadRequest readRequest = new BluetoothReadRequest(inputCmd.getDeviceID());
         readRequest.addParam(inputCmd.getParamID());

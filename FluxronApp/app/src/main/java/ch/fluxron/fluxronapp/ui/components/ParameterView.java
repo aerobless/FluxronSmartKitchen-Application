@@ -57,4 +57,8 @@ public class ParameterView extends RelativeLayout {
     public String getParameter(){
         return parameter;
     }
+
+    public void setValue(String value){
+        paramValue.setText(value);
+    }
 }

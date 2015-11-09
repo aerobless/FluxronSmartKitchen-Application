@@ -3,6 +3,7 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -55,7 +57,10 @@ public class DeviceStatusFragment extends Fragment {
 
     public void onEventMainThread(DeviceChanged inputMsg){
         if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
-            //TODO:
+            DeviceParameter pHeatSink1 = inputMsg.getDevice().getDeviceParameter(heatsink1.getParameter());
+            if(pHeatSink1 != null){
+                heatsink1.setValue(pHeatSink1.getValue());
+            }
         }
     }
 }
