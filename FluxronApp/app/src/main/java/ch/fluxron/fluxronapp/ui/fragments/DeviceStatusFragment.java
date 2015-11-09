@@ -27,11 +27,13 @@ public class DeviceStatusFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        provider.getUiEventBus().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        provider.getUiEventBus().unregister(this);
     }
 
     @Override
@@ -45,7 +47,6 @@ public class DeviceStatusFragment extends Fragment {
         View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_status, container, false);
         heatsink1 = (ParameterView) deviceView.findViewById(R.id.heatsink1);
         provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
-        provider.getUiEventBus().register(this);
         return deviceView;
     }
 

@@ -279,6 +279,8 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             return;
         }
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
+        startActivity.putExtra("DEVICE_ID", v.getDeviceAddress());
+        startActivity.putExtra("DEVICE_TYPE", v.getDeviceType());
         getContext().startActivity(startActivity);
     }
 
