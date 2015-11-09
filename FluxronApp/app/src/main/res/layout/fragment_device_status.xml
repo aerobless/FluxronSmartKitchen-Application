@@ -8,7 +8,14 @@
     <ch.fluxron.fluxronapp.ui.components.ParameterView
         android:id="@+id/ui1"
         app:paramName="@string/F_SCLASS_3006SUB3_HEATSINK_LEVEL_1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ch.fluxron.fluxronapp.ui.components.ParameterView
+        android:id="@+id/ui2"
+        app:paramName="@string/F_SCLASS_3006SUB3_HEATSINK_LEVEL_1"
+        app:paramDisplayText="Example with set display text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="ParameterView">
         <attr name="paramName" format="string"/>
+        <attr name="paramDisplayText" format="string"/>
     </declare-styleable>
 </resources>
