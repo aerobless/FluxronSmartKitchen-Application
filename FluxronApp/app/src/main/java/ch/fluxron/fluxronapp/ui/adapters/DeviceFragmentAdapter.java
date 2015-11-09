@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.ui.fragments.DeviceStatusFragment;
 import ch.fluxron.fluxronapp.ui.fragments.SimpleTextFragment;
 
 /**
@@ -22,7 +23,12 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new SimpleTextFragment();
+        switch (position){
+            case 0:
+                return new DeviceStatusFragment();
+            default:
+                return new SimpleTextFragment();
+        }
     }
 
     @Override
