@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
 import java.util.List;
+import java.util.Set;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.objectBase.Device;
@@ -9,17 +10,17 @@ import ch.fluxron.fluxronapp.objectBase.Device;
  * Used to inject devices loaded with a kitchen into the device manager.
  */
 public class InjectDevicesCommand extends RequestResponseConnection{
-    List<Device> deviceList;
+    Set<String> deviceList;
 
-    public InjectDevicesCommand(List<Device> deviceList) {
+    public InjectDevicesCommand(Set<String> deviceList) {
         this.deviceList = deviceList;
     }
 
-    public List<Device> getDeviceList() {
+    public Set<String> getDeviceList() {
         return deviceList;
     }
 
-    public void setDeviceList(List<Device> deviceList) {
+    public void setDeviceList(Set<String> deviceList) {
         this.deviceList = deviceList;
     }
 }

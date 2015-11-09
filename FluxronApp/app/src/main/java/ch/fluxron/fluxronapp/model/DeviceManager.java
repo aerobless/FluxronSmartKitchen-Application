@@ -39,8 +39,13 @@ public class DeviceManager {
      * @param cmd
      */
     public void onEventAsync(InjectDevicesCommand cmd){
-        for(Device d:cmd.getDeviceList()){
-            deviceCache.put(d.getAddress(), d);
+        synchronized (deviceCache){
+            deviceCache.evictAll();
+            for(String d:cmd.getDeviceList()){
+                if(deviceCache.get(d) == null){
+                    deviceCache.put(d, new Device("Unkown", d, false));
+                }
+            }
         }
     }
 
@@ -112,7 +117,6 @@ public class DeviceManager {
     }
 
     public void onEventAsync(DeviceParamRequestCommand inputCmd){
-        //TODO: check if cached?
         //TODO: make sure that device is bonded first?
         BluetoothReadRequest readRequest = new BluetoothReadRequest(inputCmd.getDeviceID());
         readRequest.addParam(inputCmd.getParamID());
