@@ -496,21 +496,33 @@ public class KitchenManager {
         }
 
         if(found!=null) {
-            DevicePosition pos = new DevicePosition();
-            pos.setPosition(new Point(100,100));
-            pos.setDeviceId(msg.getDevice().getAddress());
-            found.getDevicePositionList().add(pos);
 
-            // Save the kitchen
-            final SaveObjectCommand saveCommand = new SaveObjectCommand();
-            saveCommand.setDocumentId(kitchen.getId());
-            saveCommand.setData(kitchen);
-            provider.getDalEventBus().post(saveCommand);
+            // Only add the device if it does not exist
+            boolean exists = false;
+            for(DevicePosition p : found.getDevicePositionList()) {
+                if (p.getDeviceId().equals(msg.getDevice().getAddress())){
+                    exists = true;
+                    break;
+                }
+            }
 
-            // Notify the change of position
-            DevicePositionChanged event = new DevicePositionChanged(kitchen.getId(), found.getRelativeId(), pos);
-            event.setConnectionId(msg);
-            provider.getUiEventBus().post(event);
+            if (!exists) {
+                DevicePosition pos = new DevicePosition();
+                pos.setPosition(new Point(100, 100));
+                pos.setDeviceId(msg.getDevice().getAddress());
+                found.getDevicePositionList().add(pos);
+
+                // Save the kitchen
+                final SaveObjectCommand saveCommand = new SaveObjectCommand();
+                saveCommand.setDocumentId(kitchen.getId());
+                saveCommand.setData(kitchen);
+                provider.getDalEventBus().post(saveCommand);
+
+                // Notify the change of position
+                DevicePositionChanged event = new DevicePositionChanged(kitchen.getId(), found.getRelativeId(), pos);
+                event.setConnectionId(msg);
+                provider.getUiEventBus().post(event);
+            }
         }
     }
 }
