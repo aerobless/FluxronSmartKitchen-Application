@@ -27,7 +27,6 @@
         <activity android:name=".ui.activities.CreateKitchenActivity" />
         <activity android:name=".ui.activities.KitchenActivity" />
         <activity android:name=".ui.activities.DeviceActivity" />
-        <activity android:name=".ui.activities.DeviceListActivity" />
         <activity android:name=".ui.activities.KitchenSettingsActivity" />
     </application>
 
