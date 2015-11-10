@@ -19,19 +19,19 @@ import java.util.Map;
  * ParamGenerator is automatically run before every build.
  */
 public class ParamGenerator {
-    final static String CLASS_NAME = "ParamManager";
+    private static final String CLASS_NAME = "ParamManager";
 
     public static void main(String[] args){
         System.out.println("Generating classes..");
         ParamGenerator generator = new ParamGenerator();
-        Map<String, DeviceParameter> parameterList = new HashMap<String, DeviceParameter>();
-        parameterList = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds", parameterList, "CClass");
-        parameterList = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/ETX.eds", parameterList, "ETX");
-        parameterList = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/S-Class.eds", parameterList, "SClass");
+        Map<String, DeviceParameter> parameterMap = new HashMap<String, DeviceParameter>();
+        parameterMap = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds", parameterMap, "CClass");
+        parameterMap = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/ETX.eds", parameterMap, "ETX");
+        parameterMap = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/S-Class.eds", parameterMap, "SClass");
 
         generator.generateDeviceParameter(args[0]);
-        generator.generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", parameterList);
-        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", parameterList);
+        generator.generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", parameterMap);
+        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", parameterMap);
     }
 
     /**
@@ -141,7 +141,7 @@ public class ParamGenerator {
     /**
      * Read device parameters from a .eds file, containing information such as index, subindex etc.
      */
-    public Map<String, DeviceParameter> loadParameters(String path, Map<String, DeviceParameter> parameterList, String prefix){
+    public Map<String, DeviceParameter> loadParameters(String path, Map<String, DeviceParameter> parameterMap, String prefix){
         try {
             InputStream is = new FileInputStream(path);
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -165,7 +165,7 @@ public class ParamGenerator {
                     }
                     param.setId(prefix+"_"+line);
                     param.setDeviceClass(prefix);
-                    parameterList.put(line, param);
+                    parameterMap.put(prefix+line, param);
                 } else if (line.contains("ParameterName=") && (param!=null)){
                     param.setName(line.substring(line.lastIndexOf("=") + 1).replaceAll(" |-", "_").replaceAll("\\(|\\)|\\[|\\]",""));
                 } else if (line.contains("ObjectType=") && (param!=null)){
@@ -181,6 +181,6 @@ public class ParamGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return parameterList;
+        return parameterMap;
     }
 }
