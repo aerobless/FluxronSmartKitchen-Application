@@ -23,7 +23,7 @@ public class ParameterView extends RelativeLayout {
 
     public ParameterView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
+
         LayoutInflater.from(context).inflate(R.layout.component_parameter_view, this, true);
         manager = new ParamManager();
 
@@ -34,7 +34,11 @@ public class ParameterView extends RelativeLayout {
         paramValue = (TextView) this.findViewById(R.id.paramValue);
 
         setDisplayText();
-        provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
+
+        if (!isInEditMode()) {
+            provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
+            provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
+        }
     }
 
 
