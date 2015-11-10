@@ -13,8 +13,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="220dip"
-            android:text="175 °C" />
+            android:paddingLeft="215dip"
+            android:text="175 °C"
+            android:drawablePadding="-6sp"
+            android:drawableBottom="@drawable/ic_arrow_drop_down"/>
         <LinearLayout android:layout_width="wrap_content"
             android:layout_height="5pt">
             <View android:layout_width="240dip" android:background="@color/currentTemperature" android:layout_height="match_parent"/>
@@ -26,7 +28,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="265dip"
-            android:text="195 °C" />
+            android:paddingLeft="250dip"
+            android:text="195 °C"
+            android:textColor="@color/cardview_dark_background"
+            android:drawablePadding="-6sp"
+            android:drawableTop="@drawable/ic_arrow_drop_up"/>
     </LinearLayout>
 </merge>
