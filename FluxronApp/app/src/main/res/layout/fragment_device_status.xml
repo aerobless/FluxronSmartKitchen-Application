@@ -20,18 +20,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+                    android:id="@+id/temperature1"
                     app:temperatureParamName="@string/F_CCLASS_3028SUB1_KMX_TEMPERATURE_0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+                    android:id="@+id/temperature2"
                     app:temperatureParamName="@string/F_CCLASS_3028SUB2_KMX_TEMPERATURE_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+                    android:id="@+id/temperature3"
                     app:temperatureParamName="@string/F_CCLASS_3028SUB3_KMX_TEMPERATURE_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+                    android:id="@+id/temperature4"
                     app:temperatureParamName="@string/F_CCLASS_3028SUB4_KMX_TEMPERATURE_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>

@@ -3,6 +3,7 @@ package ch.fluxron.fluxronapp.ui.components;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -65,36 +66,18 @@ public class TemperatureBar extends LinearLayout{
             provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
             provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
         }
-
-        addOnLayoutChangeListener(new OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                updateCurrentTempPos();
-                updateMaxTempPos();
-                invalidate();
-            }
-        });
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        updateCurrentTemperature(80); //TODO: Test, remove!
     }
 
     private void updateCurrentTempPos() {
         int halfText = (currentTemperature.getWidth()-currentTemperature.getPaddingLeft())/2;
         int textOffset = frontSegment.getWidth()-halfText+(space1.getWidth()/2);
         currentTemperature.setPadding(textOffset, 0, 0, 0);
-        currentTemperature.invalidate();
     }
-
 
     private void updateMaxTempPos() {
         int halfText = (maxTemperature.getWidth()-maxTemperature.getPaddingLeft())/2;
         int textOffset = frontSegment.getWidth()+middleSegment.getWidth()-halfText+3*(space1.getWidth()/2);
         maxTemperature.setPadding(textOffset, 0, 0, 0);
-        maxTemperature.invalidate();
     }
 
     /**
@@ -125,8 +108,16 @@ public class TemperatureBar extends LinearLayout{
         middleSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, maxTempWeight));
         lastSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, limitTempWeight));
 
-        currentTemperature.setText(temperature+" °C");
+        currentTemperature.setText(temperature + " °C");
         maxTemperature.setText(maxTemp+" °C");
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                updateCurrentTempPos();
+                updateMaxTempPos();
+            }
+        });
     }
 
     /**
