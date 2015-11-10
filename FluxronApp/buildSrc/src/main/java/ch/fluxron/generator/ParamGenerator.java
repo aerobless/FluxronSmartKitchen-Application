@@ -23,22 +23,21 @@ public class ParamGenerator {
 
     public static void main(String[] args){
         System.out.println("Generating classes..");
-        ParamGenerator generator = new ParamGenerator();
         Map<String, DeviceParameter> parameterMap = new HashMap<String, DeviceParameter>();
-        parameterMap = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds", parameterMap, "CClass");
-        parameterMap = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/ETX.eds", parameterMap, "ETX");
-        parameterMap = generator.loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/S-Class.eds", parameterMap, "SClass");
+        parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds", parameterMap, "CClass");
+        parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/ETX.eds", parameterMap, "ETX");
+        parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/S-Class.eds", parameterMap, "SClass");
 
-        generator.generateDeviceParameter(args[0]);
-        generator.generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", parameterMap);
-        generator.generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", parameterMap);
+        generateDeviceParameter(args[0]);
+        generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", parameterMap);
+        generateParameterManager(args[0] + "/app/src/main/java/ch/fluxron/fluxronapp/data/generated/" + CLASS_NAME + ".java", parameterMap);
     }
 
     /**
      * Generate DeviceParameter
      * @param rootPath
      */
-    private void generateDeviceParameter(String rootPath){
+    private static void generateDeviceParameter(String rootPath){
         Path srcLocation = Paths.get(rootPath + "/buildSrc/src/main/java/ch/fluxron/generator/DeviceParameter.java");
         Path dstLocation = Paths.get(rootPath+"/app/src/main/java/ch/fluxron/fluxronapp/data/generated/DeviceParameter.java");
 
@@ -73,7 +72,7 @@ public class ParamGenerator {
      * @param outputPath
      * @param paramMap
      */
-    private void generateUIParameters(String outputPath, Map<String, DeviceParameter> paramMap){
+    private static void generateUIParameters(String outputPath, Map<String, DeviceParameter> paramMap){
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         sb.append("<!-- GENERATED RESOURCE FILE - DO NO CHANGE MANUALLY -->\n");
@@ -91,7 +90,7 @@ public class ParamGenerator {
      * @param outputPath
      * @param paramMap
      */
-    private void generateParameterManager(String outputPath, Map<String, DeviceParameter> paramMap){
+    private static void generateParameterManager(String outputPath, Map<String, DeviceParameter> paramMap){
         StringBuilder paramManager = new StringBuilder();
         paramManager.append("package ch.fluxron.fluxronapp.data.generated;\n\n");
         paramManager.append("import java.util.Map;\n");
@@ -107,7 +106,7 @@ public class ParamGenerator {
         paramManager.append("    paramMap = new HashMap<String, DeviceParameter>();\n");
         for (DeviceParameter p:paramMap.values()) {
             paramManager.append("            paramMap.put(\""+p.getId()+
-                    "\", new DeviceParameter(\""+p.getName()+ "\",\""+p.getId()+"\"," +
+                    "\", new DeviceParameter(\""+prettifyName(p.getName())+ "\",\""+p.getId()+"\"," +
                     " "+p.getObjectType()+", "+p.getDataType()+", \""+p.getAccessType()+"\", \""+p.getDefaultValue()+
                     "\", "+p.getSubNumber()+", new byte[]{(byte)"+(p.getIndex()[0] & 0xff) +", (byte)"+(p.getIndex()[1] & 0xff)+"}, (byte)"+p.getSubindex()+",\""+p.getDeviceClass()+"\"));\n");
         }
@@ -121,11 +120,35 @@ public class ParamGenerator {
     }
 
     /**
+     * Improves the parameter name so that it is more pretty.
+     * @param paramName
+     * @return
+     */
+    private static String prettifyName(String paramName){
+        String result = paramName.replace("_", " ");
+        return capitalizeString(result);
+    }
+
+    private static String capitalizeString(String string) {
+        char[] chars = string.toLowerCase().toCharArray();
+        boolean found = false;
+        for (int i = 0; i < chars.length; i++) {
+            if (!found && Character.isLetter(chars[i])) {
+                chars[i] = Character.toUpperCase(chars[i]);
+                found = true;
+            } else if (Character.isWhitespace(chars[i]) || chars[i]=='.' || chars[i]=='\'') { // You can add other chars here
+                found = false;
+            }
+        }
+        return String.valueOf(chars);
+    }
+
+    /**
      * Write generated data to text files.
      * @param outputPath
      * @param data
      */
-    private void writeToFile(String outputPath, String data) {
+    private static void writeToFile(String outputPath, String data) {
         try {
             Path pathToFile = Paths.get(outputPath);
             Files.createDirectories(pathToFile.getParent());
@@ -141,7 +164,7 @@ public class ParamGenerator {
     /**
      * Read device parameters from a .eds file, containing information such as index, subindex etc.
      */
-    public Map<String, DeviceParameter> loadParameters(String path, Map<String, DeviceParameter> parameterMap, String prefix){
+    private static Map<String, DeviceParameter> loadParameters(String path, Map<String, DeviceParameter> parameterMap, String prefix){
         try {
             InputStream is = new FileInputStream(path);
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
