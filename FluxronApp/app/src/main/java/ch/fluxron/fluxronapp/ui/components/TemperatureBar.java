@@ -5,8 +5,8 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
@@ -18,18 +18,21 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Represents a bar with a target temperature and an actual temperature
  */
 public class TemperatureBar extends LinearLayout{
-    ParamManager manager;
-    TypedArray arguments;
-    String parameter;
-    TextView paramName;
-    //TextView paramValue;
-    IEventBusProvider provider;
-
+    private ParamManager manager;
+    private TypedArray arguments;
+    private String parameter;
+    private TextView paramName;
+    private TextView currentTemperature;
+    private TextView maxTemperature;
+    private View frontSegment;
+    private View middleSegment;
+    private View lastSegment;
+    private View space1;
+    private IEventBusProvider provider;
 
     private int minTemp = 0;
-    private int maxTemp = 200;
-    private int curTemp = 150;
-    private View middleSegment;
+    private int maxTemp = 180;
+    private int maxOffsetTemp = 40;
 
     /**
      * Create a new temperature bar
@@ -38,30 +41,60 @@ public class TemperatureBar extends LinearLayout{
      */
     public TemperatureBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         setOrientation(LinearLayout.HORIZONTAL);
         LayoutInflater.from(context).inflate(R.layout.component_temperature_bar, this, true);
-
-        middleSegment = findViewById(R.id.middleSegment);
-
         manager = new ParamManager();
 
         arguments = context.obtainStyledAttributes(attrs, R.styleable.TemperatureBar);
         parameter = arguments.getString(R.styleable.TemperatureBar_temperatureParamName);
-
+        currentTemperature = (TextView) findViewById(R.id.currentTemperatureValue);
+        maxTemperature = (TextView) findViewById(R.id.maxTemperatureValue);
+        frontSegment = findViewById(R.id.frontSegment);
+        middleSegment = findViewById(R.id.middleSegment);
+        lastSegment = findViewById(R.id.lastSegment);
+        space1 = findViewById(R.id.space1);
         paramName = (TextView) this.findViewById(R.id.paramName);
-        //paramValue = (TextView) this.findViewById(R.id.paramValue);
 
         setDisplayText();
 
         // TODO: Allow styling via the colors XML (obtainStyledAttributes etc)
         // TODO: Animate changes
-        // TODO: Use actual values
+        // TODO: support for min temp?
 
         if (!isInEditMode()) {
             provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
             provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
         }
+
+        addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                updateCurrentTempPos();
+                updateMaxTempPos();
+                invalidate();
+            }
+        });
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        updateCurrentTemperature(80); //TODO: Test, remove!
+    }
+
+    private void updateCurrentTempPos() {
+        int halfText = (currentTemperature.getWidth()-currentTemperature.getPaddingLeft())/2;
+        int textOffset = frontSegment.getWidth()-halfText+(space1.getWidth()/2);
+        currentTemperature.setPadding(textOffset, 0, 0, 0);
+        currentTemperature.invalidate();
+    }
+
+
+    private void updateMaxTempPos() {
+        int halfText = (maxTemperature.getWidth()-maxTemperature.getPaddingLeft())/2;
+        int textOffset = frontSegment.getWidth()+middleSegment.getWidth()-halfText+3*(space1.getWidth()/2);
+        maxTemperature.setPadding(textOffset, 0, 0, 0);
+        maxTemperature.invalidate();
     }
 
     /**
@@ -72,13 +105,32 @@ public class TemperatureBar extends LinearLayout{
     public void setMinMax(int min, int max) {
         minTemp = min;
         maxTemp = max;
-        ViewGroup.LayoutParams params = middleSegment.getLayoutParams();
-        params.width = 290;
-        middleSegment.setLayoutParams(params);
     }
 
     /**
-     * If no displayText is supplied the default param Name is used.
+     * Set the current temperature, updates UI.
+     * @param temperature
+     */
+    public void updateCurrentTemperature(float temperature){
+        int limit = maxTemp+maxOffsetTemp;
+        float currentTempPercent = 100f/limit*temperature;
+        float maxTempPercent = (100f/limit*maxTemp)-currentTempPercent;
+        float restTempPercent = 100f-currentTempPercent-maxTempPercent;
+
+        float currentTempWeight = (100-currentTempPercent)/100;
+        float maxTempWeight = (100-maxTempPercent)/100;
+        float limitTempWeight = (100-restTempPercent)/100;
+
+        frontSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, currentTempWeight));
+        middleSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, maxTempWeight));
+        lastSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, limitTempWeight));
+
+        currentTemperature.setText(temperature+" °C");
+        maxTemperature.setText(maxTemp+" °C");
+    }
+
+    /**
+     * If no displayText is supplied the default parameter_name is used.
      */
     private void setDisplayText() {
         String displayText = arguments.getString(R.styleable.TemperatureBar_temperatureDisplayText);

@@ -11,6 +11,7 @@
             android:layout_height="wrap_content"
             android:text="Temperature Zone 1" />
         <TextView
+            android:id="@+id/currentTemperatureValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="215dip"
@@ -19,13 +20,14 @@
             android:drawableBottom="@drawable/ic_arrow_drop_down"/>
         <LinearLayout android:layout_width="wrap_content"
             android:layout_height="5pt">
-            <View android:layout_width="240dip" android:background="@color/currentTemperature" android:layout_height="match_parent"/>
-            <View android:layout_width="3dip" android:background="@color/cardview_light_background" android:layout_height="match_parent"/>
-            <View android:layout_width="30dip" android:background="@color/idealTemperature" android:layout_height="match_parent" android:id="@+id/middleSegment"/>
-            <View android:layout_width="3dip" android:background="@color/cardview_light_background" android:layout_height="match_parent"/>
-            <View android:layout_width="wrap_content" android:background="@color/maxTemperature" android:layout_height="match_parent"/>
+            <View android:layout_width="0sp" android:layout_weight="0.5" android:background="@color/currentTemperature" android:layout_height="wrap_content" android:id="@+id/frontSegment"/>
+            <View android:layout_width="3dip" android:background="@color/cardview_light_background" android:layout_height="wrap_content" android:id="@+id/space1"/>
+            <View android:layout_width="0sp" android:layout_weight="0.7" android:background="@color/idealTemperature" android:layout_height="match_parent" android:id="@+id/middleSegment"/>
+            <View android:layout_width="3dip" android:background="@color/cardview_light_background" android:layout_height="wrap_content" android:id="@+id/space2"/>
+            <View android:layout_width="0sp" android:layout_weight="0.8" android:background="@color/maxTemperature" android:layout_height="wrap_content" android:id="@+id/lastSegment"/>
         </LinearLayout>
         <TextView
+            android:id="@+id/maxTemperatureValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="250dip"
