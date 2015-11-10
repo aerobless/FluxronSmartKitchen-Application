@@ -1,21 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:padding="9dp">
 
-    <ch.fluxron.fluxronapp.ui.components.ParameterView
-        android:id="@+id/heatsink1"
-        app:paramName="@string/F_SCLASS_3006SUB3_HEATSINK_LEVEL_1"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ch.fluxron.fluxronapp.ui.components.TemperatureBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
-    <ch.fluxron.fluxronapp.ui.components.ParameterView
-        android:id="@+id/ui2"
-        app:paramName="@string/F_SCLASS_3006SUB3_HEATSINK_LEVEL_1"
-        app:paramDisplayText="Example with set display text"
+    <GridLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="2">
+        <ch.fluxron.fluxronapp.ui.components.ParameterView
+            android:id="@+id/heatsink1"
+            app:paramName="@string/F_SCLASS_3006SUB3_HEATSINK_LEVEL_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="0"/>
 
+        <ch.fluxron.fluxronapp.ui.components.ParameterView
+            android:id="@+id/kwfSetpoint"
+            app:paramName="@string/F_CCLASS_2001SUB6_KWF_TEMP_SETPOINT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="0" />
+
+        <ch.fluxron.fluxronapp.ui.components.ParameterView
+            android:id="@+id/power"
+            app:paramName="@string/F_CCLASS_2001SUB3_KWF_ACTUAL_POWER_LEVEL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="1"/>
+
+        <ch.fluxron.fluxronapp.ui.components.ParameterView
+            android:id="@+id/tempGradient"
+            app:paramName="@string/F_CCLASS_3030SUB7_BAX_TEMPERATURE_GLASS_GRADIENT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="1"/>
+    </GridLayout>
 </LinearLayout>

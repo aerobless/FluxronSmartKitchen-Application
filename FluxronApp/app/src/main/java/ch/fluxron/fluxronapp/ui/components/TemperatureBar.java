@@ -1,6 +1,5 @@
 package ch.fluxron.fluxronapp.ui.components;
 
-import android.animation.LayoutTransition;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -28,7 +27,7 @@ public class TemperatureBar extends LinearLayout{
         super(context, attrs);
 
         setOrientation(LinearLayout.HORIZONTAL);
-        LayoutInflater.from(context).inflate(R.layout.compound_temperature_bar, this, true);
+        LayoutInflater.from(context).inflate(R.layout.component_temperature_bar, this, true);
 
         middleSegment = findViewById(R.id.middleSegment);
 
