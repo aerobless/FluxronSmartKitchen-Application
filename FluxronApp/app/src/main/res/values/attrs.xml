@@ -4,4 +4,9 @@
         <attr name="paramName" format="string"/>
         <attr name="paramDisplayText" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="TemperatureBar">
+        <attr name="temperatureParamName" format="string"/>
+        <attr name="temperatureDisplayText" format="string"/>
+    </declare-styleable>
 </resources>

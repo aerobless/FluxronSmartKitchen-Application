@@ -14,8 +14,8 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCo
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class ParameterView extends RelativeLayout {
-    TypedArray arguments;
     ParamManager manager;
+    TypedArray arguments;
     String parameter;
     TextView paramName;
     TextView paramValue;
