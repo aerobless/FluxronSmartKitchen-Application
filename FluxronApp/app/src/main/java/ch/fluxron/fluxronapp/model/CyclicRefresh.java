@@ -63,9 +63,25 @@ public class CyclicRefresh {
                 if(!enabled.get()){
                     break;
                 }
-                requestAndWaitForNext(device);
+                postRequest(device);
             }
             cooldown(1000);
+        }
+    }
+
+    private void postRequest(String device) {
+        RequestResponseConnection req = new BluetoothReadRequest(device, listOfInterestingParameters);
+        synchronized (lock){
+            while(!doNext.get()){
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    Log.d("FLUXRON", "Interruped exception in CyclicRefresh");
+                }
+            }
+            currentConnection = req.getConnectionId();
+            provider.getDalEventBus().post(req);
+            doNext.set(false);
         }
     }
 
@@ -77,21 +93,7 @@ public class CyclicRefresh {
         }
     }
 
-    private void requestAndWaitForNext(String device) {
-        RequestResponseConnection req = new BluetoothReadRequest(device, listOfInterestingParameters);
-        synchronized (lock){
-            currentConnection = req.getConnectionId();
-            provider.getDalEventBus().post(req);
-            while(!doNext.get()){
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    Log.d("FLUXRON", "Interruped exception in CyclicRefresh");
-                }
-            }
-            doNext.set(false);
-        }
-    }
+
 
     /**
      * Copy a snapshot of the current deviceCache to the refreshList.
@@ -135,8 +137,7 @@ public class CyclicRefresh {
 
     private void start() {
         skipToNext();
-        if(!enabled.get()){
-            enabled.set(true);
+        if(!enabled.getAndSet(true)){
             run();
         } else{
             Log.d("FLUXRON", "ALREADY ENABLED; NOT STARTING AGAIN");
