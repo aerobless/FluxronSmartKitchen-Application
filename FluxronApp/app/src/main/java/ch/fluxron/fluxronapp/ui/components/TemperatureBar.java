@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
+import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -138,5 +140,12 @@ public class TemperatureBar extends LinearLayout{
      */
     public String getParameter(){
         return parameter;
+    }
+
+    public void handleDeviceChanged(DeviceChanged msg){
+        DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
+        if(dp != null){
+            updateCurrentTemperature(Float.parseFloat(dp.getValue()));
+        }
     }
 }

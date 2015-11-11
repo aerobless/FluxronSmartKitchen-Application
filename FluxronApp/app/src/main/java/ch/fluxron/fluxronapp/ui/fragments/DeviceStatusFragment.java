@@ -3,7 +3,6 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -62,10 +60,12 @@ public class DeviceStatusFragment extends Fragment {
         temperatureBar1.updateCurrentTemperature(80);
         temperatureBar2 = (TemperatureBar) deviceView.findViewById(R.id.temperature2);
         temperatureBar2.updateCurrentTemperature(40);
+        temperatureBar2.setMinMax(0, 400);
         temperatureBar3 = (TemperatureBar) deviceView.findViewById(R.id.temperature3);
         temperatureBar3.updateCurrentTemperature(130);
         temperatureBar4 = (TemperatureBar) deviceView.findViewById(R.id.temperature4);
         temperatureBar4.updateCurrentTemperature(145.3f);
+        temperatureBar4.setMinMax(0, 400);
         provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
         return deviceView;
     }
@@ -76,39 +76,14 @@ public class DeviceStatusFragment extends Fragment {
 
     public void onEventMainThread(DeviceChanged inputMsg){
         if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
-            DeviceParameter pHeatSink1 = inputMsg.getDevice().getDeviceParameter(heatsink1.getParameter());
-            DeviceParameter pKwfSetpoint = inputMsg.getDevice().getDeviceParameter(kwfSetpoint.getParameter());
-            DeviceParameter pkwfPower = inputMsg.getDevice().getDeviceParameter(kwfPower.getParameter());
-            DeviceParameter ptempGradient = inputMsg.getDevice().getDeviceParameter(tempGradient.getParameter());
-            DeviceParameter pTemperatureBar1 = inputMsg.getDevice().getDeviceParameter(temperatureBar1.getParameter());
-            DeviceParameter pTemperatureBar2 = inputMsg.getDevice().getDeviceParameter(temperatureBar2.getParameter());
-            DeviceParameter pTemperatureBar3 = inputMsg.getDevice().getDeviceParameter(temperatureBar3.getParameter());
-            DeviceParameter pTemperatureBar4 = inputMsg.getDevice().getDeviceParameter(temperatureBar4.getParameter());
-
-            if(pHeatSink1 != null){
-                heatsink1.setValue(pHeatSink1.getValue());
-            }
-            if(pKwfSetpoint != null){
-                kwfSetpoint.setValue(pKwfSetpoint.getValue());
-            }
-            if(pkwfPower != null){
-                kwfPower.setValue(pkwfPower.getValue());
-            }
-            if(ptempGradient != null){
-                tempGradient.setValue(ptempGradient.getValue());
-            }
-            if(pTemperatureBar1 != null){
-                temperatureBar1.updateCurrentTemperature(Float.parseFloat(pTemperatureBar1.getValue()));
-            }
-            if(pTemperatureBar2 != null){
-                temperatureBar2.updateCurrentTemperature(Float.parseFloat(pTemperatureBar2.getValue()));
-            }
-            if(pTemperatureBar3 != null){
-                temperatureBar3.updateCurrentTemperature(Float.parseFloat(pTemperatureBar3.getValue()));
-            }
-            if(pTemperatureBar4 != null){
-                temperatureBar4.updateCurrentTemperature(Float.parseFloat(pTemperatureBar4.getValue()));
-            }
+            heatsink1.handleDeviceChanged(inputMsg);
+            kwfSetpoint.handleDeviceChanged(inputMsg);
+            kwfPower.handleDeviceChanged(inputMsg);
+            tempGradient.handleDeviceChanged(inputMsg);
+            temperatureBar1.handleDeviceChanged(inputMsg);
+            temperatureBar2.handleDeviceChanged(inputMsg);
+            temperatureBar3.handleDeviceChanged(inputMsg);
+            temperatureBar4.handleDeviceChanged(inputMsg);
         }
     }
 }
