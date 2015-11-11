@@ -63,7 +63,7 @@
                     android:layout_row="0" />
 
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/power"
+                    android:id="@+id/kwfPower"
                     app:paramName="@string/F_CCLASS_2001SUB3_KWF_ACTUAL_POWER_LEVEL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

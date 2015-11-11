@@ -120,4 +120,14 @@ public class Device {
         }
         return null;
     }
+
+    /**
+     * Prints all the parameters stored in this device object.
+     * Used for debugging purposes.
+     */
+    public void printStoredParameters(){
+        for(DeviceParameter dp: deviceParameters.values()){
+            Log.d("FLUXRON DEBUG", "ParamName: "+dp.getName()+" Value: "+dp.getValue());
+        }
+    }
 }
