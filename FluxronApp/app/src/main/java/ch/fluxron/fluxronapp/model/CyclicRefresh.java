@@ -4,9 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.LruCache;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,26 +21,28 @@ import ch.fluxron.fluxronapp.objectBase.Device;
 /**
  * Used to iterate through all registered devices and refresh their parameters.
  */
-public class CyclicRefresh extends Thread{
+public class CyclicRefresh {
     private AtomicBoolean enabled = new AtomicBoolean(false);
-    private LruCache<String, Device> deviceCache;
+    private final LruCache<String, Device> deviceCache;
+    private final Set<String> refreshList;
     private IEventBusProvider provider;
     private String currentConnection;
     private final Object lock = new Object();
     private AtomicBoolean doNext = new AtomicBoolean(false);
-    private Set<String> listOfInterestingParameters;
+    private final Set<String> listOfInterestingParameters;
 
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
         this.deviceCache = deviceCache;
-        this.currentConnection = new String();
+        this.refreshList = new HashSet<>();
+        this.currentConnection = "";
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
         listOfInterestingParameters = initLoiP();
     }
 
     //TODO: differentiate between device type, currently all S-Class
-    private Set<String> initLoiP(){
+    private static Set<String> initLoiP(){
         Set<String> list = new HashSet<>();
         list.add(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
         list.add(ParamManager.F_SCLASS_1008_MANUFACTURER_DEVICE_NAME);
@@ -53,51 +53,61 @@ public class CyclicRefresh extends Thread{
         return list;
     }
 
-    @Override
-    public void run() {
+    private void run() {
         while(enabled.get()){
-            Map<String, Device> deviceList = getUpdatedDeviceList();
-            for(Device device: deviceList.values()){
+            Set<String> localRefreshList;
+            synchronized (refreshList){
+                localRefreshList = refreshList;
+            }
+            for(String device: localRefreshList){
                 if(!enabled.get()){
                     break;
                 }
-                if(device.isBonded()){
-                    //TODO: replace one param with list of interesting params
-                    RequestResponseConnection req = new BluetoothReadRequest(device.getAddress(), listOfInterestingParameters);
-                    synchronized (lock){
-                        currentConnection = req.getConnectionId();
-                        provider.getDalEventBus().post(req);
-                        while(!doNext.get()){
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                Log.d("FLUXRON", "Interruped exception in CyclicRefresh");
-                            }
-                        }
-                        doNext.set(false);
-                    }
+                requestAndWaitForNext(device);
+            }
+            cooldown(1000);
+        }
+    }
+
+    private static void cooldown(int timeInMs) {
+        try {
+            Thread.sleep(timeInMs);
+        } catch (InterruptedException e) {
+            Log.d("FLUXRON", "InterruptedException during Cooldown in CyclicRefresh");
+        }
+    }
+
+    private void requestAndWaitForNext(String device) {
+        RequestResponseConnection req = new BluetoothReadRequest(device, listOfInterestingParameters);
+        synchronized (lock){
+            currentConnection = req.getConnectionId();
+            provider.getDalEventBus().post(req);
+            while(!doNext.get()){
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    Log.d("FLUXRON", "Interruped exception in CyclicRefresh");
                 }
             }
+            doNext.set(false);
         }
     }
 
     /**
-     * Returns an updated device list and makes sure that the CyclicRefresh doesn't uselessly
-     * chew memory when there are no bonded devices.
+     * Copy a snapshot of the current deviceCache to the refreshList.
      * @return
      */
     @NonNull
-    private Map<String, Device> getUpdatedDeviceList() {
-        try {
-            Thread.sleep(1000); //Cooldown after a device-cycle.
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Map<String, Device> deviceList;
+    private Set<String> copyDeviceCacheToRefreshList() {
+        Map<String, Device> deviceMap;
         synchronized (deviceCache){
-            deviceList = deviceCache.snapshot();
+            deviceMap = deviceCache.snapshot();
         }
-        return deviceList;
+        Set<String> deviceSet = new HashSet<>();
+        for (Device device:deviceMap.values()){
+            deviceSet.add(device.getAddress());
+        }
+        return deviceSet;
     }
 
     /**
@@ -105,11 +115,31 @@ public class CyclicRefresh extends Thread{
      * @param cmd
      */
     public void onEventAsync(CyclicRefreshCommand cmd){
-        if(cmd.isEnabled()){
-            enabled.set(true);
-            this.run();
-        } else {
+        Log.d("FLUXRON", "GOT REQUEST FOR REFRESH");
+        if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)){
+            Log.d("FLUXRON", "ENABLING REFRESH FOR ALL DEVICES");
+            copyDeviceCacheToRefreshList();
+            start();
+        } else if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.NONE)){
+            Log.d("FLUXRON", "DISABLING REFRESH FOR ALL DEVICES");
+            refreshList.clear();
+            skipToNext();
             enabled.set(false);
+        } else{
+            refreshList.clear();
+            Log.d("FLUXRON", "ENABLING FOR SPECIFIC DEVICE");
+            refreshList.add(cmd.getDeviceToRefresh());
+            start();
+        }
+    }
+
+    private void start() {
+        skipToNext();
+        if(!enabled.get()){
+            enabled.set(true);
+            run();
+        } else{
+            Log.d("FLUXRON", "ALREADY ENABLED; NOT STARTING AGAIN");
         }
     }
 
@@ -120,12 +150,15 @@ public class CyclicRefresh extends Thread{
      */
     public void onEventAsync(BluetoothDeviceChanged inputMsg){
         String connectionID = inputMsg.getConnectionId();
+        if(connectionID.equals(currentConnection)){
+            skipToNext();
+        }
+    }
 
+    private void skipToNext() {
         synchronized (lock){
-            if(connectionID.equals(currentConnection)){
-                doNext.set(true);
-                lock.notifyAll();
-            }
+            doNext.set(true);
+            lock.notifyAll();
         }
     }
 
@@ -136,12 +169,8 @@ public class CyclicRefresh extends Thread{
      */
     public void onEventAsync(BluetoothConnectionFailure inputMsg){
         String connectionID = inputMsg.getConnectionId();
-
-        synchronized (lock){
-            if(connectionID.equals(currentConnection)){
-                doNext.set(true);
-                lock.notifyAll();
-            }
+        if(connectionID.equals(currentConnection)){
+            skipToNext();
         }
     }
 

@@ -9,6 +9,7 @@ public class DevicePosition {
     private String deviceId;
     private Point position;
     private String category;
+    private String name;
 
     /**
      * Gets the id of the device
@@ -48,5 +49,13 @@ public class DevicePosition {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
