@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class AreaListFragment extends Fragment {
     private IEventBusProvider provider;
     private AreaListAdapter listAdapter;
     private IAreaClickedListener listener;
+    private int scrollPos = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class AreaListFragment extends Fragment {
         RecyclerView kitchenListView = (RecyclerView) listView.findViewById(R.id.areaList);
 
         // Layout for the list
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         kitchenListView.setLayoutManager(layoutManager);
 
@@ -83,7 +85,45 @@ public class AreaListFragment extends Fragment {
         listAdapter = new AreaListAdapter(this.listener, this.provider);
         kitchenListView.setAdapter(listAdapter);
 
+        // Scroll listener
+        kitchenListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    snapListAndNotify(recyclerView, layoutManager);
+                }
+            }
+        });
+
         return listView;
+    }
+
+    private void snapListAndNotify(RecyclerView v, LinearLayoutManager m) {
+        // Find the middle of the visible view positions
+        int firstVisibleView = m.findFirstVisibleItemPosition();
+        int lastVisibleView = m.findLastVisibleItemPosition();
+        int controlCenter = v.getWidth()/2;
+
+        int scrollDistanceMin = Integer.MAX_VALUE;
+        int scrollPosition = -1;
+        for(int i = firstVisibleView; i <= lastVisibleView; i++) {
+            View currentView = m.findViewByPosition(i);
+            int viewCenter = (currentView.getLeft()+ currentView.getRight())/2;
+            int dx =  viewCenter - controlCenter;
+            if(Math.abs(dx) < Math.abs(scrollDistanceMin)) {
+                scrollDistanceMin = dx;
+                scrollPosition = i;
+            }
+        }
+
+        if(scrollDistanceMin != Integer.MAX_VALUE) {
+            v.smoothScrollBy(scrollDistanceMin, 0);
+
+            if (this.listener!=null){
+                this.listener.areaScrolled(scrollPosition);
+            }
+        }
     }
 
     public AreaListAdapter getListAdapter() {

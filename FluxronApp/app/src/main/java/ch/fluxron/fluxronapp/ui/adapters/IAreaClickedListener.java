@@ -7,4 +7,5 @@ import ch.fluxron.fluxronapp.objectBase.KitchenArea;
  */
 public interface IAreaClickedListener {
     void areaClicked(KitchenArea a);
+    void areaScrolled(int pos);
 }
