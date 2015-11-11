@@ -9,4 +9,9 @@
         <attr name="temperatureParamName" format="string"/>
         <attr name="temperatureDisplayText" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="ParameterEditable">
+        <attr name="editableParamName" format="string"/>
+        <attr name="editableDisplayText" format="string"/>
+    </declare-styleable>
 </resources>

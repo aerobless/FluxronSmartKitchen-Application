@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="9dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2000SUB4_COIL_SETUP_"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2000SUB1_BLT_VISIBILITY"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2001SUB1_KWF_ENABLE"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2001SUB2_KWF_MAX_POWER_LEVEL"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2001SUB9_KWF_TEMP_SETPOINT_OFFSET"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2002SUB1_PMG_ENABLE"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2002SUB2_PMG_POWER_REDUCTION"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <!-- TODO: 3030-0A FAULT E04 DELAY EINFUEGEN - WEGEN BUG NICHT IN PARAM ATM -->
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3031SUB5_BAX_RP_PSC"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3031SUB4_BAX_SCAN_PAN_PSC"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3031SUB6_BAX_LIFT_PAN_PSC"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <!-- TODO: 3035-0B BAX POWER max EINFUEGEN - WEGEN BUG NICHT IN PARAM ATM -->
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_COIL_PEAK_CURRENT"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_COIL_PEAK_CURRENT"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <!-- TODO: 3030-0D Gradient Lim lowT EINFUEGEN - WEGEN BUG NICHT IN PARAM ATM -->
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_2000SUB2_SEVENSEG_CONFIG"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

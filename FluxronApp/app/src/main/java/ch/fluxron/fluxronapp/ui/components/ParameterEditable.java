@@ -1,11 +1,11 @@
 package ch.fluxron.fluxronapp.ui.components;
 
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.RelativeLayout;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
@@ -16,27 +16,27 @@ import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
- * Displays a non-editable parameter to the user with name and value.
+ * Displays a editable parameter to the user with name and value.
  */
-public class ParameterView extends RelativeLayout {
+public class ParameterEditable extends LinearLayout {
     ParamManager manager;
     TypedArray arguments;
     String parameter;
     TextView paramName;
-    TextView paramValue;
+    EditText paramValue;
     IEventBusProvider provider;
 
-    public ParameterView(Context context, AttributeSet attrs) {
+    public ParameterEditable(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        LayoutInflater.from(context).inflate(R.layout.component_parameter_view, this, true);
+        LayoutInflater.from(context).inflate(R.layout.component_parameter_editable, this, true);
         manager = new ParamManager();
 
-        arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterView);
-        parameter = arguments.getString(R.styleable.ParameterView_paramName);
+        arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterEditable);
+        parameter = arguments.getString(R.styleable.ParameterEditable_editableParamName);
 
         paramName = (TextView) this.findViewById(R.id.paramName);
-        paramValue = (TextView) this.findViewById(R.id.paramValue);
+        paramValue = (EditText) this.findViewById(R.id.paramValue);
 
         setDisplayText();
 
@@ -46,12 +46,11 @@ public class ParameterView extends RelativeLayout {
         }
     }
 
-
     /**
      * If no displayText is supplied the default param Name is used.
      */
     private void setDisplayText() {
-        String displayText = arguments.getString(R.styleable.ParameterView_paramDisplayText);
+        String displayText = arguments.getString(R.styleable.ParameterEditable_editableDisplayText);
         if(displayText != null){
             paramName.setText(displayText);
         } else {

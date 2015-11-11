@@ -117,19 +117,15 @@ public class CyclicRefresh {
      * @param cmd
      */
     public void onEventAsync(CyclicRefreshCommand cmd){
-        Log.d("FLUXRON", "GOT REQUEST FOR REFRESH");
         if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)){
-            Log.d("FLUXRON", "ENABLING REFRESH FOR ALL DEVICES");
             copyDeviceCacheToRefreshList();
             start();
         } else if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.NONE)){
-            Log.d("FLUXRON", "DISABLING REFRESH FOR ALL DEVICES");
             refreshList.clear();
             skipToNext();
             enabled.set(false);
         } else{
             refreshList.clear();
-            Log.d("FLUXRON", "ENABLING FOR SPECIFIC DEVICE");
             refreshList.add(cmd.getDeviceToRefresh());
             start();
         }
@@ -139,8 +135,6 @@ public class CyclicRefresh {
         skipToNext();
         if(!enabled.getAndSet(true)){
             run();
-        } else{
-            Log.d("FLUXRON", "ALREADY ENABLED; NOT STARTING AGAIN");
         }
     }
 
