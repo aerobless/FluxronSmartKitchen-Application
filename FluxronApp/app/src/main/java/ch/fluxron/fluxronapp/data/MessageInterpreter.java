@@ -49,28 +49,24 @@ public class MessageInterpreter {
             } else {
                 Log.d("Fluxron", "Unkown Command Code"+ data[2]);
             }
-            if (dataPayload != null){
-                //messageFactory.printUnsignedByteArray(dataPayload);
-                //Log.d(TAG, "INT "+decodeByteArray(dataPayload));
-                //TODO: nicer method to generate/lookup field name
-
-                String msb = Integer.toHexString(0xFF & data[4]);
-                String lsb = Integer.toHexString(0xFF & data[3]);
-                String sub = Integer.toHexString(0xFF & data[5]);
-                if(lsb.length()==1){
-                    lsb = "0"+lsb;
-                }
-                String field = msb+lsb+"sub"+sub;
-                String fieldID = getParamID(field);
-                if(fieldID == null){
-                    fieldID = getParamID(field.substring(0, 4));
-                }
-                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(inputMsg.getAddress(), fieldID, decodeByteArray(dataPayload));
-                deviceChanged.setConnectionId(inputMsg);
-                provider.getDalEventBus().post(deviceChanged);
-            }
+            handlePayload(inputMsg, data, dataPayload);
         } else {
             Log.d("Fluxron", "Invalid checksum!");
+        }
+    }
+
+    private void handlePayload(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
+        if (dataPayload != null){
+            String msb = Integer.toHexString(0xFF & data[4]);
+            String lsb = Integer.toHexString(0xFF & data[3]);
+            String sub = Integer.toHexString(0xFF & data[5]);
+            if(lsb.length()==1){
+                lsb = "0"+lsb;
+            }
+            String field = msb+lsb+"sub"+sub;
+            RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(inputMsg.getAddress(), field, decodeByteArray(dataPayload));
+            deviceChanged.setConnectionId(inputMsg);
+            provider.getDalEventBus().post(deviceChanged);
         }
     }
 
@@ -101,22 +97,12 @@ public class MessageInterpreter {
         return subArray;
     }
 
-    //TODO: proper distinction between SClass etc. based on communication ID.. will probably be done in Device Manager in the future.
-    //This is a simple fix to not break device discovery after adding multiple EDSs.
-    public String getParamID(String input){
-        if(messageFactory.getParameter("SClass_"+input)!= null) {
-            return messageFactory.getParameter("SClass_"+input).getId();
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Decodes little endian byte[] arrays to int values.
      * @param input
      * @return decoded Int value of the input
      */
-    private int decodeByteArray(byte[] input){
+    private static int decodeByteArray(byte[] input){
         ByteBuffer buffer = ByteBuffer.wrap(input);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         return buffer.getInt();

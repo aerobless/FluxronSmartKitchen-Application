@@ -6,6 +6,7 @@ import android.util.LruCache;
 import java.util.Date;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
@@ -23,8 +24,9 @@ import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
  */
 public class DeviceManager {
     private IEventBusProvider provider;
-    private LruCache<String, Device> deviceCache;
-    CyclicRefresh cyclicRefresh;
+    private final LruCache<String, Device> deviceCache;
+    private Map<String, ch.fluxron.fluxronapp.data.generated.DeviceParameter> paramMap;
+    private CyclicRefresh cyclicRefresh;
 
     public DeviceManager(IEventBusProvider provider) {
         this.provider = provider;
@@ -32,6 +34,7 @@ public class DeviceManager {
         provider.getUiEventBus().register(this);
         deviceCache = new LruCache<>(256);
         cyclicRefresh = new CyclicRefresh(provider, deviceCache);
+        paramMap = new ParamManager().getParamMap();
     }
 
     /**
@@ -87,7 +90,9 @@ public class DeviceManager {
         Device device;
         synchronized (deviceCache){
             device = deviceCache.get(inputMsg.getAddress());
-            device.setDeviceParameter(new DeviceParameter(inputMsg.getField(), inputMsg.getValue()+""));
+            if(paramMap.get(device.getDeviceTypePrefix()+"_"+inputMsg.getField())!= null){
+                device.setDeviceParameter(new DeviceParameter(device.getDeviceTypePrefix()+"_"+inputMsg.getField(), inputMsg.getValue() + ""));
+            }
         }
         updateDeviceCache(device);
         RequestResponseConnection deviceChanged = new DeviceChanged(deviceCache.get(inputMsg.getAddress()));

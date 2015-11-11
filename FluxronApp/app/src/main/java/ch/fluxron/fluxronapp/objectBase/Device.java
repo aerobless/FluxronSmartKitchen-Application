@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.objectBase;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -19,8 +21,8 @@ public class Device {
     private Map<String, DeviceParameter> deviceParameters = new HashMap<>();
     private DeviceTypeConverter dtConverter = new DeviceTypeConverter();
 
-    public final static String UNKNOWN_DEVICE_TYPE = "Unknown Device Type";
-    public final static String INVALID_DEVICE_TYPE = "Invalid Device Type";
+    public static final String UNKNOWN_DEVICE_TYPE = "Unknown Device Type";
+    public static final String INVALID_DEVICE_TYPE = "Invalid Device Type";
 
     @JsonProperty("_id")
     String address;
@@ -81,16 +83,41 @@ public class Device {
      * @return
      */
     public String getDeviceType(){
-        DeviceParameter product_code = deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
-        if(product_code != null){
+        DeviceParameter productCodeParam = getProductParam();
+        if(productCodeParam != null){
             try{
-                int productCode = Integer.parseInt(product_code.getValue());
+                int productCode = Integer.parseInt(productCodeParam.getValue());
                 return dtConverter.toDeviceType(productCode);
             } catch(NumberFormatException e){
+                Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
                 return INVALID_DEVICE_TYPE;
             }
         } else {
             return UNKNOWN_DEVICE_TYPE;
         }
+    }
+
+    /**
+     * TODO: returns whether a device is CClass, SClass or ETX.
+     * @return
+     */
+    public String getDeviceTypePrefix(){
+        return "CClass";
+    }
+
+    /**
+     * Since we can't be sure what type the device is before we have access the product code
+     * we have to access all of them and use the one that's actually used.
+     * @return
+     */
+    private DeviceParameter getProductParam(){
+        if(deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE) != null){
+            return deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
+        }else if(deviceParameters.get(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE) != null){
+            return deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
+        }else if(deviceParameters.get(ParamManager.F_ETX_1018SUB2_PRODUCT_CODE) != null){
+            return deviceParameters.get(ParamManager.F_ETX_1018SUB2_PRODUCT_CODE);
+        }
+        return null;
     }
 }
