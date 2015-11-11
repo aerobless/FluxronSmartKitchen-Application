@@ -9,11 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +28,6 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
-import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IAreaClickedListener;
@@ -176,6 +173,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
             ListBubbleControl listBubbles = (ListBubbleControl)findViewById(R.id.bubbleControl);
             listBubbles.setNumberOfBubbles(msg.getKitchen().getAreaList().size());
+            listBubbles.setCurrentBubble(0);
 
             if (listFragment instanceof AreaListFragment) {
                 AreaListFragment list = (AreaListFragment) listFragment;
@@ -293,6 +291,12 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
         // Show the button for area editing
         animateEditButton(true);
+    }
+
+    @Override
+    public void areaScrolled(int pos) {
+        ListBubbleControl c = (ListBubbleControl)findViewById(R.id.bubbleControl);
+        c.setCurrentBubble(pos);
     }
 
     /**

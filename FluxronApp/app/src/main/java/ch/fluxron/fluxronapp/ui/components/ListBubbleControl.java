@@ -17,6 +17,8 @@ public class ListBubbleControl extends LinearLayout{
     private int numberOfBubbles = 0;
     private int currentBubble = 0;
     private final int MARGIN_SPACE = 15;
+    private int normalColor;
+    private int highlightedColor;
 
     public ListBubbleControl(Context context) {
         super(context);
@@ -37,6 +39,9 @@ public class ListBubbleControl extends LinearLayout{
     private void setUpLayout() {
         setOrientation(LinearLayout.HORIZONTAL);
         setGravity(Gravity.CENTER);
+
+        this.normalColor = ContextCompat.getColor(getContext(), R.color.primaryColorDark);
+        this.highlightedColor = ContextCompat.getColor(getContext(), R.color.accentColor1);
     }
 
 
@@ -57,7 +62,7 @@ public class ListBubbleControl extends LinearLayout{
             p.setMargins(MARGIN_SPACE / 2, 0, MARGIN_SPACE / 2, 0);
 
             View v = new View(getContext());
-            v.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primaryColorDark));
+            v.setBackgroundColor(normalColor);
             v.setLayoutParams(p);
 
             this.addView(v);
@@ -65,6 +70,10 @@ public class ListBubbleControl extends LinearLayout{
     }
 
     public void setCurrentBubble(int i){
+        int oldBubble = currentBubble;
         currentBubble = i;
+
+        this.getChildAt(oldBubble).setBackgroundColor(normalColor);
+        this.getChildAt(currentBubble).setBackgroundColor(highlightedColor);
     }
 }
