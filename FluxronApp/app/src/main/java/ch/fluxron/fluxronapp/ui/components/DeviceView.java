@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
@@ -39,6 +41,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private boolean deleted = false;
     private boolean cancelAnimation = false;
+
+    private HashMap<Integer, Animator> animators;
 
     /**
      * Creates a new device view
@@ -127,6 +131,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
      * Set up the state
      */
     private void setUp() {
+        animators = new HashMap<>();
+
         LayoutInflater.from(getContext()).inflate(R.layout.component_device_view, this, true);
         this.setWillNotDraw(false);
         this.setLayoutParams(new ViewGroup.LayoutParams(145, 100));
@@ -258,14 +264,24 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     private void animateIn(View target) {
+        if (animators.containsKey(target.getId())) {
+            animators.get(target.getId()).end();
+        }
+
         target.setVisibility(ViewGroup.VISIBLE);
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
         set.setTarget(target);
         ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
         set.start();
+
+        animators.put(target.getId(), set);
     }
 
     private void animateOut(final View target) {
+        if (animators.containsKey(target.getId())) {
+            animators.get(target.getId()).end();
+        }
+
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_hide);
         set.setTarget(target);
         ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
@@ -288,5 +304,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             }
         });
         set.start();
+        
+        animators.put(target.getId(), set);
     }
 }
