@@ -91,18 +91,19 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             }
         }
 
+        canvas.restore();
+        float theZoom = cam.getScale();
+        canvas.translate(cam.getTranslation().x*theZoom, cam.getTranslation().y*theZoom);
+
         // Draw the positions for the devices
         if (views!= null) {
             for (DeviceView p : views){
                 canvas.save();
-                canvas.translate(p.getPosition().getPosition().x, p.getPosition().getPosition().y);
+                canvas.translate(p.getPosition().getPosition().x*theZoom, p.getPosition().getPosition().y*theZoom);
                 p.draw(canvas);
                 canvas.restore();
             }
         }
-
-        canvas.restore();
-        Log.d("rt", (System.currentTimeMillis() - start) + "ms");
     }
 
     private void limitTranslation() {
@@ -136,9 +137,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         boolean touchHandled = false;
 
         // Map from cam space to world space
+        float theZoom = cam.getScale();
         float[] p = {event.getX(), event.getY()};
         Matrix camSpaceToWorldSpace = new Matrix();
-        cam.getTransformMatrix().invert(camSpaceToWorldSpace);
+        camSpaceToWorldSpace.setTranslate(-cam.getTranslation().x*theZoom, -cam.getTranslation().y*theZoom);
         camSpaceToWorldSpace.mapPoints(p);
 
         // Notify child views of the touch event in reverse order
@@ -148,7 +150,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
             // Copy the click event and translate it to the control space
             MotionEvent translatedCopy = MotionEvent.obtain(event);
-            translatedCopy.setLocation(p[0]-child.getPosition().getPosition().x,p[1]-child.getPosition().getPosition().y);
+            translatedCopy.setLocation(p[0]-child.getPosition().getPosition().x*theZoom,p[1]-child.getPosition().getPosition().y*theZoom);
 
             // Send to the child
             touchHandled = child.dispatchTouchEvent(translatedCopy);

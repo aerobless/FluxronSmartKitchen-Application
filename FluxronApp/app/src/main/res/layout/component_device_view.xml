@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/device_background"
         android:text="MIA"
         style="@style/FluxronDeviceStatusTextView"
-        android:textSize="25dp"
+        android:textSize="12sp"
         android:id="@+id/theDeviceOrb"
         />
     <TextView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:background="@drawable/status_ok_background"
         android:text="@string/ok_check"
         android:gravity="center"
         android:textSize="16sp"
         android:layout_marginTop="0dp"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="40dp"
         android:textColor="@color/titleForeground"
         android:id="@+id/theStatusOrb"
         />
     <TextView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/device_background"
         android:text="x"
         style="@style/FluxronDeviceStatusTextView"
@@ -31,15 +31,15 @@
         android:id="@+id/theCancelOrb"
         />
     <TextView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/delete_background"
         android:drawableLeft="@drawable/ic_delete"
-        android:paddingLeft="24dp"
+        android:paddingLeft="19dp"
         android:gravity="center"
         android:textSize="40sp"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="105dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="65dp"
         android:textColor="@color/titleForeground"
         android:id="@+id/theDeleteOrb"
         />
