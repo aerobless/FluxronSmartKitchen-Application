@@ -28,6 +28,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     private IDeviceViewListener listener;
 
     private String deviceType;
+    private String deviceName;
     private String deviceAddress;
 
     private float lastTouchX;
@@ -93,6 +94,13 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         this.position = pos;
     }
 
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
 
     public String getDeviceType() {
         return deviceType;

@@ -58,7 +58,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     public void onStart() {
         super.onStart();
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
-        provider.getUiEventBus().post(new CyclicRefreshCommand(true));
+        provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
         discoveryActive = true;
     }
 
@@ -66,7 +66,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     public void onStop() {
         super.onStop();
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(false));
-        //provider.getUiEventBus().post(new CyclicRefreshCommand(false));
+        provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.NONE));
         discoveryActive = false;
         provider.getUiEventBus().unregister(this);
     }

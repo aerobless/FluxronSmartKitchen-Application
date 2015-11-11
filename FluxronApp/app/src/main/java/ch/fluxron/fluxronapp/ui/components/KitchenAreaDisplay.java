@@ -255,6 +255,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         DeviceView deviceRenderer = new DeviceView(getContext());
         deviceRenderer.setDeviceAddress(d.getDeviceId());
         deviceRenderer.setDeviceType(d.getCategory());
+        deviceRenderer.setDeviceName(d.getName());
         deviceRenderer.setPosition(d);
         deviceRenderer.setListener(this);
         return deviceRenderer;
@@ -282,7 +283,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
         Intent startActivity = new Intent(this.getContext(), DeviceActivity.class);
         startActivity.putExtra("DEVICE_ID", v.getDeviceAddress());
-        startActivity.putExtra("DEVICE_TYPE", v.getDeviceType());
+        startActivity.putExtra("DEVICE_NAME", v.getDeviceName());
         getContext().startActivity(startActivity);
     }
 

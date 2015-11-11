@@ -3,12 +3,13 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
-import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -16,7 +17,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 public class DeviceActivity extends FluxronBaseActivity {
     private IEventBusProvider provider;
     private String address = "Unkown";
-    private String type = "Unkown";
+    private String name = "Unkown";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class DeviceActivity extends FluxronBaseActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             address = extras.getString("DEVICE_ID");
-            type = extras.getString("DEVICE_TYPE");
+            name = extras.getString("DEVICE_NAME");
         }
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
@@ -38,8 +39,9 @@ public class DeviceActivity extends FluxronBaseActivity {
         tabs.setupWithViewPager(viewPager);
         provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplicationContext();
 
-        ((TextView)findViewById(R.id.deviceStatusName)).setText(type);
+        ((TextView)findViewById(R.id.deviceStatusName)).setText(name);
         ((TextView)findViewById(R.id.deviceStatusDescription)).setText(address);
+        provider.getUiEventBus().post(new CyclicRefreshCommand(address));
     }
 
     public void onEventMainThread(Object msg){
@@ -50,6 +52,7 @@ public class DeviceActivity extends FluxronBaseActivity {
     public void onBackButtonClicked(View button){
         // Close this activity and navigate back to the activity
         // that is below on the stack.
+        provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
         finish();
     }
 
@@ -64,7 +67,6 @@ public class DeviceActivity extends FluxronBaseActivity {
      */
     public void onEventMainThread(DeviceChanged inputMsg){
         if(inputMsg.getDevice().getAddress().equals(address)){
-            ((TextView)findViewById(R.id.deviceStatusName)).setText(inputMsg.getDevice().getName());
             ((TextView)findViewById(R.id.statusOrb)).setText(R.string.ok_check);
         }
     }
