@@ -145,7 +145,15 @@ public class TemperatureBar extends LinearLayout{
     public void handleDeviceChanged(DeviceChanged msg){
         DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
         if(dp != null){
-            updateCurrentTemperature(Float.parseFloat(dp.getValue()));
+            Float value = Float.parseFloat(dp.getValue());
+            updateCurrentTemperature(value);
+            //TODO: remove again, for demo purposes only since the actual values are so wildly different
+            if(value>200){
+                setMinMax(0, 300);
+            }
+            if(value>300){
+                setMinMax(0, 400);
+            }
         }
     }
 }
