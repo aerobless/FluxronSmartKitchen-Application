@@ -28,6 +28,10 @@
     <string name="unkown_check">"?"</string>
     <string name="fail_check">"X"</string>
 
+    <!-- Editable Parameter -->
+    <string name="saveButton">Save Changes</string>
+    <string name="resetButton">Reset</string>
+
     <!-- Other texts -->
     <string name="device_count">%d device(s)</string>
     <string name="kitchen_property_name">Name</string>
