@@ -30,6 +30,7 @@ public class CyclicRefresh {
     private final Object lock = new Object();
     private AtomicBoolean doNext = new AtomicBoolean(false);
     private final Set<String> listOfInterestingParameters;
+    private boolean discoveryMode = false;
 
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
@@ -47,7 +48,6 @@ public class CyclicRefresh {
         list.add(ParamManager.F_CCLASS_1008_MANUFACTURER_DEVICE_NAME);
         list.add(ParamManager.F_CCLASS_1009_MANUFACTURER_HARDWARE_VERSION);
         list.add(ParamManager.F_CCLASS_100A_MANUFACTURER_SOFTWARE_VERSION);
-        list.add(ParamManager.F_CCLASS_3030SUBD_BAX_GRADIENT_LIMIT_LOW_TEMP);
         return list;
     }
 
@@ -64,6 +64,9 @@ public class CyclicRefresh {
                 postRequest(device);
             }
             cooldown(1000);
+            if(discoveryMode){
+                refreshList.addAll(copyDeviceCacheToRefreshList());
+            }
         }
     }
 
@@ -116,14 +119,18 @@ public class CyclicRefresh {
      */
     public void onEventAsync(CyclicRefreshCommand cmd){
         if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)){
-            copyDeviceCacheToRefreshList();
+            refreshList.clear();
+            refreshList.addAll(copyDeviceCacheToRefreshList());
+            discoveryMode = true;
             start();
         } else if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.NONE)){
             refreshList.clear();
             skipToNext();
+            discoveryMode = false;
             enabled.set(false);
         } else{
             refreshList.clear();
+            discoveryMode = false;
             refreshList.add(cmd.getDeviceToRefresh());
             start();
         }
@@ -161,8 +168,10 @@ public class CyclicRefresh {
      * @param inputMsg
      */
     public void onEventAsync(BluetoothConnectionFailure inputMsg){
+        Log.d("FLUXRON","RECEIVED connection failure");
         String connectionID = inputMsg.getConnectionId();
         if(connectionID.equals(currentConnection)){
+            Log.d("FLUXRON","skipping to next");
             skipToNext();
         }
     }

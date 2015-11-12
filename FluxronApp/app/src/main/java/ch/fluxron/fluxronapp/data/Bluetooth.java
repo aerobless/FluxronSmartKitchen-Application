@@ -173,6 +173,7 @@ public class Bluetooth {
                 BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure();
                 connectionFailure.setConnectionId(cmd);
                 provider.getDalEventBus().post(connectionFailure);
+                Log.d("Fluxron", "Connection Failure sent");
             }
         }
     }
@@ -186,34 +187,11 @@ public class Bluetooth {
             }
 
             if(device.getBondState() == BluetoothDevice.BOND_BONDED){
-                BTConnectionThread connectionThread = null;
-                try {
-                    connectionThread = getConnection(device, false);
-                } catch (IOException e) {
-                    Log.d(TAG, e.getMessage());
-                }
-
-                boolean retry = false;
-                try {
-                    connectionThread.write(message, connection);
-                } catch (IOException e) {
-                    if(e.getMessage().equals("Broken pipe")){
-                        Log.d(TAG, "Broken pipe");
-                        retry = true;
-                    }else {
-                        throw new IOException("Unable establish connection");
-                    }
-                }
-                if(retry){
-                    try {
-                        connectionThread = getConnection(device, true);
-                        connectionThread.write(message, connection);
-                    } catch (IOException e) {
-                        throw new IOException("Unable establish connection");
-                    }
-                }
+                BTConnectionThread connectionThread = getConnection(device, false);
+                connectionThread.write(message, connection);
             } else {
                 Log.d(TAG, "Device isn't bonded yet. Unable to send data");
+                throw new IOException("Unbonded Device");
             }
         }
     }
