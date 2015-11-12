@@ -37,7 +37,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     // Zoom variables
     private float maxZoom = 1;
-    private float minZoom = 0.5f;
     private Camera cam;
     private PointF currentDragStart;
     private PointF cameraDragStartTranslation;
@@ -93,7 +92,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
         canvas.restore();
         float theZoom = cam.getScale();
-        canvas.translate(cam.getTranslation().x*theZoom, cam.getTranslation().y*theZoom);
+        canvas.translate(cam.getTranslation().x * theZoom, cam.getTranslation().y * theZoom);
 
         // Draw the positions for the devices
         if (views!= null) {
@@ -196,7 +195,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             public boolean onScale(ScaleGestureDetector detector) {
                     float oldScaleFactor = cam.getScale();
                     float scaleFactor = oldScaleFactor * detector.getScaleFactor();
-                    scaleFactor = Math.max(minZoom, Math.min(scaleFactor, maxZoom));
+                    scaleFactor = Math.max(getMinZoom(), Math.min(scaleFactor, maxZoom));
                     if (scaleFactor != oldScaleFactor) {
                         float scaleDifference = scaleFactor / oldScaleFactor;
                         float zoomTranslationX = (1 - scaleDifference) * detector.getFocusX() / scaleFactor;
@@ -225,8 +224,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         bmpWidth = bmp.getWidth();
         bmpHeight = bmp.getHeight();
 
-        minZoom = bmp.getWidth() > bmp.getHeight() ? (float)getHeight() / (float)bmp.getHeight() : (float)getWidth() / (float)bmp.getWidth();
-        cam.setScale(minZoom);
+        cam.setScale(getMinZoom());
 
         for(int x = 0; x < splitArraySide; x++){
             for(int y = 0; y < splitArraySide; y++){
@@ -348,5 +346,9 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
                 break;
             }
         }
+    }
+
+    private float getMinZoom() {
+        return Math.min((float)getHeight() / bmpHeight, (float)getWidth() / bmpWidth);
     }
 }
