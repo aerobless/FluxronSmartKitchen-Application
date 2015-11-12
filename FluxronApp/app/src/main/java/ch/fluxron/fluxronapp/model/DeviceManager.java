@@ -12,6 +12,8 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
@@ -52,13 +54,14 @@ public class DeviceManager {
         }
     }
 
-    /*
-    public void onEventAsync(BluetoothTestCommand inputCmd){
-        String cmd = ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE;
-        RequestResponseConnection readRequest = new BluetoothReadRequest(inputCmd.getDeviceID(), cmd);
-        readRequest.setConnectionId(inputCmd);
-        provider.getDalEventBus().post(readRequest);
-    }*/
+    public void onEventAsync(DeviceChangeCommand cmd){
+        //TODO: validate here
+        String address = cmd.getAddress();
+        String field = cmd.getChangeRequest().getName();
+        int value = Integer.parseInt(cmd.getChangeRequest().getValue());
+        //TODO: convert into correct object
+        provider.getDalEventBus().post(new BluetoothWriteRequest(address, field, value));
+    }
 
     /**
      * Enables or disables the discovery of bluetooth devices.

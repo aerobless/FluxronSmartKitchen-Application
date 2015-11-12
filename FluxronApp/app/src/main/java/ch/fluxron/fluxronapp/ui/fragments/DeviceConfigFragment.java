@@ -30,6 +30,7 @@ public class DeviceConfigFragment extends Fragment{
     ParameterEditable baxFWarningTempLimit;
     ParameterEditable baxGradientLimit;
     ParameterEditable sevenSegConfig;
+    ParameterEditable testMode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class DeviceConfigFragment extends Fragment{
         baxFWarningTempLimit = (ParameterEditable) deviceView.findViewById(R.id.baxFWarningTempLimit);
         baxGradientLimit = (ParameterEditable) deviceView.findViewById(R.id.baxGradientLimit);
         sevenSegConfig = (ParameterEditable) deviceView.findViewById(R.id.sevenSegConfig);
+        testMode = (ParameterEditable) deviceView.findViewById(R.id.testMode);
         return deviceView;
     }
 
@@ -97,6 +99,24 @@ public class DeviceConfigFragment extends Fragment{
             baxFWarningTempLimit.handleDeviceChanged(inputMsg);
             baxGradientLimit.handleDeviceChanged(inputMsg);
             sevenSegConfig.handleDeviceChanged(inputMsg);
+            testMode.handleDeviceChanged(inputMsg);
+
+            coilSetup.setDeviceAddress(deviceAddress);
+            bltVisibility.setDeviceAddress(deviceAddress);
+            kwfEnable.setDeviceAddress(deviceAddress);
+            kwfMaxPower.setDeviceAddress(deviceAddress);
+            kwfTempSetpoint.setDeviceAddress(deviceAddress);
+            pmgEnable.setDeviceAddress(deviceAddress);
+            pmgPowerReduction.setDeviceAddress(deviceAddress);
+            baxFaultDelay.setDeviceAddress(deviceAddress);
+            baxRpPsc.setDeviceAddress(deviceAddress);
+            baxScanPanPsc.setDeviceAddress(deviceAddress);
+            baxLiftPsc.setDeviceAddress(deviceAddress);
+            flxActivePowerMax.setDeviceAddress(deviceAddress);
+            baxFWarningTempLimit.setDeviceAddress(deviceAddress);
+            baxGradientLimit.setDeviceAddress(deviceAddress);
+            sevenSegConfig.setDeviceAddress(deviceAddress);
+            testMode.setDeviceAddress(deviceAddress);
         }
     }
 }

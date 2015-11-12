@@ -101,6 +101,12 @@
                 app:editableInfoText="bit54: 0=1digit, 1=2digit, 2=3digit 3=4digit\nbit1: 1=100%\nbit0: 1=flip"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                android:id="@+id/testMode"
+                app:editableParamName="@string/F_CCLASS_3100SUB1_TST_ENABLE_TEST"
+                app:editableInfoText="Testsequenz on=2, off=1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
