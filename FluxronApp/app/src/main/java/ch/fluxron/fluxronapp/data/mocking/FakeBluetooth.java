@@ -19,7 +19,7 @@ import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 public class FakeBluetooth {
     private IEventBusProvider provider;
     private static final boolean FAKE_ENABLED = true;
-    private static final int FAKE_DEVICE_COUNT = 20;
+    private static final int FAKE_DEVICE_COUNT = 10;
     private boolean discoveryActive = true;
     private List<Integer> deviceTypes;
 

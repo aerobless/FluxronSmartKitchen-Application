@@ -114,7 +114,7 @@ public class Device {
         if(deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE) != null){
             return deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
         }else if(deviceParameters.get(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE) != null){
-            return deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
+            return deviceParameters.get(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
         }else if(deviceParameters.get(ParamManager.F_ETX_1018SUB2_PRODUCT_CODE) != null){
             return deviceParameters.get(ParamManager.F_ETX_1018SUB2_PRODUCT_CODE);
         }
