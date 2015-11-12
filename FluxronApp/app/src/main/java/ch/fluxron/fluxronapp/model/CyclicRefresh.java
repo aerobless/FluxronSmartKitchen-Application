@@ -41,15 +41,13 @@ public class CyclicRefresh {
         listOfInterestingParameters = initLoiP();
     }
 
-    //TODO: differentiate between device type, currently all S-Class
     private static Set<String> initLoiP(){
         Set<String> list = new HashSet<>();
-        list.add(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
-        list.add(ParamManager.F_SCLASS_1008_MANUFACTURER_DEVICE_NAME);
-        list.add(ParamManager.F_SCLASS_1009_MANUFACTURER_HARDWARE_VERSION);
-        list.add(ParamManager.F_SCLASS_100A_MANUFACTURER_SOFTWARE_VERSION);
-        list.add(ParamManager.F_SCLASS_3038_SAFETY);
-        list.add(ParamManager.F_SCLASS_3035SUB7_FLX_ACTIVE_POWER);
+        list.add(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
+        list.add(ParamManager.F_CCLASS_1008_MANUFACTURER_DEVICE_NAME);
+        list.add(ParamManager.F_CCLASS_1009_MANUFACTURER_HARDWARE_VERSION);
+        list.add(ParamManager.F_CCLASS_100A_MANUFACTURER_SOFTWARE_VERSION);
+        list.add(ParamManager.F_CCLASS_3030SUBD_BAX_GRADIENT_LIMIT_LOW_TEMP);
         return list;
     }
 

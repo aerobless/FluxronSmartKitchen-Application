@@ -13,7 +13,6 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_2000SUB4_COIL_SETUP_"
                 android:layout_width="fill_parent"
@@ -42,7 +41,10 @@
                 app:editableParamName="@string/F_CCLASS_2002SUB2_PMG_POWER_REDUCTION"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
-            <!-- TODO: 3030-0A FAULT E04 DELAY EINFUEGEN - WEGEN BUG NICHT IN PARAM ATM -->
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3030SUBA_BAX_FAULT_E04_DELAY"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_3031SUB5_BAX_RP_PSC"
                 android:layout_width="fill_parent"
@@ -55,16 +57,18 @@
                 app:editableParamName="@string/F_CCLASS_3031SUB6_BAX_LIFT_PAN_PSC"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
-            <!-- TODO: 3035-0B BAX POWER max EINFUEGEN - WEGEN BUG NICHT IN PARAM ATM -->
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_COIL_PEAK_CURRENT"
+                app:editableParamName="@string/F_CCLASS_3035SUBB_FLX_ACTIVE_POWER_MAX"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_COIL_PEAK_CURRENT"
+                app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_F_WARNING_TEMPERATURE_LIMIT"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
-            <!-- TODO: 3030-0D Gradient Lim lowT EINFUEGEN - WEGEN BUG NICHT IN PARAM ATM -->
+            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableParamName="@string/F_CCLASS_3030SUBD_BAX_GRADIENT_LIMIT_LOW_TEMP"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_2000SUB2_SEVENSEG_CONFIG"
                 android:layout_width="fill_parent"

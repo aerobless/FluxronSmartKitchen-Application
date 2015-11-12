@@ -173,7 +173,7 @@ public class ParamGenerator {
             DeviceParameter param = null;
             while((line = in.readLine()) != null) {
                 responseData.append(line);
-                if(line.matches("\\s*\\[[0-9A-Z]{1,4}(sub[0-9]{1,4})?\\]")){ //match [1000] and [1000sub1]
+                if(line.matches("\\s*\\[[0-9A-Z]{1,4}(sub[0-9A-Z]{1,2})?\\]")){ //match [1000sub1]
                     param = new DeviceParameter();
                     line = line.replaceAll("\\s|\\[|\\]",""); //remove spaces, []
                     String[] parts = line.split("sub");
