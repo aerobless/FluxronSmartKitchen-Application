@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,8 +23,12 @@ public class ParameterEditable extends LinearLayout {
     ParamManager manager;
     TypedArray arguments;
     String parameter;
-    TextView paramName;
+    TextView paramNameSmall;
+    TextView paramNameBig;
+    TextView infoText;
     EditText paramValue;
+    LinearLayout buttonPanel;
+    LinearLayout paramPanel;
     IEventBusProvider provider;
 
     public ParameterEditable(Context context, AttributeSet attrs) {
@@ -35,15 +40,40 @@ public class ParameterEditable extends LinearLayout {
         arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterEditable);
         parameter = arguments.getString(R.styleable.ParameterEditable_editableParamName);
 
-        paramName = (TextView) this.findViewById(R.id.paramName);
+        paramNameSmall = (TextView) this.findViewById(R.id.paramNameSmall);
+        paramNameBig = (TextView) this.findViewById(R.id.paramNameBig);
+        infoText = (TextView) this.findViewById(R.id.infoText);
         paramValue = (EditText) this.findViewById(R.id.paramValue);
+        buttonPanel = (LinearLayout) this.findViewById(R.id.buttonPanel);
+        paramPanel = (LinearLayout) this.findViewById(R.id.paramPanel);
 
         setDisplayText();
+        setInfoText();
 
         if (!isInEditMode()) {
             provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
             provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
         }
+
+        paramValue.setOnFocusChangeListener(new OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    paramNameSmall.setVisibility(GONE);
+                    paramNameBig.setVisibility(VISIBLE);
+                    if(infoText.getText()!=""){
+                        infoText.setVisibility(VISIBLE);
+                    }
+                    buttonPanel.setVisibility(VISIBLE);
+                    paramPanel.setBackgroundColor(getResources().getColor(R.color.primaryColorLight));
+                } else {
+                    paramNameBig.setVisibility(GONE);
+                    infoText.setVisibility(GONE);
+                    buttonPanel.setVisibility(GONE);
+                    paramNameSmall.setVisibility(VISIBLE);
+                    paramPanel.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+                }
+            }
+        });
     }
 
     /**
@@ -52,11 +82,22 @@ public class ParameterEditable extends LinearLayout {
     private void setDisplayText() {
         String displayText = arguments.getString(R.styleable.ParameterEditable_editableDisplayText);
         if(displayText != null){
-            paramName.setText(displayText);
+            paramNameSmall.setText(displayText);
+            paramNameBig.setText(displayText);
         } else {
-            paramName.setText(manager.getParamMap().get(parameter).getName());
+            paramNameSmall.setText(manager.getParamMap().get(parameter).getName());
+            paramNameBig.setText(manager.getParamMap().get(parameter).getName());
         }
     }
+
+    private void setInfoText() {
+        String text = arguments.getString(R.styleable.ParameterEditable_editableInfoText);
+        if(text != null){
+            infoText.setText(text);
+        }
+    }
+
+
 
     /**
      * Returns the id of the parameter thats registered for this view.

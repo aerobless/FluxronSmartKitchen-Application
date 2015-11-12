@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
+        android:id="@+id/paramPanel"
         android:layout_width="fill_parent"
         android:orientation="vertical"
         android:background="@color/cardview_light_background"
@@ -15,7 +16,7 @@
             android:layout_gravity="left"
             android:text="Coil Setup"/>
         <TextView
-            android:text="0=no sensors, 1-4=1-4sensors, 5=1 sensors direct, >10 auto setup"
+            android:id="@+id/infoText"
             android:drawableLeft="@drawable/ic_settings"
             android:drawablePadding="8sp"
             android:visibility="gone"
@@ -41,7 +42,8 @@
                     android:id="@+id/paramValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.2"/>
+                    android:layout_weight="0.2"
+                    android:singleLine="true" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
