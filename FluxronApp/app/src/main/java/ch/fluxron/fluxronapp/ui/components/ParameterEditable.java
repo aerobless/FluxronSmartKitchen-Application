@@ -20,17 +20,18 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Displays a editable parameter to the user with name and value.
  */
 public class ParameterEditable extends LinearLayout {
-    ParamManager manager;
-    TypedArray arguments;
-    String parameter;
-    String measuringUnit;
-    TextView paramNameSmall;
-    TextView paramNameBig;
-    TextView infoText;
-    EditText paramValue;
-    LinearLayout buttonPanel;
-    LinearLayout paramPanel;
-    IEventBusProvider provider;
+    private ParamManager manager;
+    private TypedArray arguments;
+    private String parameter;
+    private String measuringUnit;
+    private TextView paramNameSmall;
+    private TextView paramNameBig;
+    private TextView infoText;
+    private boolean editMode;
+    private EditText paramValue;
+    private LinearLayout buttonPanel;
+    private LinearLayout paramPanel;
+    private IEventBusProvider provider;
 
     public ParameterEditable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,12 +67,14 @@ public class ParameterEditable extends LinearLayout {
                         infoText.setVisibility(VISIBLE);
                     }
                     buttonPanel.setVisibility(VISIBLE);
+                    editMode = true;
                     paramPanel.setBackgroundColor(getResources().getColor(R.color.primaryColorLight));
                 } else {
                     paramNameBig.setVisibility(GONE);
                     infoText.setVisibility(GONE);
                     buttonPanel.setVisibility(GONE);
                     paramNameSmall.setVisibility(VISIBLE);
+                    editMode = false;
                     paramPanel.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
                 }
             }
@@ -110,13 +113,17 @@ public class ParameterEditable extends LinearLayout {
     }
 
     public void setValue(String value){
-        paramValue.setText(value+" "+measuringUnit);
+        String result = value;
+        if(measuringUnit!=null){
+            result+=" "+measuringUnit;
+        }
+        paramValue.setText(result);
     }
 
     public void handleDeviceChanged(DeviceChanged msg){
         DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
-        if(dp != null){
-            setValue(dp.getValue()+" "+measuringUnit);
+        if(dp != null & !editMode){
+            setValue(dp.getValue());
         }
     }
 }
