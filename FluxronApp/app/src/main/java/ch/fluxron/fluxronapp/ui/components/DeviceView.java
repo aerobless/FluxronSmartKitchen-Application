@@ -199,7 +199,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             case MotionEvent.ACTION_UP:
                 float dTotalDrag = draggingX*draggingX+draggingY*draggingY;
 
-                if (dTotalDrag  < 10) {
+                if (dTotalDrag  < 15) {
                     fireActionRequested();
                 }
                 else {
