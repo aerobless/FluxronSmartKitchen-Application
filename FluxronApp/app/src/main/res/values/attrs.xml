@@ -12,6 +12,7 @@
 
     <declare-styleable name="ParameterEditable">
         <attr name="editableParamName" format="string"/>
+        <attr name="editableMeasuringUnit" format="string"/>
         <attr name="editableInfoText" format="string"/>
         <attr name="editableDisplayText" format="string"/>
     </declare-styleable>

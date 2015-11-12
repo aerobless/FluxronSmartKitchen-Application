@@ -19,6 +19,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                app:editableInfoText="0=visible in ERROR, P, 10min after last communication \n1: permanently on"
                 app:editableParamName="@string/F_CCLASS_2000SUB1_BLT_VISIBILITY"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
@@ -28,10 +29,13 @@
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_2001SUB2_KWF_MAX_POWER_LEVEL"
+                app:editableMeasuringUnit="W"
+                app:editableInfoText="Default: 1600W for 3.5kW device. 2000W for 5kW device."
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_2001SUB9_KWF_TEMP_SETPOINT_OFFSET"
+                app:editableMeasuringUnit="°C"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
@@ -40,10 +44,12 @@
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_2002SUB2_PMG_POWER_REDUCTION"
+                app:editableMeasuringUnit="%"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_3030SUBA_BAX_FAULT_E04_DELAY"
+                app:editableMeasuringUnit="sec"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
@@ -52,18 +58,23 @@
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_3031SUB4_BAX_SCAN_PAN_PSC"
+                app:editableInfoText="SPP value 3.5kW:12 5kW:403"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_3031SUB6_BAX_LIFT_PAN_PSC"
+                app:editableInfoText="LPP value 3.5kW:220 5kW:670"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_3035SUBB_FLX_ACTIVE_POWER_MAX"
+                app:editableMeasuringUnit="W"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_F_WARNING_TEMPERATURE_LIMIT"
+                app:editableInfoText="F display if IGBT temp is above this limit"
+                app:editableMeasuringUnit="°C"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
@@ -72,6 +83,7 @@
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
                 app:editableParamName="@string/F_CCLASS_2000SUB2_SEVENSEG_CONFIG"
+                app:editableInfoText="bit54: 0=1digit, 1=2digit, 2=3digit 3=4digit\nbit1: 1=100%\nbit0: 1=flip"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

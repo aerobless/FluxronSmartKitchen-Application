@@ -23,6 +23,7 @@ public class ParameterEditable extends LinearLayout {
     ParamManager manager;
     TypedArray arguments;
     String parameter;
+    String measuringUnit;
     TextView paramNameSmall;
     TextView paramNameBig;
     TextView infoText;
@@ -39,6 +40,7 @@ public class ParameterEditable extends LinearLayout {
 
         arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterEditable);
         parameter = arguments.getString(R.styleable.ParameterEditable_editableParamName);
+        measuringUnit = arguments.getString(R.styleable.ParameterEditable_editableMeasuringUnit);
 
         paramNameSmall = (TextView) this.findViewById(R.id.paramNameSmall);
         paramNameBig = (TextView) this.findViewById(R.id.paramNameBig);
@@ -108,13 +110,13 @@ public class ParameterEditable extends LinearLayout {
     }
 
     public void setValue(String value){
-        paramValue.setText(value);
+        paramValue.setText(value+" "+measuringUnit);
     }
 
     public void handleDeviceChanged(DeviceChanged msg){
         DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
         if(dp != null){
-            setValue(dp.getValue());
+            setValue(dp.getValue()+" "+measuringUnit);
         }
     }
 }
