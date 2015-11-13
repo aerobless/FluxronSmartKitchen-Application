@@ -57,13 +57,9 @@ public class DeviceStatusFragment extends Fragment {
         kwfPower = (ParameterView) deviceView.findViewById(R.id.kwfPower);
         tempGradient = (ParameterView) deviceView.findViewById(R.id.tempGradient);
         temperatureBar1 = (TemperatureBar) deviceView.findViewById(R.id.temperature1);
-        temperatureBar1.updateCurrentTemperature(80);
         temperatureBar2 = (TemperatureBar) deviceView.findViewById(R.id.temperature2);
-        temperatureBar2.updateCurrentTemperature(40);
         temperatureBar3 = (TemperatureBar) deviceView.findViewById(R.id.temperature3);
-        temperatureBar3.updateCurrentTemperature(130);
         temperatureBar4 = (TemperatureBar) deviceView.findViewById(R.id.temperature4);
-        temperatureBar4.updateCurrentTemperature(145.3f);
         provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
         return deviceView;
     }

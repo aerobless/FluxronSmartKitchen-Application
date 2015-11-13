@@ -34,7 +34,7 @@ public class TemperatureBar extends LinearLayout{
     private IEventBusProvider provider;
 
     private int minTemp = 0;
-    private int maxTemp = 180;
+    private int maxTemp = 100;
     private int maxOffsetTemp = 40;
 
     /**
@@ -148,11 +148,20 @@ public class TemperatureBar extends LinearLayout{
             Float value = Float.parseFloat(dp.getValue());
             updateCurrentTemperature(value);
             //TODO: remove again, for demo purposes only since the actual values are so wildly different
+            if(value>100){
+                setMinMax(0, 200);
+            }
             if(value>200){
                 setMinMax(0, 300);
             }
             if(value>300){
                 setMinMax(0, 400);
+            }
+            if(value>400){
+                setMinMax(0, 500);
+            }
+            if(value>500){
+                setMinMax(0, 100000);
             }
         }
     }
