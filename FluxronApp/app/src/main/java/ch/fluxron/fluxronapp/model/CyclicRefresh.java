@@ -55,7 +55,7 @@ public class CyclicRefresh {
         while(enabled.get()){
             Set<String> localRefreshList;
             synchronized (refreshList){
-                localRefreshList = refreshList;
+               localRefreshList = new HashSet<>(refreshList);
             }
             for(String device: localRefreshList){
                 if(!enabled.get()){
