@@ -44,6 +44,10 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private HashMap<Integer, Animator> animators;
 
+    public final static int DEVICE_STATUS_OK = 0;
+    public final static int DEVICE_STATUS_FAILURE = 1;
+    public final static int DEVICE_STATUS_UNKNOWN = 2;
+
     /**
      * Creates a new device view
      * @param context Context
@@ -116,6 +120,28 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             ((TextView)this.findViewById(R.id.theDeviceOrb)).setText("?");
         } else {
             ((TextView)this.findViewById(R.id.theDeviceOrb)).setText(getDeviceType());
+        }
+    }
+
+    public void setDeviceStatus(int deviceStatus){
+        TextView statusOrb = (TextView)findViewById(R.id.theStatusOrb);
+        switch (deviceStatus){
+            case DEVICE_STATUS_OK:
+                statusOrb.setText(getResources().getText(R.string.ok_check));
+                statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
+                break;
+            case DEVICE_STATUS_FAILURE:
+                statusOrb.setText(getResources().getText(R.string.fail_check));
+                statusOrb.setBackground(getResources().getDrawable(R.drawable.status_failure_background));
+                break;
+            case DEVICE_STATUS_UNKNOWN:
+                statusOrb.setText(getResources().getText(R.string.unkown_check));
+                statusOrb.setBackground(getResources().getDrawable(R.drawable.status_unkown_background));
+                break;
+            default:
+                statusOrb.setText(getResources().getText(R.string.unkown_check));
+                statusOrb.setBackground(getResources().getDrawable(R.drawable.status_unkown_background));
+                break;
         }
     }
 

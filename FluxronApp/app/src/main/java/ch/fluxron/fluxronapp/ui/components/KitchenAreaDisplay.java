@@ -206,7 +206,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
                         invalidate();
                     }
                     return true;
-
                 }
         });
     }
@@ -254,6 +253,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         deviceRenderer.setDeviceAddress(d.getDeviceId());
         deviceRenderer.setDeviceType(d.getCategory());
         deviceRenderer.setDeviceName(d.getName());
+        deviceRenderer.setDeviceStatus(DeviceView.DEVICE_STATUS_UNKNOWN);
         deviceRenderer.setPosition(d);
         deviceRenderer.setListener(this);
         return deviceRenderer;
@@ -311,15 +311,21 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         editMode = edit;
     }
 
+    public void setDevicePosition(DevicePosition devicePosition){
+        setDevicePosition(devicePosition, DeviceView.DEVICE_STATUS_UNKNOWN);
+    }
+
     /**
      * Adds or changes the position of a device
      * @param devicePosition Position of a device
      */
-    public void setDevicePosition(DevicePosition devicePosition) {
+    public void setDevicePosition(DevicePosition devicePosition, int status) {
         // Find the view with the changed position
         DevicePosition found = null;
         for(DeviceView deviceView : views) {
             if(deviceView.getPosition().getDeviceId().equals(devicePosition.getDeviceId())) {
+                deviceView.setDeviceStatus(status);
+                deviceView.setDeviceType(devicePosition.getCategory());
                 found = deviceView.getPosition();
                 break;
             }
@@ -329,10 +335,12 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         // otherwise we'll need to create a new one
         if (found!=null) {
             found.setPosition(devicePosition.getPosition());
+            found.setCategory(devicePosition.getCategory());
             needsRepaint(false);
         }
         else {
             DeviceView deviceRenderer = createDeviceView(devicePosition);
+            deviceRenderer.setDeviceStatus(status);
             deviceRenderer.popUp();
             views.add(deviceRenderer);
             needsRepaint(true);

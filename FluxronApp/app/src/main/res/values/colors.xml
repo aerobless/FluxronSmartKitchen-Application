@@ -17,6 +17,7 @@
     <!-- Error, Warning, OK -->
     <color name="errorColor"        >#d32f2f</color>
     <color name="warningColor"      >#fbc02d</color>
+    <color name="unknownColor"      >#dddddd</color>
     <color name="okColor"           >#689f38</color>
 
     <!-- Temperature Bar -->

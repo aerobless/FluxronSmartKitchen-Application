@@ -8,14 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenAreaLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenArea;
+import ch.fluxron.fluxronapp.objectBase.Device;
+import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
+import ch.fluxron.fluxronapp.ui.components.DeviceView;
 import ch.fluxron.fluxronapp.ui.components.KitchenAreaDisplay;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -118,6 +124,19 @@ public class AreaDetailFragment extends Fragment {
             display.setDevicePosition(msg.getPosition());
         }
     }
+
+    public void onEventMainThread(DeviceChanged msg){
+        Device device = msg.getDevice();
+        List<DevicePosition> positionList = kitchenArea.getDevicePositionList();
+        for(DevicePosition pos:positionList){
+            if(device.getAddress().equals(pos.getDeviceId())){
+                pos.setCategory(device.getDeviceType());
+                display.setDevicePosition(pos, DeviceView.DEVICE_STATUS_OK);
+            }
+        }
+    }
+
+    //TODO: update when failure
 
     public void setKitchenArea(KitchenArea kitchenArea) {
         this.kitchenArea = kitchenArea;
