@@ -152,7 +152,7 @@ public class Bluetooth {
         try {
             sendData(cmd.getAddress(), message, cmd);
         } catch (IOException e) {
-            BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure();
+            BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure(BluetoothConnectionFailure.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
             connectionFailure.setConnectionId(cmd);
             provider.getDalEventBus().post(connectionFailure);
         }
@@ -170,7 +170,7 @@ public class Bluetooth {
             try {
                 sendData(cmd.getAddress(), message, cmd);
             } catch (IOException e) {
-                BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure();
+                BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure(BluetoothConnectionFailure.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
                 connectionFailure.setConnectionId(cmd);
                 provider.getDalEventBus().post(connectionFailure);
                 Log.d("Fluxron", "Connection Failure sent");

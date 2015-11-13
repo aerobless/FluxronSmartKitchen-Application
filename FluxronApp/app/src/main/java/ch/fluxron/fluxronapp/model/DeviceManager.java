@@ -8,6 +8,7 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -15,6 +16,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceFailed;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
@@ -130,6 +132,14 @@ public class DeviceManager {
         readRequest.addParam(inputCmd.getParamID());
         readRequest.setConnectionId(inputCmd);
         provider.getDalEventBus().post(readRequest);
+    }
+
+    /**
+     * Forwards device failures to the UI.
+     * @param inputMsg
+     */
+    public void onEventAsync(BluetoothConnectionFailure inputMsg){
+        provider.getUiEventBus().post(new DeviceFailed(inputMsg.getAddress()));
     }
 
     /**

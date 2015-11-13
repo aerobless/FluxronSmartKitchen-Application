@@ -3,13 +3,13 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceFailed;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -56,18 +56,27 @@ public class DeviceActivity extends FluxronBaseActivity {
         finish();
     }
 
-    public void onSampleText(View btn){
-        //TemperatureBar tb = (TemperatureBar) findViewById(R.id.barTemp);
-        //tb.setMinMax(0,0);
-    }
-
     /**
-     * Sets the full name instead of just the type in the header.
+     * Sets the status of the device to OK whenever it receives a DeviceChange message.
      * @param inputMsg
      */
     public void onEventMainThread(DeviceChanged inputMsg){
         if(inputMsg.getDevice().getAddress().equals(address)){
-            ((TextView)findViewById(R.id.statusOrb)).setText(R.string.ok_check);
+            TextView statusOrb = (TextView)findViewById(R.id.statusOrb);
+            statusOrb.setText(R.string.ok_check);
+            statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
+        }
+    }
+
+    /**
+     * Sets the status of the device to failure whenever it receives a DeviceFailed message.
+     * @param inputMsg
+     */
+    public void onEventMainThread(DeviceFailed inputMsg){
+        if(inputMsg.getAddress().equals(address)){
+            TextView statusOrb = (TextView)findViewById(R.id.statusOrb);
+            statusOrb.setText(R.string.fail_check);
+            statusOrb.setBackground(getResources().getDrawable(R.drawable.status_failure_background));
         }
     }
 }

@@ -168,10 +168,8 @@ public class CyclicRefresh {
      * @param inputMsg
      */
     public void onEventAsync(BluetoothConnectionFailure inputMsg){
-        Log.d("FLUXRON","RECEIVED connection failure");
         String connectionID = inputMsg.getConnectionId();
         if(connectionID.equals(currentConnection)){
-            Log.d("FLUXRON","skipping to next");
             skipToNext();
         }
     }

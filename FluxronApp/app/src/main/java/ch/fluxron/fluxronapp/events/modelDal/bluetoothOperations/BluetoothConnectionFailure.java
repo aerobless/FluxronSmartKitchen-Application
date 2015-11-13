@@ -10,11 +10,11 @@ public class BluetoothConnectionFailure extends RequestResponseConnection{
         GENERIC_CONECTION_FAILURE, DEVICE_NOT_FOUND, DEVICE_FOUND_UNABLE_TO_CONNECT
     }
     FailureType failuretype = FailureType.GENERIC_CONECTION_FAILURE;
+    String address;
 
-    public BluetoothConnectionFailure() {}
-
-    public BluetoothConnectionFailure(FailureType failuretype) {
+    public BluetoothConnectionFailure(FailureType failuretype, String address) {
         this.failuretype = failuretype;
+        this.address = address;
     }
 
     public FailureType getFailuretype() {
@@ -23,5 +23,13 @@ public class BluetoothConnectionFailure extends RequestResponseConnection{
 
     public void setFailuretype(FailureType failuretype) {
         this.failuretype = failuretype;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
