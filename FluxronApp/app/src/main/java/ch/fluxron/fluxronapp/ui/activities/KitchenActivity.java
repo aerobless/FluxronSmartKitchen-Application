@@ -186,10 +186,10 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
         // Send all the devices contained in this kitchen to the device manager
         List<KitchenArea> kitchenAreas = msg.getKitchen().getAreaList();
-        Set<String> devices = new HashSet<String>();
+        Set<DevicePosition> devices = new HashSet<>();
         for(KitchenArea area:kitchenAreas){
             for(DevicePosition dp:area.getDevicePositionList()){
-                devices.add(dp.getDeviceId());
+                devices.add(dp);
             }
         }
         InjectDevicesCommand idf = new InjectDevicesCommand(devices);

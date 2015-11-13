@@ -22,6 +22,7 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestC
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
+import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 
 /**
  * Manages & caches bluetooth devices.
@@ -48,9 +49,9 @@ public class DeviceManager {
     public void onEventAsync(InjectDevicesCommand cmd){
         synchronized (deviceCache){
             deviceCache.evictAll();
-            for(String d:cmd.getDeviceList()){
-                if(deviceCache.get(d) == null){
-                    deviceCache.put(d, new Device("Unkown", d, false));
+            for(DevicePosition d:cmd.getDeviceList()){
+                if(deviceCache.get(d.getDeviceId()) == null){
+                    deviceCache.put(d.getDeviceId(), new Device(d.getName(), d.getDeviceId(), false));
                 }
             }
         }

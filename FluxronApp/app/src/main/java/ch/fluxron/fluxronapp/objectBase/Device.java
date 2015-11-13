@@ -27,8 +27,7 @@ public class Device {
     @JsonProperty("_id")
     String address;
 
-    public Device() {
-    }
+    public Device() {}
 
     public Device(String name, String address, boolean bonded) {
         this.name = name;
