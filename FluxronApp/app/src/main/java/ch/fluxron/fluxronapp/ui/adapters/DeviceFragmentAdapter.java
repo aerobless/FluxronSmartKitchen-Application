@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.ui.fragments.DeviceConfigFragment;
+import ch.fluxron.fluxronapp.ui.fragments.DeviceErrorFragment;
 import ch.fluxron.fluxronapp.ui.fragments.DeviceHistoryFragment;
 import ch.fluxron.fluxronapp.ui.fragments.DeviceStatusFragment;
 import ch.fluxron.fluxronapp.ui.fragments.SimpleTextFragment;
@@ -35,6 +36,10 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
                 DeviceHistoryFragment history = new DeviceHistoryFragment();
                 history.setDeviceAddress(address);
                 return history;
+            case 2:
+                DeviceErrorFragment errors = new DeviceErrorFragment ();
+                errors.setDeviceAddress(address);
+                return errors;
             case 3:
                 DeviceConfigFragment dgf = new DeviceConfigFragment();
                 dgf.setDeviceAddress(address);

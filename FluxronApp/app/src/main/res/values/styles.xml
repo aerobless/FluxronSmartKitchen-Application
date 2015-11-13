@@ -95,4 +95,24 @@
         <item name="android:layout_width">55dp</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
+    <style name="FluxronErrorCode" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/errorColor</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginRight">12dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">55dp</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="FluxronErrorDescription" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/contentForeground</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_width">55dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
 </resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+        <TextView
+            android:id="@+id/errorCode"
+            android:text="E03"
+            style="@style/FluxronErrorCode"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/errorDescription"
+                style="@style/FluxronErrorDescription"
+                android:text="Device temperature above 80°"/>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/errorSince"
+                android:text="213d 12:03:15 ago"
+                />
+        </LinearLayout>
+</merge>
