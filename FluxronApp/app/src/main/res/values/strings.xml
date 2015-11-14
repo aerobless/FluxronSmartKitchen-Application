@@ -39,4 +39,26 @@
     <string name="history_uptime">Uptime</string>
     <string name="history_heatsink">Heatsink Temperature</string>
     <string name="history_glass">Glass Temperature</string>
+
+    <!-- ErrorCodes -->
+    <string name="error_description_prefix">error_description_</string>
+    <string name="error_description_e01">No pan detected</string>
+    <string name="error_description_e02">Coil current limit exceeded</string>
+    <string name="error_description_e03">Device temperature limit exceeded</string>
+    <string name="error_description_e04">Empty pan protection activated</string>
+    <string name="error_description_e05">Knob malfunction</string>
+    <string name="error_description_e06">Maximum usage hours exceeded</string>
+    <string name="error_description_e07">IGBT temperature sensor error</string>
+    <string name="error_description_e08">Device temperature too high</string>
+    <string name="error_description_e09">Cooktop temperature too high</string>
+    <string name="error_description_e10">Input voltage too low</string>
+    <string name="error_description_e11">Communication error</string>
+    <string name="error_description_e12">Cooktop temperature too high</string>
+    <string name="error_description_e13">Temperature sensor error</string>
+    <string name="error_description_e14">Contact the device manufacturer</string>
+    <string name="error_description_e15">Cooktop interference</string>
+    <string name="error_description_e16">Contact the device manufacturer</string>
+    <string name="error_description_e17">Power management error</string>
+    <string name="error_description_e18">Contact the device manufacturer</string>
+    <string name="error_description_e19">Generator to coil cable error</string>
 </resources>

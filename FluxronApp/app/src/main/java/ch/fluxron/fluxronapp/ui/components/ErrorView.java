@@ -65,6 +65,38 @@ public class ErrorView extends LinearLayout {
     }
 
     public void setValue(String value) {
-        this.errorCode.setText(value);
+        String code = getErrorCodeFromValue(value);
+        String counter = getCounterFromValue(value);
+        this.errorCode.setText(code);
+        this.errorDescription.setText(getErrorDescriptionFromCode(code));
+        this.errorSince.setText(counter);
+    }
+
+    /**
+     * Gets the error code part from a parameter value
+     * @param value Value
+     * @return Error code
+     */
+    private String getErrorCodeFromValue(String value) {
+        return value;
+    }
+
+    /**
+     * Gets the counter from an error parameter value
+     * @param value Value
+     * @return Usage counter
+     */
+    private String getCounterFromValue(String value) {
+        return value;
+    }
+
+    /**
+     * Maps an error code to a resource id
+     * @param code Error Code
+     * @return Resource id
+     */
+    private int getErrorDescriptionFromCode(String code) {
+        String prefix = getResources().getString(R.string.error_description_prefix);
+        return getResources().getIdentifier(prefix + code, "string", getContext().getPackageName());
     }
 }

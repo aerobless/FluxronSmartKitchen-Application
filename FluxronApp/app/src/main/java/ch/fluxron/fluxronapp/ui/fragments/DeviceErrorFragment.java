@@ -9,11 +9,13 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.ui.components.ErrorView;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class DeviceErrorFragment extends Fragment {
     IEventBusProvider provider;
     String deviceAddress;
+    ErrorView[] errorViews;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,13 @@ public class DeviceErrorFragment extends Fragment {
         View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_errors, container, false);
         provider = (IEventBusProvider)getContext().getApplicationContext();
 
+        ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);
+        errorViews = new ErrorView[list.getChildCount()];
+
+        for(int i = 0; i < errorViews.length; i++){
+            errorViews[i] = (ErrorView)list.getChildAt(i);
+        }
+
         return deviceView;
     }
 
@@ -52,7 +61,9 @@ public class DeviceErrorFragment extends Fragment {
 
     public void onEventMainThread(DeviceChanged inputMsg){
         if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
-            // TODO: DO THIS PROPERLY :)
+            for(ErrorView er :  errorViews){
+                er.handleDeviceChanged(inputMsg);
+            }
         }
     }
 }
