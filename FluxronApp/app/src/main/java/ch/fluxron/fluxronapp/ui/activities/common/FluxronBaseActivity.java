@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 /**
@@ -22,7 +23,7 @@ public class FluxronBaseActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
         busProvider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplication();
     }
 
