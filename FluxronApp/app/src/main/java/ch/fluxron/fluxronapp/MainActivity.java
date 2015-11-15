@@ -55,6 +55,12 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         kitchenListView.setLayoutManager(layoutManager);
 
+        RecyclerView.ItemAnimator animator = kitchenListView.getItemAnimator();
+        animator.setAddDuration(250);
+        animator.setChangeDuration(250);
+        animator.setMoveDuration(250);
+        animator.setRemoveDuration(250);
+
         listAdapter = new KitchenListAdapter(this, this.busProvider);
         kitchenListView.setAdapter(listAdapter);
     }

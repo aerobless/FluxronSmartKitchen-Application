@@ -156,7 +156,17 @@ public class KitchenManager {
             float aspect = (float)loadedImage.getWidth() / (float)loadedImage.getHeight();
             float newHeight = 1;
             float newWidth = 1;
-            if (imageSize.x < imageSize.y && imageSize.x > 0) {
+            if (imageSize.x > 0 && imageSize.y > 0) {
+                if (imageSize.x < imageSize.y) {
+                    newWidth = imageSize.x;
+                    newHeight = newWidth / aspect;
+                }
+                else {
+                    newHeight = imageSize.y;
+                    newWidth = newHeight * aspect;
+                }
+            }
+            else if (imageSize.x > 0) {
                 newWidth = imageSize.x;
                 newHeight = newWidth / aspect;
             }

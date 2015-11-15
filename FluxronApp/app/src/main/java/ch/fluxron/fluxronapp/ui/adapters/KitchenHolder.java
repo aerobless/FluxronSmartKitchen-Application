@@ -47,7 +47,7 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
 
     public void onEventMainThread(ImageLoaded msg){
         if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
-            img.setImageBitmap(Bitmap.createScaledBitmap(msg.getBmp(), img.getWidth(), img.getHeight(), false));
+            img.setImageBitmap(msg.getBmp());
         }
     }
 
@@ -70,7 +70,7 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
      */
     private void loadImage(Kitchen k) {
         LoadImageFromKitchenCommand command = new LoadImageFromKitchenCommand(k.getId(), "mainPicture");
-        command.setImageSize(new Point(img.getWidth(), img.getHeight()));
+        command.setImageSize(new Point(img.getWidth(), 0));
         imageRequestId = command.getConnectionId();
         provider.getUiEventBus().post(command);
     }
