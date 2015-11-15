@@ -45,7 +45,10 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_settings"
                         android:onClick="onSettingsButtonClicked"
-                        android:id="@+id/settingsButton"/>
+                        android:id="@+id/settingsButton"
+                        android:animateLayoutChanges="true"
+                        android:alpha="0"
+                        android:visibility="gone"/>
 
                     <ImageButton
                         style="@style/FluxronImageButton"
@@ -54,7 +57,10 @@
                         android:src="@drawable/ic_build"
                         android:onClick="onEditButtonClicked"
                         android:id="@+id/editViewButton"
-                        android:layout_marginStart="12dp"/>
+                        android:layout_marginStart="12dp"
+                        android:animateLayoutChanges="true"
+                        android:alpha="0"
+                        android:visibility="gone"/>
 
                     <ImageButton
                         style="@style/FluxronImageButton"
@@ -62,7 +68,8 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_delete"
                         android:onClick="onDeleteButtonClicked"
-                        android:layout_marginStart="12dp" />
+                        android:layout_marginStart="12dp"
+                        android:animateLayoutChanges="true"/>
                 </LinearLayout>
             </FrameLayout>
 

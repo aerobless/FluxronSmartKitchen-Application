@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  */
 public class FluxronBaseActivity extends AppCompatActivity{
     protected IEventBusProvider busProvider;
+    private static int ANIMATE_OUT_MILLISECONDS = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,5 +90,19 @@ public class FluxronBaseActivity extends AppCompatActivity{
 
     public IEventBusProvider getBusProvider() {
         return busProvider;
+    }
+
+    public void animateFadeOut(final View v, final boolean setVisibility){
+        v.animate().alpha(0).setDuration(ANIMATE_OUT_MILLISECONDS).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                if (setVisibility) v.setVisibility(View.GONE);
+            }
+        }).start();
+    }
+
+    public void animateFadeIn(final View v, final boolean setVisibility){
+        if(setVisibility) v.setVisibility(View.VISIBLE);
+        v.animate().alpha(1).setDuration(ANIMATE_OUT_MILLISECONDS).start();
     }
 }

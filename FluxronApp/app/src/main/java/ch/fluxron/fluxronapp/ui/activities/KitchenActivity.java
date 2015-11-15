@@ -305,10 +305,10 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      */
     private void animateEditButton(boolean visible) {
         if(visible){
-            findViewById(R.id.editViewButton).setVisibility(View.VISIBLE);
-        }else
-        {
-            findViewById(R.id.editViewButton).setVisibility(View.GONE);
+            animateFadeIn(findViewById(R.id.editViewButton), true);
+        }
+        else {
+            animateFadeOut(findViewById(R.id.editViewButton), true);
         }
     }
 
@@ -318,10 +318,10 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      */
     private void animateSettingsIcon(boolean visible) {
         if(visible){
-            findViewById(R.id.settingsButton).setVisibility(View.VISIBLE);
-        }else
-        {
-            findViewById(R.id.settingsButton).setVisibility(View.GONE);
+            animateFadeIn(findViewById(R.id.settingsButton), true);
+        }
+        else {
+            animateFadeOut(findViewById(R.id.settingsButton), true);
         }
     }
 
