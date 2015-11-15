@@ -78,8 +78,8 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
         // Set the fragment for the area list
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.kitchenArea, fragment);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.replace(R.id.kitchenArea, fragment);
+        ft.setCustomAnimations(R.anim.activity_in, R.anim.activity_out);
         ft.commit();
     }
 

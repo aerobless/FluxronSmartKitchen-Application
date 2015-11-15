@@ -60,6 +60,7 @@ public class ListBubbleControl extends LinearLayout{
         while(this.getChildCount() < numberOfBubbles) {
             LayoutParams p = new LayoutParams(MARGIN_SPACE, MARGIN_SPACE);
             p.setMargins(MARGIN_SPACE / 2, 0, MARGIN_SPACE / 2, 0);
+            p.gravity = Gravity.CENTER_VERTICAL;
 
             View v = new View(getContext());
             v.setBackgroundColor(normalColor);
