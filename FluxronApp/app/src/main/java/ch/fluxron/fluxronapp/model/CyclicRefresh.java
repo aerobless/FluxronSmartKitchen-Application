@@ -17,6 +17,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
+import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 
 /**
  * Used to iterate through all registered devices and refresh their parameters.
@@ -71,7 +72,7 @@ public class CyclicRefresh {
     }
 
     private void postRequest(String device) {
-        RequestResponseConnection req = new BluetoothReadRequest(device, listOfInterestingParameters);
+        BluetoothReadRequest req = new BluetoothReadRequest(device, listOfInterestingParameters);
         synchronized (lock){
             while(!doNext.get()){
                 try {

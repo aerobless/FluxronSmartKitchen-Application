@@ -9,7 +9,7 @@ public class RegisterParameterCommand extends RequestResponseConnection {
     String parameter;
 
     public RegisterParameterCommand(String parameter) {
-        this.parameter = parameter;
+        setParameter(parameter);
     }
 
     public String getParameter() {
@@ -17,6 +17,10 @@ public class RegisterParameterCommand extends RequestResponseConnection {
     }
 
     public void setParameter(String parameter) {
-        this.parameter = parameter;
+        if(parameter != null){
+            this.parameter = parameter;
+        } else{
+            throw new IllegalArgumentException("Null is not allowed.");
+        }
     }
 }

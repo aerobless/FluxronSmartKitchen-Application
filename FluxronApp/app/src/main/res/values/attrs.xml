@@ -5,7 +5,7 @@
         <attr name="paramDisplayText" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="ErrorViewView">
+    <declare-styleable name="ErrorView">
         <attr name="errorParamName" format="string"/>
     </declare-styleable>
 

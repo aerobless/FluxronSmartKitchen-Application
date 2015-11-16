@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
@@ -36,8 +35,8 @@ public class ErrorView extends LinearLayout {
 
         manager = new ParamManager();
 
-        arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterView);
-        parameter = arguments.getString(R.styleable.ErrorViewView_errorParamName);
+        arguments = context.obtainStyledAttributes(attrs, R.styleable.ErrorView);
+        parameter = arguments.getString(R.styleable.ErrorView_errorParamName);
 
         errorCode = (TextView) this.findViewById(R.id.errorCode);
         errorDescription = (TextView) this.findViewById(R.id.errorDescription);
