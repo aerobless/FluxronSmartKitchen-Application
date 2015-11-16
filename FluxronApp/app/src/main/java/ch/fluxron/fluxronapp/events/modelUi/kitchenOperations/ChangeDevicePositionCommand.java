@@ -7,13 +7,13 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Request the storage of a changed device position
  */
-public class ChangeDevicePosition extends RequestResponseConnection {
+public class ChangeDevicePositionCommand extends RequestResponseConnection {
     private Point pos;
     private String deviceId;
     private String kitchenId;
     private int areaId;
 
-    public ChangeDevicePosition(Point pos, String kitchenId, int areaID, String deviceId) {
+    public ChangeDevicePositionCommand(Point pos, String kitchenId, int areaID, String deviceId) {
         this.pos = pos;
         this.deviceId = deviceId;
         this.areaId = areaID;

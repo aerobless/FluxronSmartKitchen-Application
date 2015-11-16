@@ -18,10 +18,10 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.base.ResponseOK;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachmentCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
@@ -91,7 +91,7 @@ public class LocalDatabase {
      * Triggered when prompted to provide an attachment's stream
      * @param cmd Command message
      */
-    public void onEventAsync(final GetFileStreamFromAttachment cmd) {
+    public void onEventAsync(final GetFileStreamFromAttachmentCommand cmd) {
         final Document doc = database.getExistingDocument(cmd.getObjectId());
         if(doc != null) {
             cmd.notifyCompletion(new IStreamProvider() {
@@ -107,7 +107,7 @@ public class LocalDatabase {
      * Triggered when attaching an image to an object
      * @param cmd Command
      */
-    public void onEventAsync(AttachFileToObjectById cmd) {
+    public void onEventAsync(AttachFileToObjectByIdCommand cmd) {
         Document doc = database.getExistingDocument(cmd.getDocumentId());
         if(doc != null) {
             documents.attachFileToDocument(doc, cmd.getFileUri(), cmd.getAttachmentName(), resolver.getType(cmd.getFileUri()));
@@ -123,7 +123,7 @@ public class LocalDatabase {
      * Triggered when an object should be deleted by id.
      * @param cmd Command
      */
-    public void onEventAsync(DeleteObjectById cmd) {
+    public void onEventAsync(DeleteObjectByIdCommand cmd) {
         documents.deleteDocument(database.getExistingDocument(cmd.getId()));
     }
 

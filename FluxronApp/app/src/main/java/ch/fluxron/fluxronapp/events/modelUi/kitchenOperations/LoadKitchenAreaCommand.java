@@ -5,11 +5,11 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Loads a kitchen area
  */
-public class LoadKitchenArea extends RequestResponseConnection {
+public class LoadKitchenAreaCommand extends RequestResponseConnection {
     private String kitchenId;
     private int relativeId;
 
-    public LoadKitchenArea(String kitchenId, int relativeId) {
+    public LoadKitchenAreaCommand(String kitchenId, int relativeId) {
         this.kitchenId = kitchenId;
         this.relativeId = relativeId;
     }

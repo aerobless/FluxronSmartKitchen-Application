@@ -8,7 +8,7 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -139,7 +139,7 @@ public class DeviceManager {
      * Forwards device failures to the UI.
      * @param inputMsg
      */
-    public void onEventAsync(BluetoothConnectionFailure inputMsg){
+    public void onEventAsync(BluetoothConnectionFailed inputMsg){
         provider.getUiEventBus().post(new DeviceFailed(inputMsg.getAddress()));
     }
 

@@ -8,7 +8,7 @@ import ch.fluxron.fluxronapp.events.base.SynchronousReplyEvent;
 /**
  * Requests the stream of an Object
  */
-public class GetFileStreamFromAttachment extends SynchronousReplyEvent<IStreamProvider> {
+public class GetFileStreamFromAttachmentCommand extends SynchronousReplyEvent<IStreamProvider> {
     private String objectId;
     private String attachmentName;
 
@@ -17,7 +17,7 @@ public class GetFileStreamFromAttachment extends SynchronousReplyEvent<IStreamPr
      * @param objectId Id of the object the file is attached to
      * @param attachmentName Name of the attached file
      */
-    public GetFileStreamFromAttachment(String objectId, String attachmentName, ITypedCallback<IStreamProvider> callback) {
+    public GetFileStreamFromAttachmentCommand(String objectId, String attachmentName, ITypedCallback<IStreamProvider> callback) {
         super(callback);
         this.objectId = objectId;
         this.attachmentName = attachmentName;

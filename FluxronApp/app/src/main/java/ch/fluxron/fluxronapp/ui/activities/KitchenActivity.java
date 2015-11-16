@@ -19,10 +19,10 @@ import java.util.Set;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromArea;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePositionCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceDeletedFromArea;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceFromAreaDeleted;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
@@ -200,7 +200,7 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      * Occurs when a device was removed from an area
      * @param msg Event
      */
-    public void onEventMainThread(DeviceDeletedFromArea msg) {
+    public void onEventMainThread(DeviceFromAreaDeleted msg) {
         if (currentArea!= null && currentArea.getKitchenId().equals(msg.getKitchenId()) && currentArea.getRelativeId() == msg.getAreaId()){
             Fragment f = getFragmentManager().findFragmentById(R.id.kitchenArea);
             if (f instanceof AreaDetailFragment) {
@@ -428,14 +428,14 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     @Override
     public void devicePositionChanged(KitchenArea area, String deviceId, int x, int y) {
         // Send a message to the business logic that the device should be moved
-        ChangeDevicePosition command = new ChangeDevicePosition(new Point(x,y), area.getKitchenId(), area.getRelativeId(), deviceId);
+        ChangeDevicePositionCommand command = new ChangeDevicePositionCommand(new Point(x,y), area.getKitchenId(), area.getRelativeId(), deviceId);
         postMessage(command);
     }
 
     @Override
     public void deviceDeleted(KitchenArea area, String deviceId) {
         // Device should be removed from the kitchen area
-        DeleteDeviceFromArea command = new DeleteDeviceFromArea(area.getKitchenId(), area.getRelativeId(), deviceId);
+        DeleteDeviceFromAreaCommand command = new DeleteDeviceFromAreaCommand(area.getKitchenId(), area.getRelativeId(), deviceId);
         postMessage(command);
     }
 }

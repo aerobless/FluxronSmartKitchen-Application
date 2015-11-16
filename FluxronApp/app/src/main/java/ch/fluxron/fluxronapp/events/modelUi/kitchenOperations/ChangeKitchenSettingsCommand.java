@@ -6,7 +6,7 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 /**
  * Sends a command to save a kitchen
  */
-public class ChangeKitchenSettings extends RequestResponseConnection {
+public class ChangeKitchenSettingsCommand extends RequestResponseConnection {
     private String kitchenId;
     private String kitchenName;
     private String kitchenDescription;
@@ -17,7 +17,7 @@ public class ChangeKitchenSettings extends RequestResponseConnection {
      * @param kitchenName Name of the kitchen
      * @param kitchenDescription Description of the kitchen
      */
-    public ChangeKitchenSettings(String kitchenId, String kitchenName, String kitchenDescription) {
+    public ChangeKitchenSettingsCommand(String kitchenId, String kitchenName, String kitchenDescription) {
         this.kitchenId = kitchenId;
         this.kitchenName = kitchenName;
         this.kitchenDescription = kitchenDescription;

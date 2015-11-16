@@ -10,14 +10,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
-import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 
 /**
  * Used to iterate through all registered devices and refresh their parameters.
@@ -168,7 +166,7 @@ public class CyclicRefresh {
      * Skips the current device. It will be automatically retried in the next cycle.
      * @param inputMsg
      */
-    public void onEventAsync(BluetoothConnectionFailure inputMsg){
+    public void onEventAsync(BluetoothConnectionFailed inputMsg){
         String connectionID = inputMsg.getConnectionId();
         if(connectionID.equals(currentConnection)){
             skipToNext();

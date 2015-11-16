@@ -5,15 +5,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.util.Log;
 
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.base.ResponseOK;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectById;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachment;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachmentCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
@@ -22,18 +21,18 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePosition;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettings;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePositionCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettingsCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromArea;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceDeletedFromArea;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceFromAreaDeleted;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenAreaLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenArea;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
@@ -76,7 +75,7 @@ public class KitchenManager {
      * @param msg Message containing the image path
      */
     public void onEventAsync(AttachImageToKitchenCommand msg) {
-        AttachFileToObjectById cmd = new AttachFileToObjectById(msg.getId(), msg.getImagePath(), "mainPicture");
+        AttachFileToObjectByIdCommand cmd = new AttachFileToObjectByIdCommand(msg.getId(), msg.getImagePath(), "mainPicture");
         cmd.setConnectionId(msg);
         provider.getDalEventBus().post(cmd);
     }
@@ -102,7 +101,7 @@ public class KitchenManager {
             return;
         }
 
-        GetFileStreamFromAttachment cmd = new GetFileStreamFromAttachment(msg.getKitchenId(), msg.getImageName(), new ITypedCallback<IStreamProvider>() {
+        GetFileStreamFromAttachmentCommand cmd = new GetFileStreamFromAttachmentCommand(msg.getKitchenId(), msg.getImageName(), new ITypedCallback<IStreamProvider>() {
             @Override
             public void call(IStreamProvider streamProvider) {
                 Bitmap bmp = getFittingBitmap(streamProvider, msg.getImageSize());
@@ -237,7 +236,7 @@ public class KitchenManager {
      * @param msg Message containing the kitchen id
      */
     public void onEventAsync(DeleteKitchenCommand msg) {
-        DeleteObjectById delete = new DeleteObjectById(msg.getId());
+        DeleteObjectByIdCommand delete = new DeleteObjectByIdCommand(msg.getId());
         delete.setConnectionId(msg);
         provider.getDalEventBus().post(delete);
     }
@@ -286,7 +285,7 @@ public class KitchenManager {
         saveCommand.setData(k);
 
         // Command for file attachment
-        final AttachFileToObjectById attachCommand = new AttachFileToObjectById(kitchenId, imageName, storedImageName);
+        final AttachFileToObjectByIdCommand attachCommand = new AttachFileToObjectByIdCommand(kitchenId, imageName, storedImageName);
 
         // Command for notifying the UI
         final KitchenLoaded change = new KitchenLoaded(k);
@@ -351,7 +350,7 @@ public class KitchenManager {
      * Triggered when a device should be added to an area
      * @param msg command
      */
-    public void onEventAsync(final ChangeDevicePosition msg){
+    public void onEventAsync(final ChangeDevicePositionCommand msg){
         // Load the kitchen and attach the device to the area
         GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
             @Override
@@ -369,7 +368,7 @@ public class KitchenManager {
      * Triggered when a kitchens settings should be changed
      * @param msg command
      */
-    public void onEventAsync(final ChangeKitchenSettings msg){
+    public void onEventAsync(final ChangeKitchenSettingsCommand msg){
         // Load the kitchen and attach the device to the area
         GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
             @Override
@@ -387,7 +386,7 @@ public class KitchenManager {
      * Triggered when a device should be deleted
      * @param msg command
      */
-    public void onEventAsync(final DeleteDeviceFromArea msg){
+    public void onEventAsync(final DeleteDeviceFromAreaCommand msg){
         // Load the kitchen and attach the device to the area
         GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
             @Override
@@ -400,7 +399,7 @@ public class KitchenManager {
         this.provider.getDalEventBus().post(getOp);
     }
 
-    private void deleteDevice(Kitchen kitchen, DeleteDeviceFromArea msg) {
+    private void deleteDevice(Kitchen kitchen, DeleteDeviceFromAreaCommand msg) {
         // Find the area
         KitchenArea foundArea = null;
         for(KitchenArea a : kitchen.getAreaList()){
@@ -431,7 +430,7 @@ public class KitchenManager {
             provider.getDalEventBus().post(saveCommand);
 
             // Notify the deletion
-            DeviceDeletedFromArea event = new DeviceDeletedFromArea(msg.getKitchenId(), msg.getAreaId(), msg.getDeviceId());
+            DeviceFromAreaDeleted event = new DeviceFromAreaDeleted(msg.getKitchenId(), msg.getAreaId(), msg.getDeviceId());
             provider.getUiEventBus().post(event);
         }
     }
@@ -441,7 +440,7 @@ public class KitchenManager {
      * @param value kitchen
      * @param msg message
      */
-    private void changeKitchenSettings(Kitchen value, ChangeKitchenSettings msg) {
+    private void changeKitchenSettings(Kitchen value, ChangeKitchenSettingsCommand msg) {
         value.setName(msg.getKitchenName());
         value.setDescription(msg.getKitchenDescription());
 
@@ -456,7 +455,7 @@ public class KitchenManager {
      * Changes the device position according to the message
      * @param msg Message
      */
-    private void moveDevicePosition(Kitchen kitchen, ChangeDevicePosition msg) {
+    private void moveDevicePosition(Kitchen kitchen, ChangeDevicePositionCommand msg) {
         // Find the area
         KitchenArea foundArea = null;
         for(KitchenArea a : kitchen.getAreaList()){
@@ -497,7 +496,7 @@ public class KitchenManager {
      * Triggered when an area should be loaded
      * @param msg command
      */
-    public void onEventAsync(final LoadKitchenArea msg){
+    public void onEventAsync(final LoadKitchenAreaCommand msg){
         // Load the kitchen and attach the device to the area
         GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
             @Override
@@ -510,7 +509,7 @@ public class KitchenManager {
         this.provider.getDalEventBus().post(getOp);
     }
 
-    private void loadArea(Kitchen kitchen, LoadKitchenArea msg) {
+    private void loadArea(Kitchen kitchen, LoadKitchenAreaCommand msg) {
         // Find the area
         KitchenArea found = null;
         for(KitchenArea a : kitchen.getAreaList()){

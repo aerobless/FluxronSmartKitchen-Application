@@ -5,14 +5,14 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Used to communicate a connection failure to the DeviceManager.
  */
-public class BluetoothConnectionFailure extends RequestResponseConnection{
+public class BluetoothConnectionFailed extends RequestResponseConnection{
     public enum FailureType{
         GENERIC_CONECTION_FAILURE, DEVICE_NOT_FOUND, DEVICE_FOUND_UNABLE_TO_CONNECT
     }
     FailureType failuretype = FailureType.GENERIC_CONECTION_FAILURE;
     String address;
 
-    public BluetoothConnectionFailure(FailureType failuretype, String address) {
+    public BluetoothConnectionFailed(FailureType failuretype, String address) {
         this.failuretype = failuretype;
         this.address = address;
     }

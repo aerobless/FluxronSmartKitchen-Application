@@ -5,7 +5,7 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Requests the deletion of a device from an area
  */
-public class DeleteDeviceFromArea extends RequestResponseConnection {
+public class DeleteDeviceFromAreaCommand extends RequestResponseConnection {
     private String kitchenId;
     private int areaId;
     private String deviceId;
@@ -16,7 +16,7 @@ public class DeleteDeviceFromArea extends RequestResponseConnection {
      * @param areaId Id of the area relative to the kitchen
      * @param deviceId Id of the device
      */
-    public DeleteDeviceFromArea(String kitchenId, int areaId, String deviceId) {
+    public DeleteDeviceFromAreaCommand(String kitchenId, int areaId, String deviceId) {
         this.kitchenId = kitchenId;
         this.areaId = areaId;
         this.deviceId = deviceId;

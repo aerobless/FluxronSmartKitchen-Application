@@ -13,14 +13,12 @@ import android.util.LruCache;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
@@ -161,7 +159,7 @@ public class Bluetooth {
         try {
             sendData(cmd.getAddress(), message, cmd);
         } catch (IOException e) {
-            BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure(BluetoothConnectionFailure.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
+            BluetoothConnectionFailed connectionFailure = new BluetoothConnectionFailed(BluetoothConnectionFailed.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
             connectionFailure.setConnectionId(cmd);
             provider.getDalEventBus().post(connectionFailure);
         }
@@ -179,7 +177,7 @@ public class Bluetooth {
             try {
                 sendData(cmd.getAddress(), message, cmd);
             } catch (IOException e) {
-                BluetoothConnectionFailure connectionFailure = new BluetoothConnectionFailure(BluetoothConnectionFailure.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
+                BluetoothConnectionFailed connectionFailure = new BluetoothConnectionFailed(BluetoothConnectionFailed.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
                 connectionFailure.setConnectionId(cmd);
                 provider.getDalEventBus().post(connectionFailure);
                 Log.d("Fluxron", "Connection Failure sent");

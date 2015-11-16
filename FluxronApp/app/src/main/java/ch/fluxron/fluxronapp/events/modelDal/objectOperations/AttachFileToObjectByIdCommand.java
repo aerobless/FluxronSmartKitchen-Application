@@ -9,12 +9,12 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Requests the storage of a file's content
  */
-public class AttachFileToObjectById extends RequestResponseConnection {
+public class AttachFileToObjectByIdCommand extends RequestResponseConnection {
     private Uri fileUri;
     private String documentId;
     private String attachmentName;
 
-    public AttachFileToObjectById(String documentId, Uri file, String attachmentName){
+    public AttachFileToObjectByIdCommand(String documentId, Uri file, String attachmentName){
         this.documentId = documentId;
         this.fileUri = file;
         this.attachmentName = attachmentName;

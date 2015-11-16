@@ -3,7 +3,6 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenAreaLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenArea;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenAreaCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
@@ -69,7 +68,7 @@ public class AreaDetailFragment extends Fragment {
         provider.getUiEventBus().register(this);
 
         // Request the load of a kitchen area
-        LoadKitchenArea cmd = new LoadKitchenArea(kitchenId, areaId);
+        LoadKitchenAreaCommand cmd = new LoadKitchenAreaCommand(kitchenId, areaId);
         areaLoadConnection = cmd.getConnectionId();
         provider.getUiEventBus().post(cmd);
     }

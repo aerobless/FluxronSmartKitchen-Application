@@ -6,7 +6,7 @@ import android.text.TextWatcher;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettings;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettingsCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -103,7 +103,7 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
         String description = ((TextView) findViewById(R.id.settingsEditDescription)).getText().toString();
 
         // Text changed, send the changes
-        ChangeKitchenSettings cmd = new ChangeKitchenSettings(kitchenId, name, description);
+        ChangeKitchenSettingsCommand cmd = new ChangeKitchenSettingsCommand(kitchenId, name, description);
         postMessage(cmd);
     }
 }
