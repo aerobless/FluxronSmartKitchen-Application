@@ -13,9 +13,11 @@ import android.util.LruCache;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailure;
@@ -35,6 +37,8 @@ public class Bluetooth {
     private MessageInterpreter messageInterpreter;
     private BluetoothAdapter btAdapter = null;
     private final LruCache<String, BTConnectionThread> connectionCache;
+    //private final Set<String> devicesAttemptingToBond;
+    private final AtomicBoolean bondingAllowed;
 
     private static final String TAG = "FLUXRON";
     private static final String DEVICE_PIN = "1234";
@@ -46,6 +50,7 @@ public class Bluetooth {
         this.provider.getDalEventBus().register(this);
 
         messageFactory = new MessageFactory();
+        bondingAllowed = new AtomicBoolean(true);
         messageInterpreter = new MessageInterpreter(provider, messageFactory);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
@@ -116,11 +121,15 @@ public class Bluetooth {
                 } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                     final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
                     final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                         Log.d(TAG, "DEVICE PAIRED");
                     } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
                         Log.d(TAG, "DEVICE UNPAIRED");
+                    } else {
+                        Log.d(TAG, "BONDING FAILED");
                     }
+                    bondingAllowed.set(true);
                 }
             }
         };
@@ -182,7 +191,6 @@ public class Bluetooth {
         if(bluetoothEnabled()){
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
             if(device.getBondState()== BluetoothDevice.BOND_NONE){
-                Log.d(TAG, "UNBONDED Device, trying to bond");
                 pairDevice(device);
             }
 
@@ -197,11 +205,17 @@ public class Bluetooth {
     }
 
     private void pairDevice(BluetoothDevice device) {
-        try {
-            Method method = device.getClass().getMethod("createBond", (Class[]) null);
-            method.invoke(device, (Object[]) null);
-        } catch (Exception e) {
-            e.printStackTrace();
+        Log.d("FLUXERON","IN PARING");
+        if(bondingAllowed.compareAndSet(true, false)){
+            Log.d(TAG, "UNBONDED Device, trying to bond");
+            try {
+                Method method = device.getClass().getMethod("createBond", (Class[]) null);
+                method.invoke(device, (Object[]) null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.d(TAG, "already bonding another device, maybe next time..");
         }
     }
 

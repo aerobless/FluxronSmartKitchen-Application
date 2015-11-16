@@ -139,7 +139,7 @@ public class CyclicRefresh {
 
     private void start() {
         skipToNext();
-        if(!enabled.getAndSet(true)){
+        if(enabled.compareAndSet(false, true)){
             run();
         }
     }
