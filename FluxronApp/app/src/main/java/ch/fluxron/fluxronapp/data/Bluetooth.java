@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothBondingCommand;
@@ -105,13 +104,13 @@ public class Bluetooth {
 
     /**
      * Sets up a BroadcastReceiver to listen to bonding events.
-     *
      * @param context
      */
     private void setupBonding(Context context) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
+                Log.d(TAG, action);
                 if (ACTION_PAIRING_REQUEST.equals(action)) {
                     Log.d(TAG, "TRYING TO PAIR");
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -188,26 +187,18 @@ public class Bluetooth {
      */
     public void onEventAsync(BluetoothBondingCommand cmd) {
         if (bluetoothEnabled()) {
-            Log.d(TAG, "Trying to bond!");
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
             if (device.getBondState() == BluetoothDevice.BOND_NONE) {
-                bondTo(device);
+                Log.d(TAG, "Trying to bond!");
+                try {
+                    Method method = device.getClass().getMethod("createBond", (Class[]) null);
+                    method.invoke(device, (Object[]) null);
+                } catch (Exception e) {
+                    Log.d(TAG, "Attempt invoke bonding failed: "+e.getMessage());
+                }
             } else {
                 Log.d(TAG, "Device is already bonded.");
             }
-        }
-    }
-
-    /**
-     * Create a bond to the specified device.
-     * @param device
-     */
-    private void bondTo(BluetoothDevice device) {
-        try {
-            Method method = device.getClass().getMethod("createBond", (Class[]) null);
-            method.invoke(device, (Object[]) null);
-        } catch (Exception e) {
-            Log.d(TAG, "Attempt invoke bonding failed: "+e.getMessage());
         }
     }
 

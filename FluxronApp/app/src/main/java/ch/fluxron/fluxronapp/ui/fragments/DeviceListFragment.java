@@ -44,7 +44,6 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     private IDeviceAddedListener addListener;
     private Button discoveryButton;
 
-
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;
         provider.getUiEventBus().register(this);
@@ -161,8 +160,9 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
             }
         } else {
             //Request that the device is bonded first
+            provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.NONE)); //Disable CyclicRefresh
+            setDiscoveryActive(false); //Disable Discovery
             provider.getUiEventBus().post(new BluetoothBondingCommand(d.getAddress()));
-            setDiscoveryActive(false);
         }
     }
 
