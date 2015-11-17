@@ -34,6 +34,8 @@ public class DeviceManager {
     private Map<String, ch.fluxron.fluxronapp.data.generated.DeviceParameter> paramMap;
     private CyclicRefresh cyclicRefresh;
 
+    private static final String PARAM_PRODUCT_CODE = "1018sub2";
+
     public DeviceManager(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);
@@ -97,11 +99,18 @@ public class DeviceManager {
         Device device;
         synchronized (deviceCache){
             device = deviceCache.get(inputMsg.getAddress());
-            if(paramMap.get(device.getDeviceClass()+"_"+inputMsg.getField())!= null){
-                device.setDeviceParameter(new DeviceParameter(device.getDeviceClass() + "_" + inputMsg.getField(), inputMsg.getValue() + ""));
-                device.setBonded(true);
-                device.setLastContact(new Date());
-            }
+        }
+        /**
+         * The product code is needed to correctly store all other parameters. So we're
+         * directly storing it as a parameters of the device. This is the only parameter
+         * that is handled this way.
+         */
+        if(inputMsg.getField().equals(PARAM_PRODUCT_CODE)){
+            device.setProductCode(inputMsg.getValue());
+        }else if(paramMap.get(device.getDeviceClass()+"_"+inputMsg.getField())!= null){
+            device.setDeviceParameter(new DeviceParameter(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
+            device.setBonded(true);
+            device.setLastContact(new Date());
         }
         addDeviceToCache(device);
         RequestResponseConnection deviceChanged = new DeviceChanged(deviceCache.get(inputMsg.getAddress()));

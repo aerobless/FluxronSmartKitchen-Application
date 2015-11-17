@@ -18,6 +18,7 @@ public class Device {
     private String name;
     private boolean bonded;
     private Date lastContact;
+    private int productCode = 0;
     private Map<String, DeviceParameter> deviceParameters = new HashMap<>();
     private DeviceTypeConverter dtConverter = new DeviceTypeConverter();
 
@@ -67,6 +68,14 @@ public class Device {
         this.lastContact = lastContact;
     }
 
+    public int getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(int productCode) {
+        this.productCode = productCode;
+    }
+
     public DeviceParameter getDeviceParameter(String paramName) {
         return deviceParameters.get(paramName);
     }
@@ -82,11 +91,9 @@ public class Device {
      * @return
      */
     public String getDeviceType(){
-        DeviceParameter productCodeParam = getProductParam();
-        if(productCodeParam != null){
+        if(productCode != 0){
             try{
-                int productCode = Integer.parseInt(productCodeParam.getValue());
-                return dtConverter.toDeviceClass(productCode);
+                return dtConverter.toDeviceType(productCode);
             } catch(NumberFormatException e){
                 Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
                 return INVALID_DEVICE_TYPE;
@@ -103,11 +110,9 @@ public class Device {
      * @return
      */
     public String getDeviceClass(){
-        DeviceParameter productCodeParam = getProductParam();
-        if(productCodeParam != null){
+        if(productCode != 0){
             try{
-                int productCode = Integer.parseInt(productCodeParam.getValue());
-                return dtConverter.toDeviceType(productCode);
+                return dtConverter.toDeviceClass(productCode);
             } catch(NumberFormatException e){
                 Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
                 return INVALID_DEVICE_TYPE;
@@ -115,22 +120,6 @@ public class Device {
         } else {
             return UNKNOWN_DEVICE_TYPE;
         }
-    }
-
-    /**
-     * Since we can't be sure what type the device is before we have access the product code
-     * we have to access all of them and use the one that's actually used.
-     * @return
-     */
-    private DeviceParameter getProductParam(){
-        if(deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE) != null){
-            return deviceParameters.get(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE);
-        }else if(deviceParameters.get(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE) != null){
-            return deviceParameters.get(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
-        }else if(deviceParameters.get(ParamManager.F_ETX_1018SUB2_PRODUCT_CODE) != null){
-            return deviceParameters.get(ParamManager.F_ETX_1018SUB2_PRODUCT_CODE);
-        }
-        return null;
     }
 
     /**
