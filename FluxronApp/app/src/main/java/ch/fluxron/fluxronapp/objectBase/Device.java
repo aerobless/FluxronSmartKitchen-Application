@@ -86,7 +86,7 @@ public class Device {
         if(productCodeParam != null){
             try{
                 int productCode = Integer.parseInt(productCodeParam.getValue());
-                return dtConverter.toDeviceType(productCode);
+                return dtConverter.toDeviceClass(productCode);
             } catch(NumberFormatException e){
                 Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
                 return INVALID_DEVICE_TYPE;
@@ -97,11 +97,24 @@ public class Device {
     }
 
     /**
-     * TODO: returns whether a device is CClass, SClass or ETX.
+     * Returns the device class if "F_SCLASS_1018SUB2_PRODUCT_CODE" is stored for this device.
+     * Otherwise it will return UNKNOWN_DEVICE_TYPE. If the value stored in param "F_SCLASS_1018SUB2_PRODUCT_CODE"
+     * is invalid it will return INVALID_DEVICE_TYPE.
      * @return
      */
-    public String getDeviceTypePrefix(){
-        return "CClass";
+    public String getDeviceClass(){
+        DeviceParameter productCodeParam = getProductParam();
+        if(productCodeParam != null){
+            try{
+                int productCode = Integer.parseInt(productCodeParam.getValue());
+                return dtConverter.toDeviceType(productCode);
+            } catch(NumberFormatException e){
+                Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
+                return INVALID_DEVICE_TYPE;
+            }
+        } else {
+            return UNKNOWN_DEVICE_TYPE;
+        }
     }
 
     /**

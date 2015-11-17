@@ -97,8 +97,8 @@ public class DeviceManager {
         Device device;
         synchronized (deviceCache){
             device = deviceCache.get(inputMsg.getAddress());
-            if(paramMap.get(device.getDeviceTypePrefix()+"_"+inputMsg.getField())!= null){
-                device.setDeviceParameter(new DeviceParameter(device.getDeviceTypePrefix() + "_" + inputMsg.getField(), inputMsg.getValue() + ""));
+            if(paramMap.get(device.getDeviceClass()+"_"+inputMsg.getField())!= null){
+                device.setDeviceParameter(new DeviceParameter(device.getDeviceClass() + "_" + inputMsg.getField(), inputMsg.getValue() + ""));
                 device.setBonded(true);
                 device.setLastContact(new Date());
             }

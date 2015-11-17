@@ -18,6 +18,15 @@ public class DeviceTypeConverter {
      * @param input
      * @return
      */
+    public String toDeviceClass(int input){
+        return deviceTypes.get(input).getDeviceClass();
+    }
+
+    /**
+     * Get the Device Type. E.g. BAX.
+     * @param input
+     * @return
+     */
     public String toDeviceType(int input){
         return deviceTypes.get(input).getType();
     }
