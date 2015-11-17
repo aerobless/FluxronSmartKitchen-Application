@@ -25,6 +25,9 @@ public class Device {
     public static final String UNKNOWN_DEVICE_TYPE = "Unknown Device Type";
     public static final String INVALID_DEVICE_TYPE = "Invalid Device Type";
 
+    public static final String UNKNOWN_DEVICE_CLASS = "Unknown Device Class";
+    public static final String INVALID_DEVICE_CLASS = "Invalid Device Class";
+
     @JsonProperty("_id")
     String address;
 
@@ -115,10 +118,10 @@ public class Device {
                 return dtConverter.toDeviceClass(productCode);
             } catch(NumberFormatException e){
                 Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
-                return INVALID_DEVICE_TYPE;
+                return INVALID_DEVICE_CLASS;
             }
         } else {
-            return UNKNOWN_DEVICE_TYPE;
+            return UNKNOWN_DEVICE_CLASS;
         }
     }
 
