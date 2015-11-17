@@ -14,6 +14,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscov
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceFailed;
@@ -105,6 +106,17 @@ public class DeviceManager {
         deviceChanged.setConnectionId(inputMsg);
         provider.getUiEventBus().post(deviceChanged);
     }
+
+    /**
+     * Relays bonding commands to DAL
+     * @param inputMsg
+     */
+    public void onEventAsync(BluetoothBondingCommand inputMsg){
+        RequestResponseConnection req = new ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothBondingCommand(inputMsg.getAddress());
+        req.setConnectionId(inputMsg);
+        provider.getDalEventBus().post(req);
+    }
+
 
     /**
      * Handles BluetoothDeviceFound event. Validates devices, stores it to DB and notifies UI

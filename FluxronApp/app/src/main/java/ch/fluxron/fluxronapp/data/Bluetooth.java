@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
@@ -35,8 +36,6 @@ public class Bluetooth {
     private MessageInterpreter messageInterpreter;
     private BluetoothAdapter btAdapter = null;
     private final LruCache<String, BTConnectionThread> connectionCache;
-    //private final Set<String> devicesAttemptingToBond;
-    private final AtomicBoolean bondingAllowed;
 
     private static final String TAG = "FLUXRON";
     private static final String DEVICE_PIN = "1234";
@@ -48,7 +47,6 @@ public class Bluetooth {
         this.provider.getDalEventBus().register(this);
 
         messageFactory = new MessageFactory();
-        bondingAllowed = new AtomicBoolean(true);
         messageInterpreter = new MessageInterpreter(provider, messageFactory);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
@@ -59,10 +57,10 @@ public class Bluetooth {
     /**
      * Set the Bluetooth PIN of a device. This method should only be run after a attempt at bonding
      * has been made.
+     *
      * @param device
      */
-    public void setDevicePin(BluetoothDevice device)
-    {
+    public void setDevicePin(BluetoothDevice device) {
         Log.d(TAG, "SETTING PIN FOR " + device.getName());
         try {
             byte[] pinBytes = (byte[]) BluetoothDevice.class.getMethod("convertPinToBytes", String.class).invoke(BluetoothDevice.class, DEVICE_PIN);
@@ -88,15 +86,16 @@ public class Bluetooth {
     /**
      * Sets up a BroadcastReceiver to listen to BluetoothDevice.ACTION_FOUND.
      * When a device is found a message is sent to the DAL-BL event bus.
+     *
      * @param context
      */
-    private void setupDiscovery(Context context){
+    private void setupDiscovery(Context context) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Device(device.getName(), device.getAddress(),device.getBondState()==BluetoothDevice.BOND_BONDED)));
+                    provider.getDalEventBus().post(new BluetoothDeviceFound(new Device(device.getName(), device.getAddress(), device.getBondState() == BluetoothDevice.BOND_BONDED)));
                 }
             }
         };
@@ -106,28 +105,27 @@ public class Bluetooth {
 
     /**
      * Sets up a BroadcastReceiver to listen to bonding events.
+     *
      * @param context
      */
-    private void setupBonding(Context context){
+    private void setupBonding(Context context) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                if (ACTION_PAIRING_REQUEST.equals(action)){
+                if (ACTION_PAIRING_REQUEST.equals(action)) {
                     Log.d(TAG, "TRYING TO PAIR");
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     setDevicePin(device);
                 } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                     final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
                     final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                         Log.d(TAG, "DEVICE PAIRED");
-                    } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
+                    } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
                         Log.d(TAG, "DEVICE UNPAIRED");
                     } else {
                         Log.d(TAG, "BONDING FAILED");
                     }
-                    bondingAllowed.set(true);
                 }
             }
         };
@@ -139,10 +137,11 @@ public class Bluetooth {
 
     /**
      * Starts/Stops the discovery of new devices via bluetooth.
+     *
      * @param cmd
      */
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
-        if(cmd.isEnabled()){
+        if (cmd.isEnabled()) {
             startDeviceDiscovery();
         } else {
             stopDeviceDiscovery();
@@ -151,6 +150,7 @@ public class Bluetooth {
 
     /**
      * Connects to a bluetooth device and writes data to the field specified in the command.
+     *
      * @param cmd
      */
     public void onEventAsync(BluetoothWriteRequest cmd) {
@@ -171,7 +171,7 @@ public class Bluetooth {
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
         Set<String> parameters = cmd.getParameters();
-        for (String p:parameters){
+        for (String p : parameters) {
             byte[] message = messageFactory.makeReadRequest(p);
             messageFactory.printUnsignedByteArray(message);
             try {
@@ -180,70 +180,79 @@ public class Bluetooth {
                 BluetoothConnectionFailed connectionFailure = new BluetoothConnectionFailed(BluetoothConnectionFailed.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
                 connectionFailure.setConnectionId(cmd);
                 provider.getDalEventBus().post(connectionFailure);
-                Log.d("Fluxron", "Connection Failure sent");
             }
+        }
+    }
+
+    /**
+     * Used to start the bonding process with a specific bluetooth device.
+     * @param cmd
+     */
+    private void onEventAsync(BluetoothBondingCommand cmd) {
+        if (bluetoothEnabled()) {
+            Log.d(TAG, "Trying to bond!");
+            BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());
+            if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                bondTo(device);
+            } else {
+                Log.d(TAG, "Device is already bonded.");
+            }
+        }
+    }
+
+    /**
+     * Create a bond to the specified device.
+     * @param device
+     */
+    private void bondTo(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("createBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            Log.d(TAG, "Attempt invoke bonding failed: "+e.getMessage());
         }
     }
 
     private void sendData(String address, byte[] message, RequestResponseConnection connection) throws IOException {
-        if(bluetoothEnabled()){
+        if (bluetoothEnabled()) {
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
-            if(device.getBondState()== BluetoothDevice.BOND_NONE){
-                pairDevice(device);
-            }
-
-            if(device.getBondState() == BluetoothDevice.BOND_BONDED){
+            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                 BTConnectionThread connectionThread = getConnection(device, false);
                 connectionThread.write(message, connection);
             } else {
-                Log.d(TAG, "Device isn't bonded yet. Unable to send data");
                 throw new IOException("Unbonded Device");
             }
-        }
-    }
-
-    private void pairDevice(BluetoothDevice device) {
-        Log.d("FLUXERON","IN PARING");
-        if(bondingAllowed.compareAndSet(true, false)){
-            Log.d(TAG, "UNBONDED Device, trying to bond");
-            try {
-                Method method = device.getClass().getMethod("createBond", (Class[]) null);
-                method.invoke(device, (Object[]) null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else{
-            Log.d(TAG, "already bonding another device, maybe next time..");
         }
     }
 
     /**
      * Kill all existing connections.
      */
-    private void disconnectAllDevices(){
-        synchronized (connectionCache){
+    private void disconnectAllDevices() {
+        synchronized (connectionCache) {
             connectionCache.evictAll();
         }
     }
 
     /**
      * Get an existing connection to a device or establish a new one.
+     *
      * @param device
      * @return BTConnectionThread for the specified device
      */
     private BTConnectionThread getConnection(BluetoothDevice device, boolean clean) throws IOException {
-        if(clean){
-            synchronized (connectionCache){
+        if (clean) {
+            synchronized (connectionCache) {
                 connectionCache.remove(device.getAddress());
             }
         }
         BTConnectionThread connectionThread;
-        synchronized (connectionCache){
+        synchronized (connectionCache) {
             connectionThread = connectionCache.get(device.getAddress());
         }
-        if(connectionThread == null){
+        if (connectionThread == null) {
             BluetoothSocket btSocket = createBluetoothSocket(device);
-            if(connectSocket(btSocket)){
+            if (connectSocket(btSocket)) {
                 connectionThread = new BTConnectionThread(btSocket, provider);
                 connectionThread.start();
                 synchronized (connectionCache) {
@@ -273,35 +282,35 @@ public class Bluetooth {
         return false;
     }
 
-    private void startDeviceDiscovery(){
-        if(bluetoothEnabled()){
+    private void startDeviceDiscovery() {
+        if (bluetoothEnabled()) {
             stopDeviceDiscovery();
             disconnectAllDevices();
             btAdapter.startDiscovery();
         }
     }
 
-    private void stopDeviceDiscovery(){
-        if(btAdapter.isDiscovering()){
+    private void stopDeviceDiscovery() {
+        if (btAdapter.isDiscovering()) {
             btAdapter.cancelDiscovery();
         }
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        if(Build.VERSION.SDK_INT >= 10){
+        if (Build.VERSION.SDK_INT >= 10) {
             try {
-                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
                 return (BluetoothSocket) m.invoke(device, SPP_UUID);
             } catch (Exception e) {
-                Log.e(TAG, "Could not create Insecure RFComm Connection",e);
+                Log.e(TAG, "Could not create Insecure RFComm Connection", e);
                 e.printStackTrace();
             }
         }
-        return  device.createRfcommSocketToServiceRecord(SPP_UUID);
+        return device.createRfcommSocketToServiceRecord(SPP_UUID);
     }
 
     private boolean bluetoothEnabled() {
-        if(btAdapter==null) {
+        if (btAdapter == null) {
             Log.d(TAG, "Bluetooth not supported (Are you running on emulator?)");
         } else {
             if (btAdapter.isEnabled()) {

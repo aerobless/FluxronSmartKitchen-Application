@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
@@ -148,9 +149,14 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     @Override
     public void deviceButtonPressed(Device d) {
-        // Add the device to the kitchen area !!!!
-        if (addListener != null) {
-            addListener.onDeviceAddRequested(d);
+        if(d.isBonded()){
+            // Add the device to the kitchen area
+            if (addListener != null) {
+                addListener.onDeviceAddRequested(d);
+            }
+        } else {
+            //Request that the device is bonded first
+            provider.getUiEventBus().post(new BluetoothBondingCommand(d.getAddress()));
         }
     }
 
