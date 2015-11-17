@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ import java.util.Locale;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelUi.ToastProduced;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 /**
  * Base class for all activities in the Fluxron tool app. Provides common functions like finding the
@@ -104,5 +106,15 @@ public class FluxronBaseActivity extends AppCompatActivity{
     public void animateFadeIn(final View v, final boolean setVisibility){
         if(setVisibility) v.setVisibility(View.VISIBLE);
         v.animate().alpha(1).setDuration(ANIMATE_OUT_MILLISECONDS).start();
+    }
+
+    /**
+     * Listens to toast messages and displays them as overlay.
+     * @param msg
+     */
+    public void onEventMainThread(ToastProduced msg) {
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(getApplicationContext(), msg.getMessage(), duration);
+        toast.show();
     }
 }

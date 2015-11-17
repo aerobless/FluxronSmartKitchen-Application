@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.ToastProduced;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
@@ -73,11 +74,9 @@ public class Bluetooth {
                 device.getClass().getMethod("setPairingConfirmation", boolean.class).invoke(device, true);
                 Log.d(TAG, "Success to setPairingConfirmation.");
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 Log.e(TAG, e.getMessage());
                 e.printStackTrace();
             }
-            //TODO: proper exception
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             e.printStackTrace();
@@ -309,7 +308,7 @@ public class Bluetooth {
             if (btAdapter.isEnabled()) {
                 return true;
             } else {
-                //TODO: Prompt user to turn on Bluetooth
+                provider.getDalEventBus().post(new ToastProduced("Please turn on Bluetooth!"));
                 Log.d(TAG, "Bluetooth not turned on");
             }
         }

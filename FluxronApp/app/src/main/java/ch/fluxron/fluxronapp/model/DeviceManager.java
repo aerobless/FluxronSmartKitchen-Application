@@ -8,6 +8,7 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.ToastProduced;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
@@ -128,6 +129,15 @@ public class DeviceManager {
         provider.getDalEventBus().post(req);
     }
 
+    /**
+     * Relays toast messages to UI
+     * @param inputToast
+     */
+    public void onEventAsync(ToastProduced inputToast){
+        RequestResponseConnection freshToast = new ch.fluxron.fluxronapp.events.modelUi.ToastProduced(inputToast.getMessage());
+        freshToast.setConnectionId(inputToast);
+        provider.getUiEventBus().post(freshToast);
+    }
 
     /**
      * Handles BluetoothDeviceFound event. Validates devices and notifies UI
