@@ -13,6 +13,7 @@
 
         <!-- Global styles for controls-->
         <item name="android:textViewStyle">@style/FluxronTextView</item>
+        <item name="android:buttonStyle">@style/FluxronButton</item>
     </style>
 
     <style name="FluxronAppBar" parent="Widget.Design.AppBarLayout">
@@ -22,6 +23,20 @@
 
     <style name="FluxronTextView" parent="android:Widget.TextView">
         <item name="android:foreground">@color/contentForeground</item>
+    </style>
+
+    <style name="FluxronButton" parent="android:Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">@color/contentBackground</item>
+        <item name="android:shadowColor">@color/contentForeground</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">-1</item>
+        <item name="android:shadowRadius">0.2</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/flx_button_selector</item>
     </style>
 
     <style name="FluxronTitleTextView" parent="android:Widget.TextView">
