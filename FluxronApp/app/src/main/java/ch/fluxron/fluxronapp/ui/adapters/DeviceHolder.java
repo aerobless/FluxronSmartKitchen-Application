@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,7 +20,6 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
     private View parent;
     private Device boundData;
     private IDeviceClickListener listener;
-    //private IEventBusProvider provider;
 
     public DeviceHolder(View itemView, IDeviceClickListener listener, IEventBusProvider provider) {
         super(itemView);
@@ -28,27 +28,29 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
         this.deviceName = (TextView) itemView.findViewById(R.id.deviceName);
         this.deviceAddress = (TextView) itemView.findViewById(R.id.deviceAddress);
         this.listener = listener;
-        this.addButton = (Button)itemView.findViewById(R.id.addButton);
-       // this.provider = provider;
-        //this.provider.getUiEventBus().register(this);
+        this.addButton = (Button) itemView.findViewById(R.id.addButton);
 
         parent.setOnClickListener(this);
         addButton.setOnClickListener(this);
 
     }
 
-    public void bind(final Device d){
+    public void bind(final Device d) {
         boundData = d;
         deviceName.setText(d.getName());
         deviceAddress.setText(d.getAddress());
+        if (d.isBonded()) {
+            addButton.setText(R.string.btn_add);
+        } else {
+            addButton.setText(R.string.btn_pair);
+        }
     }
 
     @Override
     public void onClick(View v) {
-        if(listener != null && !(v instanceof Button)){
+        if (listener != null && !(v instanceof Button)) {
             listener.deviceClicked(boundData);
-        }
-        else if (listener != null){
+        } else if (listener != null) {
             listener.deviceButtonPressed(boundData);
         }
     }

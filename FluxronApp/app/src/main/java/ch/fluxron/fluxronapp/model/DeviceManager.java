@@ -98,10 +98,12 @@ public class DeviceManager {
         synchronized (deviceCache){
             device = deviceCache.get(inputMsg.getAddress());
             if(paramMap.get(device.getDeviceTypePrefix()+"_"+inputMsg.getField())!= null){
-                device.setDeviceParameter(new DeviceParameter(device.getDeviceTypePrefix()+"_"+inputMsg.getField(), inputMsg.getValue() + ""));
+                device.setDeviceParameter(new DeviceParameter(device.getDeviceTypePrefix() + "_" + inputMsg.getField(), inputMsg.getValue() + ""));
+                device.setBonded(true);
+                device.setLastContact(new Date());
             }
         }
-        updateDeviceCache(device);
+        addDeviceToCache(device);
         RequestResponseConnection deviceChanged = new DeviceChanged(deviceCache.get(inputMsg.getAddress()));
         deviceChanged.setConnectionId(inputMsg);
         provider.getUiEventBus().post(deviceChanged);
@@ -119,23 +121,38 @@ public class DeviceManager {
 
 
     /**
-     * Handles BluetoothDeviceFound event. Validates devices, stores it to DB and notifies UI
+     * Handles BluetoothDeviceFound event. Validates devices and notifies UI
      * @param inputMsg
      */
     public void onEventAsync(BluetoothDeviceFound inputMsg){
         Device device = inputMsg.getDevice();
         if(device != null && isFluxronDevice(device.getName())){
-            boolean cached;
+            Device cachedDevice;
             synchronized (deviceCache){
-                cached = deviceCache.get(device.getAddress())!=null;
+                cachedDevice = deviceCache.get(device.getAddress());
             }
-            if(!cached){
+            if(cachedDevice == null){
                 Log.d("FLUXRON", "New Device found: " + device.getName() + " " + device.getAddress());
-                updateDeviceCache(device);
+                addDeviceToCache(device);
                 RequestResponseConnection deviceLoaded = new DeviceLoaded(device);
                 deviceLoaded.setConnectionId(inputMsg);
                 provider.getUiEventBus().post(deviceLoaded);
+            } else {
+                cachedDevice.setLastContact(new Date());
+                cachedDevice.setBonded(device.isBonded());
+                addDeviceToCache(cachedDevice);
             }
+        }
+    }
+
+    /**
+     * Save
+     * @param device
+     */
+    private void addDeviceToCache(Device device) {
+        device.setLastContact(new Date());
+        synchronized (deviceCache){
+            deviceCache.put(device.getAddress(), device);
         }
     }
 
@@ -153,19 +170,6 @@ public class DeviceManager {
      */
     public void onEventAsync(BluetoothConnectionFailed inputMsg){
         provider.getUiEventBus().post(new DeviceFailed(inputMsg.getAddress()));
-    }
-
-    /**
-     * Save a device to Cache & DB.
-     * @param device
-     */
-    private void updateDeviceCache(Device device) {
-        device.setLastContact(new Date());
-
-        //TODO: Device Cache
-        synchronized (deviceCache){
-            deviceCache.put(device.getAddress(), device);
-        }
     }
 
     /**

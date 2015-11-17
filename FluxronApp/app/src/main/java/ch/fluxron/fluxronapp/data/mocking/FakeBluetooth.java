@@ -75,12 +75,12 @@ public class FakeBluetooth {
         int deviceType = deviceTypes.get(randInt(0, 3));
         DeviceParameter productCodeParam = new DeviceParameter(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE, deviceType+"");
         unreal.setDeviceParameter(productCodeParam);
+        unreal.setBonded(true);
         return unreal;
     }
 
-    private int randInt(int min, int max) {
+    private static int randInt(int min, int max) {
         Random rand = new Random();
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-        return randomNum;
+        return rand.nextInt((max - min) + 1) + min;
     }
 }
