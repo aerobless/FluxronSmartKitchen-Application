@@ -123,8 +123,6 @@ public class Bluetooth {
                         Log.d(TAG, "DEVICE PAIRED");
                     } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
                         Log.d(TAG, "DEVICE UNPAIRED");
-                    } else {
-                        Log.d(TAG, "BONDING FAILED");
                     }
                 }
             }
@@ -188,7 +186,7 @@ public class Bluetooth {
      * Used to start the bonding process with a specific bluetooth device.
      * @param cmd
      */
-    private void onEventAsync(BluetoothBondingCommand cmd) {
+    public void onEventAsync(BluetoothBondingCommand cmd) {
         if (bluetoothEnabled()) {
             Log.d(TAG, "Trying to bond!");
             BluetoothDevice device = btAdapter.getRemoteDevice(cmd.getAddress());

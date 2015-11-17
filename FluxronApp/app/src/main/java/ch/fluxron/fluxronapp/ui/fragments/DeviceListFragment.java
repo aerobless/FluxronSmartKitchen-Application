@@ -30,8 +30,8 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 /**
  * Implements a fragment that displays the list of discovered devices
  */
-public class DeviceListFragment extends Fragment implements IDeviceClickListener{
-    public interface IDeviceAddedListener{
+public class DeviceListFragment extends Fragment implements IDeviceClickListener {
+    public interface IDeviceAddedListener {
         void onDeviceAddRequested(Device d);
     }
 
@@ -42,7 +42,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     private boolean discoveryActive = true;
     private TextView discoveryStatus;
     private IDeviceAddedListener addListener;
-
+    private Button discoveryButton;
 
 
     public void setEventBusProvider(IEventBusProvider provider) {
@@ -51,7 +51,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         setClickListener(this);
     }
 
-    public void setClickListener(IDeviceClickListener listener){
+    public void setClickListener(IDeviceClickListener listener) {
         this.listener = listener;
     }
 
@@ -101,18 +101,11 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
 
         discoveryStatus = (TextView) deviceView.findViewById(R.id.discoveryStatusText);
-        final Button discoveryButton = (Button) deviceView.findViewById(R.id.discoveryButton);
+        discoveryButton = (Button) deviceView.findViewById(R.id.discoveryButton);
         discoveryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean toggle = toggleDiscovery();
-                if (toggle) {
-                    discoveryButton.setText(getResources().getText(R.string.btn_pause_discovery));
-                    updateStatusText();
-                } else {
-                    discoveryButton.setText(getResources().getText(R.string.btn_start_discovery));
-                    updateStatusText();
-                }
+                toggleDiscovery();
             }
         });
 
@@ -122,21 +115,33 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         return deviceView;
     }
 
-    private void updateStatusText(){
+    public void toggleDiscovery() {
+        setDiscoveryActive(!discoveryActive);
+    }
+
+    private void setDiscoveryActive(boolean value) {
+        discoveryActive = value;
+        provider.getUiEventBus().post(new BluetoothDiscoveryCommand(value));
+        updateStatusText();
+    }
+
+    private void updateStatusText() {
         if (discoveryActive) {
-            discoveryStatus.setText("Discovery active. "+listAdapter.size()+" found.");
+            discoveryButton.setText(getResources().getText(R.string.btn_pause_discovery));
+            discoveryStatus.setText("Discovery active. " + listAdapter.size() + " found.");
         } else {
-            discoveryStatus.setText("Discovery stopped. "+listAdapter.size()+" found.");
+            discoveryButton.setText(getResources().getText(R.string.btn_start_discovery));
+            discoveryStatus.setText("Discovery stopped. " + listAdapter.size() + " found.");
         }
     }
 
-    public void onEventMainThread(DeviceLoaded msg){
+    public void onEventMainThread(DeviceLoaded msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
         updateStatusText();
     }
 
-    public void onEventMainThread(DeviceChanged msg){
+    public void onEventMainThread(DeviceChanged msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
     }
@@ -149,7 +154,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     @Override
     public void deviceButtonPressed(Device d) {
-        if(d.isBonded()){
+        if (d.isBonded()) {
             // Add the device to the kitchen area
             if (addListener != null) {
                 addListener.onDeviceAddRequested(d);
@@ -157,14 +162,8 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         } else {
             //Request that the device is bonded first
             provider.getUiEventBus().post(new BluetoothBondingCommand(d.getAddress()));
+            setDiscoveryActive(false);
         }
-    }
-
-    public boolean toggleDiscovery(){
-        provider.getUiEventBus().post(new BluetoothDiscoveryCommand(!discoveryActive));
-        discoveryActive = !discoveryActive;
-
-        return discoveryActive;
     }
 
     public void setListener(IDeviceAddedListener l) {
