@@ -135,14 +135,12 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     }
 
     public void onEventMainThread(DeviceLoaded msg) {
-        //Log.d("FLUXRON BONDED?", msg.getDevice().getName()+" "+ msg.getDevice().isBonded()+"");
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
         updateStatusText();
     }
 
     public void onEventMainThread(DeviceChanged msg) {
-        //Log.d("FLUXRON BONDED?", msg.getDevice().getName()+" "+ msg.getDevice().isBonded()+"");
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
     }

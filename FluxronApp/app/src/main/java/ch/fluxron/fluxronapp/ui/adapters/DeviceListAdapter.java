@@ -40,6 +40,11 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         if (deviceIds.containsKey(d.getAddress()))
         {
             int position = deviceIds.get(d.getAddress());
+            for(Device dev:devices){
+                if(dev.getAddress().equals(d.getAddress())){
+                    dev.setBonded(d.isBonded());
+                }
+            }
             notifyItemChanged(position);
         }
         else

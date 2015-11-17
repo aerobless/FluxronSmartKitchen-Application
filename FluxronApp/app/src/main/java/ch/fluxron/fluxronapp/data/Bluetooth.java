@@ -19,10 +19,12 @@ import java.util.UUID;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.model.ConnectionCache;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
@@ -117,9 +119,11 @@ public class Bluetooth {
                     setDevicePin(device);
                 } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                     final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
                     if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                         Log.d(TAG, "DEVICE PAIRED");
+                        provider.getDalEventBus().post(new BluetoothDeviceChanged(device.getAddress(), "Bondage", 1));
                     } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
                         Log.d(TAG, "DEVICE UNPAIRED");
                     }
