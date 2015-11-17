@@ -31,7 +31,8 @@ public class Device {
     @JsonProperty("_id")
     String address;
 
-    public Device() {}
+    public Device() {
+    }
 
     public Device(String name, String address, boolean bonded) {
         this.name = name;
@@ -91,13 +92,14 @@ public class Device {
      * Returns the device type if "F_SCLASS_1018SUB2_PRODUCT_CODE" is stored for this device.
      * Otherwise it will return UNKNOWN_DEVICE_TYPE. If the value stored in param "F_SCLASS_1018SUB2_PRODUCT_CODE"
      * is invalid it will return INVALID_DEVICE_TYPE.
+     *
      * @return
      */
-    public String getDeviceType(){
-        if(productCode != 0){
-            try{
+    public String getDeviceType() {
+        if (productCode != 0) {
+            try {
                 return dtConverter.toDeviceType(productCode);
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
                 return INVALID_DEVICE_TYPE;
             }
@@ -110,13 +112,14 @@ public class Device {
      * Returns the device class if "F_SCLASS_1018SUB2_PRODUCT_CODE" is stored for this device.
      * Otherwise it will return UNKNOWN_DEVICE_TYPE. If the value stored in param "F_SCLASS_1018SUB2_PRODUCT_CODE"
      * is invalid it will return INVALID_DEVICE_TYPE.
+     *
      * @return
      */
-    public String getDeviceClass(){
-        if(productCode != 0){
-            try{
+    public String getDeviceClass() {
+        if (productCode != 0) {
+            try {
                 return dtConverter.toDeviceClass(productCode);
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 Log.d("FLUXRON", "Attempt to use illegal characters as product_code");
                 return INVALID_DEVICE_CLASS;
             }
@@ -129,9 +132,9 @@ public class Device {
      * Prints all the parameters stored in this device object.
      * Used for debugging purposes.
      */
-    public void printStoredParameters(){
-        for(DeviceParameter dp: deviceParameters.values()){
-            Log.d("FLUXRON DEBUG", "ParamName: "+dp.getName()+" Value: "+dp.getValue());
+    public void printStoredParameters() {
+        for (DeviceParameter dp : deviceParameters.values()) {
+            Log.d("FLUXRON DEBUG", "ParamName: " + dp.getName() + " Value: " + dp.getValue());
         }
     }
 }

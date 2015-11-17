@@ -35,21 +35,16 @@ public class DeviceActivity extends FluxronBaseActivity {
         dfa.setAddress(address);
         viewPager.setAdapter(dfa);
 
-        TabLayout tabs = (TabLayout)findViewById(R.id.deviceTabs);
+        TabLayout tabs = (TabLayout) findViewById(R.id.deviceTabs);
         tabs.setupWithViewPager(viewPager);
-        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getApplicationContext();
+        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getApplicationContext();
 
-        ((TextView)findViewById(R.id.deviceStatusName)).setText(name);
-        ((TextView)findViewById(R.id.deviceStatusDescription)).setText(address);
+        ((TextView) findViewById(R.id.deviceStatusName)).setText(name);
+        ((TextView) findViewById(R.id.deviceStatusDescription)).setText(address);
         provider.getUiEventBus().post(new CyclicRefreshCommand(address));
     }
 
-    public void onEventMainThread(Object msg){
-        // TODO: Add event handling for device activity
-        postMessage(null);
-    }
-
-    public void onBackButtonClicked(View button){
+    public void onBackButtonClicked(View button) {
         // Close this activity and navigate back to the activity
         // that is below on the stack.
         provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
@@ -58,11 +53,12 @@ public class DeviceActivity extends FluxronBaseActivity {
 
     /**
      * Sets the status of the device to OK whenever it receives a DeviceChange message.
+     *
      * @param inputMsg
      */
-    public void onEventMainThread(DeviceChanged inputMsg){
-        if(inputMsg.getDevice().getAddress().equals(address)){
-            TextView statusOrb = (TextView)findViewById(R.id.statusOrb);
+    public void onEventMainThread(DeviceChanged inputMsg) {
+        if (inputMsg.getDevice().getAddress().equals(address)) {
+            TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
             statusOrb.setText(R.string.ok_check);
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
         }
@@ -70,11 +66,12 @@ public class DeviceActivity extends FluxronBaseActivity {
 
     /**
      * Sets the status of the device to failure whenever it receives a DeviceFailed message.
+     *
      * @param inputMsg
      */
-    public void onEventMainThread(DeviceFailed inputMsg){
-        if(inputMsg.getAddress().equals(address)){
-            TextView statusOrb = (TextView)findViewById(R.id.statusOrb);
+    public void onEventMainThread(DeviceFailed inputMsg) {
+        if (inputMsg.getAddress().equals(address)) {
+            TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
             statusOrb.setText(R.string.fail_check);
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_failure_background));
         }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
@@ -105,10 +106,10 @@ public class ParameterEditable extends LinearLayout {
     private void initOnFocusListener() {
         paramValue.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
+                if (hasFocus) {
                     paramNameSmall.setVisibility(GONE);
                     paramNameBig.setVisibility(VISIBLE);
-                    if(infoText.getText()!=""){
+                    if (infoText.getText() != "") {
                         infoText.setVisibility(VISIBLE);
                     }
                     buttonPanel.setVisibility(VISIBLE);
@@ -131,7 +132,7 @@ public class ParameterEditable extends LinearLayout {
      */
     private void setDisplayText() {
         String displayText = arguments.getString(R.styleable.ParameterEditable_editableDisplayText);
-        if(displayText != null){
+        if (displayText != null) {
             paramNameSmall.setText(displayText);
             paramNameBig.setText(displayText);
         } else {
@@ -145,23 +146,24 @@ public class ParameterEditable extends LinearLayout {
      */
     private void setInfoText() {
         String text = arguments.getString(R.styleable.ParameterEditable_editableInfoText);
-        if(text != null){
+        if (text != null) {
             infoText.setText(text);
         }
     }
 
     /**
      * Returns the id of the parameter thats registered for this view.
+     *
      * @return
      */
-    public String getParameter(){
+    public String getParameter() {
         return parameter;
     }
 
-    public void setValue(String value){
+    public void setValue(String value) {
         String result = value;
-        if(measuringUnit!=null){
-            result+=" "+measuringUnit;
+        if (measuringUnit != null) {
+            result += " " + measuringUnit;
         }
         lastParamValue = result;
         paramValue.setText(result);
@@ -169,11 +171,12 @@ public class ParameterEditable extends LinearLayout {
 
     /**
      * Check if the deviceChanged message contains this parameter and update it if that's the case.
+     *
      * @param msg
      */
-    public void handleDeviceChanged(DeviceChanged msg){
+    public void handleDeviceChanged(DeviceChanged msg) {
         DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
-        if(dp != null & !editMode){
+        if (dp != null & !editMode) {
             setValue(dp.getValue());
         }
     }
