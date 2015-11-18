@@ -45,9 +45,11 @@
     <string name="export_kitchen">Share via EMail</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="hoursAgo"> hours ago</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>
+    <string name="error_description_e00">No error</string>
     <string name="error_description_e01">No pan detected</string>
     <string name="error_description_e02">Coil current limit exceeded</string>
     <string name="error_description_e03">Device temperature limit exceeded</string>

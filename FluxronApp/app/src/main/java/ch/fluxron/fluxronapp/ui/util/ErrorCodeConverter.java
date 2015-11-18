@@ -24,7 +24,7 @@ public class ErrorCodeConverter {
      */
     public static String convertToErrorCode(int input) {
         String hex = Integer.toHexString(input);
-        String result = "error_description_e";
+        String result = "e";
         if (hex.length() == 8) {
             result += Integer.toString(Integer.parseInt(hex.substring(0, 2), 16));
         } else {
@@ -48,10 +48,15 @@ public class ErrorCodeConverter {
         String result;
         if (hex.length() == 8) {
             result = Integer.toString(Integer.parseInt(hex.substring(2, 8), 16));
+        } else if (hex.length() <= 1) {
+            result = "000";
         } else {
             result = Integer.toString(Integer.parseInt(hex.substring(1, 7), 16));
         }
-        result = result.substring(0, result.length()-1) +"."+ result.substring(result.length()-1,result.length());
+        if (result.length() <= 1) {
+            result = "00" + result;
+        }
+        result = result.substring(0, result.length() - 1) + "." + result.substring(result.length() - 1, result.length());
         return result;
     }
 }
