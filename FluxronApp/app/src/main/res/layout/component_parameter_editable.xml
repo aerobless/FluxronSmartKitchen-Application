@@ -46,6 +46,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_toStartOf="@+id/paramMeasurementUnit"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"/>
                 <TextView
                     android:id="@+id/paramMeasurementUnit"

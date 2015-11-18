@@ -84,7 +84,7 @@ public class ParameterEditable extends LinearLayout {
                 if (deviceAddress != null) {
                     provider.getUiEventBus().post(new DeviceChangeCommand(deviceAddress, new ParameterValue(parameter, value)));
                 } else {
-                    Log.d("FLUXRON", "arameterEditable.deviceAddress hasn't been set. Are you attempting to save on a Fake Device?");
+                    Log.d("FLUXRON", "ParameterEditable.deviceAddress hasn't been set. Are you attempting to save on a Fake Device?");
                 }
             }
         });
