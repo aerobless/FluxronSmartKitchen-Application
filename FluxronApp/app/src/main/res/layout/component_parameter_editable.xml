@@ -14,10 +14,10 @@
             android:textSize="20sp"
             android:visibility="gone"
             android:layout_gravity="left"
-            android:text="Coil Setup"/>
+            android:text="Coil Setup"
+            android:layout_marginTop="15dp"/>
         <TextView
             android:id="@+id/infoText"
-            android:drawableLeft="@drawable/ic_settings"
             android:drawablePadding="8sp"
             android:visibility="gone"
             android:layout_width="wrap_content"
@@ -52,17 +52,21 @@
             android:layout_gravity="end"
             android:visibility="gone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingRight="6dp">
             <Button
                 android:text="@string/resetButton"
                 android:id="@+id/resetButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"/>
             <Button
                 android:text="@string/saveButton"
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="3dp"/>
         </LinearLayout>
     </LinearLayout>
 </merge>

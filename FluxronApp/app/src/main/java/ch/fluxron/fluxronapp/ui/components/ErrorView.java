@@ -77,6 +77,7 @@ public class ErrorView extends LinearLayout {
      * @return Error code
      */
     private String getErrorCodeFromValue(String value) {
+        // TODO: do it properly
         return value;
     }
 
@@ -86,6 +87,7 @@ public class ErrorView extends LinearLayout {
      * @return Usage counter
      */
     private String getCounterFromValue(String value) {
+        // TODO: do it properly
         return value;
     }
 

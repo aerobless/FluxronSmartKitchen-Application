@@ -114,14 +114,12 @@ public class ParameterEditable extends LinearLayout {
                     }
                     buttonPanel.setVisibility(VISIBLE);
                     editMode = true;
-                    paramPanel.setBackgroundColor(getResources().getColor(R.color.primaryColorLight));
                 } else {
                     paramNameBig.setVisibility(GONE);
                     infoText.setVisibility(GONE);
                     buttonPanel.setVisibility(GONE);
                     paramNameSmall.setVisibility(VISIBLE);
                     editMode = false;
-                    paramPanel.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
                 }
             }
         });
