@@ -4,6 +4,7 @@ package ch.fluxron.fluxronapp.ui.components;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,7 +68,8 @@ public class ErrorView extends LinearLayout {
         String code = getErrorCodeFromValue(value);
         String counter = getCounterFromValue(value);
         this.errorCode.setText(code);
-        this.errorDescription.setText(getErrorDescriptionFromCode(code));
+        Log.d("FLUXRON ERROR CODE", code);
+        //this.errorDescription.setText(getErrorDescriptionFromCode(code));
         this.errorSince.setText(counter);
     }
 
