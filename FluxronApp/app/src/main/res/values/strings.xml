@@ -9,7 +9,7 @@
     <string name="activity_create_kitchen">Create a kitchen</string>
     <string name="activity_find_a_kitchen">Find a kitchen</string>
     <string name="activity_kitchen_settings">Kitchen settings</string>
-    <string name="activity_kitchen_import">Importing kitchen</string>
+    <string name="activity_kitchen_imp">Importing kitchen</string>
     <string name="activity_application_settings">Application settings</string>
     <!-- Help texts -->
     <string name="no_image_here">No image here. Tap this to take a snapshot.</string>
