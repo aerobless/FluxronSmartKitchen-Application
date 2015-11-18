@@ -66,12 +66,24 @@
                 android:singleLine="false"
                 android:id="@+id/settingsEditDescription"
                 />
-            <Button
+            <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/export_kitchen"
-                android:onClick="shareKitchen"/>
+                android:layout_height="wrap_content">
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:alpha="0"
+                    android:id="@+id/exportSpinner"
+                    android:layout_gravity="center"/>
+                <Button
+                    android:id="@+id/exportButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/export_kitchen"
+                    android:onClick="shareKitchen"/>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

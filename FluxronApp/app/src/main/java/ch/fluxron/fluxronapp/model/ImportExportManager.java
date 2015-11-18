@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.net.Uri;
 import android.os.Environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentSt
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**
@@ -91,6 +93,11 @@ public class ImportExportManager {
 
             zipFile.flush();
             zipFile.close();
+
+            // Success, send a message
+            KitchenExported event = new KitchenExported(Uri.fromFile(destinationFile));
+            event.setConnectionId(msg);
+            provider.getUiEventBus().post(event);
         } catch (java.io.IOException e) {
 
         }

@@ -3,11 +3,13 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettingsCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
@@ -21,6 +23,7 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
 
     private String kitchenId;
     private String loadConnection;
+    private String exportConnection;
 
     /**
      * Expects the Kitchen Id as an intent extra and creates a list adapter
@@ -114,9 +117,25 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
      * @param v Button
      */
     public void shareKitchen(View v){
+        v.setEnabled(false);
+        v.animate().alpha(0).setDuration(150).start();
+        findViewById(R.id.exportSpinner).animate().alpha(1).setDuration(150).start();
         ExportKitchenCommand cmd = new ExportKitchenCommand(kitchenId);
+        this.exportConnection = cmd.getConnectionId();
         postMessage(cmd);
-        // TODO: Wait for export result, then show EMail Intent
-        //       http://stackoverflow.com/questions/6078099/android-intent-for-sending-email-with-attachment
+    }
+
+    /**
+     * Occurs when a kitchen was exported
+     * @param msg Event with uri location
+     */
+    public void onEventMainThread(KitchenExported msg) {
+        // Get the kitchen properties
+        if (msg.getConnectionId().equals(this.exportConnection)) {
+            this.exportConnection = null;
+            findViewById(R.id.exportButton).setEnabled(true);
+            findViewById(R.id.exportButton).animate().alpha(1).setDuration(150).start();
+            findViewById(R.id.exportSpinner).animate().alpha(0).setDuration(150).start();
+        }
     }
 }
