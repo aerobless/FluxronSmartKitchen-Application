@@ -1,14 +1,16 @@
 package ch.fluxron.fluxronapp.ui.activities;
-
+import android.net.Uri;
 import android.os.Bundle;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
 /**
  * Activity to import a kitchen
  */
 public class KitchenImportActivity extends FluxronBaseActivity {
+    private String importConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +24,13 @@ public class KitchenImportActivity extends FluxronBaseActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+        Uri theUri = getIntent().getData();
+        if (theUri != null) {
+            ImportKitchenCommand cmd = new ImportKitchenCommand(theUri);
+            this.importConnection = cmd.getConnectionId();
+            postMessage(cmd);
+        }
     }
 
     /**

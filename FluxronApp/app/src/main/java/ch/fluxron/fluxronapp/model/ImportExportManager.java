@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.model;
 
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
+
 /**
  * Manages import and export requests for kitchens
  */
@@ -17,7 +19,7 @@ public class ImportExportManager {
         provider.getUiEventBus().register(this);
     }
 
-    public void onEventAsync(Object msg) {
+    public void onEventAsync(ImportKitchenCommand msg) {
 
     }
 }
