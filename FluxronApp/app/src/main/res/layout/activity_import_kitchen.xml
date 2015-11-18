@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_kitchen_import"
+                android:text="@string/activity_kitchen_imp"
                 style="@style/FluxronTitleTextView"/>
         </LinearLayout>
 
