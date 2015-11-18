@@ -28,6 +28,7 @@
         <activity android:name=".ui.activities.KitchenActivity" />
         <activity android:name=".ui.activities.DeviceActivity" />
         <activity android:name=".ui.activities.KitchenSettingsActivity" />
+        <activity android:name=".ui.activities.ApplicationSettingsActivity" />
         <activity android:name=".ui.activities.KitchenImportActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

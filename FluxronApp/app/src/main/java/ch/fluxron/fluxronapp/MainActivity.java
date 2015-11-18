@@ -16,6 +16,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
+import ch.fluxron.fluxronapp.ui.activities.ApplicationSettingsActivity;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -112,6 +113,11 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         if (msg.getConnectionId().equals(searchConnection)) {
             listAdapter.addOrUpdate(msg.getKitchen());
         }
+    }
+
+    public void onSettingsButtonClicked(View view){
+        Intent startOther = new Intent(this, ApplicationSettingsActivity.class);
+        startActivity(startOther);
     }
 
     @Override

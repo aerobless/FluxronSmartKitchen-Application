@@ -10,7 +10,7 @@
     <string name="activity_find_a_kitchen">Find a kitchen</string>
     <string name="activity_kitchen_settings">Kitchen settings</string>
     <string name="activity_kitchen_import">Importing kitchen</string>
-
+    <string name="activity_application_settings">Application settings</string>
     <!-- Help texts -->
     <string name="no_image_here">No image here. Tap this to take a snapshot.</string>
 
@@ -43,6 +43,8 @@
     <string name="history_heatsink">Heatsink Temperature</string>
     <string name="history_glass">Glass Temperature</string>
     <string name="export_kitchen">Share via EMail</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>
