@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView;
 import ch.fluxron.fluxronapp.ui.components.ParameterEditable;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -75,6 +76,7 @@ public class DeviceConfigFragment extends Fragment{
         baxGradientLimit = (ParameterEditable) deviceView.findViewById(R.id.baxGradientLimit);
         sevenSegConfig = (ParameterEditable) deviceView.findViewById(R.id.sevenSegConfig);
         testMode = (ParameterEditable) deviceView.findViewById(R.id.testMode);
+        ((ConfigurableScrollView) deviceView.findViewById(R.id.scrollView)).setScrollOffset(100);
         return deviceView;
     }
 
