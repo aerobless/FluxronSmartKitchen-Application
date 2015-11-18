@@ -71,10 +71,13 @@ public class ParameterView extends RelativeLayout {
         paramValue.setText(value);
     }
 
-    public void handleDeviceChanged(DeviceChanged msg){
+    public String handleDeviceChanged(DeviceChanged msg){
         DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
         if(dp != null){
-            setValue(dp.getValue());
+            String val = dp.getValue();
+            setValue(val);
+            return val;
         }
+        return null;
     }
 }
