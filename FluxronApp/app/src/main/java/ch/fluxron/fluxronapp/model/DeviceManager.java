@@ -13,14 +13,12 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnec
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
-import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceFailed;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
@@ -185,7 +183,7 @@ public class DeviceManager {
     }
 
     /**
-     * Save
+     * Add a new device to the cache.
      *
      * @param device
      */
@@ -194,13 +192,6 @@ public class DeviceManager {
         synchronized (deviceCache) {
             deviceCache.put(device.getAddress(), device);
         }
-    }
-
-    public void onEventAsync(DeviceParamRequestCommand inputCmd) {
-        BluetoothReadRequest readRequest = new BluetoothReadRequest(inputCmd.getDeviceID());
-        readRequest.addParam(inputCmd.getParamID());
-        readRequest.setConnectionId(inputCmd);
-        provider.getDalEventBus().post(readRequest);
     }
 
     /**
