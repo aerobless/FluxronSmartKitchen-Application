@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
+import ch.fluxron.fluxronapp.ui.util.ErrorCodeConverter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -64,31 +65,11 @@ public class ErrorView extends LinearLayout {
     }
 
     public void setValue(String value) {
-        String code = getErrorCodeFromValue(value);
-        String counter = getCounterFromValue(value);
+        String code = ErrorCodeConverter.convertToErrorCode(Integer.parseInt(value));
+        String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value)+getResources().getIdentifier("hoursAgo", "string", getContext().getPackageName()));
         this.errorCode.setText(code);
         this.errorDescription.setText(getErrorDescriptionFromCode(code));
         this.errorSince.setText(counter);
-    }
-
-    /**
-     * Gets the error code part from a parameter value
-     * @param value Value
-     * @return Error code
-     */
-    private String getErrorCodeFromValue(String value) {
-        // TODO: do it properly
-        return value;
-    }
-
-    /**
-     * Gets the counter from an error parameter value
-     * @param value Value
-     * @return Usage counter
-     */
-    private String getCounterFromValue(String value) {
-        // TODO: do it properly
-        return value;
     }
 
     /**
