@@ -42,6 +42,7 @@
     <string name="history_uptime">Uptime</string>
     <string name="history_heatsink">Heatsink Temperature</string>
     <string name="history_glass">Glass Temperature</string>
+    <string name="export_kitchen">Share via EMail</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>

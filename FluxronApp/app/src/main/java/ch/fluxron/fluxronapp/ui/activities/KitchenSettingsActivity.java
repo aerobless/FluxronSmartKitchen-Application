@@ -3,9 +3,11 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettingsCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
@@ -104,6 +106,15 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
 
         // Text changed, send the changes
         ChangeKitchenSettingsCommand cmd = new ChangeKitchenSettingsCommand(kitchenId, name, description);
+        postMessage(cmd);
+    }
+
+    /**
+     * User requested to share the kitchen via EMail
+     * @param v Button
+     */
+    public void shareKitchen(View v){
+        ExportKitchenCommand cmd = new ExportKitchenCommand(kitchenId);
         postMessage(cmd);
     }
 }
