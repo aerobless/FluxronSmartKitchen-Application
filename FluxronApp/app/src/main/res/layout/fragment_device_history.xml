@@ -26,7 +26,8 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="51%"/>
+                    android:text="51%"
+                    android:id="@+id/powerOnTimeP"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/uptimePowerOnTime"
                     app:paramName="@string/F_CCLASS_3006SUB1_POWER_ON_TIME"
@@ -35,7 +36,8 @@
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"/>
+                    android:text="58%"
+                    android:id="@+id/workingTimeP"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/uptimeWorkingTime"
                     app:paramName="@string/F_CCLASS_3006SUB2_WORKING_TIME"
@@ -58,19 +60,21 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="100%"/>
+                    android:text="100%"
+                    android:id="@+id/heatsinkLevel1P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/heatsinkPowerOnTime1"
-                    app:paramName="@string/F_CCLASS_3006SUB1_POWER_ON_TIME"
+                    android:id="@+id/heatsinkLevel1"
+                    app:paramName="@string/F_CCLASS_3006SUB3_HEATSINK_LEVEL_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"/>
+                    android:text="58%"
+                    android:id="@+id/heatsinkLevel2P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/heatsinkWorkingTime1"
-                    app:paramName="@string/F_CCLASS_3006SUB2_WORKING_TIME"
+                    android:id="@+id/heatsinkLevel2"
+                    app:paramName="@string/F_CCLASS_3006SUB4_HEATSINK_LEVEL_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -82,19 +86,21 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="10%"/>
+                    android:text="10%"
+                    android:id="@+id/heatsinkLevel3P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/heatsinkPowerOnTime2"
-                    app:paramName="@string/F_CCLASS_3006SUB1_POWER_ON_TIME"
+                    android:id="@+id/heatsinkLevel3"
+                    app:paramName="@string/F_CCLASS_3006SUB5_HEATSINK_LEVEL_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"/>
+                    android:text="58%"
+                    android:id="@+id/heatsinkLevel4P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/heatsinkWorkingTime2"
-                    app:paramName="@string/F_CCLASS_3006SUB2_WORKING_TIME"
+                    android:id="@+id/heatsinkLevel4"
+                    app:paramName="@string/F_CCLASS_3006SUB6_HEATSINK_LEVEL_4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -113,19 +119,21 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="100%"/>
+                    android:text="100%"
+                    android:id="@+id/glassLevel1P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/glassPowerOnTime1"
-                    app:paramName="@string/F_CCLASS_3006SUB1_POWER_ON_TIME"
+                    android:id="@+id/glassLevel1"
+                    app:paramName="@string/F_CCLASS_3006SUB7_GLASS_LEVEL_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"/>
+                    android:text="58%"
+                    android:id="@+id/glassLevel2P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/glassWorkingTime1"
-                    app:paramName="@string/F_CCLASS_3006SUB2_WORKING_TIME"
+                    android:id="@+id/glassLevel2"
+                    app:paramName="@string/F_CCLASS_3006SUB8_GLASS_LEVEL_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -137,19 +145,21 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="100%"/>
+                    android:text="100%"
+                    android:id="@+id/glassLevel3P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/glassPowerOnTime2"
-                    app:paramName="@string/F_CCLASS_3006SUB1_POWER_ON_TIME"
+                    android:id="@+id/glassLevel3"
+                    app:paramName="@string/F_CCLASS_3006SUB9_GLASS_LEVEL_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"/>
+                    android:text="58%"
+                    android:id="@+id/glassLevel4P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/glassWorkingTime2"
-                    app:paramName="@string/F_CCLASS_3006SUB2_WORKING_TIME"
+                    android:id="@+id/glassLevel4"
+                    app:paramName="@string/F_CCLASS_3006SUBA_GLASS_LEVEL_4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.LocalDatabase;
 import ch.fluxron.fluxronapp.data.mocking.FakeBluetooth;
 import ch.fluxron.fluxronapp.model.DeviceManager;
+import ch.fluxron.fluxronapp.model.ImportExportManager;
 import ch.fluxron.fluxronapp.model.KitchenManager;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
 import de.greenrobot.event.EventBus;
@@ -34,6 +35,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private Bluetooth bluetooth;
     private FakeBluetooth fakeBluetooth;
     private KitchenManager kitchenManger;
+    private ImportExportManager importExport;
 
     @Override
     public void onCreate() {
@@ -78,6 +80,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
         responder = new PrototypeResponder(modelProvier);
         deviceManager = new DeviceManager(modelProvier);
         kitchenManger = new KitchenManager(modelProvier);
+        importExport = new ImportExportManager(modelProvier);
 
         // Data Access Layer
         setupDal();
