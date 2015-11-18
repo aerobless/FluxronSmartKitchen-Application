@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -136,6 +138,17 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
             findViewById(R.id.exportButton).setEnabled(true);
             findViewById(R.id.exportButton).animate().alpha(1).setDuration(150).start();
             findViewById(R.id.exportSpinner).animate().alpha(0).setDuration(150).start();
+
+            startMailWithAttachment(msg.getLocation());
         }
+    }
+
+    private void startMailWithAttachment(Uri location) {
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        emailIntent.setType("application/fluxron");
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Share a kitchen");
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Kitchen is attached.");
+        emailIntent.putExtra(Intent.EXTRA_STREAM, location);
+        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 }
