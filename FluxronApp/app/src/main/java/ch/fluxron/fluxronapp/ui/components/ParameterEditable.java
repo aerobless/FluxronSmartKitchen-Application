@@ -16,7 +16,7 @@ import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
+import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
@@ -83,7 +83,7 @@ public class ParameterEditable extends LinearLayout {
                 //TODO: possible problem if we have to enter hex data..?
                 value = value.replaceAll("[^\\d]", ""); //TODO: better way to format the values instead of removing non-numerics here.
                 if (value != "" && deviceAddress != null) {
-                    provider.getUiEventBus().post(new DeviceChangeCommand(deviceAddress, new DeviceParameter(parameter, value)));
+                    provider.getUiEventBus().post(new DeviceChangeCommand(deviceAddress, new ParameterValue(parameter, value)));
                 } else {
                     Log.d("FLUXRON", "Trying to save an empty value in ParameterEditable OR ParameterEditable.deviceAddress hasn't been set.");
                     //TODO: message/toast/info for user
@@ -175,7 +175,7 @@ public class ParameterEditable extends LinearLayout {
      * @param msg
      */
     public void handleDeviceChanged(DeviceChanged msg) {
-        DeviceParameter dp = msg.getDevice().getDeviceParameter(getParameter());
+        ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
         if (dp != null & !editMode) {
             setValue(dp.getValue());
         }

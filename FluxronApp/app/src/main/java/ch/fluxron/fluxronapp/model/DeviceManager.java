@@ -23,7 +23,7 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
+import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 
 /**
@@ -63,7 +63,7 @@ public class DeviceManager {
     }
 
     public void onEventAsync(DeviceChangeCommand cmd) {
-        DeviceParameter changedParam = cmd.getChangeRequest();
+        ParameterValue changedParam = cmd.getChangeRequest();
         if(isValid(changedParam)){
             String address = cmd.getAddress();
             String field = cmd.getChangeRequest().getName();
@@ -76,13 +76,14 @@ public class DeviceManager {
         }
     }
 
-    private boolean isValid(DeviceParameter param){
+    private boolean isValid(ParameterValue param){
         Object converted = convertToObject(param);
         return converted != null;
     }
 
-    private Object convertToObject(DeviceParameter param){
-       /* if(){
+    private Object convertToObject(ParameterValue param){
+        /*ParameterValue param = paramMap.get(param.getName());
+        if(){
 
         }*/
         return param;
@@ -129,7 +130,7 @@ public class DeviceManager {
         if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
             device.setProductCode(inputMsg.getValue());
         } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
-            device.setDeviceParameter(new DeviceParameter(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
+            device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);
             device.setLastContact(new Date());
         }

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 /**
@@ -19,7 +18,7 @@ public class Device {
     private boolean bonded;
     private Date lastContact;
     private int productCode = 0;
-    private Map<String, DeviceParameter> deviceParameters = new HashMap<>();
+    private Map<String, ParameterValue> deviceParameters = new HashMap<>();
     private DeviceTypeConverter dtConverter = new DeviceTypeConverter();
 
     public static final String UNKNOWN_DEVICE_TYPE = "Unknown Device Type";
@@ -80,11 +79,11 @@ public class Device {
         this.productCode = productCode;
     }
 
-    public DeviceParameter getDeviceParameter(String paramName) {
+    public ParameterValue getDeviceParameter(String paramName) {
         return deviceParameters.get(paramName);
     }
 
-    public void setDeviceParameter(DeviceParameter param) {
+    public void setDeviceParameter(ParameterValue param) {
         deviceParameters.put(param.getName(), param);
     }
 
@@ -133,7 +132,7 @@ public class Device {
      * Used for debugging purposes.
      */
     public void printStoredParameters() {
-        for (DeviceParameter dp : deviceParameters.values()) {
+        for (ParameterValue dp : deviceParameters.values()) {
             Log.d("FLUXRON DEBUG", "ParamName: " + dp.getName() + " Value: " + dp.getValue());
         }
     }

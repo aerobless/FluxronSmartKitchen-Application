@@ -1,25 +1,25 @@
 package ch.fluxron.fluxronapp.events.modelUi.deviceOperations;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
+import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 
 /**
  * Used to request changing a device parameter
  */
 public class DeviceChangeCommand extends RequestResponseConnection{
-    DeviceParameter changeRequest;
+    ParameterValue changeRequest;
     String address;
 
-    public DeviceChangeCommand(String address, DeviceParameter changeRequest) {
+    public DeviceChangeCommand(String address, ParameterValue changeRequest) {
         this.changeRequest = changeRequest;
         this.address = address;
     }
 
-    public DeviceParameter getChangeRequest() {
+    public ParameterValue getChangeRequest() {
         return changeRequest;
     }
 
-    public void setChangeRequest(DeviceParameter changeRequest) {
+    public void setChangeRequest(ParameterValue changeRequest) {
         this.changeRequest = changeRequest;
     }
 

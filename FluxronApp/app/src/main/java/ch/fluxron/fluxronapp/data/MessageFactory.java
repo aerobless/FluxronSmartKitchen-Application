@@ -211,7 +211,7 @@ public class MessageFactory {
     }
 
     /**
-     * Returns a DeviceParameter if the key exists. Otherwise null.
+     * Returns a ParameterValue if the key exists. Otherwise null.
      * @param key
      * @return
      */
