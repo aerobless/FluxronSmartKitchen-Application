@@ -116,5 +116,7 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
     public void shareKitchen(View v){
         ExportKitchenCommand cmd = new ExportKitchenCommand(kitchenId);
         postMessage(cmd);
+        // TODO: Wait for export result, then show EMail Intent
+        //       http://stackoverflow.com/questions/6078099/android-intent-for-sending-email-with-attachment
     }
 }
