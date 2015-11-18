@@ -41,7 +41,12 @@ public class CyclicRefresh {
         listOfInterestingParameters = initLoiP();
     }
 
-    private static Set<String> initLoiP(){
+    /**
+     * Initializes the list containing all interesting parameters.
+     *
+     * @return
+     */
+    private static Set<String> initLoiP() {
         Set<String> list = new HashSet<>();
         list.add(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
         list.add(ParamManager.F_CCLASS_1008_MANUFACTURER_DEVICE_NAME);
@@ -50,29 +55,84 @@ public class CyclicRefresh {
         return list;
     }
 
-    private void run() {
-        while(enabled.get()){
-            Set<String> localRefreshList;
-            synchronized (refreshList){
-               localRefreshList = new HashSet<>(refreshList);
-            }
-            for(String device: localRefreshList){
-                if(!enabled.get()){
-                    break;
+    /**
+     * Copy a snapshot of the current deviceCache to the refreshList.
+     *
+     * @return
+     */
+    @NonNull
+    private Set<String> copyDeviceCacheToRefreshList() {
+        Map<String, Device> deviceMap;
+        synchronized (deviceCache) {
+            deviceMap = deviceCache.snapshot();
+        }
+        Set<String> deviceSet = new HashSet<>();
+        for (Device device : deviceMap.values()) {
+            deviceSet.add(device.getAddress());
+        }
+        return deviceSet;
+    }
+
+    /**
+     * Used to inject devices loaded with a kitchen into the device manager.
+     *
+     * @param cmd
+     */
+    public void onEventAsync(CyclicRefreshCommand cmd) {
+        if (cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)) {
+            refreshList.clear();
+            refreshList.addAll(copyDeviceCacheToRefreshList());
+            discoveryMode = true;
+            start();
+        } else if (cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.NONE)) {
+            refreshList.clear();
+            skipToNext();
+            discoveryMode = false;
+            enabled.set(false);
+        } else {
+            refreshList.clear();
+            discoveryMode = false;
+            refreshList.add(cmd.getDeviceToRefresh());
+            start();
+        }
+    }
+
+    /**
+     * CyclicRefresh will now iterate through all devices and refresh their parameters until
+     * its told to stop.
+     */
+    private void start() {
+        skipToNext();
+        if (enabled.compareAndSet(false, true)) {
+            while (enabled.get()) {
+                Set<String> localRefreshList;
+                synchronized (refreshList) {
+                    localRefreshList = new HashSet<>(refreshList);
                 }
-                postRequest(device);
-            }
-            cooldown(1000);
-            if(discoveryMode){
-                refreshList.addAll(copyDeviceCacheToRefreshList());
+                for (String device : localRefreshList) {
+                    if (!enabled.get()) {
+                        break;
+                    }
+                    postRequest(device);
+                }
+                cooldown(1000);
+                if (discoveryMode) {
+                    refreshList.addAll(copyDeviceCacheToRefreshList());
+                }
             }
         }
     }
 
+    /**
+     * Post a request to read all the parameters in the list of interesting parameters of a specific
+     * device.
+     *
+     * @param device
+     */
     private void postRequest(String device) {
         BluetoothReadRequest req = new BluetoothReadRequest(device, listOfInterestingParameters);
-        synchronized (lock){
-            while(!doNext.get()){
+        synchronized (lock) {
+            while (!doNext.get()) {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
@@ -85,6 +145,12 @@ public class CyclicRefresh {
         }
     }
 
+    /**
+     * Used to prevent memory churning when there are only fake devices in a kitchen.
+     * Can also be used for debugging purposes, to slow down the communication with the devices.
+     *
+     * @param timeInMs
+     */
     private static void cooldown(int timeInMs) {
         try {
             Thread.sleep(timeInMs);
@@ -93,92 +159,49 @@ public class CyclicRefresh {
         }
     }
 
-
-
-    /**
-     * Copy a snapshot of the current deviceCache to the refreshList.
-     * @return
-     */
-    @NonNull
-    private Set<String> copyDeviceCacheToRefreshList() {
-        Map<String, Device> deviceMap;
-        synchronized (deviceCache){
-            deviceMap = deviceCache.snapshot();
-        }
-        Set<String> deviceSet = new HashSet<>();
-        for (Device device:deviceMap.values()){
-            deviceSet.add(device.getAddress());
-        }
-        return deviceSet;
-    }
-
-    /**
-     * Used to inject devices loaded with a kitchen into the device manager.
-     * @param cmd
-     */
-    public void onEventAsync(CyclicRefreshCommand cmd){
-        if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)){
-            refreshList.clear();
-            refreshList.addAll(copyDeviceCacheToRefreshList());
-            discoveryMode = true;
-            start();
-        } else if(cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.NONE)){
-            refreshList.clear();
-            skipToNext();
-            discoveryMode = false;
-            enabled.set(false);
-        } else{
-            refreshList.clear();
-            discoveryMode = false;
-            refreshList.add(cmd.getDeviceToRefresh());
-            start();
-        }
-    }
-
-    private void start() {
-        skipToNext();
-        if(enabled.compareAndSet(false, true)){
-            run();
-        }
-    }
-
     /**
      * Checks BluetoothDeviceChanged messages to see if it originated from the CyclicRefresh.
      * If it did originate here, it wakes the CyclicRefresh to update the next device.
+     *
      * @param inputMsg
      */
-    public void onEventAsync(BluetoothDeviceChanged inputMsg){
+    public void onEventAsync(BluetoothDeviceChanged inputMsg) {
         String connectionID = inputMsg.getConnectionId();
-        if(connectionID.equals(currentConnection)){
+        if (connectionID.equals(currentConnection)) {
             skipToNext();
-        }
-    }
-
-    private void skipToNext() {
-        synchronized (lock){
-            doNext.set(true);
-            lock.notifyAll();
         }
     }
 
     /**
      * If the pipe broke or the connection could not be established for other reasons.
      * Skips the current device. It will be automatically retried in the next cycle.
+     *
      * @param inputMsg
      */
-    public void onEventAsync(BluetoothConnectionFailed inputMsg){
+    public void onEventAsync(BluetoothConnectionFailed inputMsg) {
         String connectionID = inputMsg.getConnectionId();
-        if(connectionID.equals(currentConnection)){
+        if (connectionID.equals(currentConnection)) {
             skipToNext();
         }
     }
 
     /**
+     * Skip to the next device.
+     */
+    private void skipToNext() {
+        synchronized (lock) {
+            doNext.set(true);
+            lock.notifyAll();
+        }
+    }
+
+    /**
      * Listens to RegisterParameterCommand and adds it to the List of interesting parameters.
+     *
      * @param inputMsg
      */
-    public void onEventAsync(RegisterParameterCommand inputMsg){
-        synchronized (listOfInterestingParameters){
+    public void onEventAsync(RegisterParameterCommand inputMsg) {
+        synchronized (listOfInterestingParameters) {
             listOfInterestingParameters.add(inputMsg.getParameter());
         }
     }
