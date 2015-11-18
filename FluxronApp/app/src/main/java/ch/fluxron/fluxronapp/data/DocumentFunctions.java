@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -124,5 +125,26 @@ public class DocumentFunctions {
             return is;
         }
         return null;
+    }
+
+    /**
+     * Gets a map of all attachment streams belonging to a document FileName - InputStream
+     * @param doc Document
+     * @return Map
+     */
+    public Map<String, InputStream> getAllStreams(Document doc) {
+        Revision rev = doc.getCurrentRevision();
+        Map<String, InputStream> result = new HashMap<>();
+
+        for(Attachment cur : rev.getAttachments()){
+            try {
+                result.put(cur.getName(), cur.getContent());
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return result;
     }
 }

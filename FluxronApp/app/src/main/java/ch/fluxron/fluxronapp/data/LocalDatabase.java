@@ -21,6 +21,7 @@ import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentStreamsFromObjectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachmentCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
@@ -281,5 +282,18 @@ public class LocalDatabase {
         }
 
         return objectsByType;
+    }
+
+    /**
+     * All streams should be returned
+     * @param cmd Command with parameters
+     */
+    public void onEventAsync(GetAllAttachmentStreamsFromObjectCommand cmd) {
+        final Document doc = database.getExistingDocument(cmd.getObjectId());
+
+        if(doc != null) {
+            Map<String, InputStream> streams = documents.getAllStreams(doc);
+            cmd.notifyCompletion(streams);
+        }
     }
 }

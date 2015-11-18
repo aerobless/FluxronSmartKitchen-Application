@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentStreamsFromObjectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
@@ -52,7 +55,18 @@ public class ImportExportManager {
         provider.getDalEventBus().post(cmd);
     }
 
-    private void exportKitchen(Kitchen kitchen, ExportKitchenCommand msg) {
+    private void exportKitchen(final Kitchen kitchen, final ExportKitchenCommand msg) {
+        // Laden der Attachmentstreams
+        GetAllAttachmentStreamsFromObjectCommand cmd = new GetAllAttachmentStreamsFromObjectCommand(kitchen.getId(), new ITypedCallback<Map<String, InputStream>>() {
+            @Override
+            public void call(Map<String, InputStream> streams) {
+                createKitchenZipFile(kitchen, msg, streams);
+            }
+        });
+        provider.getDalEventBus().post(cmd);
+    }
+
+    private void createKitchenZipFile(Kitchen kitchen, ExportKitchenCommand msg, Map<String, InputStream> streams) {
         // Storage directory
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "flx_export");
 
@@ -72,11 +86,36 @@ public class ImportExportManager {
             // Write the object
             writeObject(zipFile, kitchen);
 
+            // write and close streams
+            writeAnCloseAllStreams(zipFile, streams);
+
             zipFile.flush();
             zipFile.close();
         } catch (java.io.IOException e) {
 
         }
+    }
+
+    private void writeAnCloseAllStreams(ZipOutputStream zipFile, Map<String, InputStream> streams) throws IOException {
+        for(Map.Entry<String, InputStream> stream : streams.entrySet()) {
+            ZipEntry entry = new ZipEntry(stream.getKey());
+            zipFile.putNextEntry(entry);
+
+            copyStreamToZip(stream.getValue(), zipFile);
+
+            zipFile.closeEntry();
+        }
+    }
+
+    private void copyStreamToZip(InputStream stream, ZipOutputStream zipFile) throws IOException {
+        byte[] buffer = new byte[256];
+        int bytesRead;
+
+        while ((bytesRead = stream.read(buffer))>=0) {
+            zipFile.write(buffer, 0, bytesRead);
+        }
+
+        stream.close();
     }
 
     private void writeObject(ZipOutputStream zipFile, Kitchen kitchen) throws IOException {
