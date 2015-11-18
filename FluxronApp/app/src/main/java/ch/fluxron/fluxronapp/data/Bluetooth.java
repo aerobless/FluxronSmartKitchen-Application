@@ -13,6 +13,7 @@ import android.util.LruCache;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -169,7 +170,7 @@ public class Bluetooth {
      * @param cmd
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
-        Set<String> parameters = cmd.getParameters();
+        Set<String> parameters = new HashSet<>(cmd.getParameters());
         for (String p : parameters) {
             byte[] message = messageFactory.makeReadRequest(p);
             messageFactory.printUnsignedByteArray(message);
