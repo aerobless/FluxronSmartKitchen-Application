@@ -23,7 +23,7 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceParamRequestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
+import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 
 /**
@@ -34,6 +34,7 @@ public class DeviceManager {
     private final LruCache<String, Device> deviceCache;
     private Map<String, ch.fluxron.fluxronapp.data.generated.DeviceParameter> paramMap;
     private CyclicRefresh cyclicRefresh;
+    private ParamValidator validator;
 
     private static final String PARAM_PRODUCT_CODE = "1018sub2";
 
@@ -44,6 +45,7 @@ public class DeviceManager {
         deviceCache = new LruCache<>(256);
         cyclicRefresh = new CyclicRefresh(provider, deviceCache);
         paramMap = new ParamManager().getParamMap();
+        validator = new ParamValidator();
     }
 
     /**
@@ -62,30 +64,25 @@ public class DeviceManager {
         }
     }
 
+    /**
+     * Listens to DeviceChangedCommands. Validates incoming change requests and then
+     * sends them on to the bluetooth module. If a change request is invalid a response is
+     * sent to the UI.
+     *
+     * @param cmd
+     */
     public void onEventAsync(DeviceChangeCommand cmd) {
-        DeviceParameter changedParam = cmd.getChangeRequest();
-        if(isValid(changedParam)){
+        ParameterValue changedParam = cmd.getChangeRequest();
+        if (validator.isValid(changedParam)) {
             String address = cmd.getAddress();
             String field = cmd.getChangeRequest().getName();
-            int value = Integer.parseInt(cmd.getChangeRequest().getValue());
-            //TODO: convert into correct object
+            Object value = validator.convertToObject(changedParam);
             provider.getDalEventBus().post(new BluetoothWriteRequest(address, field, value));
         } else {
-            provider.getDalEventBus().post(new ch.fluxron.fluxronapp.events.modelUi.ToastProduced("Illegal Value entered"));
+            provider.getUiEventBus().post(new ch.fluxron.fluxronapp.events.modelUi.ToastProduced("Illegal Value entered"));
+            Log.d("Fluxron", "Illegal Value entered");
             //TODO: return proper message instead of toast
         }
-    }
-
-    private boolean isValid(DeviceParameter param){
-        Object converted = convertToObject(param);
-        return converted != null;
-    }
-
-    private Object convertToObject(DeviceParameter param){
-       /* if(){
-
-        }*/
-        return param;
     }
 
     /**
@@ -129,7 +126,7 @@ public class DeviceManager {
         if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
             device.setProductCode(inputMsg.getValue());
         } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
-            device.setDeviceParameter(new DeviceParameter(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
+            device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);
             device.setLastContact(new Date());
         }

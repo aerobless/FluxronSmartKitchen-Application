@@ -11,7 +11,7 @@ import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
+import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 
 /**
  * Responds to BluetoothDiscoveryCommands and replies with Fake devices.
@@ -73,7 +73,7 @@ public class FakeBluetooth {
         String deviceMac = randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99);
         Device unreal = new Device("FAKE_"+deviceID, deviceMac, false);
         int deviceType = deviceTypes.get(randInt(0, 3));
-        DeviceParameter productCodeParam = new DeviceParameter(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE, deviceType+"");
+        ParameterValue productCodeParam = new ParameterValue(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE, deviceType+"");
         unreal.setDeviceParameter(productCodeParam);
         unreal.setBonded(true);
         return unreal;

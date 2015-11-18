@@ -3,11 +3,11 @@ package ch.fluxron.fluxronapp.objectBase;
 /**
  * A deviceParameter
  */
-public class DeviceParameter {
+public class ParameterValue {
     private String name;
     private String value;
 
-    public DeviceParameter(String name, String value) {
+    public ParameterValue(String name, String value) {
         this.name = name;
         this.value = value;
     }

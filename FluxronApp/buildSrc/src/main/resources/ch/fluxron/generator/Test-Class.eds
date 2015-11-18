@@ -1,0 +1,15 @@
+[2001sub8]
+ParameterName=BOOLEAN TEST
+ObjectType=0x7
+DataType=0x0001
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[3021sub1]
+ParameterName=FLOAT TEST
+ObjectType=0x7
+DataType=0x0008
+AccessType=ro
+DefaultValue=0
+PDOMapping=1

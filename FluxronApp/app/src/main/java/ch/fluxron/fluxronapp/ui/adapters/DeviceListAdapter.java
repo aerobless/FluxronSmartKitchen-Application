@@ -1,7 +1,6 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.objectBase.Device;
-import ch.fluxron.fluxronapp.objectBase.DeviceParameter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
