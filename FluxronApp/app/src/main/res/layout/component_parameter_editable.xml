@@ -13,7 +13,7 @@
             android:gravity="center_vertical"
             android:textSize="20sp"
             android:visibility="gone"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:text="Coil Setup"
             android:layout_marginTop="15dp"/>
         <TextView
@@ -33,19 +33,29 @@
                 android:visibility="visible"
                 android:gravity="center_vertical"
                 android:textSize="15sp"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:text="Coil Setup"/>
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/layout_bottom"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height = "wrap_content">
                 <EditText
                     android:id="@+id/paramValue"
-                    android:layout_width="0dp"
+                    android:layout_width="fill_parent"
+                    android:gravity="end"
+                    android:layout_marginEnd="0dp"
+                    android:layout_toStartOf="@+id/paramMeasurementUnit"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
+                    android:singleLine="true"/>
+                <TextView
+                    android:id="@+id/paramMeasurementUnit"
+                    android:textSize="20sp"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:autoText="false" />
-            </LinearLayout>
+                    android:layout_alignParentEnd = "true"/>
+            </RelativeLayout>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/buttonPanel"
@@ -53,7 +63,8 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="6dp">
+            android:paddingStart="0dp"
+            android:paddingEnd="6dp">
             <Button
                 android:text="@string/resetButton"
                 android:id="@+id/resetButton"
@@ -65,7 +76,7 @@
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginBottom="3dp"/>
         </LinearLayout>
     </LinearLayout>

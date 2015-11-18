@@ -30,6 +30,7 @@ public class ParameterEditable extends LinearLayout {
     private TypedArray arguments;
     private String parameter;
     private String measuringUnit;
+    private TextView paramMeasurementUnit;
     private TextView paramNameSmall;
     private TextView paramNameBig;
     private TextView infoText;
@@ -38,7 +39,7 @@ public class ParameterEditable extends LinearLayout {
     private String lastParamValue = "";
     private String deviceAddress;
     private LinearLayout buttonPanel;
-    private LinearLayout paramPanel;
+
     private Button saveButton;
     private Button resetButton;
     private IEventBusProvider provider;
@@ -53,12 +54,12 @@ public class ParameterEditable extends LinearLayout {
         parameter = arguments.getString(R.styleable.ParameterEditable_editableParamName);
         measuringUnit = arguments.getString(R.styleable.ParameterEditable_editableMeasuringUnit);
 
+        paramMeasurementUnit = (TextView) this.findViewById(R.id.paramMeasurementUnit);
         paramNameSmall = (TextView) this.findViewById(R.id.paramNameSmall);
         paramNameBig = (TextView) this.findViewById(R.id.paramNameBig);
         infoText = (TextView) this.findViewById(R.id.infoText);
         paramValue = (EditText) this.findViewById(R.id.paramValue);
         buttonPanel = (LinearLayout) this.findViewById(R.id.buttonPanel);
-        paramPanel = (LinearLayout) this.findViewById(R.id.paramPanel);
         saveButton = (Button) this.findViewById(R.id.saveButton);
         resetButton = (Button) this.findViewById(R.id.resetButton);
 
@@ -104,6 +105,7 @@ public class ParameterEditable extends LinearLayout {
         paramValue.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    paramValue.setSelection(paramValue.getText().length());
                     paramNameSmall.setVisibility(GONE);
                     paramNameBig.setVisibility(VISIBLE);
                     if (infoText.getText() != "") {
@@ -157,9 +159,9 @@ public class ParameterEditable extends LinearLayout {
 
     public void setValue(String value) {
         String result = value;
-        /*if (measuringUnit != null) {
-            result += " " + measuringUnit;
-        }*/
+        if (measuringUnit != null) {
+            paramMeasurementUnit.setText(measuringUnit);
+        }
         lastParamValue = result;
         paramValue.setText(result);
     }
