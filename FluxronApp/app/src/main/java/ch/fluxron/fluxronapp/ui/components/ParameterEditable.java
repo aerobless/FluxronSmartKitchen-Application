@@ -80,13 +80,10 @@ public class ParameterEditable extends LinearLayout {
             @Override
             public void onClick(View v) {
                 String value = paramValue.getText().toString();
-                //TODO: possible problem if we have to enter hex data..?
-                value = value.replaceAll("[^\\d]", ""); //TODO: better way to format the values instead of removing non-numerics here.
-                if (value != "" && deviceAddress != null) {
+                if (deviceAddress != null) {
                     provider.getUiEventBus().post(new DeviceChangeCommand(deviceAddress, new ParameterValue(parameter, value)));
                 } else {
-                    Log.d("FLUXRON", "Trying to save an empty value in ParameterEditable OR ParameterEditable.deviceAddress hasn't been set.");
-                    //TODO: message/toast/info for user
+                    Log.d("FLUXRON", "arameterEditable.deviceAddress hasn't been set. Are you attempting to save on a Fake Device?");
                 }
             }
         });
@@ -160,9 +157,9 @@ public class ParameterEditable extends LinearLayout {
 
     public void setValue(String value) {
         String result = value;
-        if (measuringUnit != null) {
+        /*if (measuringUnit != null) {
             result += " " + measuringUnit;
-        }
+        }*/
         lastParamValue = result;
         paramValue.setText(result);
     }

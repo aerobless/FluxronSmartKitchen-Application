@@ -27,6 +27,7 @@ public class ParamGenerator {
         parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/C-Class.eds", parameterMap, "CClass");
         parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/ETX.eds", parameterMap, "ETX");
         parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/S-Class.eds", parameterMap, "SClass");
+        parameterMap = loadParameters("/"+args[0]+"/buildSrc/build/resources/main/ch/fluxron/generator/Test-Class.eds", parameterMap, "TEST");
 
         generateDeviceParameter(args[0]);
         generateUIParameters(args[0] + "/app/src/main/res/values/parameters.xml", parameterMap);
