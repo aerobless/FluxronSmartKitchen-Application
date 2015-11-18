@@ -207,7 +207,7 @@ public class MessageFactory {
         for (int i = 0; i < message.length; i++) {
             hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";
         }
-        Log.d("FLUXRON", hexMessage);
+        //Log.d("FLUXRON", hexMessage);
     }
 
     /**

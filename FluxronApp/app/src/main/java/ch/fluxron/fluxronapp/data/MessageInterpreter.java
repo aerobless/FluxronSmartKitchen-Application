@@ -30,12 +30,12 @@ public class MessageInterpreter {
     public void onEventAsync(BluetoothMessageReceived inputMsg) {
         String address = inputMsg.getAddress();
         byte[] data = inputMsg.getData();
-        Log.d("Fluxron", "Message from " + address);
+        //Log.d("Fluxron", "Message from " + address);
 
         byte[] dataPayload = null;
         messageFactory.printUnsignedByteArray(data);
         if(isChecksumValid(data)){
-            Log.d("Fluxron", "and its checksum is valid.");
+            //Log.d("Fluxron", "and its checksum is valid.");
             if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B){
                 //Java Ints are 32bits, so we need 4Bytes anyway. That's why we don't care
                 //how long the payload really is.
@@ -51,7 +51,8 @@ public class MessageInterpreter {
             }
             handlePayload(inputMsg, data, dataPayload);
         } else {
-            Log.d("Fluxron", "Invalid checksum!");
+            //Log.d("Fluxron", "Invalid checksum!");
+            //TODO: interprete error messages
         }
     }
 

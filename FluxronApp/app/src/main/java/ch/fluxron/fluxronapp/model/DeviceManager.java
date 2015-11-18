@@ -63,12 +63,29 @@ public class DeviceManager {
     }
 
     public void onEventAsync(DeviceChangeCommand cmd) {
-        //TODO: validate here
-        String address = cmd.getAddress();
-        String field = cmd.getChangeRequest().getName();
-        int value = Integer.parseInt(cmd.getChangeRequest().getValue());
-        //TODO: convert into correct object
-        provider.getDalEventBus().post(new BluetoothWriteRequest(address, field, value));
+        DeviceParameter changedParam = cmd.getChangeRequest();
+        if(isValid(changedParam)){
+            String address = cmd.getAddress();
+            String field = cmd.getChangeRequest().getName();
+            int value = Integer.parseInt(cmd.getChangeRequest().getValue());
+            //TODO: convert into correct object
+            provider.getDalEventBus().post(new BluetoothWriteRequest(address, field, value));
+        } else {
+            provider.getDalEventBus().post(new ch.fluxron.fluxronapp.events.modelUi.ToastProduced("Illegal Value entered"));
+            //TODO: return proper message instead of toast
+        }
+    }
+
+    private boolean isValid(DeviceParameter param){
+        Object converted = convertToObject(param);
+        return converted != null;
+    }
+
+    private Object convertToObject(DeviceParameter param){
+       /* if(){
+
+        }*/
+        return param;
     }
 
     /**
@@ -99,7 +116,7 @@ public class DeviceManager {
      * @param inputMsg
      */
     public void onEventAsync(BluetoothDeviceChanged inputMsg) {
-        Log.d("FLUXRON", "Device " + inputMsg.getAddress() + " has reported " + inputMsg.getValue() + " for field " + inputMsg.getField());
+        //Log.d("FLUXRON", "Device " + inputMsg.getAddress() + " has reported " + inputMsg.getValue() + " for field " + inputMsg.getField());
         Device device;
         synchronized (deviceCache) {
             device = deviceCache.get(inputMsg.getAddress());

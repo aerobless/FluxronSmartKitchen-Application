@@ -25,7 +25,6 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRe
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothWriteRequest;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.model.ConnectionCache;
 import ch.fluxron.fluxronapp.objectBase.Device;
 

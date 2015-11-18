@@ -57,7 +57,7 @@ public class BTConnectionThread extends Thread{
                 if(mmInStream.available() > 0){
                     nofBytes = mmInStream.read(buffer);
                     outputStream.write(buffer, 0, nofBytes);
-                    Log.d("FLUXRON", nofBytes + " Bytes received!!!");
+                    //Log.d("FLUXRON", nofBytes + " Bytes received!!!");
 
                     //For a message >=7 we can be sure that it includes the actual length of the message in the payload
                     if(outputStream.size() >= 7){
@@ -66,7 +66,7 @@ public class BTConnectionThread extends Thread{
                            Their actual length is set in the payload. */
                         if (partialMsg[2] == 64){
                             messageLength = MESSAGE_LENGTH + partialMsg[6];
-                            Log.d("FLUXRON","Message length set to "+messageLength);
+                            //Log.d("FLUXRON","Message length set to "+messageLength);
                         } else {
                             messageLength = MESSAGE_LENGTH;
                         }
@@ -94,7 +94,7 @@ public class BTConnectionThread extends Thread{
     }
 
     public void write(byte[] message, RequestResponseConnection requestResponseConnection) throws IOException {
-        Log.d("FLUXRON", "Sending message");
+        //Log.d("FLUXRON", "Sending message");
         mmOutStream.write(message);
         synchronized (this.requestResponseConnection){
             this.requestResponseConnection = requestResponseConnection;
