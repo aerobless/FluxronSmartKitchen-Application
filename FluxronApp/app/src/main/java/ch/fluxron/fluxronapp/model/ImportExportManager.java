@@ -5,7 +5,9 @@ import android.os.Environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,8 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
@@ -21,12 +25,15 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdComma
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.LoadImportMetadata;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.MetadataLoaded;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 
 /**
  * Manages import and export requests for kitchens
  */
 public class ImportExportManager {
+    private static String ENTRY_MANIFEST = "manifest.json";
     private IEventBusProvider provider;
 
     /**
@@ -42,6 +49,29 @@ public class ImportExportManager {
 
     public void onEventAsync(ImportKitchenCommand msg) {
 
+    }
+
+    public void onEventAsync(LoadImportMetadata msg) {
+        try {
+            FluxronManifest manifest = getMetadataFromUri(msg.getLocation());
+
+            MetadataLoaded loaded = new MetadataLoaded(manifest);
+            loaded.setConnectionId(msg);
+            provider.getUiEventBus().post(loaded);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private FluxronManifest getMetadataFromUri(Uri location) throws IOException {
+        ZipFile file = new ZipFile(location.getPath());
+        ZipEntry entry = file.getEntry(ENTRY_MANIFEST);
+
+        ObjectMapper mapper = new ObjectMapper();
+        FluxronManifest parsed = mapper.readValue(file.getInputStream(entry), FluxronManifest.class);
+
+        return parsed;
     }
 
     public void onEventAsync(final ExportKitchenCommand msg) {
@@ -140,7 +170,7 @@ public class ImportExportManager {
     }
 
     private void writeManifest(ZipOutputStream zipFile, Kitchen kitchen) throws IOException {
-        ZipEntry entry = new ZipEntry("manifest.json");
+        ZipEntry entry = new ZipEntry(ENTRY_MANIFEST);
         zipFile.putNextEntry(entry);
 
         // Create manifest

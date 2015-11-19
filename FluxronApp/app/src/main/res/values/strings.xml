@@ -39,6 +39,7 @@
     <string name="device_count">%d device(s)</string>
     <string name="kitchen_property_name">Name</string>
     <string name="kitchen_property_description">Description</string>
+    <string name="kitchen_property_export_date">Exported</string>
     <string name="history_uptime">Uptime</string>
     <string name="history_heatsink">Heatsink Temperature</string>
     <string name="history_glass">Glass Temperature</string>
