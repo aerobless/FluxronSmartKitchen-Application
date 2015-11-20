@@ -210,6 +210,7 @@ public class Bluetooth {
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
             if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                 BTConnectionThread connectionThread = getConnection(device, false);
+                //Log.d(TAG, "GOT connection, trying to write message");
                 connectionThread.write(message, connection);
             } else {
                 throw new IOException("Unbonded Device");

@@ -28,6 +28,7 @@ public class CyclicRefresh {
     private String currentConnection;
     private final Object lock = new Object();
     private AtomicBoolean doNext = new AtomicBoolean(false);
+    private AtomicBoolean forceNextDevice = new AtomicBoolean(false);
     private final Set<String> listOfInterestingParameters;
     private boolean discoveryMode = false;
 
@@ -86,7 +87,7 @@ public class CyclicRefresh {
             start();
         } else if (cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.NONE)) {
             refreshList.clear();
-            skipToNext();
+            skipToNextDevice();
             discoveryMode = false;
             enabled.set(false);
         } else {
@@ -102,7 +103,7 @@ public class CyclicRefresh {
      * its told to stop.
      */
     private void start() {
-        skipToNext();
+        skipToNextDevice();
         if (enabled.compareAndSet(false, true)) {
             while (enabled.get()) {
                 Set<String> localRefreshList;
@@ -113,7 +114,13 @@ public class CyclicRefresh {
                     if (!enabled.get()) {
                         break;
                     }
-                    postRequest(device);
+                    Set<String> tempList = new HashSet<>(listOfInterestingParameters);
+                    for(String param:tempList){
+                        postRequest(device, param);
+                        if(forceNextDevice.compareAndSet(true, false)){
+                            break;
+                        }
+                    }
                 }
                 cooldown(1000);
                 if (discoveryMode) {
@@ -129,8 +136,8 @@ public class CyclicRefresh {
      *
      * @param device
      */
-    private void postRequest(String device) {
-        BluetoothReadRequest req = new BluetoothReadRequest(device, listOfInterestingParameters);
+    private void postRequest(String device, String parameter) {
+        BluetoothReadRequest req = new BluetoothReadRequest(device, parameter);
         synchronized (lock) {
             while (!doNext.get()) {
                 try {
@@ -141,6 +148,7 @@ public class CyclicRefresh {
             }
             currentConnection = req.getConnectionId();
             provider.getDalEventBus().post(req);
+            Log.d("FLUXRON", "POSTED A REQUEST FOR DATA");
             doNext.set(false);
         }
     }
@@ -168,7 +176,7 @@ public class CyclicRefresh {
     public void onEventAsync(BluetoothDeviceChanged inputMsg) {
         String connectionID = inputMsg.getConnectionId();
         if (connectionID.equals(currentConnection)) {
-            skipToNext();
+            skipToNextParam();
         }
     }
 
@@ -181,18 +189,27 @@ public class CyclicRefresh {
     public void onEventAsync(BluetoothConnectionFailed inputMsg) {
         String connectionID = inputMsg.getConnectionId();
         if (connectionID.equals(currentConnection)) {
-            skipToNext();
+            skipToNextDevice();
+        }
+    }
+
+    /**
+     * Skip to the next parameter.
+     */
+    private void skipToNextParam() {
+        synchronized (lock) {
+            doNext.set(true);
+            lock.notifyAll();
         }
     }
 
     /**
      * Skip to the next device.
      */
-    private void skipToNext() {
-        synchronized (lock) {
-            doNext.set(true);
-            lock.notifyAll();
-        }
+    private void skipToNextDevice() {
+        Log.d("Fluxron", "Skipping to next Device");
+        forceNextDevice.set(true);
+        skipToNextParam();
     }
 
     /**

@@ -124,6 +124,7 @@ public class DeviceManager {
         if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
             device.setProductCode(inputMsg.getValue());
         } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
+            Log.d("Setting param",device.getDeviceClass() + "_" + inputMsg.getField()+"   "+Integer.toString(inputMsg.getValue()));
             device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);
             device.setLastContact(new Date());
