@@ -22,6 +22,8 @@ public class ParameterView extends RelativeLayout {
     ParamManager manager;
     TypedArray arguments;
     String parameter;
+    String measuringUnit;
+    int decPointPos;
     TextView paramName;
     TextView paramValue;
     IEventBusProvider provider;
@@ -34,6 +36,8 @@ public class ParameterView extends RelativeLayout {
 
         arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterView);
         parameter = arguments.getString(R.styleable.ParameterView_paramName);
+        measuringUnit = arguments.getString(R.styleable.ParameterView_paramMeasuringUnit);
+        decPointPos = arguments.getInteger(R.styleable.ParameterView_paramDecPointPosRight, 0);
 
         paramName = (TextView) this.findViewById(R.id.paramName);
         paramValue = (TextView) this.findViewById(R.id.paramValue);
@@ -52,7 +56,7 @@ public class ParameterView extends RelativeLayout {
      */
     private void setDisplayText() {
         String displayText = arguments.getString(R.styleable.ParameterView_paramDisplayText);
-        if(displayText != null){
+        if (displayText != null) {
             paramName.setText(displayText);
         } else {
             paramName.setText(manager.getParamMap().get(parameter).getName());
@@ -61,19 +65,35 @@ public class ParameterView extends RelativeLayout {
 
     /**
      * Returns the id of the parameter thats registered for this view.
+     *
      * @return
      */
-    public String getParameter(){
+    public String getParameter() {
         return parameter;
     }
 
-    public void setValue(String value){
-        paramValue.setText(value);
+    public void setValue(String value) {
+        String formattedValue = value;
+
+        //Format decimal point
+        if (decPointPos != 0) {
+            formattedValue = value.substring(0, value.length() - decPointPos) + "." + value.substring(value.length() - decPointPos, value.length());
+            if (formattedValue.length() == 2) {
+                formattedValue = "0" + formattedValue;
+            }
+        }
+
+        //Format measuring unit
+        if (measuringUnit != null) {
+            formattedValue += " " + measuringUnit;
+        }
+
+        paramValue.setText(formattedValue);
     }
 
-    public String handleDeviceChanged(DeviceChanged msg){
+    public String handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
-        if(dp != null){
+        if (dp != null) {
             String val = dp.getValue();
             setValue(val);
             return val;
