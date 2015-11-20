@@ -5,6 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="9dp">
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +30,7 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="51%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/powerOnTimeP"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/uptimePowerOnTime"
@@ -38,7 +42,7 @@
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/workingTimeP"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/uptimeWorkingTime"
@@ -64,7 +68,7 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="100%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/heatsinkLevel1P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/heatsinkLevel1"
@@ -76,7 +80,7 @@
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/heatsinkLevel2P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/heatsinkLevel2"
@@ -94,7 +98,7 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="10%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/heatsinkLevel3P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/heatsinkLevel3"
@@ -106,7 +110,7 @@
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/heatsinkLevel4P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/heatsinkLevel4"
@@ -131,7 +135,7 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="100%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/glassLevel1P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/glassLevel1"
@@ -143,7 +147,7 @@
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/glassLevel2P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/glassLevel2"
@@ -160,7 +164,7 @@
                 android:orientation="horizontal">
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="100%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/glassLevel3P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/glassLevel3"
@@ -172,7 +176,7 @@
                 <Space android:layout_width="24dp" android:layout_height="match_parent" />
                 <TextView
                     style="@style/FluxronHistoryPercentage"
-                    android:text="58%"
+                    android:text="@string/percentage_zero"
                     android:id="@+id/glassLevel4P"/>
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/glassLevel4"

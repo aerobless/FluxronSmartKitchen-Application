@@ -43,19 +43,22 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/kitchen_property_name"
                 android:id="@+id/textViewName"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                android:labelFor="@+id/editTextName"/>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editTextName" />
+                android:id="@+id/editTextName"
+                android:inputType="text"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Description"
-                android:id="@+id/textViewDescription" />
+                android:text="@string/kitchen_property_description"
+                android:id="@+id/textViewDescription"
+                android:labelFor="@+id/editTextDescription"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -84,16 +87,17 @@
                     android:layout_width="match_parent"
                     android:id="@+id/imagePreview"
                     android:onClick="onCreatePictureClicked"
+                    android:contentDescription="@string/kitchen_image"
                      />
             </FrameLayout>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Create >"
+                android:text="@string/create_kitchen"
                 android:id="@+id/buttonCreate"
                 android:onClick="createNewKitchen"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:layout_marginTop="12dp"/>
         </LinearLayout>
     </ScrollView>

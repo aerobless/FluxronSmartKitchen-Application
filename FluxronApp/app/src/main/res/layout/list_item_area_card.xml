@@ -24,6 +24,7 @@
             android:minWidth="50dp"
             android:scaleX="1.04"
             android:scaleY="1.04"
+            android:contentDescription="@string/card_description"
             />
     </FrameLayout>
 

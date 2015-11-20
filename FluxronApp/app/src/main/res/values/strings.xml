@@ -25,6 +25,7 @@
     <string name="btn_start_discovery">Start Discovery</string>
     <string name="btn_pair">pair</string>
     <string name="btn_add">add</string>
+    <string name="discovery_active">Device Discovery active&#8230;</string>
 
     <!-- Single characters -->
     <string name="ok_check">&#10003;</string>
@@ -48,6 +49,28 @@
     <string name="password">Password</string>
     <string name="hoursAgo"> hours ago</string>
     <string name="fieldDoesNotExist">field unavailable</string>
+    <string name="kitchen_image">Picture to identify the kitchen</string>
+    <string name="create_kitchen">Create &gt;</string>
+    <string name="device_name_default">Device Name</string>
+    <string name="device_address_default">00:11:22:33:44:55:66</string>
+    <string name="kitchen_settings">edit kitchen settings</string>
+    <string name="area_edit">edit kitchen area</string>
+    <string name="kitchen_delete">delete kitchen or area</string>
+    <string name="app_settings">edit app settings</string>
+    <string name="kitchen_search_hint">search by name</string>
+    <string name="device_type_default">\?\?\?</string>
+    <string name="device_cancel_deletion">x</string>
+    <string name="error_code_default">E00</string>
+    <string name="error_text_default">Error text</string>
+    <string name="error_time_default">0d 00:00:00</string>
+    <string name="param_name_default">Coil Setup</string>
+    <string name="param_value">value missing</string>
+    <string name="temperature_bar_title">Temperature</string>
+    <string name="temperature_bar_temp">175 °C</string>
+    <string name="percentage_zero">0%</string>
+    <string name="card_description">area card</string>
+    <string name="kitchen_description">kitchen image</string>
+    <string name="kitchen_name_default">kitchen name</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>

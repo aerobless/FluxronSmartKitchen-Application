@@ -48,7 +48,8 @@
                         android:id="@+id/settingsButton"
                         android:animateLayoutChanges="true"
                         android:alpha="0"
-                        android:visibility="gone"/>
+                        android:visibility="gone"
+                        android:contentDescription="@string/kitchen_settings"/>
 
                     <ImageButton
                         style="@style/FluxronImageButton"
@@ -60,7 +61,8 @@
                         android:layout_marginStart="12dp"
                         android:animateLayoutChanges="true"
                         android:alpha="0"
-                        android:visibility="gone"/>
+                        android:visibility="gone"
+                        android:contentDescription="@string/area_edit"/>
 
                     <ImageButton
                         style="@style/FluxronImageButton"
@@ -69,7 +71,8 @@
                         android:src="@drawable/ic_delete"
                         android:onClick="onDeleteButtonClicked"
                         android:layout_marginStart="12dp"
-                        android:animateLayoutChanges="true"/>
+                        android:animateLayoutChanges="true"
+                        android:contentDescription="@string/kitchen_delete"/>
                 </LinearLayout>
             </FrameLayout>
 

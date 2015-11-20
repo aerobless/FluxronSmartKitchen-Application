@@ -54,7 +54,8 @@
                         android:layout_alignParentEnd="true"
                         android:onClick="onSettingsButtonClicked"
                         android:id="@+id/settingsButton"
-                        android:animateLayoutChanges="true"/>
+                        android:animateLayoutChanges="true"
+                        android:contentDescription="@string/app_settings"/>
                 </RelativeLayout>
             </LinearLayout>
             <EditText
@@ -64,8 +65,11 @@
                 style="@style/FluxronSearchBar"
                 android:id="@+id/kitchenName"
                 android:singleLine="true"
-                android:drawableLeft="@drawable/ic_search"
-                android:paddingLeft="8dp"/>
+                android:drawableStart="@drawable/ic_search"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:drawablePadding="8dp"
+                android:hint="@string/kitchen_search_hint"/>
         </LinearLayout>
     </android.support.design.widget.AppBarLayout>
 

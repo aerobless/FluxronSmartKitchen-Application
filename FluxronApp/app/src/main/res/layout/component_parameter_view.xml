@@ -7,13 +7,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Temperature Heatsink"
+            android:text="@string/param_name_default"
             android:id="@+id/paramName" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="150 °C"
+            android:text="@string/param_value"
             android:textSize="9pt"
             android:textColor="@color/cardview_dark_background"
             android:id="@+id/paramValue" />

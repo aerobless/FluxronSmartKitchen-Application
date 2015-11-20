@@ -28,21 +28,21 @@
                     android:id="@+id/deviceStatusName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FLX_GTZ4899"
-                    android:layout_toRightOf="@id/statusOrb"
+                    android:text="@string/device_name_default"
+                    android:layout_toEndOf="@id/statusOrb"
                     style="@style/FluxronDeviceNameTextView"
-                    android:layout_marginLeft="9dp"
+                    android:layout_marginStart="9dp"
                     />
                 <TextView
                     android:id="@+id/deviceStatusDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="00:FF:DD:33:32:BB"
-                    android:layout_toRightOf="@id/statusOrb"
+                    android:text="@string/device_address_default"
+                    android:layout_toEndOf="@id/statusOrb"
                     android:layout_below="@id/deviceStatusName"
                     style="@style/FluxronDeviceDescTextView"
-                    android:layout_marginLeft="9dp"
+                    android:layout_marginStart="9dp"
                     />
             </RelativeLayout>
     </android.support.design.widget.AppBarLayout>

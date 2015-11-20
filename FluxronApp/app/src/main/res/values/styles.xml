@@ -10,6 +10,7 @@
 
         <!-- Colors -->
         <item name="colorAccent">@color/accentColor1</item>
+        <item name="android:textColorHint">@color/titleForeground</item>
 
         <!-- Global styles for controls-->
         <item name="android:textViewStyle">@style/FluxronTextView</item>
