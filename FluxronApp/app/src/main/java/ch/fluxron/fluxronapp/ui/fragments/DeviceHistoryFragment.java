@@ -14,6 +14,7 @@ import java.util.Map;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 import ch.fluxron.fluxronapp.ui.util.PercentageGroup;
@@ -57,16 +58,17 @@ public class DeviceHistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_history, container, false);
-        provider = (IEventBusProvider)getContext().getApplicationContext();
+        provider = (IEventBusProvider) getContext().getApplicationContext();
 
         return deviceView;
     }
-    public void setDeviceAddress(String address){
+
+    public void setDeviceAddress(String address) {
         this.deviceAddress = address;
     }
 
-    public void onEventMainThread(DeviceChanged inputMsg){
-        if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
+    public void onEventMainThread(DeviceChanged inputMsg) {
+        if (inputMsg.getDevice().getAddress().equals(deviceAddress)) {
 
             // Uptime
             updatePercentageGroupedControls(inputMsg, uptimeGroup
@@ -88,9 +90,26 @@ public class DeviceHistoryFragment extends Fragment {
         }
     }
 
+    public void onEventMainThread(DeviceNotChanged inputMsg) {
+        if (inputMsg.getAddress().equals(deviceAddress)) {
+            int[] parameterViewIds = new int[]{
+                    R.id.uptimePowerOnTime, R.id.uptimeWorkingTime, R.id.powerOnTimeP, R.id.workingTimeP,
+                    R.id.heatsinkLevel1, R.id.heatsinkLevel2, R.id.heatsinkLevel3, R.id.heatsinkLevel4,
+                    R.id.heatsinkLevel1P, R.id.heatsinkLevel2P, R.id.heatsinkLevel3P, R.id.heatsinkLevel4P,
+                    R.id.glassLevel1, R.id.glassLevel2, R.id.glassLevel3, R.id.glassLevel4,
+                    R.id.glassLevel1P, R.id.glassLevel2P, R.id.glassLevel3P, R.id.glassLevel4P
+            };
+            for (int i = 0; i < parameterViewIds.length; i++) {
+                ParameterView current = (ParameterView) getView().findViewById(parameterViewIds[i]);
+                current.handleDeviceNotChanged(inputMsg);
+
+            }
+        }
+    }
+
     // TODO: Why is Glass Level 4 not updated
     private void updatePercentageGroupedControls(DeviceChanged updatedValues, PercentageGroup group, int[] parameterViewIds, int[] labelIds, boolean[] addToGroup) {
-        if (getView()==null) return;
+        if (getView() == null) return;
 
         // Mapping of parameterViewId to new value from updatedValues
         Map<Integer, Integer> values = new HashMap<>(parameterViewIds.length);
@@ -102,11 +121,11 @@ public class DeviceHistoryFragment extends Fragment {
             String newValue = current.handleDeviceChanged(updatedValues);
 
             if (newValue != null) {
-                    int timer = Integer.parseInt(newValue);
-                    if (addToGroup[i]) {
-                        group.put(current.getParameter(), timer);
-                    }
-                    values.put(parameterViewIds[i], timer);
+                int timer = Integer.parseInt(newValue);
+                if (addToGroup[i]) {
+                    group.put(current.getParameter(), timer);
+                }
+                values.put(parameterViewIds[i], timer);
             }
         }
 
@@ -119,8 +138,7 @@ public class DeviceHistoryFragment extends Fragment {
                 int value = values.get(parameterViewIds[l]);
                 float percentage = group.getPercentageOfTotal(value);
                 label.setText(format.format(percentage));
-            }
-            else {
+            } else {
                 label.setText(format.format(0));
             }
         }

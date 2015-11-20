@@ -3,6 +3,7 @@ package ch.fluxron.fluxronapp.ui.components;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -99,5 +101,13 @@ public class ParameterView extends RelativeLayout {
             return val;
         }
         return null;
+    }
+
+    public void handleDeviceNotChanged(DeviceNotChanged msg){
+        if(getParameter().contains(msg.getField())){
+            paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));
+            paramValue.setEnabled(false);
+            paramValue.setFocusable(false);
+        }
     }
 }

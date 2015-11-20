@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -78,6 +79,15 @@ public class DeviceStatusFragment extends Fragment {
             temperatureBar2.handleDeviceChanged(inputMsg);
             temperatureBar3.handleDeviceChanged(inputMsg);
             temperatureBar4.handleDeviceChanged(inputMsg);
+        }
+    }
+
+    public void onEventMainThread(DeviceNotChanged inputMsg){
+        if(inputMsg.getAddress().equals(deviceAddress)){
+            heatsink1.handleDeviceNotChanged(inputMsg);
+            kwfSetpoint.handleDeviceNotChanged(inputMsg);
+            kwfPower.handleDeviceNotChanged(inputMsg);
+            tempGradient.handleDeviceNotChanged(inputMsg);
         }
     }
 }
