@@ -47,6 +47,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="hoursAgo"> hours ago</string>
+    <string name="fieldDoesNotExist">field unavailable</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>

@@ -15,6 +15,7 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDevice
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothRequestFailed;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
@@ -206,6 +207,7 @@ public class CyclicRefresh {
         if (connectionID.equals(currentConnection)) {
             skipToNextParam();
         }
+        provider.getUiEventBus().post(new DeviceNotChanged(inputMsg.getField(), inputMsg.getAddress()));
     }
 
     /**

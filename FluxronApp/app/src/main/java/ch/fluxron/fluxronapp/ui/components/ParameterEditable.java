@@ -2,6 +2,7 @@ package ch.fluxron.fluxronapp.ui.components;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -173,8 +175,17 @@ public class ParameterEditable extends LinearLayout {
      */
     public void handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
-        if (dp != null & !editMode) {
+        if (dp != null && !editMode) {
             setValue(dp.getValue());
+        }
+    }
+
+    public void handleDeviceNotChanged(DeviceNotChanged msg){
+        if(getParameter().contains(msg.getField())){
+            paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));
+            paramValue.setEnabled(false);
+            paramValue.setFocusable(false);
+            paramValue.setInputType(InputType.TYPE_NULL);
         }
     }
 
