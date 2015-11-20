@@ -22,19 +22,19 @@ public class MessageFactory {
      * 1-4 specify the amount of bytes that should be read.
      * More information in CANopen.pdf pages 16-18.
      */
-    public final static byte CCD_READ_REQUEST =  (byte) 0x40;
+    public final static byte CCD_READ_REQUEST = (byte) 0x40;
     public final static byte CCD_WRITE_REQUEST_1B = (byte) 0x2F;
     public final static byte CCD_WRITE_REQUEST_2B = (byte) 0x2B;
     public final static byte CCD_WRITE_REQUEST_3B = (byte) 0x27;
     public final static byte CCD_WRITE_REQUEST_4B = (byte) 0x23;
 
-    public final static byte CCD_ERROR_RESPONSE =  (byte) 0x80;
+    public final static byte CCD_ERROR_RESPONSE = (byte) 0x80;
 
-    public final static byte CCD_READ_RESPONSE_1B =  (byte) 0x4F;
-    public final static byte CCD_READ_RESPONSE_2B =  (byte) 0x4B;
-    public final static byte CCD_READ_RESPONSE_3B =  (byte) 0x47;
-    public final static byte CCD_READ_RESPONSE_4B =  (byte) 0x43;
-    public final static byte CCD_WRITE_RESPONSE =  (byte) 0x60;
+    public final static byte CCD_READ_RESPONSE_1B = (byte) 0x4F;
+    public final static byte CCD_READ_RESPONSE_2B = (byte) 0x4B;
+    public final static byte CCD_READ_RESPONSE_3B = (byte) 0x47;
+    public final static byte CCD_READ_RESPONSE_4B = (byte) 0x43;
+    public final static byte CCD_WRITE_RESPONSE = (byte) 0x60;
 
     //Access Types
     public final static String ACCESS_CONST = "const"; //read only, will not change
@@ -48,7 +48,7 @@ public class MessageFactory {
     public final static int DATA_TYPE_16BIT_SIGNED_INT = 3;
     public final static int DATA_TYPE_32BIT_SIGNED_INT = 4;
     public final static int DATA_TYPE_8BIT_UNSIGNED_INT = 5;
-    public final static int DATA_TYPE_16BIT_UNSIGNED_INT =6;
+    public final static int DATA_TYPE_16BIT_UNSIGNED_INT = 6;
     public final static int DATA_TYPE_32BIT_UNSIGNED_INT = 7;
     public final static int DATA_TYPE_FLOAT = 8;
     public final static int DATA_TYPE_VISIBLE_STRING = 9;
@@ -67,7 +67,7 @@ public class MessageFactory {
         this.parameterMap = paramManager.getParamMap();
     }
 
-    public byte[] makeReadRequest(String paramID){
+    public byte[] makeReadRequest(String paramID) {
         byte[] index = parameterMap.get(paramID).getIndex();
         byte[] messageBody = new byte[7];
         messageBody[0] = index[1]; //LSB
@@ -78,10 +78,10 @@ public class MessageFactory {
 
     //TODO: eventuell payload länge anhand datentyp bestimmen statt konvertierung..
     //TODO: perhaps move rw check to DeviceManager
-    public byte[] makeWriteRequest(String paramID, Object data){
+    public byte[] makeWriteRequest(String paramID, Object data) {
         String accessType = parameterMap.get(paramID).getAccessType();
 
-        if(accessType.equals(ACCESS_READ_WRITE) || accessType.equals(ACCESS_WRITE_ONLY)){
+        if (accessType.equals(ACCESS_READ_WRITE) || accessType.equals(ACCESS_WRITE_ONLY)) {
 
             //Set Index & subindex
             byte[] index = parameterMap.get(paramID).getIndex();
@@ -92,18 +92,18 @@ public class MessageFactory {
 
             //Create & copy payload to Little Endian
             byte[] dataArray = convertDataObjectToByte(paramID, data);
-            if(dataArray.length >= 4 && dataArray.length >= 1){
-                int dataIndex = dataArray.length-1;
-                for(int i=3; i< dataArray.length; i++){
+            if (dataArray.length >= 4 && dataArray.length >= 1) {
+                int dataIndex = dataArray.length - 1;
+                for (int i = 3; i < dataArray.length; i++) {
                     messageBody[i] = dataArray[dataIndex];
                     dataIndex--;
                 }
             }
 
             //Set message type
-            if(dataArray.length<=4){
+            if (dataArray.length <= 4) {
                 byte messageType = CCD_WRITE_REQUEST_4B;
-                switch (dataArray.length){
+                switch (dataArray.length) {
                     case 3:
                         messageType = CCD_WRITE_REQUEST_3B;
                     case 2:
@@ -122,22 +122,23 @@ public class MessageFactory {
 
     /**
      * Converts  Parameter Data Objects to a byte arrays.
+     *
      * @param paramID
      * @param data
      * @return
      * @throws UnsupportedOperationException
      */
-    public byte[] convertDataObjectToByte(String paramID, Object data){
+    public byte[] convertDataObjectToByte(String paramID, Object data) {
         int dataType = parameterMap.get(paramID).getDataType();
         byte[] dataByte;
 
-        if(dataType == DATA_TYPE_BOOLEAN){
+        if (dataType == DATA_TYPE_BOOLEAN) {
             int val = ((Boolean) data) ? 1 : 0;
             dataByte = new byte[val];
-        } else if(isSignedInt(dataType) || isUnsignedInt(dataType) ){
+        } else if (isSignedInt(dataType) || isUnsignedInt(dataType)) {
             dataByte = Ints.toByteArray((Integer) data);
-        } else if(dataType == DATA_TYPE_VISIBLE_STRING){
-            String val = (String)data;
+        } else if (dataType == DATA_TYPE_VISIBLE_STRING) {
+            String val = (String) data;
             dataByte = val.getBytes();
         } else {
             throw new UnsupportedOperationException("The datatype for this class hasn't been implemented yet.");
@@ -145,13 +146,13 @@ public class MessageFactory {
         return dataByte;
     }
 
-    private static boolean isSignedInt(int dataType){
+    private static boolean isSignedInt(int dataType) {
         return dataType == DATA_TYPE_8BIT_SIGNED_INT
-        || dataType == DATA_TYPE_16BIT_SIGNED_INT
-        || dataType == DATA_TYPE_32BIT_SIGNED_INT;
+                || dataType == DATA_TYPE_16BIT_SIGNED_INT
+                || dataType == DATA_TYPE_32BIT_SIGNED_INT;
     }
 
-    private static boolean isUnsignedInt(int dataType){
+    private static boolean isUnsignedInt(int dataType) {
         return dataType == DATA_TYPE_8BIT_UNSIGNED_INT
                 || dataType == DATA_TYPE_16BIT_UNSIGNED_INT
                 || dataType == DATA_TYPE_32BIT_UNSIGNED_INT;
@@ -166,10 +167,10 @@ public class MessageFactory {
      * Byte 10: Check LB Low Byte Checksum
      * Byte 11: Check HB High Byte Checksum
      */
-    public byte[] buildMessage(byte requestCode, byte[] canMessage){
+    public byte[] buildMessage(byte requestCode, byte[] canMessage) {
         byte[] message = new byte[12];
-        message[0] = (byte)0xAA;
-        message[1] = (byte)0xAA;
+        message[0] = (byte) 0xAA;
+        message[1] = (byte) 0xAA;
         message[2] = requestCode;
         for (int c = 0; c < (canMessage.length); c++) {
             message[c + 3] = canMessage[c];
@@ -182,17 +183,17 @@ public class MessageFactory {
      * Calculate the checksum for byte 2-9 and set it in byte 10 & 11.
      */
     protected byte[] setChecksum(byte[] message) {
-        if(message.length >= 5){
+        if (message.length >= 5) {
             byte[] checkedMessage = message.clone();
             int checksum = 0;
             int msgStart = 2;
-            int msgEnd = message.length-2;
+            int msgEnd = message.length - 2;
             for (int c = msgStart; c < msgEnd; c++) {
                 checksum += checkedMessage[c];
             }
             checkedMessage[msgEnd] = (byte) (checksum & 0xFF);
-            if(checksum>=255){
-                checkedMessage[msgEnd+1] = (byte) ((checksum >> 8) & 0xFF);
+            if (checksum >= 255) {
+                checkedMessage[msgEnd + 1] = (byte) ((checksum >> 8) & 0xFF);
             }
             return checkedMessage;
         } else {
@@ -205,17 +206,18 @@ public class MessageFactory {
     public void printUnsignedByteArray(byte[] message) {
         String hexMessage = "";
         for (int i = 0; i < message.length; i++) {
-            hexMessage = hexMessage+Integer.toHexString(0xFF & message[i])+" ";
+            hexMessage = hexMessage + Integer.toHexString(0xFF & message[i]) + " ";
         }
-        //Log.d("FLUXRON", hexMessage);
+        Log.d("FLUXRON", hexMessage);
     }
 
     /**
      * Returns a ParameterValue if the key exists. Otherwise null.
+     *
      * @param key
      * @return
      */
-    public DeviceParameter getParameter(String key){
+    public DeviceParameter getParameter(String key) {
         return parameterMap.get(key);
     }
 }

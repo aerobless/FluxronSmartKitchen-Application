@@ -33,7 +33,7 @@ public class MessageInterpreter {
         //Log.d("Fluxron", "Message from " + address);
 
         byte[] dataPayload = null;
-        messageFactory.printUnsignedByteArray(data);
+        //messageFactory.printUnsignedByteArray(data); //DEBUG
         if (isChecksumValid(data)) {
             //Log.d("Fluxron", "and its checksum is valid.");
             if (data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B) {
@@ -66,6 +66,7 @@ public class MessageInterpreter {
 
     /**
      * Interprets read responses and sends them upstream.
+     *
      * @param inputMsg
      * @param data
      * @param dataPayload
@@ -110,7 +111,7 @@ public class MessageInterpreter {
         if (lsb.length() == 1) {
             lsb = "0" + lsb;
         }
-        return msb + lsb + "sub" + sub;
+        return msb + lsb + "sub" + sub.toUpperCase();
     }
 
     public boolean isChecksumValid(byte[] originalMsg) {
@@ -152,6 +153,4 @@ public class MessageInterpreter {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         return buffer.getInt();
     }
-
-
 }

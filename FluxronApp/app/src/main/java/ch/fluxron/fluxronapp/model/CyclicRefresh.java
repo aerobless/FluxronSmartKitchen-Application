@@ -117,9 +117,9 @@ public class CyclicRefresh {
                         break;
                     }
                     Set<String> tempList = new HashSet<>(listOfInterestingParameters);
-                    for(String param:tempList){
+                    for (String param : tempList) {
                         postRequest(device, param);
-                        if(forceNextDevice.compareAndSet(true, false)){
+                        if (forceNextDevice.compareAndSet(true, false)) {
                             break;
                         }
                     }
@@ -150,7 +150,7 @@ public class CyclicRefresh {
             }
             currentConnection = req.getConnectionId();
             provider.getDalEventBus().post(req);
-            Log.d("FLUXRON", "POSTED A REQUEST FOR DATA");
+            //Log.d("FLUXRON", "POSTED A REQUEST FOR DATA");
             doNext.set(false);
         }
     }

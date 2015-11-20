@@ -116,6 +116,7 @@ public class DeviceManager {
         synchronized (deviceCache) {
             device = deviceCache.get(inputMsg.getAddress());
         }
+        //Log.d("Setting param",device.getDeviceClass() + "_" + inputMsg.getField()+"   "+Integer.toString(inputMsg.getValue()));
         /**
          * The product code is needed to correctly store all other parameters. So we're
          * directly storing it as a parameters of the device. This is the only parameter
@@ -124,7 +125,6 @@ public class DeviceManager {
         if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
             device.setProductCode(inputMsg.getValue());
         } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
-            Log.d("Setting param",device.getDeviceClass() + "_" + inputMsg.getField()+"   "+Integer.toString(inputMsg.getValue()));
             device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);
             device.setLastContact(new Date());

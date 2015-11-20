@@ -105,6 +105,7 @@ public class Bluetooth {
 
     /**
      * Sets up a BroadcastReceiver to listen to bonding events.
+     *
      * @param context
      */
     private void setupBonding(Context context) {
@@ -155,7 +156,7 @@ public class Bluetooth {
      */
     public void onEventAsync(BluetoothWriteRequest cmd) {
         byte[] message = messageFactory.makeWriteRequest(cmd.getField(), cmd.getValue());
-        messageFactory.printUnsignedByteArray(message);
+        //messageFactory.printUnsignedByteArray(message); //DEBUG
         try {
             sendData(cmd.getAddress(), message, cmd);
         } catch (IOException e) {
@@ -167,13 +168,14 @@ public class Bluetooth {
 
     /**
      * Connects to a bluetooth device and requests the parameters specified in the command.
+     *
      * @param cmd
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
         Set<String> parameters = new HashSet<>(cmd.getParameters());
         for (String p : parameters) {
             byte[] message = messageFactory.makeReadRequest(p);
-            messageFactory.printUnsignedByteArray(message);
+            //messageFactory.printUnsignedByteArray(message); //DEBUG
             try {
                 sendData(cmd.getAddress(), message, cmd);
             } catch (IOException e) {
@@ -186,6 +188,7 @@ public class Bluetooth {
 
     /**
      * Used to start the bonding process with a specific bluetooth device.
+     *
      * @param cmd
      */
     public void onEventAsync(BluetoothBondingCommand cmd) {
@@ -197,7 +200,7 @@ public class Bluetooth {
                     Method method = device.getClass().getMethod("createBond", (Class[]) null);
                     method.invoke(device, (Object[]) null);
                 } catch (Exception e) {
-                    Log.d(TAG, "Attempt invoke bonding failed: "+e.getMessage());
+                    Log.d(TAG, "Attempt invoke bonding failed: " + e.getMessage());
                 }
             } else {
                 Log.d(TAG, "Device is already bonded.");
