@@ -9,6 +9,7 @@ import java.util.Arrays;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessageReceived;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothRequestFailed;
 
 /**
  * Interprets bluetooth messages received from the remote device.
@@ -28,57 +29,98 @@ public class MessageInterpreter {
     }
 
     public void onEventAsync(BluetoothMessageReceived inputMsg) {
-        String address = inputMsg.getAddress();
         byte[] data = inputMsg.getData();
         //Log.d("Fluxron", "Message from " + address);
 
         byte[] dataPayload = null;
         messageFactory.printUnsignedByteArray(data);
-        if(isChecksumValid(data)){
+        if (isChecksumValid(data)) {
             //Log.d("Fluxron", "and its checksum is valid.");
-            if(data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B){
+            if (data[2] == MessageFactory.CCD_READ_RESPONSE_1B || data[2] == MessageFactory.CCD_READ_RESPONSE_2B || data[2] == MessageFactory.CCD_READ_RESPONSE_3B || data[2] == MessageFactory.CCD_READ_RESPONSE_4B) {
                 //Java Ints are 32bits, so we need 4Bytes anyway. That's why we don't care
                 //how long the payload really is.
-                dataPayload = new byte[]{data[6],data[7],data[8],data[9]};
-            } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE){
+                dataPayload = new byte[]{data[6], data[7], data[8], data[9]};
+                handleReadResponse(inputMsg, data, dataPayload);
+            } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE) {
                 //Doesn't contain data
-            } else if (data[2] == MessageFactory.CCD_READ_REQUEST){
+                //TODO: do something to confirm save?
+            } else if (data[2] == MessageFactory.CCD_READ_REQUEST) {
+                /**
+                 * A response with a READ_REQUEST as CCD is in fact a READ_RESPONSE longer then 4Bytes.
+                 * This is not according to the CANopen specification but rather a derivation from the
+                 * standard by Fluxron.
+                 */
                 dataPayload = retriveBigData(data);
-            } else if (data[2] == MessageFactory.CCD_ERROR_RESPONSE){
+                handleReadResponse(inputMsg, data, dataPayload);
+            } else if (data[2] == MessageFactory.CCD_ERROR_RESPONSE) {
                 Log.d("Fluxron", "Received ERROR bluetooth message");
+                dataPayload = new byte[]{data[6], data[7], data[8], data[9]};
+                handleError(inputMsg, data, dataPayload);
             } else {
-                Log.d("Fluxron", "Unkown Command Code"+ data[2]);
+                Log.d("Fluxron", "Unkown Command Code" + data[2]);
             }
-            handlePayload(inputMsg, data, dataPayload);
         } else {
-            //Log.d("Fluxron", "Invalid checksum!");
-            //TODO: interprete error messages
+            Log.d("Fluxron", "Invalid checksum! Dropping packet");
         }
     }
 
-    private void handlePayload(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
-        if (dataPayload != null){
-            String msb = Integer.toHexString(0xFF & data[4]);
-            String lsb = Integer.toHexString(0xFF & data[3]);
-            String sub = Integer.toHexString(0xFF & data[5]);
-            if(lsb.length()==1){
-                lsb = "0"+lsb;
-            }
-            String field = msb+lsb+"sub"+sub;
+    /**
+     * Interprets read responses and sends them upstream.
+     * @param inputMsg
+     * @param data
+     * @param dataPayload
+     */
+    private void handleReadResponse(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
+        if (dataPayload != null) {
+            String field = getFieldString(data);
             RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(inputMsg.getAddress(), field, decodeByteArray(dataPayload));
             deviceChanged.setConnectionId(inputMsg);
             provider.getDalEventBus().post(deviceChanged);
         }
     }
 
-    public boolean isChecksumValid(byte[] originalMsg){
-        if(originalMsg.length >= 12){
+    /**
+     * Interprets error messages and sends them upstream.
+     *
+     * @param inputMsg
+     * @param data
+     * @param dataPayload
+     */
+    private void handleError(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
+        if (dataPayload != null) {
+            String field = getFieldString(data);
+            //TODO: set correct error type based on payload
+            RequestResponseConnection deviceChanged = new BluetoothRequestFailed(RequestError.INDEX_DOES_NOT_EXIST, inputMsg.getAddress(), field);
+            deviceChanged.setConnectionId(inputMsg);
+            provider.getDalEventBus().post(deviceChanged);
+        }
+    }
+
+    /**
+     * Returns the field as formatted string.
+     * Example: 1008sub3
+     *
+     * @param data
+     * @return
+     */
+    private static String getFieldString(byte[] data) {
+        String msb = Integer.toHexString(0xFF & data[4]);
+        String lsb = Integer.toHexString(0xFF & data[3]);
+        String sub = Integer.toHexString(0xFF & data[5]);
+        if (lsb.length() == 1) {
+            lsb = "0" + lsb;
+        }
+        return msb + lsb + "sub" + sub;
+    }
+
+    public boolean isChecksumValid(byte[] originalMsg) {
+        if (originalMsg.length >= 12) {
             byte[] checkMsg = messageFactory.setChecksum(originalMsg);
-            if(Arrays.equals(originalMsg, checkMsg)){
+            if (Arrays.equals(originalMsg, checkMsg)) {
                 return true;
             }
-        }else {
-            Log.d("FLUXRON", "Only messages with length 12 can be verified. This message has length "+originalMsg.length);
+        } else {
+            Log.d("FLUXRON", "Only messages with length 12 can be verified. This message has length " + originalMsg.length);
         }
         return false;
     }
@@ -87,12 +129,13 @@ public class MessageInterpreter {
      * Used to retrive data from Bluetooth messages that are longer then 12Bytes (>4Byte Data).
      * These messages do not follow the CANopen specification. Instead Field 6 tells the
      * additional length after then normal CANopen message (12B).
+     *
      * @param input
      * @return byte[] Array containing only the data part of the input-Array.
      */
-    private byte[] retriveBigData(byte[] input){
-        byte [] subArray = Arrays.copyOfRange(input, 9, input.length - 3);
-        if(subArray.length != input[6]){
+    private byte[] retriveBigData(byte[] input) {
+        byte[] subArray = Arrays.copyOfRange(input, 9, input.length - 3);
+        if (subArray.length != input[6]) {
             Log.d("Fluxron", "Length of extracted data doesn't match specified length!");
         }
         return subArray;
@@ -100,10 +143,11 @@ public class MessageInterpreter {
 
     /**
      * Decodes little endian byte[] arrays to int values.
+     *
      * @param input
      * @return decoded Int value of the input
      */
-    private static int decodeByteArray(byte[] input){
+    private static int decodeByteArray(byte[] input) {
         ByteBuffer buffer = ByteBuffer.wrap(input);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         return buffer.getInt();

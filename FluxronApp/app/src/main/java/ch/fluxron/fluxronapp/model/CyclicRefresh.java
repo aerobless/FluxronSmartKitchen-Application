@@ -13,6 +13,7 @@ import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothConnectionFailed;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothRequestFailed;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.Device;
@@ -190,6 +191,20 @@ public class CyclicRefresh {
         String connectionID = inputMsg.getConnectionId();
         if (connectionID.equals(currentConnection)) {
             skipToNextDevice();
+        }
+    }
+
+    /**
+     * If the requested parameter is not available on the remote device or there is some other
+     * communication error where we still get a response from the device. (There is not connection
+     * loss here, just an error response from the remote device.)
+     *
+     * @param inputMsg
+     */
+    public void onEventAsync(BluetoothRequestFailed inputMsg) {
+        String connectionID = inputMsg.getConnectionId();
+        if (connectionID.equals(currentConnection)) {
+            skipToNextParam();
         }
     }
 
