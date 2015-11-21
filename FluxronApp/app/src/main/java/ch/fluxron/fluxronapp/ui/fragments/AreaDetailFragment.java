@@ -107,8 +107,8 @@ public class AreaDetailFragment extends Fragment {
         return display;
     }
 
-    public void onEventMainThread(ImageLoaded msg){
-        if (msg.getConnectionId().equals(imageLoadConnection)){
+    public void onEventMainThread(ImageLoaded msg) {
+        if (msg.getConnectionId().equals(imageLoadConnection)) {
             // Set the bitmap to the display
             display.setBitmap(msg.getBmp());
 
@@ -119,23 +119,10 @@ public class AreaDetailFragment extends Fragment {
 
     public void onEventMainThread(DevicePositionChanged msg) {
         // Check if we handle this kitchen and this area at the moment
-        if (msg.getKitchenId().equals(kitchenId) && kitchenArea!= null && kitchenArea.getRelativeId() == msg.getAreaId()) {
+        if (msg.getKitchenId().equals(kitchenId) && kitchenArea != null && kitchenArea.getRelativeId() == msg.getAreaId()) {
             display.setDevicePosition(msg.getPosition());
         }
     }
-
-    public void onEventMainThread(DeviceChanged msg){
-        Device device = msg.getDevice();
-        List<DevicePosition> positionList = kitchenArea.getDevicePositionList();
-        for(DevicePosition pos:positionList){
-            if(device.getAddress().equals(pos.getDeviceId())){
-                pos.setCategory(device.getDeviceType());
-                display.setDevicePosition(pos, DeviceView.DEVICE_STATUS_OK);
-            }
-        }
-    }
-
-    //TODO: update when failure
 
     public void setKitchenArea(KitchenArea kitchenArea) {
         this.kitchenArea = kitchenArea;
@@ -143,9 +130,10 @@ public class AreaDetailFragment extends Fragment {
 
     /**
      * Sets whether this area is in edit mode or not
+     *
      * @param edit Edit mode
      */
-    public void setEditMode(boolean edit){
+    public void setEditMode(boolean edit) {
         display.setEditMode(edit);
     }
 
@@ -155,6 +143,7 @@ public class AreaDetailFragment extends Fragment {
 
     /**
      * Removes the device
+     *
      * @param deviceId Id of the device
      */
     public void removeDevice(String deviceId) {

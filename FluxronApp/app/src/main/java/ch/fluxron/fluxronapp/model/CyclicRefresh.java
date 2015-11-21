@@ -41,7 +41,8 @@ public class CyclicRefresh {
         this.currentConnection = "";
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
-        listOfInterestingParameters = initLoiP();
+        listOfInterestingParameters = new HashSet<>();
+        refreshLoiP();
     }
 
     /**
@@ -49,13 +50,11 @@ public class CyclicRefresh {
      *
      * @return
      */
-    private static Set<String> initLoiP() {
-        Set<String> list = new HashSet<>();
-        list.add(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
-        list.add(ParamManager.F_CCLASS_1008_MANUFACTURER_DEVICE_NAME);
-        list.add(ParamManager.F_CCLASS_1009_MANUFACTURER_HARDWARE_VERSION);
-        list.add(ParamManager.F_CCLASS_100A_MANUFACTURER_SOFTWARE_VERSION);
-        return list;
+    private void refreshLoiP() {
+        synchronized (listOfInterestingParameters){
+            listOfInterestingParameters.clear();
+            listOfInterestingParameters.add(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
+        }
     }
 
     /**
@@ -83,6 +82,8 @@ public class CyclicRefresh {
      */
     public void onEventAsync(CyclicRefreshCommand cmd) {
         if (cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)) {
+            Log.d("FLUXRON", "RECEIVED A COMMAND TO REFRESH ALL DEVICES");
+            refreshLoiP();
             refreshList.clear();
             refreshList.addAll(copyDeviceCacheToRefreshList());
             discoveryMode = true;
@@ -116,7 +117,10 @@ public class CyclicRefresh {
                     if (!enabled.get()) {
                         break;
                     }
-                    Set<String> tempList = new HashSet<>(listOfInterestingParameters);
+                    Set<String> tempList;
+                    synchronized (listOfInterestingParameters){
+                        tempList = new HashSet<>(listOfInterestingParameters);
+                    }
                     for (String param : tempList) {
                         postRequest(device, param);
                         if (forceNextDevice.compareAndSet(true, false)) {

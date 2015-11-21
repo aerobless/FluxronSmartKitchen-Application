@@ -12,14 +12,13 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.events.modelUi.ToastProduced;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePositionCommand;
@@ -195,8 +194,14 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                 devices.add(dp);
             }
         }
-        InjectDevicesCommand idf = new InjectDevicesCommand(devices);
-        busProvider.getUiEventBus().post(idf);
+
+        //Inject the loaded devices into the device manager, since they might not be discovered
+        InjectDevicesCommand idc = new InjectDevicesCommand(devices);
+        busProvider.getUiEventBus().post(idc);
+
+        //Tell the CyclicRefresh unit to start checking whether these devices can be accessed
+        CyclicRefreshCommand cfc = new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES);
+        busProvider.getUiEventBus().post(cfc);
     }
 
     /**
