@@ -93,11 +93,9 @@ public class DeviceHistoryFragment extends Fragment {
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(deviceAddress)) {
             int[] parameterViewIds = new int[]{
-                    R.id.uptimePowerOnTime, R.id.uptimeWorkingTime, R.id.powerOnTimeP, R.id.workingTimeP,
+                    R.id.uptimePowerOnTime, R.id.uptimeWorkingTime,
                     R.id.heatsinkLevel1, R.id.heatsinkLevel2, R.id.heatsinkLevel3, R.id.heatsinkLevel4,
-                    R.id.heatsinkLevel1P, R.id.heatsinkLevel2P, R.id.heatsinkLevel3P, R.id.heatsinkLevel4P,
-                    R.id.glassLevel1, R.id.glassLevel2, R.id.glassLevel3, R.id.glassLevel4,
-                    R.id.glassLevel1P, R.id.glassLevel2P, R.id.glassLevel3P, R.id.glassLevel4P
+                    R.id.glassLevel1, R.id.glassLevel2, R.id.glassLevel3, R.id.glassLevel4
             };
             for (int i = 0; i < parameterViewIds.length; i++) {
                 ParameterView current = (ParameterView) getView().findViewById(parameterViewIds[i]);

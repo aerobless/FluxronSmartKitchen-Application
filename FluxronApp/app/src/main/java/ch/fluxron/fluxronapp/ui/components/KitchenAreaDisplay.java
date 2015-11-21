@@ -253,7 +253,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         deviceRenderer.setDeviceAddress(d.getDeviceId());
         deviceRenderer.setDeviceType(d.getCategory());
         deviceRenderer.setDeviceName(d.getName());
-        deviceRenderer.setDeviceStatus(DeviceView.DEVICE_STATUS_UNKNOWN);
         deviceRenderer.setPosition(d);
         deviceRenderer.setListener(this);
         return deviceRenderer;
@@ -324,7 +323,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         DevicePosition found = null;
         for(DeviceView deviceView : views) {
             if(deviceView.getPosition().getDeviceId().equals(devicePosition.getDeviceId())) {
-                deviceView.setDeviceStatus(status);
                 deviceView.setDeviceType(devicePosition.getCategory());
                 found = deviceView.getPosition();
                 break;
@@ -340,7 +338,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
         else {
             DeviceView deviceRenderer = createDeviceView(devicePosition);
-            deviceRenderer.setDeviceStatus(status);
             deviceRenderer.popUp();
             views.add(deviceRenderer);
             needsRepaint(true);

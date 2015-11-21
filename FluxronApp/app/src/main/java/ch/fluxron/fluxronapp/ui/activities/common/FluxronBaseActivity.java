@@ -113,8 +113,12 @@ public class FluxronBaseActivity extends AppCompatActivity{
      * @param msg
      */
     public void onEventMainThread(ToastProduced msg) {
+        showToast(msg.getMessage());
+    }
+
+    public void showToast(String message){
         int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getApplicationContext(), msg.getMessage(), duration);
+        Toast toast = Toast.makeText(getApplicationContext(), message, duration);
         toast.show();
     }
 }

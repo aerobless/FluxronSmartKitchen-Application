@@ -49,12 +49,12 @@ public class ErrorCodeConverter {
         if (hex.length() == 8) {
             result = Integer.toString(Integer.parseInt(hex.substring(2, 8), 16));
         } else if (hex.length() <= 1) {
-            result = "000";
+            result = "0";
         } else {
             result = Integer.toString(Integer.parseInt(hex.substring(1, 7), 16));
         }
         if (result.length() <= 1) {
-            result = "00" + result;
+            result = "0" + result;
         }
         result = result.substring(0, result.length() - 1) + "." + result.substring(result.length() - 1, result.length());
         return result;

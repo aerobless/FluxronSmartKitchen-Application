@@ -48,11 +48,11 @@ public class ErrorCodeConverterTest extends TestCase {
 
     public void testConvertToTimeIDNoTimeForTime(){
         String error_code1 = ErrorCodeConverter.convertToTime(83886080);
-        assertEquals("00.0", error_code1);
+        assertEquals("0.0", error_code1);
     }
 
     public void testConvertToTimeIDNull(){
         String error_code1 = ErrorCodeConverter.convertToTime(00000000);
-        assertEquals("00.0", error_code1);
+        assertEquals("0.0", error_code1);
     }
 }

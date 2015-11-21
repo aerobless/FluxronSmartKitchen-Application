@@ -8,6 +8,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,8 +19,11 @@ import android.widget.TextView;
 import java.util.HashMap;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
+import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceFailed;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
+import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
  * Renders a device
@@ -28,6 +32,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private DevicePosition position;
     private IDeviceViewListener listener;
+    IEventBusProvider provider;
 
     private String deviceType;
     private String deviceName;
@@ -50,44 +55,58 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Creates a new device view
+     *
      * @param context Context
      */
     public DeviceView(Context context) {
         super(context);
         setUp();
+        provider = (IEventBusProvider) getContext().getApplicationContext();
+        provider.getUiEventBus().register(this);
+        setDeviceStatus(DEVICE_STATUS_UNKNOWN);
     }
 
     /**
      * Creates a new device view
+     *
      * @param context Context
-     * @param attrs Attributes
+     * @param attrs   Attributes
      */
     public DeviceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUp();
+        provider = (IEventBusProvider) getContext().getApplicationContext();
+        provider.getUiEventBus().register(this);
+        setDeviceStatus(DEVICE_STATUS_UNKNOWN);
     }
 
     /**
      * Creates a new device view
-     * @param context Context
-     * @param attrs Attributes
+     *
+     * @param context      Context
+     * @param attrs        Attributes
      * @param defStyleAttr Defined Attributes
      */
     public DeviceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setUp();
+        provider = (IEventBusProvider) getContext().getApplicationContext();
+        provider.getUiEventBus().register(this);
+        setDeviceStatus(DEVICE_STATUS_UNKNOWN);
     }
 
     /**
      * Sets a listener to listen for events
+     *
      * @param l Event listener
      */
-    public void setListener(IDeviceViewListener l){
+    public void setListener(IDeviceViewListener l) {
         this.listener = l;
     }
 
     /**
      * Gets the position of the device
+     *
      * @return Position
      */
     public DevicePosition getPosition() {
@@ -96,6 +115,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Gets the position of the device
+     *
      * @param pos Position
      */
     public void setPosition(DevicePosition pos) {
@@ -116,16 +136,16 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
-        if(deviceType.equals(Device.UNKNOWN_DEVICE_TYPE)){
-            ((TextView)this.findViewById(R.id.theDeviceOrb)).setText("?");
+        if (deviceType.equals(Device.UNKNOWN_DEVICE_TYPE)) {
+            ((TextView) this.findViewById(R.id.theDeviceOrb)).setText("?");
         } else {
-            ((TextView)this.findViewById(R.id.theDeviceOrb)).setText(getDeviceType());
+            ((TextView) this.findViewById(R.id.theDeviceOrb)).setText(getDeviceType());
         }
     }
 
-    public void setDeviceStatus(int deviceStatus){
-        TextView statusOrb = (TextView)findViewById(R.id.theStatusOrb);
-        switch (deviceStatus){
+    private void setDeviceStatus(int deviceStatus) {
+        TextView statusOrb = (TextView) findViewById(R.id.theStatusOrb);
+        switch (deviceStatus) {
             case DEVICE_STATUS_OK:
                 statusOrb.setText(getResources().getText(R.string.ok_check));
                 statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
@@ -142,6 +162,32 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
                 statusOrb.setText(getResources().getText(R.string.unkown_check));
                 statusOrb.setBackground(getResources().getDrawable(R.drawable.status_unkown_background));
                 break;
+        }
+        fireNeedUpdate();
+    }
+
+    /**
+     * Updates the status orb to OK when we get a successful DeviceChanged event
+     *
+     * @param msg
+     */
+    public void onEventMainThread(DeviceChanged msg) {
+        if (msg.getDevice().getAddress().equals(deviceAddress)) {
+            if (!msg.getDevice().getDeviceType().equals(Device.UNKNOWN_DEVICE_TYPE)) {
+                setDeviceType(msg.getDevice().getDeviceType());
+            }
+            setDeviceStatus(DEVICE_STATUS_OK);
+        }
+    }
+
+    /**
+     * Updates the status orb to FAILURE when we get a DeviceFailed event
+     *
+     * @param msg
+     */
+    public void onEventMainThread(DeviceFailed msg) {
+        if (msg.getAddress().equals(deviceAddress)) {
+            setDeviceStatus(DEVICE_STATUS_FAILURE);
         }
     }
 
@@ -187,7 +233,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     private void deleteClicked() {
-        if (listener!=null){
+        if (listener != null) {
             listener.deleteRequested(this);
         }
     }
@@ -196,14 +242,14 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
      * Notify the listener of an opening request if it is existing
      */
     private void fireActionRequested() {
-        if(listener!=null){
+        if (listener != null) {
             listener.actionRequested(this);
         }
     }
 
     private boolean fireRequestMove(float dx, float dy, boolean lastPosition) {
-        if(listener!=null){
-            return listener.moveRequested(this, (int)dx, (int)dy, lastPosition);
+        if (listener != null) {
+            return listener.moveRequested(this, (int) dx, (int) dy, lastPosition);
         }
         return false;
     }
@@ -223,12 +269,11 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
                 fireRequestMove(event.getX() - lastTouchX, event.getY() - lastTouchY, false);
                 break;
             case MotionEvent.ACTION_UP:
-                float dTotalDrag = draggingX*draggingX+draggingY*draggingY;
+                float dTotalDrag = draggingX * draggingX + draggingY * draggingY;
 
-                if (dTotalDrag  < 15) {
+                if (dTotalDrag < 15) {
                     fireActionRequested();
-                }
-                else {
+                } else {
                     fireRequestMove(0, 0, true); // Do not move further, this is the final position
                 }
                 break;
@@ -236,13 +281,13 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         return true;
     }
 
-    public void popUp(){
+    public void popUp() {
         animateIn(findViewById(R.id.theDeviceOrb));
         animateIn(findViewById(R.id.theStatusOrb));
     }
 
     private void fireNeedUpdate() {
-        if(listener!=null){
+        if (listener != null) {
             listener.needsRepaint(false);
         }
     }
@@ -295,9 +340,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         }
 
         target.setVisibility(ViewGroup.VISIBLE);
-        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_flash);
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.device_flash);
         set.setTarget(target);
-        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
+        ((ObjectAnimator) set.getChildAnimations().get(0)).addUpdateListener(this);
         set.start();
 
         animators.put(target.getId(), set);
@@ -308,9 +353,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             animators.get(target.getId()).end();
         }
 
-        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(),R.animator.device_hide);
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.device_hide);
         set.setTarget(target);
-        ((ObjectAnimator)set.getChildAnimations().get(0)).addUpdateListener(this);
+        ((ObjectAnimator) set.getChildAnimations().get(0)).addUpdateListener(this);
         set.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -330,7 +375,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
             }
         });
         set.start();
-        
+
         animators.put(target.getId(), set);
     }
 }
