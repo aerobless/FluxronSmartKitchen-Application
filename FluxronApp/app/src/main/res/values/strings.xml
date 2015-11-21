@@ -36,6 +36,13 @@
     <string name="saveButton">Save Changes</string>
     <string name="resetButton">Reset</string>
 
+    <!-- Settings Texts -->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="emptyUser">Username can\'t be empty</string>
+    <string name="emptyPassword">Password can\'t be empty</string>
+    <string name="emptyUserAndPassword">Username and password can\'t be empty</string>
+
     <!-- Other texts -->
     <string name="device_count">%d device(s)</string>
     <string name="kitchen_property_name">Name</string>
@@ -45,8 +52,6 @@
     <string name="history_heatsink">Heatsink Temperature</string>
     <string name="history_glass">Glass Temperature</string>
     <string name="export_kitchen">Share via EMail</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
     <string name="hoursAgo"> hours ago</string>
     <string name="fieldDoesNotExist">field unavailable</string>
     <string name="kitchen_image">Picture to identify the kitchen</string>

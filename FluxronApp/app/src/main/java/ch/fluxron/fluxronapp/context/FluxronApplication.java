@@ -16,6 +16,7 @@ import ch.fluxron.fluxronapp.model.DeviceManager;
 import ch.fluxron.fluxronapp.model.ImportExportManager;
 import ch.fluxron.fluxronapp.model.KitchenManager;
 import ch.fluxron.fluxronapp.model.PrototypeResponder;
+import ch.fluxron.fluxronapp.model.UserManager;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -29,6 +30,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private ch.fluxron.fluxronapp.model.IEventBusProvider modelProvier;
     private PrototypeResponder responder;
     private DeviceManager deviceManager;
+    private UserManager userManager;
     private Manager couchbaseManager;
     private Database couchbaseDB;
     private LocalDatabase localDatabase;
@@ -79,6 +81,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
         // Business Layer
         responder = new PrototypeResponder(modelProvier);
         deviceManager = new DeviceManager(modelProvier);
+        userManager = new UserManager(modelProvier);
         kitchenManger = new KitchenManager(modelProvier);
         importExport = new ImportExportManager(modelProvier);
 
