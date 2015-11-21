@@ -6,6 +6,8 @@ import android.widget.EditText;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationCommand;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.LoadAuthenticationCommand;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.UserAuthenticated;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
@@ -22,6 +24,7 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         setContentView(R.layout.activity_application_settings);
         username = (EditText) findViewById(R.id.editTextUsername);
         password = (EditText) findViewById(R.id.editTextPassword);
+        busProvider.getUiEventBus().post(new LoadAuthenticationCommand());
     }
 
     public void onSaveButtonClicked(View button) {
@@ -44,5 +47,10 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         } else {
             showToast("Wrong username or password!");
         }
+    }
+
+    public void onEventMainThread(AuthenticationLoaded inputMsg) {
+        username.setText(inputMsg.getUsername());
+        password.setText(inputMsg.getPassword());
     }
 }

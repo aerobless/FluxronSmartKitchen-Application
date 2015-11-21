@@ -2,7 +2,12 @@ package ch.fluxron.fluxronapp.model;
 
 import java.util.HashMap;
 
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationCommand;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.LoadAuthenticationCommand;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.UserAuthenticated;
 import ch.fluxron.fluxronapp.objectBase.AccessLevel;
 import ch.fluxron.fluxronapp.objectBase.User;
@@ -20,6 +25,7 @@ import ch.fluxron.fluxronapp.objectBase.User;
 public class UserManager {
     private HashMap<String, User> users;
     private IEventBusProvider provider;
+    private static final String USER_DATA = "user_data";
 
     public UserManager(IEventBusProvider provider) {
         users = new HashMap<>();
@@ -29,6 +35,28 @@ public class UserManager {
 
         this.provider = provider;
         provider.getUiEventBus().register(this);
+        provider.getDalEventBus().register(this);
+    }
+
+    /**
+     * Load the currently authenticated user from the DB
+     */
+    public void onEventAsync(LoadAuthenticationCommand inputCmd) {
+        LoadObjectByIdCommand outputCmd = new LoadObjectByIdCommand(USER_DATA);
+        outputCmd.setConnectionId(inputCmd);
+        provider.getDalEventBus().post(outputCmd);
+    }
+
+    /**
+     * Relays loaded user information to the UI.
+     *
+     * @param inputCmd
+     */
+    public void onEventAsync(ObjectLoaded inputCmd) {
+        if (inputCmd.getId().equals(USER_DATA)) {
+            User user = (User) inputCmd.getData();
+            provider.getUiEventBus().post(new AuthenticationLoaded(user.getUsername(), user.getPassword()));
+        }
     }
 
     /**
@@ -44,6 +72,7 @@ public class UserManager {
 
     /**
      * Checks whether the login information exists in the user manager
+     * if it does it stores the currently authenticated user in the DB
      *
      * @param username
      * @param password
@@ -52,8 +81,22 @@ public class UserManager {
     private boolean isAuthenticated(String username, String password) {
         User user = users.get(username);
         if (user != null) {
+            saveToDB(user);
             return user.getPassword().equals(password);
         }
         return false;
     }
+
+    /**
+     * Save the authenticated user data in the DB
+     *
+     * @param user
+     */
+    private void saveToDB(User user) {
+        SaveObjectCommand cmd = new SaveObjectCommand();
+        cmd.setData(user);
+        cmd.setDocumentId(USER_DATA);
+        provider.getDalEventBus().post(cmd);
+    }
+
 }

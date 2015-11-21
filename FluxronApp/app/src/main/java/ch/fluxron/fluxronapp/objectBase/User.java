@@ -8,6 +8,9 @@ public class User {
     String password;
     AccessLevel accessLevel;
 
+    public User() {
+    }
+
     public User(String username, String password, AccessLevel accessLevel) {
         this.username = username;
         this.password = password;
