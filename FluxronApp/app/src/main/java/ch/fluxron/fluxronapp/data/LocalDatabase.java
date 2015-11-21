@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.base.ResponseFail;
 import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachStreamToObjectByIdCommand;
@@ -212,6 +213,11 @@ public class LocalDatabase {
             ObjectLoaded msg = new ObjectLoaded(doc.getId(), o);
             msg.setConnectionId(conn);
             provider.getDalEventBus().post(msg);
+        }
+        else {
+            ResponseFail fail = new ResponseFail();
+            fail.setConnectionId(conn);
+            provider.getDalEventBus().post(fail);
         }
     }
 
