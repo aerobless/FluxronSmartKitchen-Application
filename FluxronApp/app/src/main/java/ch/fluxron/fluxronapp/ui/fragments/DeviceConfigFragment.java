@@ -13,6 +13,7 @@ import java.util.List;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.DeviceParameter;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessGranted;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView;
@@ -93,6 +94,12 @@ public class DeviceConfigFragment extends Fragment{
                 p.setDeviceAddress(deviceAddress);
                 p.handleDeviceNotChanged(inputMsg);
             }
+        }
+    }
+
+    public void onEventMainThread(AccessGranted inputMsg){
+        for(ParameterEditable p:parameters){
+            p.handleAccessLevel(inputMsg.getAccessLevel());
         }
     }
 }

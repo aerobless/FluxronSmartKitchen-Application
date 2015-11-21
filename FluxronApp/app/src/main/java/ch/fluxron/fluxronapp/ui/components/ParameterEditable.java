@@ -14,10 +14,12 @@ import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChangeCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
+import ch.fluxron.fluxronapp.objectBase.AccessLevel;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -41,6 +43,7 @@ public class ParameterEditable extends LinearLayout {
     private String lastParamValue = "";
     private String deviceAddress;
     private LinearLayout buttonPanel;
+    private int requiredAccessLevel;
 
     private Button saveButton;
     private Button resetButton;
@@ -55,6 +58,7 @@ public class ParameterEditable extends LinearLayout {
         arguments = context.obtainStyledAttributes(attrs, R.styleable.ParameterEditable);
         parameter = arguments.getString(R.styleable.ParameterEditable_editableParamName);
         measuringUnit = arguments.getString(R.styleable.ParameterEditable_editableMeasuringUnit);
+        requiredAccessLevel = arguments.getInt(R.styleable.ParameterEditable_editableAccessLevel, 0); //If not specified, default is DEMO_USER = 0
 
         paramMeasurementUnit = (TextView) this.findViewById(R.id.paramMeasurementUnit);
         paramNameSmall = (TextView) this.findViewById(R.id.paramNameSmall);
@@ -76,6 +80,27 @@ public class ParameterEditable extends LinearLayout {
         initOnFocusListener();
 
         initButtonListeners();
+
+        if(requiredAccessLevel>0){
+            /**
+             * If the access level needed to display this control is greater then DEMO_USER (0) we
+             * hide it until we get confirmation that the user is authenticated and has the required
+             * access level.
+             */
+            setVisibility(GONE);
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    provider.getUiEventBus().post(new AccessCommand());
+                }
+            });
+        }
+    }
+
+    public void handleAccessLevel(AccessLevel accessLevel){
+        if(accessLevel.ordinal() >= requiredAccessLevel){
+            setVisibility(VISIBLE);
+        }
     }
 
     private void initButtonListeners() {

@@ -21,5 +21,6 @@
         <attr name="editableMeasuringUnit" format="string"/>
         <attr name="editableInfoText" format="string"/>
         <attr name="editableDisplayText" format="string"/>
+        <attr name="editableAccessLevel" format="integer"/>
     </declare-styleable>
 </resources>

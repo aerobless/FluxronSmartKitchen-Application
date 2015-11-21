@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.LoadAuthenticationCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
@@ -202,6 +203,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         //Tell the CyclicRefresh unit to start checking whether these devices can be accessed
         CyclicRefreshCommand cfc = new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES);
         busProvider.getUiEventBus().post(cfc);
+
+        //Tell the UserManager to authenticate
+        busProvider.getUiEventBus().post(new LoadAuthenticationCommand());
     }
 
     /**

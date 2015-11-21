@@ -27,6 +27,7 @@ import ch.fluxron.fluxronapp.objectBase.User;
 public class UserManager {
     private HashMap<String, User> users;
     private User currentUser = null;
+    private Object userLock = new Object();
     private IEventBusProvider provider;
     private static final String USER_DATA = "user_data";
 
@@ -34,7 +35,7 @@ public class UserManager {
         users = new HashMap<>();
         users.put("demo", new User("demo", "demo", AccessLevel.DEMO_USER));
         users.put("user", new User("user", "1234", AccessLevel.AUTHENTICATED_USER));
-        users.put("developer", new User("developer", "fluxronDev", AccessLevel.AUTHENTICATED_USER));
+        users.put("developer", new User("developer", "fluxronDev", AccessLevel.DEVELOPER));
 
         this.provider = provider;
         provider.getUiEventBus().register(this);
@@ -58,7 +59,7 @@ public class UserManager {
     public void onEventAsync(ObjectLoaded inputCmd) {
         if (inputCmd.getId().equals(USER_DATA)) {
             User user = (User) inputCmd.getData();
-            synchronized (currentUser) {
+            synchronized (userLock) {
                 currentUser = user;
             }
             provider.getUiEventBus().post(new AuthenticationLoaded(user.getUsername(), user.getPassword()));
@@ -105,7 +106,7 @@ public class UserManager {
     private boolean isAuthenticated(String username, String password) {
         User user = users.get(username);
         if (user != null) {
-            synchronized (currentUser) {
+            synchronized (userLock) {
                 currentUser = user;
             }
             saveToDB(user);

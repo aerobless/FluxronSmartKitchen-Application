@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Be sure to also change AccessLevel.java if you make changes here-->
+<resources>
+    <integer name="DEMO_USER">0</integer>
+    <integer name="AUTHENTICATED_USER">1</integer>
+    <integer name="DEVELOPER">2</integer>
+</resources>

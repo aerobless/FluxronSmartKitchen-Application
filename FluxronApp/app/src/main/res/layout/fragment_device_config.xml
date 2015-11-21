@@ -18,6 +18,7 @@
                 android:id="@+id/coilSetup"
                 app:editableInfoText="0=no sensors, 1-4=1-4sensors, 5=1 sensors direct, >10 auto setup"
                 app:editableParamName="@string/F_CCLASS_2000SUB4_COIL_SETUP_"
+                app:editableAccessLevel="@integer/AUTHENTICATED_USER"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
