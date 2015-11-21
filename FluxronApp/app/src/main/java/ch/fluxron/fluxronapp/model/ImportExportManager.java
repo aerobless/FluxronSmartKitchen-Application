@@ -80,8 +80,8 @@ public class ImportExportManager {
 
             int stepCount = kitchen.getAreaList().size();
             int currentStep = 0;
-
-            notifyProgress(currentStep, stepCount, msg);
+            String objectId = manifest.getObjectId();
+            notifyProgress(currentStep, stepCount, msg, objectId);
 
             SaveObjectCommand saveCommand = new SaveObjectCommand();
             saveCommand.setData(kitchen);
@@ -103,7 +103,7 @@ public class ImportExportManager {
                     WaitForResponse<RequestResponseConnection> waitForAttachment = new WaitForResponse<>();
                     waitForAttachment.postAndWait(provider.getDalEventBus(), attachCommand, RequestResponseConnection.class);
 
-                    notifyProgress(currentStep++, stepCount, msg);
+                    notifyProgress(currentStep++, stepCount, msg, objectId);
                 }
             }
         } catch (IOException e) {
@@ -111,9 +111,10 @@ public class ImportExportManager {
         }
     }
 
-    private void notifyProgress(int currentStep, int stepCount, ImportKitchenCommand msg) {
+    private void notifyProgress(int currentStep, int stepCount, ImportKitchenCommand msg, String objId) {
         ImportProgressChanged progress = new ImportProgressChanged(stepCount, currentStep);
         progress.setConnectionId(msg);
+        progress.setObjectId(objId);
         provider.getUiEventBus().post(progress);
     }
 

@@ -1,4 +1,5 @@
 package ch.fluxron.fluxronapp.ui.activities;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -95,10 +96,22 @@ public class KitchenImportActivity extends FluxronBaseActivity {
      * Progress changed
      * @param msg Event
      */
-    public void onEventMainThread(ImportProgressChanged msg) {
+    public void onEventMainThread(final ImportProgressChanged msg) {
         if (msg.getConnectionId().equals(this.importConnection)){
             String counterFormatted = String.format(this.getResources().getString(R.string.import_progress), msg.getCurrent(), msg.getTotal());
             ((TextView)findViewById(R.id.progressCounter)).setText(counterFormatted);
+
+            if (msg.getCurrent() == msg.getTotal()) {
+                findViewById(R.id.importDoneOrb).animate().alpha(1).setDuration(ANIM_DURATION).start();
+                findViewById(R.id.importProgressBar).animate().alpha(0).setDuration(ANIM_DURATION).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent startOther = new Intent(KitchenImportActivity.this, KitchenActivity.class);
+                        startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, msg.getObjectId());
+                        startActivity(startOther);
+                    }
+                }).start();
+            }
         }
     }
 

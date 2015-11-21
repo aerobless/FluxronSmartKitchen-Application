@@ -8,6 +8,7 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 public class ImportProgressChanged extends RequestResponseConnection{
     private int total;
     private int current;
+    private String objectId;
 
     public ImportProgressChanged(int total, int current) {
         this.total = total;
@@ -20,5 +21,13 @@ public class ImportProgressChanged extends RequestResponseConnection{
 
     public int getCurrent() {
         return current;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 }

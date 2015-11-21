@@ -46,6 +46,16 @@
                 android:id="@+id/progressCounter"
                 android:layout_gravity="center_horizontal"/>
         </LinearLayout>
+        <TextView
+            android:id="@+id/importDoneOrb"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/status_ok_background"
+            android:layout_gravity="center"
+            android:text="@string/ok_check"
+            android:alpha="0"
+            style="@style/FluxronDeviceStatusTextView"
+            />
         <android.support.v7.widget.CardView
             android:id="@+id/infoPanel"
             android:layout_width="match_parent"
