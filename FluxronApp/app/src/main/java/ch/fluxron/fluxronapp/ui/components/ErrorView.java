@@ -3,6 +3,7 @@ package ch.fluxron.fluxronapp.ui.components;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,7 +66,7 @@ public class ErrorView extends LinearLayout {
 
     public void setValue(String value) {
         String code = ErrorCodeConverter.convertToErrorCode(Integer.parseInt(value));
-        String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value)+getResources().getIdentifier("hoursAgo", "string", getContext().getPackageName()));
+        String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value))+" "+getResources().getString(R.string.hoursAgo);
         this.errorCode.setText(code);
         this.errorDescription.setText(getErrorDescriptionFromCode(code));
         this.errorSince.setText(counter);
