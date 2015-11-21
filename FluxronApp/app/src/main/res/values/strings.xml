@@ -9,7 +9,7 @@
     <string name="activity_create_kitchen">Create a kitchen</string>
     <string name="activity_find_a_kitchen">Find a kitchen</string>
     <string name="activity_kitchen_settings">Kitchen settings</string>
-    <string name="activity_kitchen_imp">Importing kitchen</string>
+    <string name="activity_kitchen_imp">Import a kitchen</string>
     <string name="activity_application_settings">Application settings</string>
     <!-- Help texts -->
     <string name="no_image_here">No image here. Tap this to take a snapshot.</string>
@@ -71,6 +71,8 @@
     <string name="card_description">area card</string>
     <string name="kitchen_description">kitchen image</string>
     <string name="kitchen_name_default">kitchen name</string>
+    <string name="import_yes">Import</string>
+    <string name="import_cancel">Cancel</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>

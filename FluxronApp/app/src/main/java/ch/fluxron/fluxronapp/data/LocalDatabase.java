@@ -19,6 +19,7 @@ import java.util.Map;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachStreamToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentStreamsFromObjectCommand;
@@ -112,6 +113,22 @@ public class LocalDatabase {
         Document doc = database.getExistingDocument(cmd.getDocumentId());
         if(doc != null) {
             documents.attachFileToDocument(doc, cmd.getFileUri(), cmd.getAttachmentName(), resolver.getType(cmd.getFileUri()));
+
+            // Generic ok response if the attachment process went fine
+            ResponseOK ok = new ResponseOK();
+            ok.setConnectionId(cmd);
+            provider.getDalEventBus().post(ok);
+        }
+    }
+
+    /**
+     * Triggered when attaching a stream to an object
+     * @param cmd Command
+     */
+    public void onEventAsync(AttachStreamToObjectByIdCommand cmd) {
+        Document doc = database.getExistingDocument(cmd.getDocumentId());
+        if(doc != null) {
+            documents.attachFileToDocument(doc, cmd.getStream(), cmd.getAttachmentName(), "application/data");
 
             // Generic ok response if the attachment process went fine
             ResponseOK ok = new ResponseOK();

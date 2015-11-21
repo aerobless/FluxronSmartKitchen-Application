@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.activities;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -17,6 +18,8 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
  */
 public class KitchenImportActivity extends FluxronBaseActivity {
     private String importMetadataConnection;
+    private String importConnection;
+    private final int ANIM_DURATION = 400;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +40,8 @@ public class KitchenImportActivity extends FluxronBaseActivity {
             this.importMetadataConnection = cmd.getConnectionId();
             postMessage(cmd);
             
-            findViewById(R.id.importProgressBar).animate().alpha(1).setDuration(250).start();
-            findViewById(R.id.infoPanel).animate().alpha(2).setDuration(250).start();
+            findViewById(R.id.importProgressBar).animate().alpha(0).setDuration(ANIM_DURATION).start();
+            findViewById(R.id.infoPanel).animate().alpha(1).setDuration(ANIM_DURATION).start();
         }
     }
 
@@ -75,8 +78,32 @@ public class KitchenImportActivity extends FluxronBaseActivity {
             Date savedAt = msg.getMetadata().getSaveDate();
             ((TextView) findViewById(R.id.manifestSaveDate)).setText(DateFormat.getDateTimeInstance().format(savedAt));
 
-            findViewById(R.id.importProgressBar).animate().alpha(0).setDuration(250).start();
-            findViewById(R.id.infoPanel).animate().alpha(1).setDuration(250).start();
+            findViewById(R.id.importProgressBar).animate().alpha(0).setDuration(ANIM_DURATION).start();
+            findViewById(R.id.infoPanel).animate().alpha(1).setDuration(ANIM_DURATION).start();
+        }
+    }
+
+    /**
+     * Import should be canceled
+     * @param v View that issued this command
+     */
+    public void onCancelImport(View v) {
+        finish();
+    }
+
+    /**
+     * Import should be started
+     * @param v View that issued this command
+     */
+    public void onStartImport(View v) {
+        Uri theUri = getIntent().getData();
+        if (theUri != null) {
+            ImportKitchenCommand cmd = new ImportKitchenCommand(theUri);
+            this.importConnection = cmd.getConnectionId();
+            postMessage(cmd);
+
+            findViewById(R.id.importProgressBar).animate().alpha(1).setDuration(ANIM_DURATION).start();
+            findViewById(R.id.infoPanel).animate().alpha(0).setDuration(ANIM_DURATION).start();
         }
     }
 }

@@ -5,23 +5,27 @@ import android.os.Environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.base.WaitForResponse;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachStreamToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentStreamsFromObjectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
@@ -34,6 +38,8 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
  */
 public class ImportExportManager {
     private static String ENTRY_MANIFEST = "manifest.json";
+    private static String ENTRY_KITCHEN = "kitchen.json";
+    private List<String> reservedEntries;
     private IEventBusProvider provider;
 
     /**
@@ -45,10 +51,54 @@ public class ImportExportManager {
 
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
+
+        reservedEntries = new ArrayList<>();
+        reservedEntries.add(ENTRY_KITCHEN);
+        reservedEntries.add(ENTRY_MANIFEST);
     }
 
     public void onEventAsync(ImportKitchenCommand msg) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // Open the zip file
+            ZipFile file = new ZipFile(msg.getLocation().getPath());
 
+            // Load the manifest
+            ZipEntry manifestEntry = file.getEntry(ENTRY_MANIFEST);
+            FluxronManifest manifest = mapper.readValue(file.getInputStream(manifestEntry), FluxronManifest.class);
+
+            if (!Kitchen.class.getName().equals(manifest.getObjectType())) {
+                return;
+            }
+
+            // Create the object on the database
+            ZipEntry kitchenEntry = file.getEntry(ENTRY_KITCHEN);
+            Kitchen kitchen = mapper.readValue(file.getInputStream(kitchenEntry), Kitchen.class);
+
+            SaveObjectCommand saveCommand = new SaveObjectCommand();
+            saveCommand.setData(kitchen);
+            saveCommand.setDocumentId(manifest.getObjectId());
+
+            // Wait for the creation of the kitchen before we proceed
+            WaitForResponse<RequestResponseConnection> waitForSave = new WaitForResponse<>();
+            waitForSave.postAndWait(provider.getDalEventBus(), saveCommand, RequestResponseConnection.class);
+
+            // Loop through all the other files
+            // leave RESERVED_ENTRIES out
+            Enumeration<? extends ZipEntry> entryList = file.entries();
+            while (entryList.hasMoreElements()){
+                ZipEntry attachmentEntry = entryList.nextElement();
+                if (!reservedEntries.contains(attachmentEntry.getName())) {
+                    // Copy attachment
+                    AttachStreamToObjectByIdCommand attachCommand = new AttachStreamToObjectByIdCommand(manifest.getObjectId(), file.getInputStream(attachmentEntry), attachmentEntry.getName());
+
+                    WaitForResponse<RequestResponseConnection> waitForAttachment = new WaitForResponse<>();
+                    waitForAttachment.postAndWait(provider.getDalEventBus(), attachCommand, RequestResponseConnection.class);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onEventAsync(LoadImportMetadata msg) {
@@ -156,7 +206,7 @@ public class ImportExportManager {
     }
 
     private void writeObject(ZipOutputStream zipFile, Kitchen kitchen) throws IOException {
-        ZipEntry entry = new ZipEntry("kitchen.json");
+        ZipEntry entry = new ZipEntry(ENTRY_KITCHEN);
         zipFile.putNextEntry(entry);
 
         // Create converter

@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.data;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -102,6 +103,23 @@ public class DocumentFunctions {
             newRev.setAttachment(attachmentName, contentType, stream);
             newRev.save();
         } catch (IOException | CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Attaches a file's data to a document
+     * @param doc Document
+     * @param dataStream Stream to the data
+     * @param attachmentName Name of the attachment
+     * @param contentType Content type of the attachment (i.e. image/jpeg)
+     */
+    public void attachFileToDocument(Document doc, InputStream dataStream, String attachmentName, String contentType){
+        try {
+            UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
+            newRev.setAttachment(attachmentName, contentType, dataStream);
+            newRev.save();
+        } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
     }
