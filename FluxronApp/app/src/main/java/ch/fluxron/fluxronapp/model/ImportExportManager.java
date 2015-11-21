@@ -30,6 +30,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportProgress;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.LoadImportMetadata;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.MetadataLoaded;
@@ -77,6 +78,11 @@ public class ImportExportManager {
             ZipEntry kitchenEntry = file.getEntry(ENTRY_KITCHEN);
             Kitchen kitchen = mapper.readValue(file.getInputStream(kitchenEntry), Kitchen.class);
 
+            int stepCount = kitchen.getAreaList().size();
+            int currentStep = 0;
+
+            notifyProgress(currentStep, stepCount, msg);
+
             SaveObjectCommand saveCommand = new SaveObjectCommand();
             saveCommand.setData(kitchen);
             saveCommand.setDocumentId(manifest.getObjectId());
@@ -96,11 +102,19 @@ public class ImportExportManager {
 
                     WaitForResponse<RequestResponseConnection> waitForAttachment = new WaitForResponse<>();
                     waitForAttachment.postAndWait(provider.getDalEventBus(), attachCommand, RequestResponseConnection.class);
+
+                    notifyProgress(currentStep++, stepCount, msg);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void notifyProgress(int currentStep, int stepCount, ImportKitchenCommand msg) {
+        ImportProgress progress = new ImportProgress(stepCount, currentStep);
+        progress.setConnectionId(msg);
+        provider.getUiEventBus().post(progress);
     }
 
     public void onEventAsync(LoadImportMetadata msg) {
