@@ -45,7 +45,7 @@
             app:cardUseCompatPadding="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:alpha="0">
+            android:alpha="1">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,11 +85,20 @@
                     android:text="@string/kitchen_property_export_date"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"/>
+                <TextView
+                    android:id="@+id/warningImport"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:alpha="0"
+                    style="@style/FluxronWarningTextView"
+                    android:text="@string/import_collision_warning"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginTop="24dp">
+                    android:layout_marginTop="14dp">
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

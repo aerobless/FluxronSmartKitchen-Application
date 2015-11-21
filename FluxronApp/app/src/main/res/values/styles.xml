@@ -27,6 +27,12 @@
         <item name="android:foreground">@color/contentForeground</item>
     </style>
 
+    <style name="FluxronWarningTextView" parent="android:Widget.TextView">
+        <item name="android:foreground">@color/contentForeground</item>
+        <item name="android:background">@color/warningColor</item>
+        <item name="android:padding">6dp</item>
+    </style>
+
     <style name="FluxronButton" parent="android:Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">@color/contentBackground</item>

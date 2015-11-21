@@ -80,6 +80,13 @@ public class KitchenImportActivity extends FluxronBaseActivity {
 
             findViewById(R.id.importProgressBar).animate().alpha(0).setDuration(ANIM_DURATION).start();
             findViewById(R.id.infoPanel).animate().alpha(1).setDuration(ANIM_DURATION).start();
+
+            if (msg.isIdCollision()) {
+                findViewById(R.id.warningImport).animate()
+                        .alpha(1)
+                        .setStartDelay(ANIM_DURATION * 2)
+                        .setDuration(ANIM_DURATION).start();
+            }
         }
     }
 

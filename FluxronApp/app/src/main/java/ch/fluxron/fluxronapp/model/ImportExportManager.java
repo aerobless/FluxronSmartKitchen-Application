@@ -21,12 +21,12 @@ import java.util.zip.ZipOutputStream;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
-import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.base.WaitForResponse;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachStreamToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentStreamsFromObjectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
@@ -114,7 +114,7 @@ public class ImportExportManager {
 
             // If the response is OK, the object was found by its Id
             WaitForResponse<RequestResponseConnection> wait = new WaitForResponse<>();
-            if (wait.postAndWait(provider.getDalEventBus(), cmd, RequestResponseConnection.class) instanceof ResponseOK) {
+            if (wait.postAndWait(provider.getDalEventBus(), cmd, RequestResponseConnection.class) instanceof ObjectLoaded) {
                 loaded.setIdCollision(true);
             }
 
