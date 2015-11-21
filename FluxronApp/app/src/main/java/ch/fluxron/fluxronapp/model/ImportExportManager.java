@@ -30,7 +30,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportProgress;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportProgressChanged;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.LoadImportMetadata;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.MetadataLoaded;
@@ -112,7 +112,7 @@ public class ImportExportManager {
     }
 
     private void notifyProgress(int currentStep, int stepCount, ImportKitchenCommand msg) {
-        ImportProgress progress = new ImportProgress(stepCount, currentStep);
+        ImportProgressChanged progress = new ImportProgressChanged(stepCount, currentStep);
         progress.setConnectionId(msg);
         provider.getUiEventBus().post(progress);
     }

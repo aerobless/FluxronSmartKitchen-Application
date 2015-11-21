@@ -5,11 +5,11 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Notifies a progress change
  */
-public class ImportProgress extends RequestResponseConnection{
+public class ImportProgressChanged extends RequestResponseConnection{
     private int total;
     private int current;
 
-    public ImportProgress(int total, int current) {
+    public ImportProgressChanged(int total, int current) {
         this.total = total;
         this.current = current;
     }

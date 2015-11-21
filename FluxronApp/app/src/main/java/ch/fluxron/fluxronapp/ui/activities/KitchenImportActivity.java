@@ -9,7 +9,7 @@ import java.util.Date;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportKitchenCommand;
-import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportProgress;
+import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ImportProgressChanged;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.LoadImportMetadata;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.MetadataLoaded;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
@@ -95,7 +95,7 @@ public class KitchenImportActivity extends FluxronBaseActivity {
      * Progress changed
      * @param msg Event
      */
-    public void onEventMainThread(ImportProgress msg) {
+    public void onEventMainThread(ImportProgressChanged msg) {
         if (msg.getConnectionId().equals(this.importConnection)){
             String counterFormatted = String.format(this.getResources().getString(R.string.import_progress), msg.getCurrent(), msg.getTotal());
             ((TextView)findViewById(R.id.progressCounter)).setText(counterFormatted);
