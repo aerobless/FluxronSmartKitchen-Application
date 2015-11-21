@@ -88,7 +88,6 @@ public class DeviceConfigFragment extends Fragment{
     }
 
     public void onEventMainThread(DeviceNotChanged inputMsg){
-        Log.d("FLUXRON", "GOT DEVICE NOT CHANGED");
         if(inputMsg.getAddress().equals(deviceAddress)){
             for(ParameterEditable p:parameters){
                 p.setDeviceAddress(deviceAddress);
