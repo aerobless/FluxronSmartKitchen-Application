@@ -5,6 +5,8 @@ import java.util.HashMap;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessCommand;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessGranted;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationCommand;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.LoadAuthenticationCommand;
@@ -24,6 +26,7 @@ import ch.fluxron.fluxronapp.objectBase.User;
  */
 public class UserManager {
     private HashMap<String, User> users;
+    private User currentUser = null;
     private IEventBusProvider provider;
     private static final String USER_DATA = "user_data";
 
@@ -55,6 +58,9 @@ public class UserManager {
     public void onEventAsync(ObjectLoaded inputCmd) {
         if (inputCmd.getId().equals(USER_DATA)) {
             User user = (User) inputCmd.getData();
+            synchronized (currentUser) {
+                currentUser = user;
+            }
             provider.getUiEventBus().post(new AuthenticationLoaded(user.getUsername(), user.getPassword()));
         }
     }
@@ -71,6 +77,24 @@ public class UserManager {
     }
 
     /**
+     * Responds to AccessCommands with the currently active users access level. If there is no
+     * user logged in the lowest possible level (DEMO_USER) is returned.
+     *
+     * @param cmd
+     */
+    public void onEventAsync(AccessCommand cmd) {
+        AccessGranted accessGranted;
+        if (currentUser != null) {
+            accessGranted = new AccessGranted(currentUser.getAccessLevel());
+        } else {
+            //Return the lowest user level if no user is authenticated.
+            accessGranted = new AccessGranted(AccessLevel.DEMO_USER);
+        }
+        accessGranted.setConnectionId(cmd);
+        provider.getUiEventBus().post(accessGranted);
+    }
+
+    /**
      * Checks whether the login information exists in the user manager
      * if it does it stores the currently authenticated user in the DB
      *
@@ -81,6 +105,9 @@ public class UserManager {
     private boolean isAuthenticated(String username, String password) {
         User user = users.get(username);
         if (user != null) {
+            synchronized (currentUser) {
+                currentUser = user;
+            }
             saveToDB(user);
             return user.getPassword().equals(password);
         }

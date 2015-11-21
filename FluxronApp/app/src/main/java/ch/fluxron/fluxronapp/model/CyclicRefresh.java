@@ -228,7 +228,7 @@ public class CyclicRefresh {
      * Skip to the next device.
      */
     private void skipToNextDevice() {
-        Log.d("Fluxron", "Skipping to next Device");
+        //Log.d("Fluxron", "Skipping to next Device");
         forceNextDevice.set(true);
         skipToNextParam();
     }
