@@ -123,7 +123,7 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
         String name = ((TextView) findViewById(R.id.settingsEditName)).getText().toString();
         String description = ((TextView) findViewById(R.id.settingsEditDescription)).getText().toString();
 
-        this.animateFadeOut(findViewById(R.id.textViewSettingsError), false);
+        this.animateFadeOut(findViewById(R.id.textViewSettingsError), false, 150);
 
         // Text changed, send the changes
         ChangeKitchenSettingsCommand cmd = new ChangeKitchenSettingsCommand(kitchenId, name, description);

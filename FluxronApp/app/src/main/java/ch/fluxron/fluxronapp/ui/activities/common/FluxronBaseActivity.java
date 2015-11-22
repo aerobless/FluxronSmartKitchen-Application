@@ -103,6 +103,15 @@ public class FluxronBaseActivity extends AppCompatActivity{
         }).start();
     }
 
+    public void animateFadeOut(final View v, final boolean setVisibility, int delay){
+        v.animate().alpha(0).setDuration(ANIMATE_OUT_MILLISECONDS).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                if (setVisibility) v.setVisibility(View.GONE);
+            }
+        }).setStartDelay(delay).start();
+    }
+
     public void animateFadeIn(final View v, final boolean setVisibility){
         if(setVisibility) v.setVisibility(View.VISIBLE);
         v.animate().alpha(1).setDuration(ANIMATE_OUT_MILLISECONDS).start();
