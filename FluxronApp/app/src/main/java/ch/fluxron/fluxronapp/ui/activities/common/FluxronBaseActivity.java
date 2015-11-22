@@ -80,7 +80,7 @@ public class FluxronBaseActivity extends AppCompatActivity{
      */
     protected Uri getImageFileUri(){
         // Get safe storage directory for photos
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "flx_img_" );
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "flx_img" );
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
         // Create the storage directory if it does not exist

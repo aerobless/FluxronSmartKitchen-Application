@@ -1,12 +1,15 @@
 package ch.fluxron.fluxronapp.context;
 
 import android.app.Application;
+import android.os.AsyncTask;
+import android.os.Environment;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.android.AndroidContext;
 
+import java.io.File;
 import java.io.IOException;
 
 import ch.fluxron.fluxronapp.data.Bluetooth;
@@ -45,6 +48,32 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
 
         setUpEventBuses();
         setUpLayers();
+        cleanUpTempDirectories();
+    }
+
+    private void cleanUpTempDirectories() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                File pictureStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "flx_img" );
+                File exportStorageDir = new File(Environment.getExternalStorageDirectory(), "flx_export");
+
+                File[] pictures = pictureStorageDir.listFiles();
+                File[] exports = exportStorageDir.listFiles();
+
+                if (pictures !=null) {
+                    for (File f : pictures) {
+                        f.delete();
+                    }
+                }
+
+                if(exports!=null) {
+                    for (File f : exports) {
+                        f.delete();
+                    }
+                }
+            }
+        });
     }
 
     private void setUpEventBuses(){
