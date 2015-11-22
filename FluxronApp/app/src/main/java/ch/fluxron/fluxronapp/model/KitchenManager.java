@@ -509,11 +509,18 @@ public class KitchenManager {
         value.setName(msg.getKitchenName());
         value.setDescription(msg.getKitchenDescription());
 
-        // Save the kitchen
-        final SaveObjectCommand saveCommand = new SaveObjectCommand();
-        saveCommand.setDocumentId(value.getId());
-        saveCommand.setData(value);
-        provider.getDalEventBus().post(saveCommand);
+        List<ValidationErrorOccurred> errors = validateKitchen(value);
+
+        if (errors.size() == 0) {
+            // Save the kitchen
+            final SaveObjectCommand saveCommand = new SaveObjectCommand();
+            saveCommand.setDocumentId(value.getId());
+            saveCommand.setData(value);
+            provider.getDalEventBus().post(saveCommand);
+        }
+        else {
+            raiseErrors(msg, errors);
+        }
     }
 
     /**

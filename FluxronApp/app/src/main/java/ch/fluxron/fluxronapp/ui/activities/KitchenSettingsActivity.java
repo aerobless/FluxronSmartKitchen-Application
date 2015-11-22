@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.modelUi.ValidationErrorOccurred;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.ExportKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.importExportOperations.KitchenExported;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettingsCommand;
@@ -26,6 +27,7 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
     private String kitchenId;
     private String loadConnection;
     private String exportConnection;
+    private String changeSettingsConnection;
 
     /**
      * Expects the Kitchen Id as an intent extra and creates a list adapter
@@ -94,6 +96,18 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
         }
     }
 
+    /**
+     * Occurs when a validation error occurred
+     * @param msg Event
+     */
+    public void onEventMainThread(ValidationErrorOccurred msg) {
+        if (msg.getConnectionId().equals(this.changeSettingsConnection)) {
+            TextView error = (TextView)findViewById(R.id.textViewSettingsError);
+            error.setText(msg.getErrorMessageResourceId());
+            this.animateFadeIn(error, false);
+        }
+    }
+
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         // Nothing to do here, only for interface compat
@@ -109,8 +123,11 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
         String name = ((TextView) findViewById(R.id.settingsEditName)).getText().toString();
         String description = ((TextView) findViewById(R.id.settingsEditDescription)).getText().toString();
 
+        this.animateFadeOut(findViewById(R.id.textViewSettingsError), false);
+
         // Text changed, send the changes
         ChangeKitchenSettingsCommand cmd = new ChangeKitchenSettingsCommand(kitchenId, name, description);
+        this.changeSettingsConnection = cmd.getConnectionId();
         postMessage(cmd);
     }
 
@@ -121,6 +138,7 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
     public void shareKitchen(View v){
         v.setEnabled(false);
         v.animate().alpha(0).setDuration(150).start();
+        this.animateFadeOut(findViewById(R.id.textViewSettingsError), false);
         findViewById(R.id.exportSpinner).animate().alpha(1).setDuration(150).start();
         ExportKitchenCommand cmd = new ExportKitchenCommand(kitchenId);
         this.exportConnection = cmd.getConnectionId();
