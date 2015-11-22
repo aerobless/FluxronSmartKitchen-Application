@@ -120,6 +120,11 @@ public class LocalDatabase {
             ok.setConnectionId(cmd);
             provider.getDalEventBus().post(ok);
         }
+        else {
+            ResponseFail fail = new ResponseFail();
+            fail.setConnectionId(cmd);
+            provider.getDalEventBus().post(fail);
+        }
     }
 
     /**

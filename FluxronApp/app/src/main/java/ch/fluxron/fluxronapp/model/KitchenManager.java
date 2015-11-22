@@ -6,10 +6,16 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.base.ResponseOK;
+import ch.fluxron.fluxronapp.events.base.WaitForResponse;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachmentCommand;
@@ -19,6 +25,7 @@ import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdComm
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.SaveObjectCommand;
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
+import ch.fluxron.fluxronapp.events.modelUi.ValidationErrorOccurred;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePositionCommand;
@@ -63,11 +70,42 @@ public class KitchenManager {
      * @param msg Message containing kitchen data
      */
     public void onEventAsync(SaveKitchenCommand msg) {
-        SaveObjectCommand cmd = new SaveObjectCommand();
-        cmd.setData(msg.getKitchen());
-        cmd.setDocumentId(msg.getKitchen().getId());
-        cmd.setConnectionId(msg);
-        provider.getDalEventBus().post(cmd);
+
+        List<ValidationErrorOccurred> errors = validateKitchen(msg.getKitchen());
+
+        if (errors.size() == 0) {
+            SaveObjectCommand cmd = new SaveObjectCommand();
+            cmd.setData(msg.getKitchen());
+            cmd.setDocumentId(msg.getKitchen().getId());
+            cmd.setConnectionId(msg);
+            provider.getDalEventBus().post(cmd);
+        }
+        else
+        {
+            raiseErrors(msg, errors);
+        }
+    }
+
+    private void raiseErrors(RequestResponseConnection msg, List<ValidationErrorOccurred> errors) {
+        for (ValidationErrorOccurred error : errors) {
+            error.setConnectionId(msg);
+            provider.getUiEventBus().post(error);
+        }
+    }
+
+    /**
+     * Validates the properties of a kitchen and returns a list of errors if any were found
+     * @param kitchen Kitchen to be validated
+     * @return List of errors. If this list is empty, the validation succeeded
+     */
+    private List<ValidationErrorOccurred> validateKitchen(Kitchen kitchen) {
+        ArrayList<ValidationErrorOccurred> errors = new ArrayList<>();
+
+        if (kitchen.getName() == null || kitchen.getName().trim().equals("")) {
+            errors.add(new ValidationErrorOccurred(R.string.validation_error_no_name));
+        }
+
+        return errors;
     }
 
     /**
@@ -75,9 +113,36 @@ public class KitchenManager {
      * @param msg Message containing the image path
      */
     public void onEventAsync(AttachImageToKitchenCommand msg) {
-        AttachFileToObjectByIdCommand cmd = new AttachFileToObjectByIdCommand(msg.getId(), msg.getImagePath(), "mainPicture");
-        cmd.setConnectionId(msg);
-        provider.getDalEventBus().post(cmd);
+        List<ValidationErrorOccurred> errors = validateAttachment(msg.getImagePath());
+
+        if (errors.size() == 0) {
+            AttachFileToObjectByIdCommand cmd = new AttachFileToObjectByIdCommand(msg.getId(), msg.getImagePath(), "mainPicture");
+
+            WaitForResponse<RequestResponseConnection> waiter = new WaitForResponse<>();
+            RequestResponseConnection response = waiter.postAndWait(provider.getDalEventBus(), cmd, RequestResponseConnection.class);
+
+            if (response instanceof ResponseOK) {
+                ResponseOK attachmentOk = new ResponseOK();
+                attachmentOk.setConnectionId(msg);
+                provider.getUiEventBus().post(attachmentOk);
+            }
+        }
+        else {
+            raiseErrors(msg, errors);
+        }
+    }
+
+    private List<ValidationErrorOccurred> validateAttachment(Uri imagePath) {
+        List<ValidationErrorOccurred> errors = new ArrayList<>();
+        if (imagePath == null || imagePath.getPath().trim().equals("")) {
+            errors.add(new ValidationErrorOccurred(R.string.validation_error_no_image));
+        }else {
+            File testFile = new File(imagePath.getPath());
+            if (!testFile.exists()) {
+                errors.add(new ValidationErrorOccurred(R.string.validation_error_no_image));
+            }
+        }
+        return errors;
     }
 
     /**

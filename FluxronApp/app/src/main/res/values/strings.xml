@@ -103,4 +103,8 @@
     <string name="error_description_e17">Power management error</string>
     <string name="error_description_e18">Contact the device manufacturer</string>
     <string name="error_description_e19">Generator to coil cable error</string>
+
+    <!-- validation erors -->
+    <string name="validation_error_no_name">Please provide a name for this kitchen.</string>
+    <string name="validation_error_no_image">Please provide an image for this kitchen.</string>
 </resources>

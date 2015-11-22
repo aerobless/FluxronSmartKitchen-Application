@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
+import ch.fluxron.fluxronapp.events.base.ResponseOK;
+import ch.fluxron.fluxronapp.events.modelUi.ValidationErrorOccurred;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand;
@@ -21,8 +24,12 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 public class CreateKitchenActivity extends FluxronBaseActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String EXTRA_SAVED_FILEPATH = "path";
+    private final int ANIM_DURATION_OUT = 100;
+    private final int ANIM_DURATION_IN = 300;
     private Uri tempFileName;
     private String saveRequestId;
+    private String attachmentRequestId;
+    private String kitchenId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,27 +55,48 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         }
     }
 
+    public void onEventMainThread(ValidationErrorOccurred msg){
+        if (msg.getConnectionId().equals(saveRequestId) || msg.getConnectionId().equals(this.attachmentRequestId)) {
+            displayError(msg);
+        }
+    }
+
+    private void displayError(ValidationErrorOccurred msg) {
+        ScrollView scroller = (ScrollView)findViewById(R.id.createKitchenScroller);
+        scroller.smoothScrollTo(0,0);
+
+        TextView errorText = (TextView)findViewById(R.id.textViewError);
+        errorText.setText(msg.getErrorMessageResourceId());
+        errorText.animate().alpha(1).setDuration(ANIM_DURATION_IN);
+    }
+
     public void onEventMainThread(KitchenCreated msg){
         // if the kitchen loaded was based on our request
         if(msg.getConnectionId().equals(saveRequestId)){
-            Intent editDevice = new Intent(this, KitchenActivity.class);
-            editDevice.putExtra(KitchenActivity.PARAM_KITCHEN_ID, msg.getKitchen().getId());
+
+            this.kitchenId = msg.getKitchen().getId();
 
             // Attach the image to the kitchen
             AttachImageToKitchenCommand attachCommand = new AttachImageToKitchenCommand(msg.getKitchen().getId(), tempFileName);
+            this.attachmentRequestId = attachCommand.getConnectionId();
             postMessage(attachCommand);
+        }
+    }
 
-            startActivity(editDevice);
+    public void onEventMainThread(ResponseOK msg) {
+        if(msg.getConnectionId().equals(this.attachmentRequestId) && this.kitchenId!=null){
+            Intent editKitchen = new Intent(this, KitchenActivity.class);
+            editKitchen.putExtra(KitchenActivity.PARAM_KITCHEN_ID, kitchenId);
+
+            startActivity(editKitchen);
             finish();
         }
     }
 
-    public void onBackButtonClicked(View button){
-        // User cancelled the process
-        finish();
-    }
-
     public void createNewKitchen(View button){
+        // Animate out the error view
+        findViewById(R.id.textViewError).animate().alpha(0).setDuration(ANIM_DURATION_OUT);
+
         TextView nameText = (TextView)findViewById(R.id.editTextName);
         TextView descText = (TextView)findViewById(R.id.editTextDescription);
         String name = nameText.getText().toString();
