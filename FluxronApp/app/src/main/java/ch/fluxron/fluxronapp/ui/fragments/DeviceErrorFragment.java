@@ -2,7 +2,6 @@ package ch.fluxron.fluxronapp.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,63 +9,43 @@ import android.view.ViewGroup;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.ui.components.ErrorView;
-import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
+import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
+import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
-public class DeviceErrorFragment extends Fragment {
-    private static final String STATE_ADDRESS = "address";
-    private IEventBusProvider provider;
-    private String deviceAddress;
+public class DeviceErrorFragment extends DeviceBaseFragment {
     private ErrorView[] errorViews;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_ADDRESS, deviceAddress);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        provider.getUiEventBus().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        provider.getUiEventBus().unregister(this);
-    }
+    private boolean ready = false;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_errors, container, false);
-        provider = (IEventBusProvider)getContext().getApplicationContext();
-
-        ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);
-        errorViews = new ErrorView[list.getChildCount()];
-
-        for(int i = 0; i < errorViews.length; i++){
-            errorViews[i] = (ErrorView)list.getChildAt(i);
+        View deviceView;
+        if (getDeviceClass().equals(DeviceTypeConverter.CCLASS)) {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_errors, container, false);
+            init(deviceView);
+            ready = true;
+        } else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_errors, container, false);
+            init(deviceView);
+            ready = true;
+        } else {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }
-
         return deviceView;
     }
 
-    public void setDeviceAddress(String address){
-        this.deviceAddress = address;
+    private void init(View deviceView){
+        ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);
+        errorViews = new ErrorView[list.getChildCount()];
+
+        for (int i = 0; i < errorViews.length; i++) {
+            errorViews[i] = (ErrorView) list.getChildAt(i);
+        }
     }
 
-    public void onEventMainThread(DeviceChanged inputMsg){
-        if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
-            for(ErrorView er :  errorViews){
+    public void onEventMainThread(DeviceChanged inputMsg) {
+        if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
+            for (ErrorView er : errorViews) {
                 er.handleDeviceChanged(inputMsg);
             }
         }

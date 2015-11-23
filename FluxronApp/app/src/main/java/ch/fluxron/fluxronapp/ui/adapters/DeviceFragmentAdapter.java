@@ -19,7 +19,7 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
     private Context context;
     private String address;
     private String deviceClass;
-    private int[] tabTitleResIds = new int[] { R.string.device_tab_status, R.string.device_tab_usage, R.string.device_tab_errors, R.string.device_tab_params };
+    private int[] tabTitleResIds = new int[]{R.string.device_tab_status, R.string.device_tab_usage, R.string.device_tab_errors, R.string.device_tab_params};
 
     public DeviceFragmentAdapter(FragmentManager fm, Context context) {
         super(fm);
@@ -28,7 +28,7 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
             case 0:
                 DeviceStatusFragment dfs = new DeviceStatusFragment();
                 dfs.init(address, deviceClass);
@@ -38,8 +38,8 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
                 history.init(address, deviceClass);
                 return history;
             case 2:
-                DeviceErrorFragment errors = new DeviceErrorFragment ();
-                errors.setDeviceAddress(address);
+                DeviceErrorFragment errors = new DeviceErrorFragment();
+                errors.init(address, deviceClass);
                 return errors;
             case 3:
                 DeviceConfigFragment dgf = new DeviceConfigFragment();

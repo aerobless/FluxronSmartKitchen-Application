@@ -35,13 +35,13 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View deviceView;
-        if(getDeviceClass().equals(DeviceTypeConverter.CCLASS)){
+        if (getDeviceClass().equals(DeviceTypeConverter.CCLASS)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_history, container, false);
             ready = true;
-        }else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
+        } else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_history, container, false);
             ready = true;
-        }else {
+        } else {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }
         return deviceView;
