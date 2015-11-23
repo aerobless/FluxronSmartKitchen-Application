@@ -122,10 +122,10 @@ public class DeviceManager {
          * directly storing it as a parameters of the device. This is the only parameter
          * that is handled this way.
          */
-        if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
+        if (inputMsg.getField().equals(PARAM_PRODUCT_CODE) && device != null) {
             device.setProductCode(inputMsg.getValue());
             //Log.d("FLUXRON", "SET PRODUCT CODE TO"+inputMsg.getValue());
-        } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
+        } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null && device != null) {
             device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);
             device.setLastContact(new Date());
