@@ -53,7 +53,7 @@ public class MessageInterpreter {
                 dataPayload = retriveBigData(data);
                 handleReadResponse(inputMsg, data, dataPayload);
             } else if (data[2] == MessageFactory.CCD_ERROR_RESPONSE) {
-                Log.d("Fluxron", "Received ERROR bluetooth message");
+                //Log.d("Fluxron", "Received ERROR bluetooth message");
                 dataPayload = new byte[]{data[6], data[7], data[8], data[9]};
                 handleError(inputMsg, data, dataPayload);
             } else {

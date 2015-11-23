@@ -111,7 +111,7 @@ public class FakeBluetooth {
     public void onEventAsync(BluetoothReadRequest cmd) {
         if(FAKE_RESPONSE_ENABLED){
             if (cmd.getAddress().contains("FF:FF:FF:FF")) {
-                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(cmd.getAddress(), "1018sub2", 12802);
+                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(cmd.getAddress(), "1018sub2", 12814);
                 deviceChanged.setConnectionId(cmd);
                 provider.getDalEventBus().post(deviceChanged);
             }

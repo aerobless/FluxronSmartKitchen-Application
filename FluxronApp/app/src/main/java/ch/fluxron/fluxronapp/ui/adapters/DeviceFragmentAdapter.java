@@ -43,7 +43,7 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
                 return errors;
             case 3:
                 DeviceConfigFragment dgf = new DeviceConfigFragment();
-                dgf.setDeviceAddress(address);
+                dgf.init(address, deviceClass);
                 return dgf;
             default:
                 return new SimpleTextFragment();
