@@ -20,21 +20,25 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 import ch.fluxron.fluxronapp.ui.util.PercentageGroup;
 
 public class DeviceHistoryFragment extends Fragment {
-    IEventBusProvider provider;
-    String deviceAddress;
+    private static final String STATE_ADDRESS = "address";
+    private IEventBusProvider provider;
+    private String deviceAddress;
 
     // General usage timers
-    PercentageGroup uptimeGroup = new PercentageGroup();
+    private PercentageGroup uptimeGroup = new PercentageGroup();
 
     // Heatsink temperature level timers
-    PercentageGroup heatsinkGroup = new PercentageGroup();
+    private PercentageGroup heatsinkGroup = new PercentageGroup();
 
     // Glass temperature level timers
-    PercentageGroup glassGroup = new PercentageGroup();
+    private PercentageGroup glassGroup = new PercentageGroup();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
+        }
     }
 
     @Override
@@ -51,6 +55,7 @@ public class DeviceHistoryFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_ADDRESS, deviceAddress);
         super.onSaveInstanceState(outState);
     }
 

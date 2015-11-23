@@ -31,6 +31,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Implements a fragment that displays the list of discovered devices
  */
 public class DeviceListFragment extends Fragment implements IDeviceClickListener {
+    private static final String STATE_ADDRESS = "address";
     public interface IDeviceAddedListener {
         void onDeviceAddRequested(Device d);
     }

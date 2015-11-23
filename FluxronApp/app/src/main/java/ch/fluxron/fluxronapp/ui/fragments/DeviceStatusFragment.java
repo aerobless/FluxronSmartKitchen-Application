@@ -3,10 +3,10 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
@@ -16,20 +16,24 @@ import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class DeviceStatusFragment extends Fragment {
-    IEventBusProvider provider;
-    ParameterView heatsink1;
-    ParameterView kwfSetpoint;
-    ParameterView kwfPower;
-    ParameterView tempGradient;
-    TemperatureBar temperatureBar1;
-    TemperatureBar temperatureBar2;
-    TemperatureBar temperatureBar3;
-    TemperatureBar temperatureBar4;
-    String deviceAddress;
+    private static final String STATE_ADDRESS = "address";
+    private IEventBusProvider provider;
+    private ParameterView heatsink1;
+    private ParameterView kwfSetpoint;
+    private ParameterView kwfPower;
+    private ParameterView tempGradient;
+    private TemperatureBar temperatureBar1;
+    private TemperatureBar temperatureBar2;
+    private TemperatureBar temperatureBar3;
+    private TemperatureBar temperatureBar4;
+    private String deviceAddress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
+        }
     }
 
     @Override
@@ -46,6 +50,7 @@ public class DeviceStatusFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_ADDRESS, deviceAddress);
         super.onSaveInstanceState(outState);
     }
 
