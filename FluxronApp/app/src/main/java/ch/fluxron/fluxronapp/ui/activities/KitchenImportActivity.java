@@ -38,7 +38,7 @@ public class KitchenImportActivity extends FluxronBaseActivity {
 
         Uri theUri = getIntent().getData();
         if (theUri != null) {
-            LoadImportMetadata cmd = new LoadImportMetadata(theUri);
+            LoadImportMetadata cmd = new LoadImportMetadata(theUri, getContentResolver());
             this.importMetadataConnection = cmd.getConnectionId();
             postMessage(cmd);
             
@@ -130,7 +130,7 @@ public class KitchenImportActivity extends FluxronBaseActivity {
     public void onStartImport(View v) {
         Uri theUri = getIntent().getData();
         if (theUri != null) {
-            ImportKitchenCommand cmd = new ImportKitchenCommand(theUri);
+            ImportKitchenCommand cmd = new ImportKitchenCommand(theUri, getContentResolver());
             this.importConnection = cmd.getConnectionId();
             postMessage(cmd);
 

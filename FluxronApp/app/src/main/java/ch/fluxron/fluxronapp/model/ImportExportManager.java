@@ -1,11 +1,16 @@
 package ch.fluxron.fluxronapp.model;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Environment;
+import android.renderscript.ScriptGroup;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
@@ -64,7 +70,7 @@ public class ImportExportManager {
         ObjectMapper mapper = new ObjectMapper();
         try {
             // Open the zip file
-            ZipFile file = new ZipFile(msg.getLocation().getPath());
+            ZipFile file = openZipFile(msg.getLocation(), msg.getResolver());
 
             // Load the manifest
             ZipEntry manifestEntry = file.getEntry(ENTRY_MANIFEST);
@@ -111,6 +117,33 @@ public class ImportExportManager {
         }
     }
 
+    private ZipFile openZipFile(Uri location, ContentResolver resolver) throws IOException {
+        if ("content".equals(location.getScheme())){
+            Log.d("imp", location.getPath());
+            File tempFolder = new File(Environment.getExternalStorageDirectory(), "flx_export");
+            File tempFile = File.createTempFile("import", null, tempFolder);
+            copy(resolver.openInputStream(location), tempFile);
+
+            return new ZipFile(tempFile);
+        }
+
+        return new ZipFile(location.getPath());
+    }
+
+    private void copy(InputStream src, File dst) throws IOException {
+        InputStream in = new BufferedInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
     private void notifyProgress(int currentStep, int stepCount, ImportKitchenCommand msg, String objId) {
         ImportProgressChanged progress = new ImportProgressChanged(stepCount, currentStep);
         progress.setConnectionId(msg);
@@ -120,7 +153,7 @@ public class ImportExportManager {
 
     public void onEventAsync(LoadImportMetadata msg) {
         try {
-            FluxronManifest manifest = getMetadataFromUri(msg.getLocation());
+            FluxronManifest manifest = getMetadataFromUri(msg.getLocation(), msg.getResolver());
             MetadataLoaded loaded = new MetadataLoaded(manifest);
             loaded.setConnectionId(msg);
 
@@ -140,8 +173,8 @@ public class ImportExportManager {
         }
     }
 
-    private FluxronManifest getMetadataFromUri(Uri location) throws IOException {
-        ZipFile file = new ZipFile(location.getPath());
+    private FluxronManifest getMetadataFromUri(Uri location, ContentResolver resolver) throws IOException {
+        ZipFile file = openZipFile(location, resolver);
         ZipEntry entry = file.getEntry(ENTRY_MANIFEST);
 
         ObjectMapper mapper = new ObjectMapper();
