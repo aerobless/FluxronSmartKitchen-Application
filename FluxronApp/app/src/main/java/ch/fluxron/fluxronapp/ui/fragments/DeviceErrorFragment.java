@@ -47,7 +47,7 @@ public class DeviceErrorFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_errors, container, false);
+        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_errors, container, false);
         provider = (IEventBusProvider)getContext().getApplicationContext();
 
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);

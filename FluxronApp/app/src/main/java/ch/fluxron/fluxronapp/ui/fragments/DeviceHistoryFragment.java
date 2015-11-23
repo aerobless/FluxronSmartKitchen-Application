@@ -62,7 +62,7 @@ public class DeviceHistoryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_history, container, false);
+        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_history, container, false);
         provider = (IEventBusProvider) getContext().getApplicationContext();
 
         return deviceView;

@@ -74,7 +74,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_list, container, false);
+        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_list, container, false);
         this.provider = (IEventBusProvider)getActivity().getApplicationContext();
         setClickListener(this);
 

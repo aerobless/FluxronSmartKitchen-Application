@@ -3,7 +3,6 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +56,7 @@ public class DeviceStatusFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_status, container, false);
+        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_status, container, false);
         heatsink1 = (ParameterView) deviceView.findViewById(R.id.heatsink1);
         kwfSetpoint = (ParameterView)deviceView.findViewById(R.id.kwfSetpoint);
         kwfPower = (ParameterView) deviceView.findViewById(R.id.kwfPower);

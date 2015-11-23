@@ -3,7 +3,6 @@ package ch.fluxron.fluxronapp.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.R;
-import ch.fluxron.fluxronapp.data.generated.DeviceParameter;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessGranted;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
@@ -56,7 +54,7 @@ public class DeviceConfigFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_config, container, false);
+        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_config, container, false);
         provider = (IEventBusProvider)getContext().getApplicationContext();
 
         parameters = new ArrayList<>();
