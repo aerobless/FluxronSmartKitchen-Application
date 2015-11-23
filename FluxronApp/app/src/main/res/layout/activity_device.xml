@@ -53,7 +53,19 @@
         android:layout_height="wrap_content"
         style="@style/FluxronTabLayout"
         />
-
+    <LinearLayout
+        android:id="@+id/progressDeviceClass"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <ProgressBar
+            android:layout_width="150sp"
+            android:layout_height="150sp"
+            android:layout_marginTop="90sp"
+            android:indeterminate="true"
+            android:layout_gravity="center" />
+    </LinearLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/deviceViewPager"
         android:layout_width="match_parent"

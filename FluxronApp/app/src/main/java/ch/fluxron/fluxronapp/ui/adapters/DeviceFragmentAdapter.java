@@ -18,6 +18,7 @@ import ch.fluxron.fluxronapp.ui.fragments.SimpleTextFragment;
 public class DeviceFragmentAdapter extends FragmentPagerAdapter {
     private Context context;
     private String address;
+    private String deviceClass;
     private int[] tabTitleResIds = new int[] { R.string.device_tab_status, R.string.device_tab_usage, R.string.device_tab_errors, R.string.device_tab_params };
 
     public DeviceFragmentAdapter(FragmentManager fm, Context context) {
@@ -30,7 +31,7 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
         switch (position){
             case 0:
                 DeviceStatusFragment dfs = new DeviceStatusFragment();
-                dfs.setDeviceAddress(address);
+                dfs.init(address, deviceClass);
                 return dfs;
             case 1:
                 DeviceHistoryFragment history = new DeviceHistoryFragment();
@@ -59,7 +60,8 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
         return context.getResources().getString(tabTitleResIds[position]);
     }
 
-    public void setAddress(String address) {
+    public void init(String address, String deviceClass) {
         this.address = address;
+        this.deviceClass = deviceClass;
     }
 }

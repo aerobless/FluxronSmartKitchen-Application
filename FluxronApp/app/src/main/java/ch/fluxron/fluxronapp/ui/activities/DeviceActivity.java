@@ -3,14 +3,16 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceFailed;
+import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
@@ -18,7 +20,9 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 public class DeviceActivity extends FluxronBaseActivity {
     private IEventBusProvider provider;
     private String address = "Unkown";
+    private String deviceClass = Device.UNKNOWN_DEVICE_CLASS;
     private String name = "Unkown";
+    private LinearLayout progressDeviceClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +35,12 @@ public class DeviceActivity extends FluxronBaseActivity {
             name = extras.getString("DEVICE_NAME");
         }
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
-        DeviceFragmentAdapter dfa = new DeviceFragmentAdapter(getSupportFragmentManager(), this);
-        dfa.setAddress(address);
-        viewPager.setAdapter(dfa);
-
-        TabLayout tabs = (TabLayout) findViewById(R.id.deviceTabs);
-        tabs.setupWithViewPager(viewPager);
         provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getApplicationContext();
 
         ((TextView) findViewById(R.id.deviceStatusName)).setText(name);
         ((TextView) findViewById(R.id.deviceStatusDescription)).setText(address);
+        progressDeviceClass = (LinearLayout) findViewById(R.id.progressDeviceClass);
+        progressDeviceClass.setVisibility(View.VISIBLE);
         provider.getUiEventBus().post(new CyclicRefreshCommand(address));
     }
 
@@ -62,7 +61,22 @@ public class DeviceActivity extends FluxronBaseActivity {
             TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
             statusOrb.setText(R.string.ok_check);
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
+            if(deviceClass.equals(Device.UNKNOWN_DEVICE_CLASS) && !inputMsg.getDevice().getDeviceClass().equals(Device.UNKNOWN_DEVICE_CLASS)){
+                deviceClass = inputMsg.getDevice().getDeviceClass();
+                progressDeviceClass.setVisibility(View.GONE);
+                setupViewPagerTabs();
+            }
         }
+    }
+
+    private void setupViewPagerTabs() {
+        ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
+        DeviceFragmentAdapter dfa = new DeviceFragmentAdapter(getSupportFragmentManager(), this);
+        dfa.init(address, deviceClass);
+        viewPager.setAdapter(dfa);
+
+        TabLayout tabs = (TabLayout) findViewById(R.id.deviceTabs);
+        tabs.setupWithViewPager(viewPager);
     }
 
     /**

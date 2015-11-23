@@ -1,6 +1,5 @@
 package ch.fluxron.fluxronapp.ui.fragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,11 +11,9 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
 import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
-import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
+import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 
-public class DeviceStatusFragment extends Fragment {
-    private static final String STATE_ADDRESS = "address";
-    private IEventBusProvider provider;
+public class DeviceStatusFragment extends DeviceBaseFragment {
     private ParameterView heatsink1;
     private ParameterView kwfSetpoint;
     private ParameterView kwfPower;
@@ -25,33 +22,6 @@ public class DeviceStatusFragment extends Fragment {
     private TemperatureBar temperatureBar2;
     private TemperatureBar temperatureBar3;
     private TemperatureBar temperatureBar4;
-    private String deviceAddress;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_ADDRESS, deviceAddress);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        provider.getUiEventBus().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        provider.getUiEventBus().unregister(this);
-    }
 
     @Nullable
     @Override
@@ -65,16 +35,11 @@ public class DeviceStatusFragment extends Fragment {
         temperatureBar2 = (TemperatureBar) deviceView.findViewById(R.id.temperature2);
         temperatureBar3 = (TemperatureBar) deviceView.findViewById(R.id.temperature3);
         temperatureBar4 = (TemperatureBar) deviceView.findViewById(R.id.temperature4);
-        provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider)getContext().getApplicationContext();
         return deviceView;
     }
 
-    public void setDeviceAddress(String address){
-        this.deviceAddress = address;
-    }
-
     public void onEventMainThread(DeviceChanged inputMsg){
-        if(inputMsg.getDevice().getAddress().equals(deviceAddress)){
+        if(inputMsg.getDevice().getAddress().equals(getDeviceAddress())){
             heatsink1.handleDeviceChanged(inputMsg);
             kwfSetpoint.handleDeviceChanged(inputMsg);
             kwfPower.handleDeviceChanged(inputMsg);
@@ -87,7 +52,7 @@ public class DeviceStatusFragment extends Fragment {
     }
 
     public void onEventMainThread(DeviceNotChanged inputMsg){
-        if(inputMsg.getAddress().equals(deviceAddress)){
+        if(inputMsg.getAddress().equals(getDeviceAddress())){
             heatsink1.handleDeviceNotChanged(inputMsg);
             kwfSetpoint.handleDeviceNotChanged(inputMsg);
             kwfPower.handleDeviceNotChanged(inputMsg);
