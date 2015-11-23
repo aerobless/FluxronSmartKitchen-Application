@@ -3,14 +3,11 @@ package ch.fluxron.fluxronapp.model;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Environment;
-import android.renderscript.ScriptGroup;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,11 +15,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
@@ -50,6 +47,7 @@ public class ImportExportManager {
     private static String ENTRY_KITCHEN = "kitchen.json";
     private List<String> reservedEntries;
     private IEventBusProvider provider;
+    private HashMap<String, String> importTempFiles;
 
     /**
      * Sets the event bus this manager should be operating on
@@ -64,6 +62,8 @@ public class ImportExportManager {
         reservedEntries = new ArrayList<>();
         reservedEntries.add(ENTRY_KITCHEN);
         reservedEntries.add(ENTRY_MANIFEST);
+
+        importTempFiles = new HashMap<>();
     }
 
     public void onEventAsync(ImportKitchenCommand msg) {
@@ -119,11 +119,19 @@ public class ImportExportManager {
 
     private ZipFile openZipFile(Uri location, ContentResolver resolver) throws IOException {
         if ("content".equals(location.getScheme())){
-            Log.d("imp", location.getPath());
-            File tempFolder = new File(Environment.getExternalStorageDirectory(), "flx_export");
-            File tempFile = File.createTempFile("import", null, tempFolder);
-            copy(resolver.openInputStream(location), tempFile);
-
+            // If this file was already saved in a temp file, just use the same file again
+            // all temp files are deleted upon app restart, the HashMap does not survive that long
+            // anyways
+            File tempFile;
+            if (importTempFiles.containsKey(location.getPath())) {
+                tempFile = new File(importTempFiles.get(location.getPath()));
+            }
+            else {
+                File tempFolder = new File(Environment.getExternalStorageDirectory(), "flx_export");
+                tempFile = File.createTempFile("import", null, tempFolder);
+                importTempFiles.put(location.getPath(), tempFile.getAbsolutePath());
+                copy(resolver.openInputStream(location), tempFile);
+            }
             return new ZipFile(tempFile);
         }
 
