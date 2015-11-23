@@ -35,7 +35,7 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
                 return dfs;
             case 1:
                 DeviceHistoryFragment history = new DeviceHistoryFragment();
-                history.setDeviceAddress(address);
+                history.init(address, deviceClass);
                 return history;
             case 2:
                 DeviceErrorFragment errors = new DeviceErrorFragment ();

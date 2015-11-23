@@ -2,7 +2,6 @@ package ch.fluxron.fluxronapp.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +15,12 @@ import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
 import ch.fluxron.fluxronapp.ui.components.ParameterView;
-import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
+import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
+import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 import ch.fluxron.fluxronapp.ui.util.PercentageGroup;
 
-public class DeviceHistoryFragment extends Fragment {
-    private static final String STATE_ADDRESS = "address";
-    private IEventBusProvider provider;
-    private String deviceAddress;
+public class DeviceHistoryFragment extends DeviceBaseFragment {
+    private boolean ready = false;
 
     // General usage timers
     private PercentageGroup uptimeGroup = new PercentageGroup();
@@ -33,47 +31,24 @@ public class DeviceHistoryFragment extends Fragment {
     // Glass temperature level timers
     private PercentageGroup glassGroup = new PercentageGroup();
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_ADDRESS, deviceAddress);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        provider.getUiEventBus().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        provider.getUiEventBus().unregister(this);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_history, container, false);
-        provider = (IEventBusProvider) getContext().getApplicationContext();
-
+        View deviceView;
+        if(getDeviceClass().equals(DeviceTypeConverter.CCLASS)){
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_history, container, false);
+            ready = true;
+        }else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_history, container, false);
+            ready = true;
+        }else {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
+        }
         return deviceView;
     }
 
-    public void setDeviceAddress(String address) {
-        this.deviceAddress = address;
-    }
-
     public void onEventMainThread(DeviceChanged inputMsg) {
-        if (inputMsg.getDevice().getAddress().equals(deviceAddress)) {
+        if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
 
             // Uptime
             updatePercentageGroupedControls(inputMsg, uptimeGroup
@@ -96,7 +71,7 @@ public class DeviceHistoryFragment extends Fragment {
     }
 
     public void onEventMainThread(DeviceNotChanged inputMsg) {
-        if (inputMsg.getAddress().equals(deviceAddress)) {
+        if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
             int[] parameterViewIds = new int[]{
                     R.id.uptimePowerOnTime, R.id.uptimeWorkingTime,
                     R.id.heatsinkLevel1, R.id.heatsinkLevel2, R.id.heatsinkLevel3, R.id.heatsinkLevel4,
