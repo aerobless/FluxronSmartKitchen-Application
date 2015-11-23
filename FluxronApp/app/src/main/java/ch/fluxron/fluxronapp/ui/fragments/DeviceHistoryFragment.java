@@ -110,7 +110,6 @@ public class DeviceHistoryFragment extends Fragment {
         }
     }
 
-    // TODO: Why is Glass Level 4 not updated
     private void updatePercentageGroupedControls(DeviceChanged updatedValues, PercentageGroup group, int[] parameterViewIds, int[] labelIds, boolean[] addToGroup) {
         if (getView() == null) return;
 
