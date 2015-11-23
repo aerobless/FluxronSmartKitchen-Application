@@ -74,7 +74,7 @@ public class ListBubbleControl extends LinearLayout{
         int oldBubble = currentBubble;
         currentBubble = i;
 
-        this.getChildAt(oldBubble).setBackgroundColor(normalColor);
-        this.getChildAt(currentBubble).setBackgroundColor(highlightedColor);
+        if (this.getChildCount() > oldBubble) this.getChildAt(oldBubble).setBackgroundColor(normalColor);
+        if (this.getChildCount() > currentBubble) this.getChildAt(currentBubble).setBackgroundColor(highlightedColor);
     }
 }
