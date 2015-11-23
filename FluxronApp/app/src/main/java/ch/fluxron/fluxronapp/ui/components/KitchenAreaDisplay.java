@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -75,7 +76,6 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        long start = System.currentTimeMillis();
         canvas.save();
 
         canvas.clipRect(0, 0, getWidth(), getHeight());
@@ -85,7 +85,8 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         if(splitMaps.length > 0 && splitMaps[0] != null) {
             for(int x = 0; x < splitArraySide; x++) {
                 for (int y = 0; y < splitArraySide; y++) {
-                    canvas.drawBitmap(splitMaps[y * splitArraySide + x], (x*splitWidth), (y*splitHeight), null);
+                    if (splitMaps[y * splitArraySide + x] != null)
+                        canvas.drawBitmap(splitMaps[y * splitArraySide + x], (x*splitWidth), (y*splitHeight), null);
                 }
             }
         }
@@ -210,6 +211,24 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         });
     }
 
+    private class SplitImageTask extends AsyncTask<Bitmap, Object, Object> {
+        @Override
+        protected Object doInBackground(Bitmap... params) {
+            Bitmap bmp = params[0];
+            for(int x = 0; x < splitArraySide; x++){
+                for(int y = 0; y < splitArraySide; y++){
+                    splitMaps[y * splitArraySide + x] = Bitmap.createBitmap(bmp, x * splitWidth, y * splitHeight, splitWidth, splitHeight);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            needsRepaint(true);
+        }
+    }
+
 
     /**
      * Sets the full sized bitmap to display
@@ -225,13 +244,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
         cam.setScale(getMinZoom());
 
-        for(int x = 0; x < splitArraySide; x++){
-            for(int y = 0; y < splitArraySide; y++){
-                splitMaps[y * splitArraySide + x] = Bitmap.createBitmap(bmp, x * splitWidth, y * splitHeight, splitWidth, splitHeight);
-            }
-        }
-
-        needsRepaint(true);
+        new SplitImageTask().execute(bmp);
     }
 
     public void setListener(IKitchenAreaListener listener) {
