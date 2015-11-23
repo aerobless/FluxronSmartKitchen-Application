@@ -21,13 +21,24 @@ import ch.fluxron.fluxronapp.ui.components.ParameterEditable;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class DeviceConfigFragment extends Fragment{
-    IEventBusProvider provider;
-    String deviceAddress;
-    List<ParameterEditable> parameters;
+    private static final String STATE_ADDRESS = "address";
+    private IEventBusProvider provider;
+    private String deviceAddress;
+    private List<ParameterEditable> parameters;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_ADDRESS, deviceAddress);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -40,11 +51,6 @@ public class DeviceConfigFragment extends Fragment{
     public void onStop() {
         super.onStop();
         provider.getUiEventBus().unregister(this);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Nullable

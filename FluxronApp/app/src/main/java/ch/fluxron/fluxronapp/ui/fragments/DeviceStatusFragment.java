@@ -37,6 +37,12 @@ public class DeviceStatusFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_ADDRESS, deviceAddress);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         provider.getUiEventBus().register(this);
@@ -46,12 +52,6 @@ public class DeviceStatusFragment extends Fragment {
     public void onStop() {
         super.onStop();
         provider.getUiEventBus().unregister(this);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_ADDRESS, deviceAddress);
-        super.onSaveInstanceState(outState);
     }
 
     @Nullable

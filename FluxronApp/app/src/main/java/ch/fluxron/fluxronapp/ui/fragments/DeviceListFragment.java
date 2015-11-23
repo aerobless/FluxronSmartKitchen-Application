@@ -31,7 +31,6 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Implements a fragment that displays the list of discovered devices
  */
 public class DeviceListFragment extends Fragment implements IDeviceClickListener {
-    private static final String STATE_ADDRESS = "address";
     public interface IDeviceAddedListener {
         void onDeviceAddRequested(Device d);
     }
@@ -45,12 +44,6 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     private IDeviceAddedListener addListener;
     private Button discoveryButton;
 
-    public void setEventBusProvider(IEventBusProvider provider) {
-        this.provider = provider;
-        provider.getUiEventBus().register(this);
-        setClickListener(this);
-    }
-
     public void setClickListener(IDeviceClickListener listener) {
         this.listener = listener;
     }
@@ -58,6 +51,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     @Override
     public void onStart() {
         super.onStart();
+        provider.getUiEventBus().register(this);
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(true));
         provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
         discoveryActive = true;
@@ -81,6 +75,8 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_list, container, false);
+        this.provider = (IEventBusProvider)getActivity().getApplicationContext();
+        setClickListener(this);
 
         // Set the list's properties
         final RecyclerView deviceListView = (RecyclerView) deviceView.findViewById(R.id.deviceList);

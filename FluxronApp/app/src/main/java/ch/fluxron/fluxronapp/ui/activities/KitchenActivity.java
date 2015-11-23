@@ -369,7 +369,6 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      */
     private void showDeviceSelectionList(){
         DeviceListFragment fragment = new DeviceListFragment();
-        fragment.setEventBusProvider(this.busProvider);
         fragment.setListener(this);
         findViewById(R.id.deviceListLayout).setVisibility(View.VISIBLE);
         getFragmentManager().beginTransaction()
