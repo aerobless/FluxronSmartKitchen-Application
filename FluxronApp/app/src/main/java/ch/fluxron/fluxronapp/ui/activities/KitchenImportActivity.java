@@ -109,6 +109,7 @@ public class KitchenImportActivity extends FluxronBaseActivity {
                         Intent startOther = new Intent(KitchenImportActivity.this, KitchenActivity.class);
                         startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, msg.getObjectId());
                         startActivity(startOther);
+                        finish();
                     }
                 }).start();
             }
