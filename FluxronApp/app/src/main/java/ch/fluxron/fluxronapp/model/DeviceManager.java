@@ -124,6 +124,7 @@ public class DeviceManager {
          */
         if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
             device.setProductCode(inputMsg.getValue());
+            //Log.d("FLUXRON", "SET PRODUCT CODE TO"+inputMsg.getValue());
         } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
             device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);

@@ -7,6 +7,11 @@ import android.util.SparseArray;
  */
 public class DeviceTypeConverter {
     SparseArray<ProductCode> deviceTypes;
+    public static final String CCLASS = "CClass";
+    public static final String ACCLASS = "AClass";
+    public static final String SCLASS = "SClass";
+    public static final String MIA = "MIA";
+    public static final String ETX = "ETX";
 
     public DeviceTypeConverter() {
         this.deviceTypes = new SparseArray<>();

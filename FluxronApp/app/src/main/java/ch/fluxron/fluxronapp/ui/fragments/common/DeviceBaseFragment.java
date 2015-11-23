@@ -53,4 +53,8 @@ public class DeviceBaseFragment extends Fragment {
     public String getDeviceAddress() {
         return deviceAddress;
     }
+
+    public String getDeviceClass(){
+        return deviceClass;
+    }
 }

@@ -8,8 +8,11 @@ import java.util.Random;
 
 import ch.fluxron.fluxronapp.data.IEventBusProvider;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
+import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceChanged;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDeviceFound;
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothDiscoveryCommand;
+import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReadRequest;
 import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 
@@ -18,14 +21,15 @@ import ch.fluxron.fluxronapp.objectBase.ParameterValue;
  */
 public class FakeBluetooth {
     private IEventBusProvider provider;
-    private static final boolean FAKE_ENABLED = true;
-    private static final int FAKE_DEVICE_COUNT = 10;
+    private static final boolean FAKE_GENERATION_ENABLED = true;
+    private static final boolean FAKE_RESPONSE_ENABLED = true;
+    private static final int FAKE_DEVICE_COUNT = 10; //Max 99
     private boolean discoveryActive = true;
     private List<Integer> deviceTypes;
 
     public FakeBluetooth(IEventBusProvider provider) {
         this.provider = provider;
-        if(FAKE_ENABLED){
+        if (FAKE_GENERATION_ENABLED) {
             this.provider.getDalEventBus().register(this);
         }
         deviceTypes = new ArrayList<>();
@@ -37,43 +41,58 @@ public class FakeBluetooth {
 
     /**
      * Starts/Stops the discovery of new devices via bluetooth.
+     *
      * @param cmd
      */
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
-        if(cmd.isEnabled()){
+        if (cmd.isEnabled()) {
             discoveryActive = true;
-           startDeviceDiscovery();
-            Log.d("Fluxron","Fake Discovery Request");
+            startDeviceDiscovery();
+            Log.d("Fluxron", "Fake Discovery Request");
         } else {
             discoveryActive = false;
         }
     }
 
-    private void startDeviceDiscovery(){
-        for(int i=0; i<FAKE_DEVICE_COUNT; i++){
-            if(!discoveryActive){
+    /**
+     * Discovers a specific amount of fake devices
+     */
+    private void startDeviceDiscovery() {
+        for (int i = 0; i < FAKE_DEVICE_COUNT; i++) {
+            if (!discoveryActive) {
                 break;
             }
 
             int sleepyTime = randInt(1, 4);
             try {
-                Thread.sleep(sleepyTime*1000);
+                Thread.sleep(sleepyTime * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            Device unreal = generateFakeDevice();
-            Log.d("FLUXRON","Fake device generated");
+            Device unreal = generateFakeDevice(i);
+            Log.d("FLUXRON", "Fake device generated");
             provider.getDalEventBus().post(new BluetoothDeviceFound(unreal));
         }
     }
 
-    private Device generateFakeDevice(){
+    /**
+     * Generates a fake device
+     *
+     * @param input
+     * @return
+     */
+    private Device generateFakeDevice(int input) {
         int deviceID = randInt(100, 999);
-        String deviceMac = randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99)+":"+randInt(10,99);
-        Device unreal = new Device("FAKE_"+deviceID, deviceMac, false);
+        String deviceMac;
+        if (input < 10) {
+            deviceMac = "FF:FF:FF:FF:FF:0" + input;
+        } else {
+            deviceMac = "FF:FF:FF:FF:FF:" + input;
+        }
+        Device unreal = new Device("FAKE_" + deviceID, deviceMac, false);
         int deviceType = deviceTypes.get(randInt(0, 3));
-        ParameterValue productCodeParam = new ParameterValue(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE, deviceType+"");
+        ParameterValue productCodeParam = new ParameterValue(ParamManager.F_SCLASS_1018SUB2_PRODUCT_CODE, deviceType + "");
         unreal.setDeviceParameter(productCodeParam);
         unreal.setBonded(true);
         return unreal;
@@ -82,5 +101,20 @@ public class FakeBluetooth {
     private static int randInt(int min, int max) {
         Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;
+    }
+
+    /**
+     * Responds to read requests on fake devices.
+     *
+     * @param cmd
+     */
+    public void onEventAsync(BluetoothReadRequest cmd) {
+        if(FAKE_RESPONSE_ENABLED){
+            if (cmd.getAddress().contains("FF:FF:FF:FF")) {
+                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(cmd.getAddress(), "1018sub2", 12802);
+                deviceChanged.setConnectionId(cmd);
+                provider.getDalEventBus().post(deviceChanged);
+            }
+        }
     }
 }

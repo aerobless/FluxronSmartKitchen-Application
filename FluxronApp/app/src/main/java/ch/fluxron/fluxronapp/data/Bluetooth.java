@@ -172,6 +172,10 @@ public class Bluetooth {
      * @param cmd
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
+        //TODO: can be removed in production, is used to test with fake devices.
+        if(cmd.getAddress().contains("FF:FF:FF:FF")){
+            return;
+        }
         Set<String> parameters = new HashSet<>(cmd.getParameters());
         for (String p : parameters) {
             byte[] message = messageFactory.makeReadRequest(p);
