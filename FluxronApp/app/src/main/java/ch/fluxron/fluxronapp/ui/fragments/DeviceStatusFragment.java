@@ -29,23 +29,27 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View deviceView;
-        if(getDeviceClass().equals(DeviceTypeConverter.CCLASS)){
+        if (getDeviceClass().equals(DeviceTypeConverter.CCLASS)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_status, container, false);
             initControls(deviceView);
             ready = true;
-        }else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
+        } else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_status, container, false);
             initControls(deviceView);
             ready = true;
-        }else {
+        } else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_status, container, false);
+            initControls(deviceView);
+            ready = true;
+        } else {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }
         return deviceView;
     }
 
-    private void initControls(View deviceView){
+    private void initControls(View deviceView) {
         heatsink1 = (ParameterView) deviceView.findViewById(R.id.heatsink1);
-        kwfSetpoint = (ParameterView)deviceView.findViewById(R.id.kwfSetpoint);
+        kwfSetpoint = (ParameterView) deviceView.findViewById(R.id.kwfSetpoint);
         kwfPower = (ParameterView) deviceView.findViewById(R.id.kwfPower);
         tempGradient = (ParameterView) deviceView.findViewById(R.id.tempGradient);
         temperatureBar1 = (TemperatureBar) deviceView.findViewById(R.id.temperature1);
@@ -54,8 +58,8 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         temperatureBar4 = (TemperatureBar) deviceView.findViewById(R.id.temperature4);
     }
 
-    public void onEventMainThread(DeviceChanged inputMsg){
-        if(inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready){
+    public void onEventMainThread(DeviceChanged inputMsg) {
+        if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             heatsink1.handleDeviceChanged(inputMsg);
             kwfSetpoint.handleDeviceChanged(inputMsg);
             kwfPower.handleDeviceChanged(inputMsg);
@@ -67,8 +71,8 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         }
     }
 
-    public void onEventMainThread(DeviceNotChanged inputMsg){
-        if(inputMsg.getAddress().equals(getDeviceAddress()) && ready){
+    public void onEventMainThread(DeviceNotChanged inputMsg) {
+        if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
             heatsink1.handleDeviceNotChanged(inputMsg);
             kwfSetpoint.handleDeviceNotChanged(inputMsg);
             kwfPower.handleDeviceNotChanged(inputMsg);

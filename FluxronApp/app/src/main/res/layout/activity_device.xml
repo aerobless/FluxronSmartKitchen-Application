@@ -60,8 +60,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
         <ProgressBar
-            android:layout_width="150sp"
-            android:layout_height="150sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="90sp"
             android:indeterminate="true"
             android:layout_gravity="center" />

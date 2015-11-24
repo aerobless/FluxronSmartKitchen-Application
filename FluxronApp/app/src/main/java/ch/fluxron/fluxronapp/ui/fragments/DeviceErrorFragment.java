@@ -28,6 +28,10 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_errors, container, false);
             init(deviceView);
             ready = true;
+        }  else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_errors, container, false);
+            init(deviceView);
+            ready = true;
         } else {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }

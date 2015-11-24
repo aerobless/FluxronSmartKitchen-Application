@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="9dp">
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/errorViewList">
+            <!-- ETX has only 4 Error params -->
+            <ch.fluxron.fluxronapp.ui.components.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorParamName="@string/F_ETX_3005SUB1_ERROR_1"/>
+            <ch.fluxron.fluxronapp.ui.components.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorParamName="@string/F_ETX_3005SUB2_ERROR_2"/>
+            <ch.fluxron.fluxronapp.ui.components.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorParamName="@string/F_ETX_3005SUB3_ERROR_3"/>
+            <ch.fluxron.fluxronapp.ui.components.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorParamName="@string/F_ETX_3005SUB4_ERROR_4"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
