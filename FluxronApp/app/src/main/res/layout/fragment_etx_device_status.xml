@@ -21,19 +21,17 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/temperatureBars"
                 android:orientation="vertical">
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature1"
                     app:temperatureParamName="@string/F_ETX_3050SUB1_ETX_TEMPERATURE_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature2"
                     app:temperatureParamName="@string/F_ETX_3050SUB2_ETX_TEMPERATURE_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature3"
                     app:temperatureParamName="@string/F_ETX_3050SUB3_ETX_TEMPERATURE_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -42,7 +40,10 @@
             <GridLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:useDefaultMargins="true"
                 android:columnCount="2"
+                android:id="@+id/paramGrid"
                 android:rowCount="2">
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
                     android:id="@+id/heatsink1"

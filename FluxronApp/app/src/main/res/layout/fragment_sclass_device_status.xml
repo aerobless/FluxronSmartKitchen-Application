@@ -21,24 +21,21 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/temperatureBars"
                 android:orientation="vertical">
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature1"
                     app:temperatureParamName="@string/F_SCLASS_3028SUB1_KMX_TEMPERATURE_0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature2"
                     app:temperatureParamName="@string/F_SCLASS_3028SUB2_KMX_TEMPERATURE_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature3"
                     app:temperatureParamName="@string/F_SCLASS_3028SUB3_KMX_TEMPERATURE_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <ch.fluxron.fluxronapp.ui.components.TemperatureBar
-                    android:id="@+id/temperature4"
                     app:temperatureParamName="@string/F_SCLASS_3028SUB4_KMX_TEMPERATURE_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -47,10 +44,12 @@
             <GridLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:useDefaultMargins="true"
                 android:columnCount="2"
+                android:id="@+id/paramGrid"
                 android:rowCount="2">
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/heatsink1"
                     app:paramName="@string/F_SCLASS_3006SUB3_HEATSINK_LEVEL_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -58,7 +57,6 @@
                     android:layout_row="0"/>
 
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/kwfSetpoint"
                     app:paramName="@string/F_SCLASS_2001SUB6_KWF_TEMP_SETPOINT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -66,7 +64,6 @@
                     android:layout_row="0" />
 
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/kwfPower"
                     app:paramName="@string/F_SCLASS_2001SUB3_KWF_ACTUAL_POWER_LEVEL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -74,7 +71,6 @@
                     android:layout_row="1"/>
 
                 <ch.fluxron.fluxronapp.ui.components.ParameterView
-                    android:id="@+id/tempGradient"
                     app:paramName="@string/F_SCLASS_3037SUB2_PAN_TEMPERATURE_GLASS_GRADIENT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

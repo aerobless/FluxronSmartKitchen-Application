@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceNotChanged;
@@ -15,14 +18,8 @@ import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 public class DeviceStatusFragment extends DeviceBaseFragment {
-    private ParameterView heatsink1;
-    private ParameterView kwfSetpoint;
-    private ParameterView kwfPower;
-    private ParameterView tempGradient;
-    private TemperatureBar temperatureBar1;
-    private TemperatureBar temperatureBar2;
-    private TemperatureBar temperatureBar3;
-    private TemperatureBar temperatureBar4;
+    private List<TemperatureBar> temperatureBars;
+    private List<ParameterView> parameters;
     private boolean ready = false;
 
     @Nullable
@@ -48,35 +45,35 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
     }
 
     private void initControls(View deviceView) {
-        heatsink1 = (ParameterView) deviceView.findViewById(R.id.heatsink1);
-        kwfSetpoint = (ParameterView) deviceView.findViewById(R.id.kwfSetpoint);
-        kwfPower = (ParameterView) deviceView.findViewById(R.id.kwfPower);
-        tempGradient = (ParameterView) deviceView.findViewById(R.id.tempGradient);
-        temperatureBar1 = (TemperatureBar) deviceView.findViewById(R.id.temperature1);
-        temperatureBar2 = (TemperatureBar) deviceView.findViewById(R.id.temperature2);
-        temperatureBar3 = (TemperatureBar) deviceView.findViewById(R.id.temperature3);
-        temperatureBar4 = (TemperatureBar) deviceView.findViewById(R.id.temperature4);
+        temperatureBars = new ArrayList<>();
+        ViewGroup temperatureList = (ViewGroup) deviceView.findViewById(R.id.temperatureBars);
+        for (int i = 0; i < temperatureList.getChildCount(); i++) {
+            temperatureBars.add((TemperatureBar) temperatureList.getChildAt(i));
+        }
+
+        parameters = new ArrayList<>();
+        ViewGroup paramList = (ViewGroup) deviceView.findViewById(R.id.paramGrid);
+        for (int i = 0; i < paramList.getChildCount(); i++) {
+            parameters.add((ParameterView) paramList.getChildAt(i));
+        }
     }
 
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
-            heatsink1.handleDeviceChanged(inputMsg);
-            kwfSetpoint.handleDeviceChanged(inputMsg);
-            kwfPower.handleDeviceChanged(inputMsg);
-            tempGradient.handleDeviceChanged(inputMsg);
-            temperatureBar1.handleDeviceChanged(inputMsg);
-            temperatureBar2.handleDeviceChanged(inputMsg);
-            temperatureBar3.handleDeviceChanged(inputMsg);
-            temperatureBar4.handleDeviceChanged(inputMsg);
+            for(TemperatureBar p:temperatureBars){
+                p.handleDeviceChanged(inputMsg);
+            }
+            for(ParameterView p:parameters){
+                p.handleDeviceChanged(inputMsg);
+            }
         }
     }
 
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
-            heatsink1.handleDeviceNotChanged(inputMsg);
-            kwfSetpoint.handleDeviceNotChanged(inputMsg);
-            kwfPower.handleDeviceNotChanged(inputMsg);
-            tempGradient.handleDeviceNotChanged(inputMsg);
+            for(ParameterView p:parameters){
+                p.handleDeviceNotChanged(inputMsg);
+            }
         }
     }
 }
