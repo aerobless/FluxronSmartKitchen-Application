@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AttachImageToKitch
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePositionCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeKitchenSettingsCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteAreaFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceFromAreaDeleted;
@@ -176,6 +178,49 @@ public class KitchenManager {
         });
         provider.getDalEventBus().post(cmd);
     }
+
+    /**
+     * Requests the deletion of a kitchen area
+     * @param msg Command
+     */
+    public void onEventAsync(final DeleteAreaFromKitchenCommand msg) {
+        // Load the kitchen and delete the area
+        GetObjectByIdCommand getOp = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
+            @Override
+            public void call(Object value) {
+                if (value != null && value instanceof Kitchen) {
+                    // Attach the area to the kitchen
+                    removeAreaFromKitchen((Kitchen) value, msg);
+                }
+            }
+        });
+        provider.getDalEventBus().post(getOp);
+    }
+
+    private void removeAreaFromKitchen(Kitchen kitchen, DeleteAreaFromKitchenCommand cmd) {
+        List<KitchenArea> areas = kitchen.getAreaList();
+
+        for(int i =0; i< areas.size(); i++ )
+        {
+            if (areas.get(i).getRelativeId() == cmd.getAreaId()) {
+                areas.remove(i);
+                break;
+            }
+        }
+
+        SaveObjectCommand save = new SaveObjectCommand();
+        save.setData(kitchen);
+        save.setDocumentId(cmd.getKitchenId());
+
+        // Wait until the save is done
+        new WaitForResponse<>().postAndWait(provider.getDalEventBus(), save, RequestResponseConnection.class);
+
+        // Issue a new kitchen load
+        LoadObjectByIdCommand loadCommand = new LoadObjectByIdCommand(cmd.getKitchenId());
+        loadCommand.setConnectionId(cmd);
+        provider.getDalEventBus().post(loadCommand);
+    }
+
 
     /**
      * Sends a message to the UI containing a loaded bitmap

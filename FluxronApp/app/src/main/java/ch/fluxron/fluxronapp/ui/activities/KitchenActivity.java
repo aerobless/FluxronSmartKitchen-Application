@@ -3,7 +3,6 @@ package ch.fluxron.fluxronapp.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -23,6 +22,7 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshComman
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.InjectDevicesCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.AddDeviceToAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.ChangeDevicePositionCommand;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteAreaFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceFromAreaDeleted;
@@ -184,6 +184,8 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                 for (KitchenArea a : msg.getKitchen().getAreaList()) {
                     list.getListAdapter().addOrUpdate(a);
                 }
+
+                list.getListAdapter().removeNotInList(msg.getKitchen().getAreaList());
             }
         }
 
@@ -222,15 +224,6 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
     }
 
     /**
-     * Back button was pressed
-     * @param button Button that was pressed
-     */
-    public void onBackButtonClicked(View button) {
-        // Close this kitchen and move back one view on the stack.
-        finish();
-    }
-
-    /**
      * The user requested to switch to the edit mode
      * @param button Button that was pressed
      */
@@ -254,9 +247,17 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
      * @param button Button that was pressed
      */
     public void onDeleteButtonClicked(View button) {
-        // Send a deletion command
-        postMessage(new DeleteKitchenCommand(kitchenId));
-        finish();
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            // Send a deletion command if we are in the kitchen view
+            postMessage(new DeleteKitchenCommand(kitchenId));
+            finish();
+        }
+        else {
+
+            // Request the deletion of the area and move back
+            postMessage(new DeleteAreaFromKitchenCommand(kitchenId, currentArea.getRelativeId()));
+            onBackPressed();
+        }
     }
 
     /**

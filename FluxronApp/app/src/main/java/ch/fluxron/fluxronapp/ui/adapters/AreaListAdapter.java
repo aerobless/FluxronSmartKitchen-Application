@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import ch.fluxron.fluxronapp.R;
@@ -78,5 +79,26 @@ public class AreaListAdapter extends RecyclerView.Adapter<AreaHolder> {
     @Override
     public int getItemCount() {
         return areas.size();
+    }
+
+    /**
+     * Removes all kitchen areas that are not in the list
+     * @param areaList List
+     */
+    public void removeNotInList(List<KitchenArea> areaList) {
+        // Create a set with all known Ids
+        HashSet<Integer> allIds = new HashSet<>(areaList.size());
+        for (KitchenArea a : areaList){
+            allIds.add(a.getRelativeId());
+        }
+
+        // Delete all areas that do not have an id in the set
+        for(int i = areas.size()-1; i>=0; i--) {
+            if (!allIds.contains(areas.get(i).getRelativeId())){
+                areaIds.remove(areas.get(1).getRelativeId());
+                areas.remove(i);
+                notifyItemRemoved(i);
+            }
+        }
     }
 }
