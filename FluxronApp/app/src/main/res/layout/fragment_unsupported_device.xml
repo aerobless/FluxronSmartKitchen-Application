@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
     <TextView
         android:text="@string/unsupported_device"
+        android:layout_margin="25sp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 </LinearLayout>

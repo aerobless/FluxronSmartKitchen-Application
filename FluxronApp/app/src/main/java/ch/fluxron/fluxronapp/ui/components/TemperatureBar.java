@@ -142,19 +142,24 @@ public class TemperatureBar extends LinearLayout {
         if (dp != null) {
             Float value = Float.parseFloat(dp.getValue());
             updateCurrentTemperature(value);
-            if (value > 500) {
-                setMax(100000);
-            } else if (value < 500 && value > 400) {
-                setMax(500);
-            } else if (value < 400 && value > 300) {
-                setMax(400);
-            } else if (value < 300 && value > 200) {
-                setMax(300);
-            } else if (value < 200 && value > 100) {
-                setMax(200);
-            } else if (value < 100) {
-                setMax(100);
-            }
+            setScale(value);
+        }
+    }
+
+    private void setScale(Float value) {
+        if (value > 500) {
+            setMax(100000);
+            maxOffsetTemp = 30000; //Fix so that large values don't mess up the UI
+        } else if (value < 500 && value > 400) {
+            setMax(500);
+        } else if (value < 400 && value > 300) {
+            setMax(400);
+        } else if (value < 300 && value > 200) {
+            setMax(300);
+        } else if (value < 200 && value > 100) {
+            setMax(200);
+        } else if (value < 100) {
+            setMax(100);
         }
     }
 }
