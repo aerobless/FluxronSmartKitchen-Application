@@ -105,6 +105,21 @@
     <string name="error_description_e18">Contact the device manufacturer</string>
     <string name="error_description_e19">Generator to coil cable error</string>
 
+    <!-- Thermostat Config -->
+    <string name="desc_nominalCurrent">Nominal phase current in ampere</string>
+    <string name="desc_tempHighLimit">Limit for operation counter "Temp High Time"</string>
+    <string name="desc_TempMaxLimit">Maximal allowed temperature</string>
+    <string name="desc_NegGradientLimit">Limit for operation counter "Temp. gradient neg"</string>
+    <string name="desc_PosGradientLimit">Limit for operation counter "Temp. gradient pos"</string>
+    <string name="desc_ReferenceTemperatureAt90">Desired temperature at knob angle of 90°</string>
+    <string name="desc_ReferenceTemperatureAt270">Desired temperature at knob angle of 270°</string>
+    <string name="desc_DisplayHysteresis">Use values>2 to avoid flickering</string>
+    <string name="desc_TemperatureOffset">Decrease if temperature is too low</string>
+    <string name="desc_PTSensorConfig">PT supervision Bit10: \n1=PT0\n2=PT01\n3=PT012</string>
+    <string name="desc_SwitchingHysteresis">Time limit for maximum switching hysteresis</string>
+    <string name="desc_SwitchingHysteresisLength">Time of hysteresis for switching</string>
+    <string name="desc_TempGradientFeedForward">Calculate: overshoot[°C] * heatup[s] / setpoint[°C]</string>
+
     <!-- validation erors -->
     <string name="validation_error_no_name">Please provide a name for this kitchen.</string>
     <string name="validation_error_no_image">Please provide an image for this kitchen.</string>

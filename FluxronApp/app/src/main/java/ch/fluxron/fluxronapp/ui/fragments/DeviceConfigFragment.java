@@ -20,7 +20,7 @@ import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
-public class DeviceConfigFragment extends DeviceBaseFragment{
+public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<ParameterEditable> parameters;
     private boolean ready = false;
 
@@ -36,13 +36,17 @@ public class DeviceConfigFragment extends DeviceBaseFragment{
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_config, container, false);
             init(deviceView);
             ready = true;
+        } else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
+            deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_config, container, false);
+            init(deviceView);
+            ready = true;
         } else {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }
         return deviceView;
     }
 
-    private void init(View deviceView){
+    private void init(View deviceView) {
         parameters = new ArrayList<>();
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.editableViewList);
         for (int i = 0; i < list.getChildCount(); i++) {
@@ -51,27 +55,27 @@ public class DeviceConfigFragment extends DeviceBaseFragment{
         ((ConfigurableScrollView) deviceView.findViewById(R.id.scrollView)).setScrollOffset(100);
     }
 
-    public void onEventMainThread(DeviceChanged inputMsg){
-        if(inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready){
-            for(ParameterEditable p:parameters){
+    public void onEventMainThread(DeviceChanged inputMsg) {
+        if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
+            for (ParameterEditable p : parameters) {
                 p.setDeviceAddress(getDeviceAddress());
                 p.handleDeviceChanged(inputMsg);
             }
         }
     }
 
-    public void onEventMainThread(DeviceNotChanged inputMsg){
-        if(inputMsg.getAddress().equals(getDeviceAddress()) && ready){
-            for(ParameterEditable p:parameters){
+    public void onEventMainThread(DeviceNotChanged inputMsg) {
+        if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
+            for (ParameterEditable p : parameters) {
                 p.setDeviceAddress(getDeviceAddress());
                 p.handleDeviceNotChanged(inputMsg);
             }
         }
     }
 
-    public void onEventMainThread(AccessGranted inputMsg){
-        if(ready){
-            for(ParameterEditable p:parameters){
+    public void onEventMainThread(AccessGranted inputMsg) {
+        if (ready) {
+            for (ParameterEditable p : parameters) {
                 p.handleAccessLevel(inputMsg.getAccessLevel());
             }
         }
