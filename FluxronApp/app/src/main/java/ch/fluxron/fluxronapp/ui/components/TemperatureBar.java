@@ -68,6 +68,10 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
             provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
             provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
         }
+
+        setMax(100);
+        updateCurrentTemperature(50);
+
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,19 +84,21 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
     private void updateCurrentTempPos() {
         int halfText = getTextWidth(currentTemperature) / 2;
         int textOffset = frontSegment.getWidth() - halfText + (space1.getWidth() / 2);
-        animatePaddingLeft(currentTemperature, textOffset);
+        int paddingLimit = getWidth() - halfText*2-10;
+        if (textOffset < paddingLimit) animatePaddingLeft(currentTemperature, textOffset);
+    }
+
+    private void updateMaxTempPos() {
+        int halfText = getTextWidth(maxTemperature) / 2;
+        int textOffset = frontSegment.getWidth() + middleSegment.getWidth() - halfText + 3 * (space1.getWidth() / 2);
+        int paddingLimit = getWidth() - halfText*2 -10;
+        if (textOffset < paddingLimit) animatePaddingLeft(maxTemperature, textOffset);
     }
 
     private int getTextWidth(TextView v) {
         Rect textBounds = new Rect();
         v.getPaint().getTextBounds((String)v.getText(), 0, v.getText().length(), textBounds);
         return textBounds.width();
-    }
-
-    private void updateMaxTempPos() {
-        int halfText = getTextWidth(maxTemperature) / 2;
-        int textOffset = frontSegment.getWidth() + middleSegment.getWidth() - halfText + 3 * (space1.getWidth() / 2);
-        animatePaddingLeft(maxTemperature, textOffset);
     }
 
     private void animatePaddingLeft(final TextView v, int textOffset) {
@@ -127,16 +133,18 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         if (middleAnim != null) middleAnim.cancel();
         if (backAnim != null) backAnim.cancel();
 
-        frontAnim = new ResizeWeightAnimation(frontSegment, currentTempWeight, 252, this);
-        middleAnim = new ResizeWeightAnimation(middleSegment, maxTempWeight, 252, this);
-        backAnim = new ResizeWeightAnimation(lastSegment, limitTempWeight, 252, this);
+        frontAnim = new ResizeWeightAnimation(frontSegment, currentTempWeight, 250, null);
+        middleAnim = new ResizeWeightAnimation(middleSegment, maxTempWeight, 250, null);
+        backAnim = new ResizeWeightAnimation(lastSegment, limitTempWeight, 250, this);
 
         frontSegment.startAnimation(frontAnim);
         middleSegment.startAnimation(middleAnim);
         lastSegment.startAnimation(backAnim);
 
-        currentTemperature.setText(temperature + " °C");
-        maxTemperature.setText(maxTemp + " °C");
+        String currentTempText = temperature + " °C";
+        String maxTempText = maxTemp + " °C";
+        if(!currentTempText.equals(currentTemperature.getText())) currentTemperature.setText(currentTempText);
+        if(!maxTempText.equals(maxTemperature.getText())) maxTemperature.setText(maxTempText);
     }
 
     /**
