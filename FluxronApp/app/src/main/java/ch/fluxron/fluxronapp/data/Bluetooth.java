@@ -35,10 +35,10 @@ import ch.fluxron.fluxronapp.objectBase.Device;
 public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
-    private MessageInterpreter messageInterpreter;
     private BluetoothAdapter btAdapter = null;
     private final LruCache<String, BTConnectionThread> connectionCache;
 
+    private static final boolean AUTO_PAIRING_ENABLED = true;
     private static final String TAG = "FLUXRON";
     private static final String DEVICE_PIN = "1234";
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
@@ -49,10 +49,11 @@ public class Bluetooth {
         this.provider.getDalEventBus().register(this);
 
         messageFactory = new MessageFactory();
-        messageInterpreter = new MessageInterpreter(provider, messageFactory);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
-        setupBonding(context);
+        if (AUTO_PAIRING_ENABLED) {
+            setupBonding(context);
+        }
         connectionCache = new ConnectionCache(3);
     }
 
@@ -173,7 +174,7 @@ public class Bluetooth {
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
         //TODO: can be removed in production, is used to test with fake devices.
-        if(cmd.getAddress().contains("FF:FF:FF:FF")){
+        if (cmd.getAddress().contains("FF:FF:FF:FF")) {
             return;
         }
         Set<String> parameters = new HashSet<>(cmd.getParameters());
