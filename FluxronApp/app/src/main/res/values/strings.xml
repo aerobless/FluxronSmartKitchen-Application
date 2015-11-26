@@ -82,7 +82,8 @@
     <string name="import_progress">%1$d / %2$d</string>
     <string name="unsupported_device">The user interface for this device type has not been implemented yet.</string>
     <string name="etx_config_profile">Profile</string>
-    <string name="etx_config_profile_1">Profile 1</string>
+    <string name="etx_config_profile_1">Profile 1 (active on device)</string>
+    <string name="etx_config_info_text">ETX devices support 4 profiles. These profiles can be configured here. However in order to activate a different profile you'll need to change a hardware setting.</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>

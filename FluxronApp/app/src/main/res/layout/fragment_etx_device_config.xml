@@ -25,6 +25,12 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20sp"
+                    android:text="@string/etx_config_info_text" />
+
+                <TextView
                     android:id="@+id/profileHeader"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"

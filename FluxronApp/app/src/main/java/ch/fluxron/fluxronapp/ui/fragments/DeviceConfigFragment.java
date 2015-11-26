@@ -23,6 +23,7 @@ import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<ParameterEditable> parameters;
+    private List<View> profiles;
     private boolean ready = false;
 
     @Nullable
@@ -47,19 +48,47 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
-    private void initProfiles(View deviceView){
-        LinearLayout profiles = (LinearLayout) deviceView.findViewById(R.id.profiles);
-        profiles.addView(cloneProfile(2));
-        profiles.addView(cloneProfile(3));
-        profiles.addView(cloneProfile(4));
+    private void initProfiles(final View deviceView){
+        profiles = new ArrayList<>();
+        LinearLayout layout = (LinearLayout) deviceView.findViewById(R.id.profiles);
+        profiles.add(deviceView.findViewById(R.id.profile));
+        profiles.add(cloneProfile(2));
+        profiles.add(cloneProfile(3));
+        profiles.add(cloneProfile(4));
+        layout.addView(profiles.get(1));
+        layout.addView(profiles.get(2));
+        layout.addView(profiles.get(3));
+
+        for(View profile:profiles){
+            profile.findViewById(R.id.profileHeader).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String id = ((TextView) v).getText().toString();
+                    int profileNr = Integer.parseInt(id.substring(8, 9)) - 1;
+                    closeAllProfiles();
+                    profiles.get(profileNr).findViewById(R.id.editableViewList).setVisibility(View.VISIBLE);
+                }
+            });
+        }
+
+        closeAllProfiles();
+        //TODO: open the currently active profile instead of profile 0
+        profiles.get(0).findViewById(R.id.editableViewList).setVisibility(View.VISIBLE);
+
         ((ConfigurableScrollView) deviceView.findViewById(R.id.scrollView)).setScrollOffset(100);
+    }
+
+    private void closeAllProfiles(){
+        for(View profile:profiles){
+            profile.findViewById(R.id.editableViewList).setVisibility(View.GONE);
+        }
     }
 
     @NonNull
     private View cloneProfile(int profileNumber) {
         View child = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_config, null);
         View clonedProfile = child.findViewById(R.id.profile);
-        ((TextView)clonedProfile.findViewById(R.id.profileHeader)).setText(getResources().getText(R.string.etx_config_profile)+" "+profileNumber);
+        ((TextView)clonedProfile.findViewById(R.id.profileHeader)).setText(getResources().getText(R.string.etx_config_profile) + " " + profileNumber);
         ((ViewGroup) clonedProfile.getParent()).removeView(clonedProfile);
 
         parameters = new ArrayList<>();

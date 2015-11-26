@@ -81,7 +81,7 @@ public class ParameterEditable extends LinearLayout {
 
         initButtonListeners();
 
-        if(requiredAccessLevel>0){
+        if (requiredAccessLevel > 0) {
             /**
              * If the access level needed to display this control is greater then DEMO_USER (0) we
              * hide it until we get confirmation that the user is authenticated and has the required
@@ -97,8 +97,8 @@ public class ParameterEditable extends LinearLayout {
         }
     }
 
-    public void handleAccessLevel(AccessLevel accessLevel){
-        if(accessLevel.ordinal() >= requiredAccessLevel){
+    public void handleAccessLevel(AccessLevel accessLevel) {
+        if (accessLevel.ordinal() >= requiredAccessLevel) {
             setVisibility(VISIBLE);
         }
     }
@@ -136,7 +136,7 @@ public class ParameterEditable extends LinearLayout {
         });
     }
 
-    public void setFocus(boolean focus){
+    private void setFocus(boolean focus) {
         if (focus) {
             paramValue.setSelection(paramValue.getText().length());
             paramNameSmall.setVisibility(GONE);
@@ -155,8 +155,14 @@ public class ParameterEditable extends LinearLayout {
         }
     }
 
-    public void setProfile(int profileNumber){
-        parameter = parameter.substring(0, parameter.length()-1)+profileNumber;
+    /**
+     * Used to change the subindex of this parameter according to the profile number of ETX devices.
+     * This method is not intended to be used with devices != ETX.
+     *
+     * @param profileNumber
+     */
+    public void setProfile(int profileNumber) {
+        parameter = parameter.substring(0, parameter.length() - 1) + profileNumber;
         setDisplayText();
         provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
     }
@@ -215,8 +221,8 @@ public class ParameterEditable extends LinearLayout {
         }
     }
 
-    public void handleDeviceNotChanged(DeviceNotChanged msg){
-        if(getParameter().contains(msg.getField())){
+    public void handleDeviceNotChanged(DeviceNotChanged msg) {
+        if (getParameter().contains(msg.getField())) {
             paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));
             paramValue.setEnabled(false);
             paramValue.setFocusable(false);
