@@ -130,25 +130,35 @@ public class ParameterEditable extends LinearLayout {
      */
     private void initOnFocusListener() {
         paramValue.setOnFocusChangeListener(new OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    paramValue.setSelection(paramValue.getText().length());
-                    paramNameSmall.setVisibility(GONE);
-                    paramNameBig.setVisibility(VISIBLE);
-                    if (infoText.getText() != "") {
-                        infoText.setVisibility(VISIBLE);
-                    }
-                    buttonPanel.setVisibility(VISIBLE);
-                    editMode = true;
-                } else {
-                    paramNameBig.setVisibility(GONE);
-                    infoText.setVisibility(GONE);
-                    buttonPanel.setVisibility(GONE);
-                    paramNameSmall.setVisibility(VISIBLE);
-                    editMode = false;
-                }
+            public void onFocusChange(View v, final boolean hasFocus) {
+                setFocus(hasFocus);
             }
         });
+    }
+
+    public void setFocus(boolean focus){
+        if (focus) {
+            paramValue.setSelection(paramValue.getText().length());
+            paramNameSmall.setVisibility(GONE);
+            paramNameBig.setVisibility(VISIBLE);
+            if (infoText.getText() != "") {
+                infoText.setVisibility(VISIBLE);
+            }
+            buttonPanel.setVisibility(VISIBLE);
+            editMode = true;
+        } else {
+            paramNameBig.setVisibility(GONE);
+            infoText.setVisibility(GONE);
+            buttonPanel.setVisibility(GONE);
+            paramNameSmall.setVisibility(VISIBLE);
+            editMode = false;
+        }
+    }
+
+    public void setProfile(int profileNumber){
+        parameter = parameter.substring(0, parameter.length()-1)+profileNumber;
+        setDisplayText();
+        provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
     }
 
     /**

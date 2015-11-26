@@ -1,95 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="9dp">
 
     <ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView
-        android:layout_width="match_parent"
         android:id="@+id/scrollView"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
+
         <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/editableViewList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <!-- TODO: dropdown menu -->
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableParamName="@string/F_ETX_305BSUB1_CONTROLLER_CONFIG_0"
+            android:id="@+id/profiles"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/profile"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_nominalCurrent"
-                app:editableParamName="@string/F_ETX_3051SUB1_NOMINAL_CURRENT_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_tempHighLimit"
-                app:editableParamName="@string/F_ETX_3052SUB1_CONTROLLED_TEMPERATURE_HIGH_LIMIT_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_TempMaxLimit"
-                app:editableParamName="@string/F_ETX_3053SUB1_CONTROLLED_TEMPERATURE_MAX_LIMIT_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_NegGradientLimit"
-                app:editableParamName="@string/F_ETX_3054SUB1_NEG_GRADIENT_LIMIT_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_PosGradientLimit"
-                app:editableParamName="@string/F_ETX_3055SUB1_POS_GRADIENT_LIMIT_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_ReferenceTemperatureAt90"
-                app:editableParamName="@string/F_ETX_3056SUB1_REFERENCE_TEMPERATURE_AT_90_DEGREE_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_ReferenceTemperatureAt270"
-                app:editableParamName="@string/F_ETX_3057SUB1_REFERENCE_TEMPERATURE_AT_270_DEGREE_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_DisplayHysteresis"
-                app:editableParamName="@string/F_ETX_3058SUB1_DISPLAY_HYSTERESIS_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_TemperatureOffset"
-                app:editableParamName="@string/F_ETX_3059SUB1_TEMPERATURE_OFFSET_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_PTSensorConfig"
-                app:editableParamName="@string/F_ETX_305ASUB1_PT_SENSOR_CONFIG_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_SwitchingHysteresis"
-                app:editableParamName="@string/F_ETX_305CSUB1_SWITCHING_HYSTERESIS_MAX_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_SwitchingHysteresisLength"
-                app:editableParamName="@string/F_ETX_305DSUB1_SWITCHING_HYSTERESIS_LENGTH_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableInfoText="@string/desc_TempGradientFeedForward"
-                app:editableParamName="@string/F_ETX_305ESUB1_TEMP_GRADIENT_FEED_FORWARD_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                app:editableParamName="@string/F_ETX_305FSUB1_TEMP_GRADIENT_FILT_0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/profileHeader"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/etx_config_profile_1"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/editableViewList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20sp"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+                    <!-- TODO: dropdown menu -->
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableParamName="@string/F_ETX_305BSUB1_CONTROLLER_CONFIG_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_nominalCurrent"
+                        app:editableParamName="@string/F_ETX_3051SUB1_NOMINAL_CURRENT_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_tempHighLimit"
+                        app:editableParamName="@string/F_ETX_3052SUB1_CONTROLLED_TEMPERATURE_HIGH_LIMIT_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_TempMaxLimit"
+                        app:editableParamName="@string/F_ETX_3053SUB1_CONTROLLED_TEMPERATURE_MAX_LIMIT_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_NegGradientLimit"
+                        app:editableParamName="@string/F_ETX_3054SUB1_NEG_GRADIENT_LIMIT_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_PosGradientLimit"
+                        app:editableParamName="@string/F_ETX_3055SUB1_POS_GRADIENT_LIMIT_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_ReferenceTemperatureAt90"
+                        app:editableParamName="@string/F_ETX_3056SUB1_REFERENCE_TEMPERATURE_AT_90_DEGREE_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_ReferenceTemperatureAt270"
+                        app:editableParamName="@string/F_ETX_3057SUB1_REFERENCE_TEMPERATURE_AT_270_DEGREE_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_DisplayHysteresis"
+                        app:editableParamName="@string/F_ETX_3058SUB1_DISPLAY_HYSTERESIS_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_TemperatureOffset"
+                        app:editableParamName="@string/F_ETX_3059SUB1_TEMPERATURE_OFFSET_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_PTSensorConfig"
+                        app:editableParamName="@string/F_ETX_305ASUB1_PT_SENSOR_CONFIG_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_SwitchingHysteresis"
+                        app:editableParamName="@string/F_ETX_305CSUB1_SWITCHING_HYSTERESIS_MAX_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_SwitchingHysteresisLength"
+                        app:editableParamName="@string/F_ETX_305DSUB1_SWITCHING_HYSTERESIS_LENGTH_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableInfoText="@string/desc_TempGradientFeedForward"
+                        app:editableParamName="@string/F_ETX_305ESUB1_TEMP_GRADIENT_FEED_FORWARD_0" />
+
+                    <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        app:editableParamName="@string/F_ETX_305FSUB1_TEMP_GRADIENT_FILT_0" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView>
 </LinearLayout>

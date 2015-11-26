@@ -1,11 +1,13 @@
 package ch.fluxron.fluxronapp.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,6 @@ import ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView;
 import ch.fluxron.fluxronapp.ui.components.ParameterEditable;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
-import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<ParameterEditable> parameters;
@@ -38,12 +39,37 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
             ready = true;
         } else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_config, container, false);
-            init(deviceView);
+            initProfiles(deviceView);
             ready = true;
         } else {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }
         return deviceView;
+    }
+
+    private void initProfiles(View deviceView){
+        LinearLayout profiles = (LinearLayout) deviceView.findViewById(R.id.profiles);
+        profiles.addView(cloneProfile(2));
+        profiles.addView(cloneProfile(3));
+        profiles.addView(cloneProfile(4));
+        ((ConfigurableScrollView) deviceView.findViewById(R.id.scrollView)).setScrollOffset(100);
+    }
+
+    @NonNull
+    private View cloneProfile(int profileNumber) {
+        View child = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_config, null);
+        View clonedProfile = child.findViewById(R.id.profile);
+        ((TextView)clonedProfile.findViewById(R.id.profileHeader)).setText(getResources().getText(R.string.etx_config_profile)+" "+profileNumber);
+        ((ViewGroup) clonedProfile.getParent()).removeView(clonedProfile);
+
+        parameters = new ArrayList<>();
+        ViewGroup list = (ViewGroup) clonedProfile.findViewById(R.id.editableViewList);
+        for (int i = 0; i < list.getChildCount(); i++) {
+            ParameterEditable editable = (ParameterEditable) list.getChildAt(i);
+            editable.setProfile(profileNumber);
+            parameters.add(editable);
+        }
+        return clonedProfile;
     }
 
     private void init(View deviceView) {
