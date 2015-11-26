@@ -1,12 +1,13 @@
 package ch.fluxron.fluxronapp.ui.components;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
@@ -15,11 +16,12 @@ import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.RegisterParameterCommand;
 import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
+import ch.fluxron.fluxronapp.ui.util.ResizeWeightAnimation;
 
 /**
  * Represents a bar with a target temperature and an actual temperature
  */
-public class TemperatureBar extends LinearLayout {
+public class TemperatureBar extends LinearLayout implements ValueAnimator.AnimatorUpdateListener {
     private ParamManager manager;
     private TypedArray arguments;
     private String parameter;
@@ -31,6 +33,10 @@ public class TemperatureBar extends LinearLayout {
     private View lastSegment;
     private View space1;
     private IEventBusProvider provider;
+
+    private ResizeWeightAnimation frontAnim;
+    private ResizeWeightAnimation middleAnim;
+    private ResizeWeightAnimation backAnim;
 
     private int maxTemp = 100;
     private int maxOffsetTemp = 40;
@@ -62,18 +68,41 @@ public class TemperatureBar extends LinearLayout {
             provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
             provider.getUiEventBus().post(new RegisterParameterCommand(parameter));
         }
+
+        setMax(100);
+        updateCurrentTemperature(50);
+
+        this.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMax(420);
+                updateCurrentTemperature(120);
+            }
+        });
     }
 
     private void updateCurrentTempPos() {
-        int halfText = (currentTemperature.getWidth() - currentTemperature.getPaddingLeft()) / 2;
+        int halfText = getTextWidth(currentTemperature) / 2;
         int textOffset = frontSegment.getWidth() - halfText + (space1.getWidth() / 2);
-        currentTemperature.setPadding(textOffset, 0, 0, 0);
+        int paddingLimit = getWidth() - halfText*2-10;
+        if (textOffset < paddingLimit) animatePaddingLeft(currentTemperature, textOffset);
     }
 
     private void updateMaxTempPos() {
-        int halfText = (maxTemperature.getWidth() - maxTemperature.getPaddingLeft()) / 2;
+        int halfText = getTextWidth(maxTemperature) / 2;
         int textOffset = frontSegment.getWidth() + middleSegment.getWidth() - halfText + 3 * (space1.getWidth() / 2);
-        maxTemperature.setPadding(textOffset, 0, 0, 0);
+        int paddingLimit = getWidth() - halfText*2 -10;
+        if (textOffset < paddingLimit) animatePaddingLeft(maxTemperature, textOffset);
+    }
+
+    private int getTextWidth(TextView v) {
+        Rect textBounds = new Rect();
+        v.getPaint().getTextBounds((String)v.getText(), 0, v.getText().length(), textBounds);
+        return textBounds.width();
+    }
+
+    private void animatePaddingLeft(final TextView v, int textOffset) {
+        v.setPadding(textOffset, 0, 0, 0);
     }
 
     /**
@@ -100,20 +129,22 @@ public class TemperatureBar extends LinearLayout {
         float maxTempWeight = (100 - maxTempPercent) / 100;
         float limitTempWeight = (100 - restTempPercent) / 100;
 
-        frontSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, currentTempWeight));
-        middleSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, maxTempWeight));
-        lastSegment.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, limitTempWeight));
+        if (frontAnim != null) frontAnim.cancel();
+        if (middleAnim != null) middleAnim.cancel();
+        if (backAnim != null) backAnim.cancel();
 
-        currentTemperature.setText(temperature + " °C");
-        maxTemperature.setText(maxTemp + " °C");
+        frontAnim = new ResizeWeightAnimation(frontSegment, currentTempWeight, 250, null);
+        middleAnim = new ResizeWeightAnimation(middleSegment, maxTempWeight, 250, null);
+        backAnim = new ResizeWeightAnimation(lastSegment, limitTempWeight, 250, this);
 
-        post(new Runnable() {
-            @Override
-            public void run() {
-                updateCurrentTempPos();
-                updateMaxTempPos();
-            }
-        });
+        frontSegment.startAnimation(frontAnim);
+        middleSegment.startAnimation(middleAnim);
+        lastSegment.startAnimation(backAnim);
+
+        String currentTempText = temperature + " °C";
+        String maxTempText = maxTemp + " °C";
+        if(!currentTempText.equals(currentTemperature.getText())) currentTemperature.setText(currentTempText);
+        if(!maxTempText.equals(maxTemperature.getText())) maxTemperature.setText(maxTempText);
     }
 
     /**
@@ -161,5 +192,11 @@ public class TemperatureBar extends LinearLayout {
         } else if (value < 100) {
             setMax(100);
         }
+    }
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+        updateCurrentTempPos();
+        updateMaxTempPos();
     }
 }
