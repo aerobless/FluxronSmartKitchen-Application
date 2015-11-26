@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.data;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -17,14 +18,17 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothReques
 public class MessageInterpreter {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
+    private BluetoothErrorCodeConverter errorCodeConverter;
 
     public MessageInterpreter(MessageFactory messageFactory) {
         this.messageFactory = messageFactory;
+        this.errorCodeConverter = new BluetoothErrorCodeConverter();
     }
 
     public MessageInterpreter(IEventBusProvider provider, MessageFactory messageFactory) {
         this.provider = provider;
         this.messageFactory = messageFactory;
+        this.errorCodeConverter = new BluetoothErrorCodeConverter();
         this.provider.getDalEventBus().register(this);
     }
 
@@ -90,11 +94,30 @@ public class MessageInterpreter {
     private void handleError(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
         if (dataPayload != null) {
             String field = getFieldString(data);
-            //TODO: set correct error type based on payload
-            RequestResponseConnection deviceChanged = new BluetoothRequestFailed(RequestError.INDEX_DOES_NOT_EXIST, inputMsg.getAddress(), field);
+            String errorCode = payloadToString(dataPayload);
+            RequestResponseConnection deviceChanged;
+            if (errorCode.equals(BluetoothErrorCodeConverter.OBJECT_DOES_NOT_EXIST)) {
+                deviceChanged = new BluetoothRequestFailed(RequestError.INDEX_DOES_NOT_EXIST, inputMsg.getAddress(), field);
+            } else {
+                deviceChanged = new BluetoothRequestFailed(RequestError.GENERIC_FAILURE, inputMsg.getAddress(), field);
+                Log.d("Fluxron", errorCodeConverter.getErrorDescription(errorCode));
+            }
             deviceChanged.setConnectionId(inputMsg);
             provider.getDalEventBus().post(deviceChanged);
         }
+    }
+
+    @NonNull
+    private static String payloadToString(byte[] dataPayload) {
+        String errorCode = "0x";
+        for (int i = 3; i >= 0; i--) {
+            String curByte = Byte.toString(dataPayload[i]);
+            if (curByte.length() == 1) {
+                curByte = "0" + curByte;
+            }
+            errorCode += curByte;
+        }
+        return errorCode;
     }
 
     /**
