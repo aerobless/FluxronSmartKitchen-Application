@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ public class AreaListFragment extends Fragment {
     private IEventBusProvider provider;
     private AreaListAdapter listAdapter;
     private IAreaClickedListener listener;
-    private int scrollPos = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,11 +97,12 @@ public class AreaListFragment extends Fragment {
         return listView;
     }
 
-    private void snapListAndNotify(RecyclerView v, LinearLayoutManager m) {
+    private void snapListAndNotify(final RecyclerView v, LinearLayoutManager m) {
         // Find the middle of the visible view positions
         int firstVisibleView = m.findFirstVisibleItemPosition();
         int lastVisibleView = m.findLastVisibleItemPosition();
         int controlCenter = v.getWidth()/2;
+        final int totalCount = listAdapter.getItemCount();
 
         int scrollDistanceMin = Integer.MAX_VALUE;
         int scrollPosition = -1;
@@ -118,11 +117,26 @@ public class AreaListFragment extends Fragment {
         }
 
         if(scrollDistanceMin != Integer.MAX_VALUE) {
-            v.smoothScrollBy(scrollDistanceMin, 0);
+            final int scrollByX = scrollDistanceMin;
+            final int targetPos = scrollPosition;
+            v.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (targetPos==0 || targetPos==(totalCount-1)) {
+                        v.smoothScrollToPosition(targetPos);
+                    }
+                    else {
+                        v.smoothScrollBy(scrollByX, 0);
+                    }
+                    notifyScrollPosition(targetPos);
+                }
+            });
+        }
+    }
 
-            if (this.listener!=null){
-                this.listener.areaScrolled(scrollPosition);
-            }
+    private void notifyScrollPosition(int pos) {
+        if (this.listener!=null){
+            this.listener.areaScrolled(pos);
         }
     }
 
