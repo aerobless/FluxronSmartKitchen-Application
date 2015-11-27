@@ -37,10 +37,22 @@
                     android:id="@+id/deviceStatusDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="0dp"
                     android:text="@string/device_address_default"
                     android:layout_toEndOf="@id/statusOrb"
                     android:layout_below="@id/deviceStatusName"
+                    style="@style/FluxronDeviceDescTextView"
+                    android:layout_marginStart="9dp"
+                    />
+                <TextView
+                    android:id="@+id/deviceStatusMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:text="@string/device_status_not_connected"
+                    android:layout_toEndOf="@id/statusOrb"
+                    android:layout_below="@id/deviceStatusDescription"
                     style="@style/FluxronDeviceDescTextView"
                     android:layout_marginStart="9dp"
                     />

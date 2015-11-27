@@ -61,7 +61,7 @@
 
     <style name="FluxronDeviceDescTextView" parent="android:Widget.TextView">
         <item name="android:textColor">@color/titleForeground</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:alpha">0.75</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>

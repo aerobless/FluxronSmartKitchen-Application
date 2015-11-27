@@ -43,6 +43,11 @@
     <string name="emptyPassword">Password can\'t be empty</string>
     <string name="emptyUserAndPassword">Username and password can\'t be empty</string>
 
+    <!-- Device Status Texts -->
+    <string name="device_status_not_connected">Not connected</string>
+    <string name="device_status_connected">Connected. Last update:</string>
+    <string name="device_status_failed">Connection failed.</string>
+
     <!-- Other texts -->
     <string name="device_count">%d device(s)</string>
     <string name="kitchen_property_name">Name</string>

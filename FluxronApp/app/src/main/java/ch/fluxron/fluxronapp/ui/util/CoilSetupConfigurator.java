@@ -44,6 +44,15 @@ public class CoilSetupConfigurator {
         return configurationMap.get(input);
     }
 
+    /**
+     * Sends a specific configuration of several parameters to the remote device.
+     *
+     * @param config
+     * @param address
+     * @param deviceClass
+     * @param provider
+     * @return
+     */
     public boolean postConfiguration(String config, String address, String deviceClass, IEventBusProvider provider) {
         boolean success = false;
         CoilConfiguration configuration = configurationMap.get(config);

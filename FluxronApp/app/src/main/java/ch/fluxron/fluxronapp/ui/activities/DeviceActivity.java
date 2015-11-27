@@ -7,6 +7,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
@@ -22,6 +26,7 @@ public class DeviceActivity extends FluxronBaseActivity {
     private String deviceClass = Device.UNKNOWN_DEVICE_CLASS;
     private String name = "Unkown";
     private LinearLayout progressDeviceClass;
+    private TextView deviceStatusMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,7 @@ public class DeviceActivity extends FluxronBaseActivity {
 
         ((TextView) findViewById(R.id.deviceStatusName)).setText(name);
         ((TextView) findViewById(R.id.deviceStatusDescription)).setText(address);
+        deviceStatusMessage = ((TextView) findViewById(R.id.deviceStatusMessage));
         progressDeviceClass = (LinearLayout) findViewById(R.id.progressDeviceClass);
         progressDeviceClass.setVisibility(View.VISIBLE);
         provider.getUiEventBus().post(new CyclicRefreshCommand(address));
@@ -59,6 +65,8 @@ public class DeviceActivity extends FluxronBaseActivity {
         if (inputMsg.getDevice().getAddress().equals(address)) {
             TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
             statusOrb.setText(R.string.ok_check);
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            deviceStatusMessage.setText(getResources().getString(R.string.device_status_connected)+" "+dateFormat.format(inputMsg.getDevice().getLastContact()));
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
             if(deviceClass.equals(Device.UNKNOWN_DEVICE_CLASS) && !inputMsg.getDevice().getDeviceClass().equals(Device.UNKNOWN_DEVICE_CLASS)){
                 deviceClass = inputMsg.getDevice().getDeviceClass();
@@ -86,7 +94,8 @@ public class DeviceActivity extends FluxronBaseActivity {
     public void onEventMainThread(DeviceFailed inputMsg) {
         if (inputMsg.getAddress().equals(address)) {
             TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
-            statusOrb.setText(R.string.fail_check);
+            statusOrb.setText(getResources().getString(R.string.fail_check));
+            deviceStatusMessage.setText(R.string.device_status_failed);
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_failure_background));
         }
     }
