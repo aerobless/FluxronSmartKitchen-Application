@@ -9,7 +9,8 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Base class for all device UI fragments. Provides common functionality.
  */
 public class DeviceBaseFragment extends Fragment {
-    private static final String STATE_ADDRESS = "address";
+    protected static final String STATE_ADDRESS = "address";
+    protected static final String STATE_DEVICE_CLASS = "class";
     private String deviceAddress;
     private String deviceClass;
     protected IEventBusProvider provider;
@@ -19,12 +20,14 @@ public class DeviceBaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             deviceAddress = savedInstanceState.getString(STATE_ADDRESS);
+            deviceClass = savedInstanceState.getString(STATE_DEVICE_CLASS);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_ADDRESS, deviceAddress);
+        outState.putString(STATE_DEVICE_CLASS, deviceClass);
         super.onSaveInstanceState(outState);
     }
 
@@ -56,5 +59,13 @@ public class DeviceBaseFragment extends Fragment {
 
     public String getDeviceClass(){
         return deviceClass;
+    }
+
+    public void setDeviceAddress(String deviceAddress) {
+        this.deviceAddress = deviceAddress;
+    }
+
+    public void setDeviceClass(String deviceClass) {
+        this.deviceClass = deviceClass;
     }
 }

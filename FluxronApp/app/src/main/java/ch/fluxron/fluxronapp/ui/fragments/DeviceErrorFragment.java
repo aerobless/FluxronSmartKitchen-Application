@@ -20,6 +20,10 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View deviceView;
+        if (savedInstanceState != null) {
+            setDeviceAddress(savedInstanceState.getString(STATE_ADDRESS));
+            setDeviceClass(savedInstanceState.getString(STATE_DEVICE_CLASS));
+        }
         if (getDeviceClass().equals(DeviceTypeConverter.CCLASS)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_cclass_device_errors, container, false);
             init(deviceView);
