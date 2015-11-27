@@ -84,6 +84,11 @@
     <string name="etx_config_profile">Profile</string>
     <string name="etx_config_profile_1">Profile 1 (active on device)</string>
     <string name="etx_config_info_text">ETX devices support 4 profiles. These profiles can be configured here. In order to activate a different profile you\'ll need to change a hardware setting.</string>
+    <string name="basic_config">Basic Configuration</string>
+    <string name="advanced_config">Advanced Configuration</string>
+    <string name="coil_setup">Coil Setup</string>
+    <string name="power_max">Power Max</string>
+    <string name="keep_warm">Keep Warm</string>
 
     <!-- ErrorCodes -->
     <string name="error_description_prefix">error_description_</string>

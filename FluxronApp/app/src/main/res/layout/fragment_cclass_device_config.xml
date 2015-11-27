@@ -1,115 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="9dp">
+
     <ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView
-        android:layout_width="match_parent"
         android:id="@+id/scrollView"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
+
         <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/editableViewList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/coilSetup"
-                app:editableInfoText="0=no sensors, 1-4=1-4sensors, 5=1 sensors direct, >10 auto setup"
-                app:editableParamName="@string/F_CCLASS_2000SUB4_COIL_SETUP_"
-                app:editableAccessLevel="@integer/AUTHENTICATED_USER"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/basic_config"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/bltVisibility"
-                app:editableInfoText="0=visible in ERROR, P, 10min after last communication \n1: permanently on"
-                app:editableParamName="@string/F_CCLASS_2000SUB1_BLT_VISIBILITY"
+                android:layout_height="35sp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="180sp"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/coil_setup"
+                    android:textSize="15sp"
+                    android:visibility="visible" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:entries="@array/spool_spinner"
+                    android:prompt="@string/spool_prompt" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="35sp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="180sp"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/keep_warm"
+                    android:textSize="15sp"
+                    android:visibility="visible" />
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:switchMinWidth="50sp" />
+            </LinearLayout>
+
             <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/kwfEnable"
-                app:editableParamName="@string/F_CCLASS_2001SUB1_KWF_ENABLE"
+                android:id="@+id/powerMax"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/kwfMaxPower"
-                app:editableParamName="@string/F_CCLASS_2001SUB2_KWF_MAX_POWER_LEVEL"
+                android:layout_height="wrap_content"
                 app:editableMeasuringUnit="W"
-                app:editableInfoText="Default: 1600W for 3.5kW device. 2000W for 5kW device."
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/kwfTempSetpoint"
-                app:editableParamName="@string/F_CCLASS_2001SUB9_KWF_TEMP_SETPOINT_OFFSET"
-                app:editableMeasuringUnit="°C"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/pmgEnable"
-                app:editableParamName="@string/F_CCLASS_2002SUB1_PMG_ENABLE"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/pmgPowerReduction"
-                app:editableParamName="@string/F_CCLASS_2002SUB2_PMG_POWER_REDUCTION"
-                app:editableMeasuringUnit="%"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/baxFaultDelay"
-                app:editableParamName="@string/F_CCLASS_3030SUBA_BAX_FAULT_E04_DELAY"
-                app:editableMeasuringUnit="sec"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/baxRpPsc"
-                app:editableParamName="@string/F_CCLASS_3031SUB5_BAX_RP_PSC"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/baxScanPanPsc"
-                app:editableParamName="@string/F_CCLASS_3031SUB4_BAX_SCAN_PAN_PSC"
-                app:editableInfoText="SPP value 3.5kW:12 5kW:403"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/baxLiftPsc"
-                app:editableParamName="@string/F_CCLASS_3031SUB6_BAX_LIFT_PAN_PSC"
-                app:editableInfoText="LPP value 3.5kW:220 5kW:670"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/flxActivePowerMax"
-                app:editableParamName="@string/F_CCLASS_3035SUBB_FLX_ACTIVE_POWER_MAX"
-                app:editableMeasuringUnit="W"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/baxFWarningTempLimit"
-                app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_F_WARNING_TEMPERATURE_LIMIT"
-                app:editableInfoText="F display if IGBT temp is above this limit"
-                app:editableMeasuringUnit="°C"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/baxGradientLimit"
-                app:editableParamName="@string/F_CCLASS_3030SUBD_BAX_GRADIENT_LIMIT_LOW_TEMP"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/sevenSegConfig"
-                app:editableParamName="@string/F_CCLASS_2000SUB2_SEVENSEG_CONFIG"
-                app:editableInfoText="bit54: 0=1digit, 1=2digit, 2=3digit 3=4digit\nbit1: 1=100%\nbit0: 1=flip"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <ch.fluxron.fluxronapp.ui.components.ParameterEditable
-                android:id="@+id/testMode"
-                app:editableParamName="@string/F_CCLASS_3100SUB1_TST_ENABLE_TEST"
-                app:editableInfoText="Testsequenz on=2, off=1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                app:editableDisplayText="@string/power_max"
+                app:editableParamName="@string/F_CCLASS_3035SUBB_FLX_ACTIVE_POWER_MAX" />
+
+            <TextView
+                android:layout_marginTop="30sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/advanced_config"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/editableViewList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/coilSetup"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableAccessLevel="@integer/AUTHENTICATED_USER"
+                    app:editableInfoText="0=no sensors, 1-4=1-4sensors, 5=1 sensors direct, >10 auto setup"
+                    app:editableParamName="@string/F_CCLASS_2000SUB4_COIL_SETUP_" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/bltVisibility"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="0=visible in ERROR, P, 10min after last communication \n1: permanently on"
+                    app:editableParamName="@string/F_CCLASS_2000SUB1_BLT_VISIBILITY" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/kwfEnable"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableParamName="@string/F_CCLASS_2001SUB1_KWF_ENABLE" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/kwfMaxPower"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="Default: 1600W for 3.5kW device. 2000W for 5kW device."
+                    app:editableMeasuringUnit="W"
+                    app:editableParamName="@string/F_CCLASS_2001SUB2_KWF_MAX_POWER_LEVEL" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/kwfTempSetpoint"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableMeasuringUnit="°C"
+                    app:editableParamName="@string/F_CCLASS_2001SUB9_KWF_TEMP_SETPOINT_OFFSET" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/pmgEnable"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableParamName="@string/F_CCLASS_2002SUB1_PMG_ENABLE" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/pmgPowerReduction"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableMeasuringUnit="%"
+                    app:editableParamName="@string/F_CCLASS_2002SUB2_PMG_POWER_REDUCTION" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/baxFaultDelay"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableMeasuringUnit="sec"
+                    app:editableParamName="@string/F_CCLASS_3030SUBA_BAX_FAULT_E04_DELAY" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/baxRpPsc"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableParamName="@string/F_CCLASS_3031SUB5_BAX_RP_PSC" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/baxScanPanPsc"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="SPP value 3.5kW:12 5kW:403"
+                    app:editableParamName="@string/F_CCLASS_3031SUB4_BAX_SCAN_PAN_PSC" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/baxLiftPsc"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="LPP value 3.5kW:220 5kW:670"
+                    app:editableParamName="@string/F_CCLASS_3031SUB6_BAX_LIFT_PAN_PSC" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/flxActivePowerMax"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableMeasuringUnit="W"
+                    app:editableParamName="@string/F_CCLASS_3035SUBB_FLX_ACTIVE_POWER_MAX" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/baxFWarningTempLimit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="F display if IGBT temp is above this limit"
+                    app:editableMeasuringUnit="°C"
+                    app:editableParamName="@string/F_CCLASS_3030SUB9_BAX_F_WARNING_TEMPERATURE_LIMIT" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/baxGradientLimit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableParamName="@string/F_CCLASS_3030SUBD_BAX_GRADIENT_LIMIT_LOW_TEMP" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/sevenSegConfig"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="bit54: 0=1digit, 1=2digit, 2=3digit 3=4digit\nbit1: 1=100%\nbit0: 1=flip"
+                    app:editableParamName="@string/F_CCLASS_2000SUB2_SEVENSEG_CONFIG" />
+
+                <ch.fluxron.fluxronapp.ui.components.ParameterEditable
+                    android:id="@+id/testMode"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:editableInfoText="Testsequenz on=2, off=1"
+                    app:editableParamName="@string/F_CCLASS_3100SUB1_TST_ENABLE_TEST" />
+            </LinearLayout>
         </LinearLayout>
     </ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView>
 </LinearLayout>
