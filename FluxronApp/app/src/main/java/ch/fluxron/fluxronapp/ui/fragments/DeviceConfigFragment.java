@@ -7,8 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -25,6 +27,7 @@ import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 import ch.fluxron.fluxronapp.ui.components.ConfigurableScrollView;
 import ch.fluxron.fluxronapp.ui.components.ParameterEditable;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
+import ch.fluxron.fluxronapp.ui.util.CoilSetupConfigurator;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 public class DeviceConfigFragment extends DeviceBaseFragment {
@@ -32,6 +35,8 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<View> profiles;
     private boolean hasAdvancedConfiguration = false;
     private boolean hasBasicConfiguration = false;
+    private CoilSetupConfigurator coilSetupConfigurator;
+    private Spinner coilSetupSinner;
     CompoundButton.OnCheckedChangeListener checkedChangeListener;
     private Switch keepWarm;
 
@@ -47,6 +52,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         } else if (getDeviceClass().equals(DeviceTypeConverter.SCLASS)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_config, container, false);
             initAdvancecConfig(deviceView);
+            initBasicConfig(deviceView);
         } else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_config, container, false);
             initProfiles(deviceView);
@@ -72,6 +78,23 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         };
         keepWarm.setEnabled(false);
         keepWarm.setOnCheckedChangeListener(checkedChangeListener);
+
+        coilSetupConfigurator = new CoilSetupConfigurator();
+        coilSetupSinner = ((Spinner)deviceView.findViewById(R.id.coilSetupSpinner));
+        coilSetupSinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selecteditem = coilSetupSinner.getItemAtPosition(position).toString();
+                Log.d("Fluxron", selecteditem);
+                coilSetupConfigurator.postConfiguration(selecteditem, getDeviceAddress(), getDeviceClass(), provider);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         hasBasicConfiguration = true;
     }
 
