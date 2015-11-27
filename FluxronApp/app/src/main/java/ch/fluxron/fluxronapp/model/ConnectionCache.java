@@ -2,12 +2,12 @@ package ch.fluxron.fluxronapp.model;
 
 import android.util.LruCache;
 
-import ch.fluxron.fluxronapp.data.BTConnectionThread;
+import ch.fluxron.fluxronapp.data.BluetoothConnectionThread;
 
 /**
  * Caches active connections. Evicted connections are ended properly.
  */
-public class ConnectionCache extends LruCache<String, BTConnectionThread> {
+public class ConnectionCache extends LruCache<String, BluetoothConnectionThread> {
 
     /**
      * @param maxSize for caches that do not override {@link #sizeOf}, this is
@@ -26,7 +26,7 @@ public class ConnectionCache extends LruCache<String, BTConnectionThread> {
      * @param newValue
      */
     @Override
-    protected void entryRemoved(boolean evicted, String key, BTConnectionThread oldValue, BTConnectionThread newValue) {
+    protected void entryRemoved(boolean evicted, String key, BluetoothConnectionThread oldValue, BluetoothConnectionThread newValue) {
         oldValue.end();
     }
 }

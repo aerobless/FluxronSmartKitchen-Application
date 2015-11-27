@@ -37,7 +37,7 @@ public class Bluetooth {
     private MessageFactory messageFactory;
     private MessageInterpreter messageInterpreter;
     private BluetoothAdapter btAdapter = null;
-    private final LruCache<String, BTConnectionThread> connectionCache;
+    private final LruCache<String, BluetoothConnectionThread> connectionCache;
 
     private static final boolean AUTO_PAIRING_ENABLED = true;
     private static final String TAG = "FLUXRON";
@@ -219,7 +219,7 @@ public class Bluetooth {
         if (bluetoothEnabled()) {
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
             if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                BTConnectionThread connectionThread = getConnection(device, false);
+                BluetoothConnectionThread connectionThread = getConnection(device, false);
                 //Log.d(TAG, "GOT connection, trying to write message");
                 connectionThread.write(message, connection);
             } else {
@@ -241,22 +241,22 @@ public class Bluetooth {
      * Get an existing connection to a device or establish a new one.
      *
      * @param device
-     * @return BTConnectionThread for the specified device
+     * @return BluetoothConnectionThread for the specified device
      */
-    private BTConnectionThread getConnection(BluetoothDevice device, boolean clean) throws IOException {
+    private BluetoothConnectionThread getConnection(BluetoothDevice device, boolean clean) throws IOException {
         if (clean) {
             synchronized (connectionCache) {
                 connectionCache.remove(device.getAddress());
             }
         }
-        BTConnectionThread connectionThread;
+        BluetoothConnectionThread connectionThread;
         synchronized (connectionCache) {
             connectionThread = connectionCache.get(device.getAddress());
         }
         if (connectionThread == null) {
             BluetoothSocket btSocket = createBluetoothSocket(device);
             if (connectSocket(btSocket)) {
-                connectionThread = new BTConnectionThread(btSocket, provider);
+                connectionThread = new BluetoothConnectionThread(btSocket, provider);
                 connectionThread.start();
                 synchronized (connectionCache) {
                     connectionCache.put(device.getAddress(), connectionThread);

@@ -154,7 +154,7 @@ public class CyclicRefresh {
             }
             currentConnection = req.getConnectionId();
             provider.getDalEventBus().post(req);
-            //Log.d("FLUXRON", "POSTED A REQUEST FOR DATA");
+            //Log.d("FLUXRON", "POSTED A REQUEST FOR DATA FOR DEVICE " + device + " and param " + parameter);
             doNext.set(false);
         }
     }
@@ -174,16 +174,12 @@ public class CyclicRefresh {
     }
 
     /**
-     * Checks BluetoothDeviceChanged messages to see if it originated from the CyclicRefresh.
-     * If it did originate here, it wakes the CyclicRefresh to update the next device.
+     * Jumps to the next parameter when we have confirmation that the device has changed.
      *
      * @param inputMsg
      */
     public void onEventAsync(BluetoothDeviceChanged inputMsg) {
-        String connectionID = inputMsg.getConnectionId();
-        if (connectionID.equals(currentConnection)) {
-            skipToNextParam();
-        }
+        skipToNextParam();
     }
 
     /**
