@@ -91,7 +91,7 @@ public class Camera {
         this._transformMatrix = transformMatrix;
     }
 
-    protected Matrix getInverseMatrix() {
+    public Matrix getInverseMatrix() {
         if(_inverseMatrix == null)
         {
             _inverseMatrixShouldBeRecalculated = true;

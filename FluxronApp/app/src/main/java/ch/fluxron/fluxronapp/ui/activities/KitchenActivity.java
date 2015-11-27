@@ -434,6 +434,14 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         AddDeviceToAreaCommand command = new AddDeviceToAreaCommand();
         command.setKitchenArea(currentArea);
         command.setDevice(d);
+
+        Fragment f = getFragmentManager().findFragmentById(R.id.kitchenArea);
+        Point center = new Point();
+        if (f instanceof AreaDetailFragment) {
+            center = ((AreaDetailFragment)f).getCenter();
+        }
+        command.setPosition(center);
+
         postMessage(command);
     }
 

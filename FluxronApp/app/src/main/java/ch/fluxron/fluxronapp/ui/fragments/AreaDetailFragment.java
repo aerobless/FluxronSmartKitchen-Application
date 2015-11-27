@@ -1,6 +1,7 @@
 package ch.fluxron.fluxronapp.ui.fragments;
 
 import android.app.Fragment;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -148,5 +149,13 @@ public class AreaDetailFragment extends Fragment {
      */
     public void removeDevice(String deviceId) {
         display.removePosition(deviceId);
+    }
+
+    /**
+     * Returns the center of the current view
+     * @return Center point
+     */
+    public Point getCenter() {
+        return display.getCenterPosition();
     }
 }

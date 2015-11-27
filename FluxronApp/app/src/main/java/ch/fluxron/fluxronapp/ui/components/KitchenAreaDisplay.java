@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -368,5 +369,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     private float getMinZoom() {
         return Math.min((float)getHeight() / bmpHeight, (float)getWidth() / bmpWidth);
+    }
+
+    public Point getCenterPosition() {
+        PointF c =cam.getAsUntransformedCoordinates(getWidth()/2, getHeight()/2);
+
+        return new Point((int)c.x, (int)c.y);
     }
 }

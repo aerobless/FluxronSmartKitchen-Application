@@ -672,7 +672,8 @@ public class KitchenManager {
 
             if (!exists) {
                 DevicePosition pos = new DevicePosition();
-                pos.setPosition(new Point(100, 100));
+                pos.setPosition(new Point(msg.getPosition().x, msg.getPosition().y));
+                
                 pos.setDeviceId(msg.getDevice().getAddress());
                 pos.setCategory(msg.getDevice().getDeviceType());
                 pos.setName(msg.getDevice().getName());
