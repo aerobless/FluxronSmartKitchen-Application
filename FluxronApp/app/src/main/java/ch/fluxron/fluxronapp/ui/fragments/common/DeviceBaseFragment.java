@@ -12,7 +12,7 @@ public class DeviceBaseFragment extends Fragment {
     private static final String STATE_ADDRESS = "address";
     private String deviceAddress;
     private String deviceClass;
-    private IEventBusProvider provider;
+    protected IEventBusProvider provider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

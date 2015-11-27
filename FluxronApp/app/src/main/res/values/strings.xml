@@ -116,6 +116,7 @@
     <!-- Spool Spinner -->
     <string name="spool_prompt">Choose a configuration</string>
     <string-array name="spool_spinner">
+        <item>custom configuration</item>
         <item>Ø 240mm / 3.5kW</item>
         <item>Ø 240mm / 5kW</item>
         <item>Wok 300mm / 3.5kW</item>
