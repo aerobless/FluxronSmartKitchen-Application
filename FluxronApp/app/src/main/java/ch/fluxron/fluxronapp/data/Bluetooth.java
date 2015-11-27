@@ -35,6 +35,7 @@ import ch.fluxron.fluxronapp.objectBase.Device;
 public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
+    private MessageInterpreter messageInterpreter;
     private BluetoothAdapter btAdapter = null;
     private final LruCache<String, BTConnectionThread> connectionCache;
 
@@ -49,6 +50,7 @@ public class Bluetooth {
         this.provider.getDalEventBus().register(this);
 
         messageFactory = new MessageFactory();
+        messageInterpreter = new MessageInterpreter(provider, messageFactory);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
         if (AUTO_PAIRING_ENABLED) {
