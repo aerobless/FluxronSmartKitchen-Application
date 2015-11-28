@@ -78,27 +78,66 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <ch.fluxron.fluxronapp.ui.components.ListBubbleControl
-            android:layout_width="fill_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="7dp"
-            android:id="@+id/bubbleControl"/>
-
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/kitchenArea"/>
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/help_change_settings"
+                android:drawableEnd="@drawable/ic_call_made"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="90dp"
+                android:textColor="@android:color/black"
+                android:drawablePadding="12dp"
+                android:alpha="0"
+                android:id="@+id/helpTextKitchenSettings"
+                android:visibility="gone"/>
 
-        <FrameLayout
-            android:id="@+id/deviceListLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:background="@color/titleForeground"
-            android:visibility="gone"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/help_add_area"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginEnd="110dp"
+                android:textColor="@android:color/black"
+                android:alpha="0"
+                android:drawablePadding="10dp"
+                android:layout_gravity="bottom|start"
+                android:id="@+id/helpTextKitchenAddArea"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ch.fluxron.fluxronapp.ui.components.ListBubbleControl
+                    android:layout_width="fill_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="7dp"
+                    android:id="@+id/bubbleControl"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/kitchenArea"/>
+
+                <FrameLayout
+                    android:id="@+id/deviceListLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="bottom"
+                    android:background="@color/titleForeground"
+                    android:visibility="gone"
+                    />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

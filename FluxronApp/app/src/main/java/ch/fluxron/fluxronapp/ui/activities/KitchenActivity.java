@@ -174,9 +174,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
             ((TextView) findViewById(R.id.kitchenNameTitle)).setText(msg.getKitchen().getName());
             Fragment listFragment = getFragmentManager().findFragmentById(R.id.kitchenArea);
 
+            int areaCount = msg.getKitchen().getAreaList().size();
             ListBubbleControl listBubbles = (ListBubbleControl)findViewById(R.id.bubbleControl);
-            listBubbles.setNumberOfBubbles(msg.getKitchen().getAreaList().size());
+            listBubbles.setNumberOfBubbles(areaCount);
             listBubbles.setCurrentBubble(0);
+
+            if (areaCount==0) {
+                animateFadeIn(findViewById(R.id.helpTextKitchenAddArea), true, 0.4f);
+                animateFadeIn(findViewById(R.id.helpTextKitchenSettings), true, 0.4f);
+            }
+            else {
+                animateFadeOut(findViewById(R.id.helpTextKitchenAddArea), true);
+                animateFadeOut(findViewById(R.id.helpTextKitchenSettings), true);
+            }
 
             if (listFragment instanceof AreaListFragment) {
                 AreaListFragment list = (AreaListFragment) listFragment;
@@ -185,7 +195,11 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                     list.getListAdapter().addOrUpdate(a);
                 }
 
-                list.getListAdapter().removeNotInList(msg.getKitchen().getAreaList());
+                if (areaCount > 0) {
+                    list.getListAdapter().removeNotInList(msg.getKitchen().getAreaList());
+                } else {
+                    list.getListAdapter().clear();
+                }
             }
         }
 

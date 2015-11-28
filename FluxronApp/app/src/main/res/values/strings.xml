@@ -162,4 +162,8 @@
     <!-- validation erors -->
     <string name="validation_error_no_name">Please provide a name for this kitchen.</string>
     <string name="validation_error_no_image">Please provide an image for this kitchen.</string>
+
+    <!-- help text -->
+    <string name="help_change_settings">Use the settings icon to change the name or the description of this kitchen.</string>
+    <string name="help_add_area">Use this button to add new photos. You can then place the devices on the photo.</string>
 </resources>

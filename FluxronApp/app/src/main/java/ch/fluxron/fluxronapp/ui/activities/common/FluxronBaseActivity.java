@@ -117,6 +117,11 @@ public class FluxronBaseActivity extends AppCompatActivity{
         v.animate().alpha(1).setDuration(ANIMATE_OUT_MILLISECONDS).start();
     }
 
+    public void animateFadeIn(final View v, final boolean setVisibility, final float targetAlpha){
+        if(setVisibility) v.setVisibility(View.VISIBLE);
+        v.animate().alpha(targetAlpha).setDuration(ANIMATE_OUT_MILLISECONDS).start();
+    }
+
     /**
      * Listens to toast messages and displays them as overlay.
      * @param msg
