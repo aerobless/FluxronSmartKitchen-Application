@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -105,18 +106,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
     private void changeChildDisplayState() {
         boolean bIsDetailView = false;
+        boolean bIsEditMode = false;
         int count = getFragmentManager().getBackStackEntryCount();
-
         if (count > 0) {
             String currentName = getFragmentManager().getBackStackEntryAt(count - 1).getName();
 
             bIsDetailView = AreaDetailFragment.class.getName().equals(currentName);
+            bIsEditMode = DeviceListFragment.class.getName().equals(currentName);
         }
 
-        animateEditButton(bIsDetailView);
-        animateFabAlpha(!bIsDetailView);
-        animateSettingsIcon(!bIsDetailView);
-        animateBubbleBar(!bIsDetailView);
+        animateEditButton(bIsDetailView && !bIsEditMode);
+        animateFabAlpha(!bIsDetailView && !bIsEditMode);
+        animateSettingsIcon(!bIsDetailView && !bIsEditMode);
+        animateBubbleBar(!bIsDetailView && !bIsEditMode);
     }
 
     /**
