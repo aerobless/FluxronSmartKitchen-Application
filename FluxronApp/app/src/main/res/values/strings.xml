@@ -166,4 +166,11 @@
     <!-- help text -->
     <string name="help_change_settings">Use the settings icon to change the name or the description of this kitchen.</string>
     <string name="help_add_area">Use this button to add new photos. You can then place the devices on the photo.</string>
+
+    <!-- Alert dialog titles and messages -->
+    <string name="alert_delete_kitchen_title">Confirm deletion</string>
+    <string name="alert_delete_kitchen_message">This deletes this kitchen with all its areas and devices permanently. Do you want to proceed?</string>
+
+    <string name="alert_delete_area_title">Confirm deletion</string>
+    <string name="alert_delete_area_message">This deletes this area with all its devices permanently. Do you want to proceed?</string>
 </resources>
