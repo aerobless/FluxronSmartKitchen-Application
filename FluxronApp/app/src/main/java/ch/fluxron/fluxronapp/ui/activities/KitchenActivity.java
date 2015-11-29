@@ -74,6 +74,17 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         if (savedInstanceState == null) {
             createAreaList();
         }
+
+        assignValuesToAreaList();
+    }
+
+    private void assignValuesToAreaList() {
+        Fragment listFragment = getFragmentManager().findFragmentById(R.id.kitchenArea);
+        if (listFragment!=null && listFragment instanceof AreaListFragment) {
+            AreaListFragment fragment = (AreaListFragment)listFragment;
+            fragment.setEventBusProvider(this.busProvider);
+            fragment.setClickListener(this);
+        }
     }
 
     private void createAreaList() {
