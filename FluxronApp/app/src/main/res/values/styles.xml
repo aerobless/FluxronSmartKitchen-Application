@@ -44,6 +44,10 @@
         <item name="android:textStyle">normal</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
         <item name="android:background">@drawable/flx_button_selector</item>
     </style>
 
@@ -83,6 +87,7 @@
 
     <style name="FluxronImageButton" parent="android:Widget.ImageButton">
         <item name="android:background">#00000000</item>
+        <item name="android:padding">6dp</item>
     </style>
 
     <style name="FluxronTabTextAppearance" parent="TextAppearance.Design.Tab">
