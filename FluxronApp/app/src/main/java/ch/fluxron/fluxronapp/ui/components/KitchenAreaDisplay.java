@@ -97,12 +97,24 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         canvas.translate(cam.getTranslation().x * theZoom, cam.getTranslation().y * theZoom);
 
         // Draw the positions for the devices
+        List<DeviceView> toDelete = new ArrayList<>(1);
         if (views!= null) {
             for (DeviceView p : views){
                 canvas.save();
                 canvas.translate(p.getPosition().getPosition().x*theZoom, p.getPosition().getPosition().y*theZoom);
                 p.draw(canvas);
                 canvas.restore();
+
+                // Device views that finished all animations and are in a deleted state
+                // should be removed
+                if (p.isDeleted()) {
+                    toDelete.add(p);
+                }
+            }
+
+            // Remove after the render loop to avoid inconsistencies in the render order
+            for (DeviceView view : toDelete) {
+                views.remove(view);
             }
         }
     }
@@ -333,6 +345,8 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
      * @param devicePosition Position of a device
      */
     public void setDevicePosition(DevicePosition devicePosition, int status) {
+        Log.d("deviceadd", "setPos " + devicePosition.getDeviceId());
+
         // Find the view with the changed position
         DevicePosition found = null;
         for(DeviceView deviceView : views) {

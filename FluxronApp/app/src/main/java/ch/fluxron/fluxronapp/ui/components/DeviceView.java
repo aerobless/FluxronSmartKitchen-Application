@@ -378,4 +378,17 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
         animators.put(target.getId(), set);
     }
+
+    public boolean isDeleted() {
+        return deleted && allAnimationsDone();
+    }
+
+    private boolean allAnimationsDone() {
+        boolean animationsRunning = false;
+        for(Animator a : animators.values()) {
+            animationsRunning = animationsRunning || a.isRunning();
+        }
+
+        return !animationsRunning;
+    }
 }

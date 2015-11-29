@@ -8,20 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import ch.fluxron.fluxronapp.events.modelUi.ImageLoaded;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenAreaLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadImageFromKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenAreaCommand;
-import ch.fluxron.fluxronapp.objectBase.Device;
 import ch.fluxron.fluxronapp.objectBase.DevicePosition;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 import ch.fluxron.fluxronapp.ui.activities.KitchenActivity;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
-import ch.fluxron.fluxronapp.ui.components.DeviceView;
 import ch.fluxron.fluxronapp.ui.components.KitchenAreaDisplay;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
@@ -157,5 +152,13 @@ public class AreaDetailFragment extends Fragment {
      */
     public Point getCenter() {
         return display.getCenterPosition();
+    }
+
+    /**
+     * The device should be repositioned
+     * @param position Location and id
+     */
+    public void repositionDevice(DevicePosition position) {
+        display.setDevicePosition(position);
     }
 }

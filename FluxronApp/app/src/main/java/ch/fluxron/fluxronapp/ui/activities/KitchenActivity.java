@@ -26,6 +26,7 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteAreaFromKitc
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteDeviceFromAreaCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeleteKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DeviceFromAreaDeleted;
+import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.DevicePositionChanged;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.LoadKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.CreateKitchenAreaCommand;
@@ -222,6 +223,17 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
 
         //Tell the UserManager to authenticate
         busProvider.getUiEventBus().post(new LoadAuthenticationCommand());
+    }
+
+    /**
+     * Occurs when a device position was changed or a new device was added to the area
+     * @param msg Event
+     */
+    public void onEventMainThread(DevicePositionChanged msg) {
+        Fragment f = getFragmentManager().findFragmentById(R.id.kitchenArea);
+        if (f instanceof AreaDetailFragment) {
+            ((AreaDetailFragment)f).repositionDevice(msg.getPosition());
+        }
     }
 
     /**
