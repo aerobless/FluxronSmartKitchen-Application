@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
@@ -15,6 +16,7 @@ import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 public class DeviceErrorFragment extends DeviceBaseFragment {
     private ErrorView[] errorViews;
     private boolean ready = false;
+    private TextView noErrorText;
 
     @Nullable
     @Override
@@ -32,17 +34,19 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_sclass_device_errors, container, false);
             init(deviceView);
             ready = true;
-        }  else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
+        } else if (getDeviceClass().equals(DeviceTypeConverter.ETX)) {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_errors, container, false);
             init(deviceView);
             ready = true;
         } else {
             deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_unsupported_device, container, false);
         }
+
         return deviceView;
     }
 
-    private void init(View deviceView){
+    private void init(View deviceView) {
+        noErrorText = (TextView) deviceView.findViewById(R.id.noErrorText);
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);
         errorViews = new ErrorView[list.getChildCount()];
 
@@ -54,7 +58,9 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             for (ErrorView er : errorViews) {
-                er.handleDeviceChanged(inputMsg);
+                if(er.handleDeviceChanged(inputMsg)){
+                    noErrorText.setVisibility(View.GONE);
+                }
             }
         }
     }

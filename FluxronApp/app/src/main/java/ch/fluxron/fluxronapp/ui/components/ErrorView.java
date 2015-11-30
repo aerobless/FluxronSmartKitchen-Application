@@ -54,23 +54,32 @@ public class ErrorView extends LinearLayout {
 
     /**
      * Returns the id of the parameter thats registered for this view.
+     *
      * @return
      */
-    public String getParameter(){
+    public String getParameter() {
         return parameter;
     }
 
-    public void handleDeviceChanged(DeviceChanged msg){
+    /**
+     * Handles DeviceChanged events. If the event had an effect it returns true, otherwise false.
+     *
+     * @param msg
+     * @return
+     */
+    public boolean handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
-        if(dp != null){
+        if (dp != null) {
             setValue(dp.getValue());
+            return true;
         }
+        return false;
     }
 
     public void setValue(String value) {
         errorControl.setVisibility(VISIBLE);
         String code = ErrorCodeConverter.convertToErrorCode(Integer.parseInt(value));
-        String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value))+" "+getResources().getString(R.string.hoursAgo);
+        String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value)) + " " + getResources().getString(R.string.hoursAgo);
         this.errorCode.setText(code);
         this.errorDescription.setText(getErrorDescriptionFromCode(code));
         this.errorSince.setText(counter);
@@ -78,6 +87,7 @@ public class ErrorView extends LinearLayout {
 
     /**
      * Maps an error code to a resource id
+     *
      * @param code Error Code
      * @return Resource id
      */
