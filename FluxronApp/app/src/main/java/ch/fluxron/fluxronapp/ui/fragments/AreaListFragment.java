@@ -98,6 +98,8 @@ public class AreaListFragment extends Fragment {
     }
 
     private void snapListAndNotify(final RecyclerView v, LinearLayoutManager m) {
+        if (listAdapter.getItemCount() == 0) return;
+
         // Find the middle of the visible view positions
         int firstVisibleView = m.findFirstVisibleItemPosition();
         int lastVisibleView = m.findLastVisibleItemPosition();
