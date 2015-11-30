@@ -126,23 +126,50 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         return deviceName;
     }
 
+    /**
+     * Set the device name. If the device type is unknown, the device name is set as text for the deviceOrb.
+     *
+     * @param deviceName
+     */
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+        TextView deviceOrbText = ((TextView) this.findViewById(R.id.theDeviceOrb));
+        //If we don't know the device type we use the device name instead.
+        if (deviceType.equals(Device.UNKNOWN_DEVICE_TYPE) || deviceOrbText.toString().equals("")) {
+            deviceOrbText.setText(deviceName);
+        }
     }
 
+    /**
+     * Get the device type.
+     *
+     * @return
+     */
     public String getDeviceType() {
         return deviceType;
     }
 
+    /**
+     * Set the device type. If the device type is unknown, the device name is set as text for the deviceOrb.
+     *
+     * @param deviceType
+     */
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
+        TextView deviceOrbText = ((TextView) this.findViewById(R.id.theDeviceOrb));
         if (deviceType.equals(Device.UNKNOWN_DEVICE_TYPE)) {
-            ((TextView) this.findViewById(R.id.theDeviceOrb)).setText("?");
+            //If we don't know the device type we use the device name instead.
+            deviceOrbText.setText(deviceName);
         } else {
-            ((TextView) this.findViewById(R.id.theDeviceOrb)).setText(getDeviceType());
+            deviceOrbText.setText(getDeviceType());
         }
     }
 
+    /**
+     * Set the device status. Status can be OK, FAILURE or UNKNOWN.
+     *
+     * @param deviceStatus
+     */
     private void setDeviceStatus(int deviceStatus) {
         TextView statusOrb = (TextView) findViewById(R.id.theStatusOrb);
         switch (deviceStatus) {
@@ -385,7 +412,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     private boolean allAnimationsDone() {
         boolean animationsRunning = false;
-        for(Animator a : animators.values()) {
+        for (Animator a : animators.values()) {
             animationsRunning = animationsRunning || a.isRunning();
         }
 
