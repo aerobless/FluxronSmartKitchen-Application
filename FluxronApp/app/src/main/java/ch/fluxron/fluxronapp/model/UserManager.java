@@ -10,6 +10,7 @@ import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessGrant
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationCommand;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AuthenticationLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.LoadAuthenticationCommand;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.SynchronousAccessCommand;
 import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.UserAuthenticated;
 import ch.fluxron.fluxronapp.objectBase.AccessLevel;
 import ch.fluxron.fluxronapp.objectBase.User;
@@ -93,6 +94,17 @@ public class UserManager {
         }
         accessGranted.setConnectionId(cmd);
         provider.getUiEventBus().post(accessGranted);
+    }
+
+    public void onEventAsync(SynchronousAccessCommand inputCmd) {
+        AccessLevel accessGranted;
+        if (currentUser != null) {
+            accessGranted = currentUser.getAccessLevel();
+        } else {
+            //Return the lowest user level if no user is authenticated.
+            accessGranted = AccessLevel.DEMO_USER;
+        }
+        inputCmd.notifyCompletion(accessGranted);
     }
 
     /**

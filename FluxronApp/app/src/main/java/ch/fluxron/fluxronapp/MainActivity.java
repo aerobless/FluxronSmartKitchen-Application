@@ -12,9 +12,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import ch.fluxron.fluxronapp.events.base.ITypedCallback;
+import ch.fluxron.fluxronapp.events.modelUi.ToastProduced;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.AccessGranted;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.LoadAuthenticationCommand;
+import ch.fluxron.fluxronapp.events.modelUi.authenticationOperations.SynchronousAccessCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.FindKitchenCommand;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 
+import ch.fluxron.fluxronapp.objectBase.AccessLevel;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.ApplicationSettingsActivity;
 import ch.fluxron.fluxronapp.ui.activities.CreateKitchenActivity;
@@ -71,6 +77,12 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
 
         listAdapter = new KitchenListAdapter(this, this.busProvider);
         kitchenListView.setAdapter(listAdapter);
+
+        kitchenListView.post(new Runnable() {
+            public void run() {
+                busProvider.getUiEventBus().post(new LoadAuthenticationCommand());
+            }
+        });
     }
 
     /**
@@ -131,7 +143,21 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
      * Navigates to kitchen creation
      * @param btn Button
      */
-    public void navigateCreate(View btn){
+    public void navigateCreate(View btn) {
+        SynchronousAccessCommand cmd = new SynchronousAccessCommand(new ITypedCallback<AccessLevel>() {
+            @Override
+            public void call(AccessLevel ac) {
+                if (ac.ordinal() >= AccessLevel.AUTHENTICATED_USER.ordinal()) {
+                    navigateCreateKitchen();
+                } else {
+                    busProvider.getUiEventBus().post(new ToastProduced(getResources().getString(R.string.please_authenticate)));
+                }
+            }
+        });
+        busProvider.getUiEventBus().post(cmd);
+    }
+
+    private void navigateCreateKitchen() {
         Intent startOther = new Intent(this, CreateKitchenActivity.class);
         startActivity(startOther);
     }
@@ -160,7 +186,21 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
      * @param k Kitchen
      */
     @Override
-    public void kitchenClicked(Kitchen k) {
+    public void kitchenClicked(final Kitchen k) {
+        SynchronousAccessCommand cmd = new SynchronousAccessCommand(new ITypedCallback<AccessLevel>() {
+            @Override
+            public void call(AccessLevel ac) {
+                if (ac.ordinal() >= AccessLevel.AUTHENTICATED_USER.ordinal()) {
+                    switchToKitchen(k);
+                } else {
+                    busProvider.getUiEventBus().post(new ToastProduced(getResources().getString(R.string.please_authenticate)));
+                }
+            }
+        });
+        busProvider.getUiEventBus().post(cmd);
+    }
+
+    private void switchToKitchen(Kitchen k) {
         Intent startOther = new Intent(this, KitchenActivity.class);
         startOther.putExtra(KitchenActivity.PARAM_KITCHEN_ID, k.getId());
         startActivity(startOther);
