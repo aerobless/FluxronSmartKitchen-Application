@@ -22,11 +22,7 @@
             <ch.fluxron.fluxronapp.ui.components.ErrorView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:errorParamName="@string/F_ETX_3005SUB1_ERROR_1"/>
-            <ch.fluxron.fluxronapp.ui.components.ErrorView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:errorParamName="@string/F_ETX_3005SUB2_ERROR_2"/>
+                app:errorParamName="@string/F_ETX_3005SUB4_ERROR_4"/>
             <ch.fluxron.fluxronapp.ui.components.ErrorView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,7 +30,11 @@
             <ch.fluxron.fluxronapp.ui.components.ErrorView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:errorParamName="@string/F_ETX_3005SUB4_ERROR_4"/>
+                app:errorParamName="@string/F_ETX_3005SUB2_ERROR_2"/>
+            <ch.fluxron.fluxronapp.ui.components.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorParamName="@string/F_ETX_3005SUB1_ERROR_1"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
