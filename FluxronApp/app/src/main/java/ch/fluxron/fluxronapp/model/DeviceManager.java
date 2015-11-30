@@ -212,12 +212,12 @@ public class DeviceManager {
     }
 
     /**
-     * Light filter to prevent non-fluxron devices from getting listed.
+     * Filter to prevent non-fluxron devices from getting listed. If the input is null it also returns null.
      *
      * @param deviceName
      * @return true if deviceName starts with FLX, DGL, HC-06 or HM-Soft, which identifies it as a potential Fluxron Device.
      */
     public boolean isFluxronDevice(String deviceName) {
-        return deviceName.matches("(FLX|DGL|HC-06|HMSoft|FAKE).*");
+        return deviceName != null && deviceName.matches("(FLX|DGL|HC-06|HMSoft|FAKE).*");
     }
 }
