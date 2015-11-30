@@ -1,8 +1,6 @@
-package ch.fluxron.fluxronapp.model;
+package ch.fluxron.fluxronapp.data;
 
 import android.util.LruCache;
-
-import ch.fluxron.fluxronapp.data.BluetoothConnectionThread;
 
 /**
  * Caches active connections. Evicted connections are ended properly.
@@ -20,6 +18,7 @@ public class ConnectionCache extends LruCache<String, BluetoothConnectionThread>
 
     /**
      * The evicted connection is ended properly.
+     *
      * @param evicted
      * @param key
      * @param oldValue
