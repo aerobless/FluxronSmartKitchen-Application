@@ -21,6 +21,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  */
 public class ErrorView extends LinearLayout {
     ParamManager manager;
+    LinearLayout errorControl;
     TypedArray arguments;
     String parameter;
     TextView errorDescription;
@@ -38,6 +39,8 @@ public class ErrorView extends LinearLayout {
 
         arguments = context.obtainStyledAttributes(attrs, R.styleable.ErrorView);
         parameter = arguments.getString(R.styleable.ErrorView_errorParamName);
+        errorControl = (LinearLayout) this.findViewById(R.id.errorControl);
+        errorControl.setVisibility(GONE);
 
         errorCode = (TextView) this.findViewById(R.id.errorCode);
         errorDescription = (TextView) this.findViewById(R.id.errorDescription);
@@ -65,6 +68,7 @@ public class ErrorView extends LinearLayout {
     }
 
     public void setValue(String value) {
+        errorControl.setVisibility(VISIBLE);
         String code = ErrorCodeConverter.convertToErrorCode(Integer.parseInt(value));
         String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value))+" "+getResources().getString(R.string.hoursAgo);
         this.errorCode.setText(code);

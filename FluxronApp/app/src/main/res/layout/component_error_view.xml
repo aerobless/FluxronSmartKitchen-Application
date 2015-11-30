@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:id="@+id/errorControl"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/errorCode"
             android:text="@string/error_code_default"
@@ -21,4 +26,5 @@
                 android:text="@string/error_time_default"
                 />
         </LinearLayout>
+    </LinearLayout>
 </merge>
