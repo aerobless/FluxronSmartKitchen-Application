@@ -164,6 +164,7 @@ public class Bluetooth {
      */
     public void onEventAsync(BluetoothWriteRequest cmd) {
         byte[] message = messageFactory.makeWriteRequest(cmd.getField(), cmd.getValue());
+        //Log.d("FLUXRON", cmd.getAddress()+" "+ cmd.getField()+" "+ cmd.getValue());
         //messageFactory.printUnsignedByteArray(message); //DEBUG
         try {
             sendData(cmd.getAddress(), message, cmd);

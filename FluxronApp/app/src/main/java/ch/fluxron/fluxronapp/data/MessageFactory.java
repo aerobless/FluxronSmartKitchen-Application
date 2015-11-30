@@ -4,6 +4,10 @@ import android.util.Log;
 
 import com.google.common.primitives.Ints;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -76,8 +80,6 @@ public class MessageFactory {
         return buildMessage(CCD_READ_REQUEST, messageBody);
     }
 
-    //TODO: eventuell payload länge anhand datentyp bestimmen statt konvertierung..
-    //TODO: perhaps move rw check to DeviceManager
     public byte[] makeWriteRequest(String paramID, Object data) {
         String accessType = parameterMap.get(paramID).getAccessType();
 
@@ -92,12 +94,12 @@ public class MessageFactory {
 
             //Create & copy payload to Little Endian
             byte[] dataArray = convertDataObjectToByte(paramID, data);
-            if (dataArray.length >= 4 && dataArray.length >= 1) {
-                int dataIndex = dataArray.length - 1;
-                for (int i = 3; i < dataArray.length; i++) {
-                    messageBody[i] = dataArray[dataIndex];
-                    dataIndex--;
-                }
+
+            ArrayUtils.reverse(dataArray);
+            int bodyIt = 3;
+            for(int i=0; i<dataArray.length; i++){
+                messageBody[bodyIt] = dataArray[i];
+                bodyIt++;
             }
 
             //Set message type
