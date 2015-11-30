@@ -18,15 +18,26 @@ import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 
 /**
  * Responds to BluetoothDiscoveryCommands and replies with Fake devices.
+ * Can be used to test application with a lot of devices or to test specific devices
+ * that we don't have on hand. For example we did not have a ETX device to tests with
+ * but by emulating it here we could still build a layout for it.
  */
 public class FakeBluetooth {
     private IEventBusProvider provider;
-    private static final boolean FAKE_GENERATION_ENABLED = false;
-    private static final boolean FAKE_RESPONSE_ENABLED = false;
-    private static final int FAKE_DEVICE_COUNT = 10; //Max 99
     private boolean discoveryActive = true;
     private List<Integer> deviceTypes;
 
+    //Settings:
+    private static final boolean FAKE_GENERATION_ENABLED = false;
+    private static final boolean FAKE_RESPONSE_ENABLED = false;
+    private static final int FAKE_DEVICE_COUNT = 10; //Max 99
+    private static final int DEVICE_TYPE = 5150; //When FAKE_RESPONSE is enabled, all devices will report that they are of this device type.
+
+    /**
+     * Instantiates a new FakeBluetooth module.
+     *
+     * @param provider
+     */
     public FakeBluetooth(IEventBusProvider provider) {
         this.provider = provider;
         if (FAKE_GENERATION_ENABLED) {
@@ -77,7 +88,7 @@ public class FakeBluetooth {
     }
 
     /**
-     * Generates a fake device
+     * Generates a fake device.
      *
      * @param input the device number, used to always generate the "same" devices.
      * @return a Device
@@ -98,6 +109,13 @@ public class FakeBluetooth {
         return unreal;
     }
 
+    /**
+     * Generates a random int between min & max.
+     *
+     * @param min
+     * @param max
+     * @return
+     */
     private static int randInt(int min, int max) {
         Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;
@@ -110,9 +128,9 @@ public class FakeBluetooth {
      * @param cmd a ReadRequest.
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
-        if(FAKE_RESPONSE_ENABLED){
+        if (FAKE_RESPONSE_ENABLED) {
             if (cmd.getAddress().contains("FF:FF:FF:FF")) {
-                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(cmd.getAddress(), "1018sub2", 5150);
+                RequestResponseConnection deviceChanged = new BluetoothDeviceChanged(cmd.getAddress(), "1018sub2", DEVICE_TYPE);
                 deviceChanged.setConnectionId(cmd);
                 provider.getDalEventBus().post(deviceChanged);
             }

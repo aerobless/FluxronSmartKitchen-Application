@@ -10,6 +10,9 @@ public class BluetoothErrorCodeConverter {
     Map<String, String> errorCodes;
     public static final String OBJECT_DOES_NOT_EXIST = "0x06020000";
 
+    /**
+     * Instantiates a new BluetoothErrorCodeConverter
+     */
     public BluetoothErrorCodeConverter() {
         errorCodes = new HashMap<>();
         errorCodes.put("0x00000000", "no abort, no SDO error (yet) - TERMINAL SPECIFIC !");
@@ -46,14 +49,15 @@ public class BluetoothErrorCodeConverter {
 
     /**
      * Returns a string containing a description of the requested error code.
+     *
      * @param errorCode
      * @return
      */
-    public String getErrorDescription(String errorCode){
+    public String getErrorDescription(String errorCode) {
         String result = errorCodes.get(errorCode);
-        if(result == null){
-            result = "Unable to find description for error code "+errorCode;
+        if (result == null) {
+            result = "Unable to find description for error code " + errorCode;
         }
-        return  result;
+        return result;
     }
 }

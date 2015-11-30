@@ -30,7 +30,8 @@ import ch.fluxron.fluxronapp.model.ConnectionCache;
 import ch.fluxron.fluxronapp.objectBase.Device;
 
 /**
- * Listens to eventbus messages. Provides access to bluetooth devices.
+ * Provides access to bluetooth devices (read/write/pair). Caches existing bluetooth connections
+ * in order to provide faster access.
  */
 public class Bluetooth {
     private IEventBusProvider provider;
@@ -44,9 +45,14 @@ public class Bluetooth {
     private static final String DEVICE_PIN = "1234";
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
     private static final String ACTION_PAIRING_REQUEST = "android.bluetooth.device.action.PAIRING_REQUEST"; //to support api18
-
     public static final String DEVICE_BONDED = "Bondage";
 
+    /**
+     * Instantiates a new bluetooth module.
+     *
+     * @param provider
+     * @param context
+     */
     public Bluetooth(IEventBusProvider provider, Context context) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
@@ -200,6 +206,27 @@ public class Bluetooth {
     }
 
     /**
+     * Writes a byte array to a connectionThread.
+     *
+     * @param address
+     * @param message
+     * @param connection
+     * @throws IOException
+     */
+    private void sendData(String address, byte[] message, RequestResponseConnection connection) throws IOException {
+        if (bluetoothEnabled()) {
+            BluetoothDevice device = btAdapter.getRemoteDevice(address);
+            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                BluetoothConnectionThread connectionThread = getConnection(device, false);
+                //Log.d(TAG, "GOT connection, trying to write message");
+                connectionThread.write(message, connection);
+            } else {
+                throw new IOException("Unbonded Device");
+            }
+        }
+    }
+
+    /**
      * Used to start the bonding process with a specific bluetooth device.
      *
      * @param cmd a command to bond a device
@@ -217,19 +244,6 @@ public class Bluetooth {
                 }
             } else {
                 Log.d(TAG, "Device is already bonded.");
-            }
-        }
-    }
-
-    private void sendData(String address, byte[] message, RequestResponseConnection connection) throws IOException {
-        if (bluetoothEnabled()) {
-            BluetoothDevice device = btAdapter.getRemoteDevice(address);
-            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                BluetoothConnectionThread connectionThread = getConnection(device, false);
-                //Log.d(TAG, "GOT connection, trying to write message");
-                connectionThread.write(message, connection);
-            } else {
-                throw new IOException("Unbonded Device");
             }
         }
     }
@@ -291,6 +305,9 @@ public class Bluetooth {
         return false;
     }
 
+    /**
+     * Starts the device discovery.
+     */
     private void startDeviceDiscovery() {
         if (bluetoothEnabled()) {
             stopDeviceDiscovery();
@@ -299,12 +316,22 @@ public class Bluetooth {
         }
     }
 
+    /**
+     * Stops the device discovery.
+     */
     private void stopDeviceDiscovery() {
         if (btAdapter.isDiscovering()) {
             btAdapter.cancelDiscovery();
         }
     }
 
+    /**
+     * Creates a bluetooth socket for the communicate with a device. Returns a RFCom connection.
+     *
+     * @param device
+     * @return
+     * @throws IOException
+     */
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         if (Build.VERSION.SDK_INT >= 10) {
             try {
@@ -318,6 +345,11 @@ public class Bluetooth {
         return device.createRfcommSocketToServiceRecord(SPP_UUID);
     }
 
+    /**
+     * Checks if bluetooth is enabled. If it isn't enabled a toast is produced. (Mjam, I like toast.)
+     *
+     * @return
+     */
     private boolean bluetoothEnabled() {
         if (btAdapter == null) {
             Log.d(TAG, "Bluetooth not supported (Are you running on emulator?)");

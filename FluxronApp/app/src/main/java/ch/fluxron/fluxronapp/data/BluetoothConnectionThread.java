@@ -25,7 +25,6 @@ public class BluetoothConnectionThread extends Thread {
     private final AtomicBoolean keepRunning;
     private final Object lock = new Object();
     private RequestResponseConnection requestResponseConnection;
-
     private final static int MESSAGE_LENGTH = 12;
 
     /**
@@ -56,7 +55,7 @@ public class BluetoothConnectionThread extends Thread {
     }
 
     /**
-     * Starts the Thread.
+     * Starts the BluetoothConnectionThread.
      */
     public void run() {
         byte[] buffer = new byte[128];
