@@ -21,8 +21,8 @@ import ch.fluxron.fluxronapp.objectBase.ParameterValue;
  */
 public class FakeBluetooth {
     private IEventBusProvider provider;
-    private static final boolean FAKE_GENERATION_ENABLED = true;
-    private static final boolean FAKE_RESPONSE_ENABLED = true;
+    private static final boolean FAKE_GENERATION_ENABLED = false;
+    private static final boolean FAKE_RESPONSE_ENABLED = false;
     private static final int FAKE_DEVICE_COUNT = 10; //Max 99
     private boolean discoveryActive = true;
     private List<Integer> deviceTypes;

@@ -6,6 +6,7 @@ import android.util.LruCache;
 import java.util.Date;
 import java.util.Map;
 
+import ch.fluxron.fluxronapp.data.Bluetooth;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 import ch.fluxron.fluxronapp.events.modelDal.ToastProduced;
@@ -115,17 +116,22 @@ public class DeviceManager {
         Device device;
         synchronized (deviceCache) {
             device = deviceCache.get(inputMsg.getAddress());
+            if (device == null) {
+                return;
+            }
         }
         //Log.d("Setting param",device.getDeviceClass() + "_" + inputMsg.getField()+"   "+Integer.toString(inputMsg.getValue()));
         /**
          * The product code is needed to correctly store all other parameters. So we're
-         * directly storing it as a parameters of the device. This is the only parameter
-         * that is handled this way.
+         * directly storing it as a parameters of the device.
          */
-        if (inputMsg.getField().equals(PARAM_PRODUCT_CODE) && device != null) {
+        if (inputMsg.getField().equals(PARAM_PRODUCT_CODE)) {
             device.setProductCode(inputMsg.getValue());
             //Log.d("FLUXRON", "SET PRODUCT CODE TO"+inputMsg.getValue());
-        } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null && device != null) {
+        } else if (inputMsg.getField().equals(Bluetooth.DEVICE_BONDED)) {
+            device.setBonded(true);
+            device.setLastContact(new Date());
+        } else if (paramMap.get(device.getDeviceClass() + "_" + inputMsg.getField()) != null) {
             device.setDeviceParameter(new ParameterValue(device.getDeviceClass() + "_" + inputMsg.getField(), Integer.toString(inputMsg.getValue())));
             device.setBonded(true);
             device.setLastContact(new Date());

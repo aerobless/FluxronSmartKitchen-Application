@@ -45,6 +45,8 @@ public class Bluetooth {
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //well-known
     private static final String ACTION_PAIRING_REQUEST = "android.bluetooth.device.action.PAIRING_REQUEST"; //to support api18
 
+    public static final String DEVICE_BONDED = "Bondage";
+
     public Bluetooth(IEventBusProvider provider, Context context) {
         this.provider = provider;
         this.provider.getDalEventBus().register(this);
@@ -53,9 +55,7 @@ public class Bluetooth {
         messageInterpreter = new MessageInterpreter(provider, messageFactory);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
-        if (AUTO_PAIRING_ENABLED) {
-            setupBonding(context);
-        }
+        setupBonding(context);
         connectionCache = new ConnectionCache(3);
     }
 
@@ -116,26 +116,31 @@ public class Bluetooth {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 Log.d(TAG, action);
-                if (ACTION_PAIRING_REQUEST.equals(action)) {
-                    Log.d(TAG, "TRYING TO PAIR");
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    setDevicePin(device);
-                } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+                if (AUTO_PAIRING_ENABLED) {
+                    if (ACTION_PAIRING_REQUEST.equals(action)) {
+                        Log.d(TAG, "TRYING TO PAIR");
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        setDevicePin(device);
+                    }
+                }
+                if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                     final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
                     if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                         Log.d(TAG, "DEVICE PAIRED");
-                        provider.getDalEventBus().post(new BluetoothDeviceChanged(device.getAddress(), "Bondage", 1));
+                        provider.getDalEventBus().post(new BluetoothDeviceChanged(device.getAddress(), DEVICE_BONDED, 1));
                     } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
                         Log.d(TAG, "DEVICE UNPAIRED");
                     }
                 }
             }
         };
-        IntentFilter ifilter = new IntentFilter(ACTION_PAIRING_REQUEST);
+        if (AUTO_PAIRING_ENABLED) {
+            IntentFilter ifilter = new IntentFilter(ACTION_PAIRING_REQUEST);
+            context.registerReceiver(receiver, ifilter);
+        }
         IntentFilter ifilter2 = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        context.registerReceiver(receiver, ifilter);
         context.registerReceiver(receiver, ifilter2);
     }
 
