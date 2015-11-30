@@ -418,4 +418,11 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
         return !animationsRunning;
     }
+
+    public void cleanUp() {
+        if(this.provider!=null && this.provider.getUiEventBus().isRegistered(this)) {
+            provider.getUiEventBus().unregister(this);
+            provider = null;
+        }
+    }
 }

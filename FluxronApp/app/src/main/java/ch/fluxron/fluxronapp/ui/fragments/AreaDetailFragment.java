@@ -86,6 +86,8 @@ public class AreaDetailFragment extends Fragment {
         super.onStop();
 
         provider.getUiEventBus().unregister(this);
+
+        if (display!=null) display.cleanUp();
     }
 
     @Override

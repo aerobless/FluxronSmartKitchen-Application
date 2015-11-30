@@ -114,6 +114,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
             // Remove after the render loop to avoid inconsistencies in the render order
             for (DeviceView view : toDelete) {
+                view.cleanUp();
                 views.remove(view);
             }
         }
@@ -389,5 +390,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         PointF c =cam.getAsUntransformedCoordinates(getWidth()/2, getHeight()/2);
 
         return new Point((int)c.x, (int)c.y);
+    }
+
+    public void cleanUp(){
+        for(DeviceView deviceView : views) {
+            deviceView.cleanUp();
+        }
     }
 }
