@@ -13,18 +13,29 @@ import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothMessag
 import ch.fluxron.fluxronapp.events.modelDal.bluetoothOperations.BluetoothRequestFailed;
 
 /**
- * Interprets bluetooth messages received from the remote device.
+ * Interprets bluetooth messages received from bluetooth devices.
  */
 public class MessageInterpreter {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
     private BluetoothErrorCodeConverter errorCodeConverter;
 
+    /**
+     * Instantiates a new MessageInterpreter without a IEventBusProvider. Used for Unit Tests.
+     *
+     * @param messageFactory
+     */
     public MessageInterpreter(MessageFactory messageFactory) {
         this.messageFactory = messageFactory;
         this.errorCodeConverter = new BluetoothErrorCodeConverter();
     }
 
+    /**
+     * Instantiates a new MessageInterpreter.
+     *
+     * @param provider
+     * @param messageFactory
+     */
     public MessageInterpreter(IEventBusProvider provider, MessageFactory messageFactory) {
         this.provider = provider;
         this.messageFactory = messageFactory;
@@ -32,6 +43,12 @@ public class MessageInterpreter {
         this.provider.getDalEventBus().register(this);
     }
 
+    /**
+     * Listens to BluetoothMessageReceived events. Interprets event and relays information to
+     * business layer.
+     *
+     * @param inputMsg
+     */
     public void onEventAsync(BluetoothMessageReceived inputMsg) {
         byte[] data = inputMsg.getData();
         //Log.d("Fluxron", "Message from " + address);
@@ -94,7 +111,7 @@ public class MessageInterpreter {
     private void handleError(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
         if (dataPayload != null) {
             String field = getFieldString(data);
-            String errorCode = payloadToString(dataPayload);
+            String errorCode = errorPayloadToString(dataPayload);
             RequestResponseConnection deviceChanged;
             if (errorCode.equals(BluetoothErrorCodeConverter.OBJECT_DOES_NOT_EXIST)) {
                 deviceChanged = new BluetoothRequestFailed(RequestError.INDEX_DOES_NOT_EXIST, inputMsg.getAddress(), field);
@@ -107,8 +124,14 @@ public class MessageInterpreter {
         }
     }
 
+    /**
+     * Converts the error payload to a legible error message.
+     *
+     * @param dataPayload
+     * @return
+     */
     @NonNull
-    private static String payloadToString(byte[] dataPayload) {
+    private static String errorPayloadToString(byte[] dataPayload) {
         String errorCode = "0x";
         for (int i = 3; i >= 0; i--) {
             String curByte = Byte.toString(dataPayload[i]);
@@ -137,6 +160,12 @@ public class MessageInterpreter {
         return msb + lsb + "sub" + sub.toUpperCase();
     }
 
+    /**
+     * Checks if the checksum is valid. Only messages up to 12 bytes are supported.
+     *
+     * @param originalMsg
+     * @return
+     */
     public boolean isChecksumValid(byte[] originalMsg) {
         if (originalMsg.length >= 12) {
             byte[] checkMsg = messageFactory.setChecksum(originalMsg);

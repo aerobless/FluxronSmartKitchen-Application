@@ -6,16 +6,13 @@ import com.google.common.primitives.Ints;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.Map;
 
 import ch.fluxron.fluxronapp.data.generated.DeviceParameter;
 import ch.fluxron.fluxronapp.data.generated.ParamManager;
 
 /**
- * Encodes & decodes CANopen messages.
+ * Encodes CANopen messages.
  */
 public class MessageFactory {
     private Map<String, DeviceParameter> parameterMap;
@@ -66,11 +63,20 @@ public class MessageFactory {
     public final static int DATA_TYPE_PDO_MAPPING = 21;
     public final static int DATA_TYPE_SDO_PARAMETER = 22;
 
+    /**
+     * Instantiates a new MessageFactory.
+     */
     public MessageFactory() {
         ParamManager paramManager = new ParamManager();
         this.parameterMap = paramManager.getParamMap();
     }
 
+    /**
+     * Create a new read request for a specific parameter.
+     *
+     * @param paramID
+     * @return
+     */
     public byte[] makeReadRequest(String paramID) {
         byte[] index = parameterMap.get(paramID).getIndex();
         byte[] messageBody = new byte[7];
@@ -80,6 +86,13 @@ public class MessageFactory {
         return buildMessage(CCD_READ_REQUEST, messageBody);
     }
 
+    /**
+     * Create a new write request for a specific parameter and value.
+     *
+     * @param paramID
+     * @param data
+     * @return
+     */
     public byte[] makeWriteRequest(String paramID, Object data) {
         String accessType = parameterMap.get(paramID).getAccessType();
 
@@ -97,7 +110,7 @@ public class MessageFactory {
 
             ArrayUtils.reverse(dataArray);
             int bodyIt = 3;
-            for(int i=0; i<dataArray.length; i++){
+            for (int i = 0; i < dataArray.length; i++) {
                 messageBody[bodyIt] = dataArray[i];
                 bodyIt++;
             }
@@ -148,19 +161,34 @@ public class MessageFactory {
         return dataByte;
     }
 
+    /**
+     * Check if this dataType is signed. Returns true if signed.
+     *
+     * @param dataType
+     * @return
+     */
     private static boolean isSignedInt(int dataType) {
         return dataType == DATA_TYPE_8BIT_SIGNED_INT
                 || dataType == DATA_TYPE_16BIT_SIGNED_INT
                 || dataType == DATA_TYPE_32BIT_SIGNED_INT;
     }
 
+    /**
+     * Check if this dataType is unsigned. Returns true if unsigned.
+     *
+     * @param dataType
+     * @return
+     */
     private static boolean isUnsignedInt(int dataType) {
         return dataType == DATA_TYPE_8BIT_UNSIGNED_INT
                 || dataType == DATA_TYPE_16BIT_UNSIGNED_INT
                 || dataType == DATA_TYPE_32BIT_UNSIGNED_INT;
     }
 
-    /*
+
+    /**
+     * Add the requestCode to a canMessage.
+     * <p/>
      * Message Format:
      * Byte 0: 0xAA Startsequence
      * Byte 1: 0xAA Startsequence
@@ -168,6 +196,10 @@ public class MessageFactory {
      * Byte 3..9: CAN 8 Byte CAN Message
      * Byte 10: Check LB Low Byte Checksum
      * Byte 11: Check HB High Byte Checksum
+     *
+     * @param requestCode
+     * @param canMessage
+     * @return
      */
     public byte[] buildMessage(byte requestCode, byte[] canMessage) {
         byte[] message = new byte[12];
@@ -204,7 +236,11 @@ public class MessageFactory {
         }
     }
 
-
+    /**
+     * Print a unsigned byte array. Can be used for debugging.
+     *
+     * @param message
+     */
     public void printUnsignedByteArray(byte[] message) {
         String hexMessage = "";
         for (int i = 0; i < message.length; i++) {

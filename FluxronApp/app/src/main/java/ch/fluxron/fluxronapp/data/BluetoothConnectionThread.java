@@ -24,9 +24,14 @@ public class BluetoothConnectionThread extends Thread {
     private final BluetoothSocket socket;
     private final AtomicBoolean keepRunning;
     private RequestResponseConnection requestResponseConnection;
-
     private final static int MESSAGE_LENGTH = 12;
 
+    /**
+     * Instantiates a new BluetoothConnectionThread.
+     *
+     * @param btsocket
+     * @param provider
+     */
     public BluetoothConnectionThread(BluetoothSocket btsocket, IEventBusProvider provider) {
         remoteDevice = btsocket.getRemoteDevice();
         InputStream tmpIn = null;
@@ -47,6 +52,9 @@ public class BluetoothConnectionThread extends Thread {
         mmOutStream = tmpOut;
     }
 
+    /**
+     * Starts the BluetoothConnectionThread.
+     */
     public void run() {
         byte[] buffer = new byte[128];
         int nofBytes;
@@ -94,6 +102,13 @@ public class BluetoothConnectionThread extends Thread {
         }
     }
 
+    /**
+     * Write a message into the output stream.
+     *
+     * @param message
+     * @param requestResponseConnection
+     * @throws IOException
+     */
     public void write(byte[] message, RequestResponseConnection requestResponseConnection) throws IOException {
         //Log.d("FLUXRON", "Sending message");
         mmOutStream.write(message);
