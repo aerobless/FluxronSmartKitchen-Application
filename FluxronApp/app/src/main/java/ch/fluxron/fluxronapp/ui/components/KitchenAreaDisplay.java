@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -114,6 +115,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
             // Remove after the render loop to avoid inconsistencies in the render order
             for (DeviceView view : toDelete) {
+                view.cleanUp();
                 views.remove(view);
             }
         }
@@ -267,8 +269,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     public void setDevicePositions(KitchenArea area){
         this.area = area;
         for(DevicePosition d : area.getDevicePositionList()){
-            DeviceView deviceRenderer = createDeviceView(d);
-            views.add(deviceRenderer);
+            DeviceView found = findDeviceView(d);
+            if (found==null) {
+                DeviceView deviceRenderer = createDeviceView(d);
+                views.add(deviceRenderer);
+            }
         }
         needsRepaint(true);
     }
@@ -345,21 +350,14 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
      * @param devicePosition Position of a device
      */
     public void setDevicePosition(DevicePosition devicePosition, int status) {
-        Log.d("deviceadd", "setPos " + devicePosition.getDeviceId());
-
         // Find the view with the changed position
-        DevicePosition found = null;
-        for(DeviceView deviceView : views) {
-            if(deviceView.getPosition().getDeviceId().equals(devicePosition.getDeviceId())) {
-                deviceView.setDeviceType(devicePosition.getCategory());
-                found = deviceView.getPosition();
-                break;
-            }
-        }
+        DeviceView foundView = findDeviceView(devicePosition);
 
         // If we found the view, update it's position,
         // otherwise we'll need to create a new one
-        if (found!=null) {
+        if (foundView!=null) {
+            foundView.setDeviceType(devicePosition.getCategory());
+            DevicePosition found = foundView.getPosition();
             found.setPosition(devicePosition.getPosition());
             found.setCategory(devicePosition.getCategory());
             needsRepaint(false);
@@ -370,6 +368,18 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             views.add(deviceRenderer);
             needsRepaint(true);
         }
+    }
+
+    @Nullable
+    private DeviceView findDeviceView(DevicePosition other) {
+        DeviceView found = null;
+        for(DeviceView deviceView : views) {
+            if(deviceView.getPosition().getDeviceId().equals(other.getDeviceId())) {
+                found = deviceView;
+                break;
+            }
+        }
+        return found;
     }
 
     public void removePosition(String deviceId) {
@@ -389,5 +399,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         PointF c =cam.getAsUntransformedCoordinates(getWidth()/2, getHeight()/2);
 
         return new Point((int)c.x, (int)c.y);
+    }
+
+    public void cleanUp(){
+        for(DeviceView deviceView : views) {
+            deviceView.cleanUp();
+        }
     }
 }
