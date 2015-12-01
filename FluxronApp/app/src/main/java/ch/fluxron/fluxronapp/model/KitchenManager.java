@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,7 +182,7 @@ public class KitchenManager {
         GetFileStreamFromAttachmentCommand cmd = new GetFileStreamFromAttachmentCommand(msg.getKitchenId(), msg.getImageName(), new ITypedCallback<IStreamProvider>() {
             @Override
             public void call(IStreamProvider streamProvider) {
-                Bitmap bmp = getFittingBitmap(streamProvider, msg.getImageSize());
+                Bitmap bmp = getFittingBitmap(streamProvider, msg.getImageSize(), msg.getMode());
                 kitchenImageCache.put(cacheId, bmp);
                 fireImageLoaded(bmp, msg);
             }
@@ -253,9 +254,11 @@ public class KitchenManager {
      * loaded in its full size.
      * @param stream Stream to load the bitmap from
      * @param imageSize Size to fit the bitmap in (or null if no fitting is requested)
+     * @param mode Describes if the image should be shrunk to fit into the bounds or if it should be
+     *             cropped to match the dimensions
      * @return Fitting bitmap
      */
-    private Bitmap getFittingBitmap(IStreamProvider stream, Point imageSize) {
+    private Bitmap getFittingBitmap(IStreamProvider stream, Point imageSize, LoadImageFromKitchenCommand.ImageFittingMode mode) {
         if (imageSize == null) {
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -268,45 +271,122 @@ public class KitchenManager {
             options.inPreferredConfig = Bitmap.Config.RGB_565;
             BitmapFactory.decodeStream(stream.openStream(), null, options);
 
-            // Calculate the sample size for the requested size
-            options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, imageSize.x, imageSize.y);
-
-            // Decode with the new sample size
-            options.inJustDecodeBounds = false;
-
-            Bitmap loadedImage = BitmapFactory.decodeStream(stream.openStream(), new Rect(0, 0, 0, 0), options);
-
-            // Calculate the bounds of the rescaled (proportional to ascpect ratio) image
-            float aspect = (float)loadedImage.getWidth() / (float)loadedImage.getHeight();
-            float newHeight = 1;
-            float newWidth = 1;
-            if (imageSize.x > 0 && imageSize.y > 0) {
-                if (imageSize.x < imageSize.y) {
-                    newWidth = imageSize.x;
-                    newHeight = newWidth / aspect;
-                }
-                else {
-                    newHeight = imageSize.y;
-                    newWidth = newHeight * aspect;
-                }
+            Bitmap result;
+            if (mode == LoadImageFromKitchenCommand.ImageFittingMode.ShrinkToFit) {
+                result = shrinkImageToFit(stream.openStream(), options, imageSize.x, imageSize.y);
+            } else if (mode == LoadImageFromKitchenCommand.ImageFittingMode.ScaleAndCropToFit) {
+                result = scaleAndCropToFit(stream.openStream(), options, imageSize.x, imageSize.y);
             }
-            else if (imageSize.x > 0) {
-                newWidth = imageSize.x;
-                newHeight = newWidth / aspect;
+            else {
+                result  = Bitmap.createBitmap(10,10, Bitmap.Config.RGB_565);
             }
-            else if (imageSize.y > 0)  {
-                newHeight = imageSize.y;
-                newWidth = newHeight * aspect;
-            }
-
-            // Rescale to the newly calculated fitting bounds
-            Bitmap result = Bitmap.createScaledBitmap(loadedImage, (int)newWidth, (int)newHeight, false);
-
-            // Free the space used by the loadedImage
-            loadedImage.recycle();
 
             return result;
         }
+    }
+
+    /**
+     * Scales an image along its smaller side and crops off the remaining pixels
+     * @param inputStream Stream to load the image from
+     * @param options Options from the original stream
+     * @param requestedWidth Width
+     * @param requestedHeight Height
+     * @return Cropped off bitmap
+     */
+    private Bitmap scaleAndCropToFit(InputStream inputStream, BitmapFactory.Options options, int requestedWidth, int requestedHeight) {
+        float aspect = (float)options.outWidth / (float)options.outHeight;
+
+        // Calculate the final size of the scaled image before cropping
+        float newWidth;
+        float newHeight;
+
+        if (options.outWidth > options.outHeight) {
+            // Landscape picture, cut left and right,
+            // scale by height
+            newHeight = requestedHeight;
+            newWidth = newHeight * aspect;
+        } else {
+            // Vertical picture, cut top and bottom,
+            // scale by width
+            newWidth = requestedWidth;
+            newHeight = newWidth / aspect;
+        }
+
+        // Load with the rescaled version with the smaller dimension matching
+        Bitmap loadedImage = loadWithOptimalSampleSize(inputStream, options, (int)newWidth, (int)newHeight);
+
+        // Calculate the x/y of the crop operation
+        int x = (int)(newWidth / 2 - requestedWidth / 2);
+        int y = (int)(newHeight / 2 - requestedHeight / 2);
+
+        Bitmap result = Bitmap.createBitmap(loadedImage, x, y, requestedWidth, requestedHeight);
+
+        // Free memory as we don't need the original image anymore
+        loadedImage.recycle();
+
+        return result;
+    }
+
+    /**
+     * Shrinks the bitmap from the InputStream to fit completely inside the given width and height
+     * @param inputStream Stream to load the image from
+     * @param options Options from the original stream
+     * @param requestedWidth Width of the resulting image
+     * @param requestedHeight Height of the resulting image
+     * @return Image fitting inside the given width and height
+     */
+    private Bitmap shrinkImageToFit(InputStream inputStream, BitmapFactory.Options options, int requestedWidth, int requestedHeight) {
+        // Load the bitmap with an optimal sample size
+        Bitmap loadedImage = loadWithOptimalSampleSize(inputStream, options, requestedWidth, requestedHeight);
+
+        // Calculate the bounds of the rescaled (proportional to aspect ratio) image
+        float aspect = (float)loadedImage.getWidth() / (float)loadedImage.getHeight();
+        float newHeight = 1;
+        float newWidth = 1;
+        if (requestedWidth > 0 && requestedHeight > 0) {
+            if (requestedWidth < requestedHeight) {
+                newWidth = requestedWidth;
+                newHeight = newWidth / aspect;
+            }
+            else {
+                newHeight = requestedHeight;
+                newWidth = newHeight * aspect;
+            }
+        }
+        else if (requestedWidth > 0) {
+            newWidth = requestedWidth;
+            newHeight = newWidth / aspect;
+        }
+        else if (requestedHeight > 0)  {
+            newHeight = requestedHeight;
+            newWidth = newHeight * aspect;
+        }
+
+        // Rescale to the newly calculated fitting bounds
+        Bitmap result = Bitmap.createScaledBitmap(loadedImage, (int) newWidth, (int) newHeight, false);
+
+        // Free the space used by the loadedImage
+        loadedImage.recycle();
+
+        return result;
+    }
+
+    /**
+     * Loads an image with an optimal sample size to reduce memory usage
+     * @param stream Stream to load the bitmap from
+     * @param options Options of the original stream containing outWidth and outHeight
+     * @param requestedWidth Width constraint
+     * @param requestedHeight Height constraint
+     * @return Bitmap loaded with an optimal sample size
+     */
+    private Bitmap loadWithOptimalSampleSize(InputStream stream, BitmapFactory.Options options, int requestedWidth, int requestedHeight) {
+        // Calculate the sample size for the requested size
+        options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, requestedWidth, requestedHeight);
+
+        // Decode with the new sample size
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeStream(stream, new Rect(0, 0, 0, 0), options);
     }
 
     /**
