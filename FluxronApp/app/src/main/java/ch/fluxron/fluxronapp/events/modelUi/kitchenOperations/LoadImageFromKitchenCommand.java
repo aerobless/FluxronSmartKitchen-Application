@@ -5,12 +5,18 @@ import android.graphics.Point;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 
 /**
- * Reqests the load of an image related to a kitchen
+ * Requests the load of an image related to a kitchen
  */
 public class LoadImageFromKitchenCommand extends RequestResponseConnection{
+    public enum ImageFittingMode {
+        ScaleAndCropToFit,
+        ShrinkToFit
+    }
+
     private String kitchenId;
     private String imageName;
     private Point imageSize;
+    private ImageFittingMode mode = ImageFittingMode.ShrinkToFit;
 
     /**
      * Sets the id and the image name to load
@@ -51,5 +57,21 @@ public class LoadImageFromKitchenCommand extends RequestResponseConnection{
      */
     public void setImageSize(Point imageSize) {
         this.imageSize = imageSize;
+    }
+
+    /**
+     * Gets the image fitting mode for this command
+     * @return Image fitting mode
+     */
+    public ImageFittingMode getMode() {
+        return mode;
+    }
+
+    /**
+     * Sets the image fitting mode for this command
+     * @param mode Image fitting mode
+     */
+    public void setMode(ImageFittingMode mode) {
+        this.mode = mode;
     }
 }

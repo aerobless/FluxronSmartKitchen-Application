@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -132,9 +133,15 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         View noImg = findViewById(R.id.noImageInformation);
 
         Bitmap takenImage = BitmapFactory.decodeFile(tempFileName.getPath());
+        float defaultSize = 250;
+        float aspect = (float)takenImage.getWidth() / (float)takenImage.getHeight();
+        float scaledWidth = aspect > 1 ? defaultSize : defaultSize * aspect ;
+        float scaledHeight = aspect < 1 ? defaultSize : defaultSize / aspect ;
 
-        takenImage = Bitmap.createScaledBitmap(takenImage, 250, 250, false);
-        img.setImageBitmap(takenImage);
+        Bitmap scaledImage = Bitmap.createScaledBitmap(takenImage, (int)scaledWidth, (int)scaledHeight, false);
+        img.setImageBitmap(scaledImage);
         noImg.setVisibility(View.GONE);
+
+        takenImage.recycle();
     }
 }
