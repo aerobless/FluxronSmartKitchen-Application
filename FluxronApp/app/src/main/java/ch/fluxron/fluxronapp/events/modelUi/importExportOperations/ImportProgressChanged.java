@@ -11,8 +11,8 @@ public class ImportProgressChanged extends RequestResponseConnection{
     private String objectId;
 
     /**
-     * Progress changed
-     * @param total Total step count
+     * Notifies a progress change
+     * @param total Total number of steps
      * @param current Current step
      */
     public ImportProgressChanged(int total, int current) {
@@ -21,8 +21,8 @@ public class ImportProgressChanged extends RequestResponseConnection{
     }
 
     /**
-     * Returns the total step count
-     * @return Total step count
+     * Returns the total number of steps
+     * @return Total number of steps
      */
     public int getTotal() {
         return total;
@@ -30,15 +30,15 @@ public class ImportProgressChanged extends RequestResponseConnection{
 
     /**
      * Gets the current step index
-     * @return Step index
+     * @return Current step index
      */
     public int getCurrent() {
         return current;
     }
 
     /**
-     * Returns the id of the object
-     * @return Id of the object
+     * Returns the object id
+     * @return Object id
      */
     public String getObjectId() {
         return objectId;

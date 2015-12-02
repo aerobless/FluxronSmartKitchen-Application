@@ -47,6 +47,12 @@ public class LocalDatabase {
     private DocumentFunctions documents;
     private ContentResolver resolver;
 
+    /**
+     * Initializes a new database access component based on a couchbase lite database
+     * @param provider Provider for the DAL event bus
+     * @param database Couchbase Lite database instance
+     * @param resolver Resolver for content queries
+     */
     public LocalDatabase(IEventBusProvider provider, Database database, ContentResolver resolver) {
         this.provider = provider;
         this.database = database;

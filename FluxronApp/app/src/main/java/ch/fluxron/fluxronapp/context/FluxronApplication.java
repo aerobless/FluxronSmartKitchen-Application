@@ -42,6 +42,9 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
     private KitchenManager kitchenManger;
     private ImportExportManager importExport;
 
+    /**
+     * Called when the application is created
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -51,6 +54,9 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
         cleanUpTempDirectories();
     }
 
+    /**
+     * Cleans up all temporary folders at the start of the application
+     */
     private void cleanUpTempDirectories() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -76,6 +82,9 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
         });
     }
 
+    /**
+     * Sets up both event buses used in this application
+     */
     private void setUpEventBuses(){
         uiToModelEventBus = new EventBus();
         uiToModelProvider = new ch.fluxron.fluxronapp.ui.util.IEventBusProvider() {
@@ -106,18 +115,31 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
         };
     }
 
+    /**
+     * Initializes all layers except the UI layer which is handled by android itself
+     */
     private void setUpLayers() {
         // Business Layer
-        responder = new ObjectCreationManager(modelProvier);
-        deviceManager = new DeviceManager(modelProvier);
-        userManager = new UserManager(modelProvier);
-        kitchenManger = new KitchenManager(modelProvier);
-        importExport = new ImportExportManager(modelProvier);
+        setupBL();
 
         // Data Access Layer
         setupDal();
     }
 
+    /**
+     * Sets up all business layer components
+     */
+    private void setupBL() {
+        responder = new ObjectResponder(modelProvier);
+        deviceManager = new DeviceManager(modelProvier);
+        userManager = new UserManager(modelProvier);
+        kitchenManger = new KitchenManager(modelProvier);
+        importExport = new ImportExportManager(modelProvier);
+    }
+
+    /**
+     * Sets up all data layer components
+     */
     private void setupDal() {
         try {
             couchbaseManager = new Manager(new AndroidContext(this.getApplicationContext()), Manager.DEFAULT_OPTIONS);
@@ -125,17 +147,23 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
             localDatabase = new LocalDatabase(dalToModelProvider, couchbaseDB, this.getContentResolver());
             bluetooth = new Bluetooth(dalToModelProvider, this.getApplicationContext());
             fakeBluetooth = new FakeBluetooth(dalToModelProvider);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CouchbaseLiteException e) {
+        } catch (IOException | CouchbaseLiteException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Returns the event bus that should be used between DAL and BL
+     * @return Event Bus
+     */
     public EventBus getDalEventBus() {
         return dalToModelEventBus;
     }
 
+    /**
+     * Returns the event bus that should be used between UI and BL
+     * @return Event Bus
+     */
     public EventBus getUiEventBus() {
         return uiToModelEventBus;
     }

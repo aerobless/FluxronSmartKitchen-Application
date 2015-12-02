@@ -12,10 +12,10 @@ public class DevicePositionChanged extends RequestResponseConnection {
     private DevicePosition position;
 
     /**
-     * Position of the device changed
+     * Notifies a listener about the change of position for a device
      * @param kitchenId Id of the kitchen
-     * @param areaId Id of the area relative to the kitchen
-     * @param position New position
+     * @param areaId Area id
+     * @param position New position for the device
      */
     public DevicePositionChanged(String kitchenId, int areaId, DevicePosition position) {
         this.kitchenId = kitchenId;
@@ -24,16 +24,16 @@ public class DevicePositionChanged extends RequestResponseConnection {
     }
 
     /**
-     * Gets the kitchen id
-     * @return Kitchen id
+     * Gets the id of the kitchen
+     * @return Id of the kitchen
      */
     public String getKitchenId() {
         return kitchenId;
     }
 
     /**
-     * Returns the area id
-     * @return Id of the area
+     * Gets the id of the area relative to the kitchen
+     * @return Area id relative to the kitchen
      */
     public int getAreaId() {
         return areaId;
@@ -41,7 +41,7 @@ public class DevicePositionChanged extends RequestResponseConnection {
 
     /**
      * Gets the new position of the device
-     * @return New Position
+     * @return Position of the device
      */
     public DevicePosition getPosition() {
         return position;

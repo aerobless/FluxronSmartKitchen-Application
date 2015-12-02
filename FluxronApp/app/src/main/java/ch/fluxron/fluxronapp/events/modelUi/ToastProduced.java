@@ -11,7 +11,7 @@ public class ToastProduced extends RequestResponseConnection {
     /**
      * Instantiates a new ToastProduced event.
      *
-     * @param message the message
+     * @param message Message to display
      */
     public ToastProduced(String message) {
         this.message = message;
@@ -20,7 +20,7 @@ public class ToastProduced extends RequestResponseConnection {
     /**
      * Returns the message text
      *
-     * @return Message text
+     * @return Message to display
      */
     public String getMessage() {
         return message;
@@ -29,7 +29,7 @@ public class ToastProduced extends RequestResponseConnection {
     /**
      * Sets the message text
      *
-     * @param message Message text
+     * @param message Message to display
      */
     public void setMessage(String message) {
         this.message = message;

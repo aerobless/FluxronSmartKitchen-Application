@@ -5,7 +5,7 @@ import android.net.Uri;
 import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 
 /**
- * Reqeuests to Attach an image file to a kitchen
+ * Requests to Attach an image file to a kitchen
  */
 public class AttachImageToKitchenCommand extends RequestResponseConnection{
     private String id;

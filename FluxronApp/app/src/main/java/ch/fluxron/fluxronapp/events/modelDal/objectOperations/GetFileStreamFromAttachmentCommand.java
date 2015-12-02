@@ -1,7 +1,5 @@
 package ch.fluxron.fluxronapp.events.modelDal.objectOperations;
 
-import java.io.InputStream;
-
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.base.SynchronousReplyEvent;
 

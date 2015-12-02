@@ -6,6 +6,10 @@ package ch.fluxron.fluxronapp.events.base;
 public abstract class SynchronousReplyEvent<T> {
     private ITypedCallback<T> callback;
 
+    /**
+     * Creates a new synchronous reply
+     * @param callback Callback function that should be called on command completion
+     */
     public SynchronousReplyEvent(ITypedCallback<T> callback){
         this.callback = callback;
     }

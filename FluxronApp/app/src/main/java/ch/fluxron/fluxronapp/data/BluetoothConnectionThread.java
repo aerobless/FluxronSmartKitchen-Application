@@ -49,6 +49,7 @@ public class BluetoothConnectionThread extends Thread {
         } catch (IOException e) {
             Log.d("Fluxron", "IOException while trying to get Input & Outputstream in BTConnectionThread");
         }
+        // TODO: Fix this
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;

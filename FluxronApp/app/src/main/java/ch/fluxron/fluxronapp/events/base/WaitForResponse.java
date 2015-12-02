@@ -15,6 +15,14 @@ public class WaitForResponse<T extends RequestResponseConnection> {
     private T responseMessage;
     private RequestResponseConnection originalMessage;
 
+    /**
+     * Posts the specified message and halts the current thread until a message of the specified
+     * type is received. WARNING: This only works with events that are processed in onEventAsynch!
+     * @param bus Event bus to operate on
+     * @param msg Message that should be sent out
+     * @param expectedResponse Expected response class, i.e. ResponseOK
+     * @return Response message of type T
+     */
     public T postAndWait(EventBus bus, RequestResponseConnection msg, Class<T> expectedResponse) {
         this.bus = bus;
         this.bus.register(this);
@@ -32,6 +40,10 @@ public class WaitForResponse<T extends RequestResponseConnection> {
         return responseMessage;
     }
 
+    /**
+     * Called when a message that operates based on RequestResponseConnection is received
+     * @param msg Message
+     */
     @SuppressWarnings("unchecked")
     public void onEventAsync(RequestResponseConnection msg) {
         if (msg != originalMessage && waitConnection.equals(msg.getConnectionId()) && expectedResponse.isInstance(msg)) {
@@ -40,6 +52,9 @@ public class WaitForResponse<T extends RequestResponseConnection> {
         }
     }
 
+    /**
+     * Unlocks the thread and clears up all references to avoid memory leaks
+     */
     private void unlockAndClear() {
         this.bus.unregister(this);
         this.originalMessage = null;
