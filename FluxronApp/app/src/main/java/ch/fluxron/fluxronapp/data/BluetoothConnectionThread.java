@@ -47,6 +47,7 @@ public class BluetoothConnectionThread extends Thread {
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
         }
+        // TODO: Fix this
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;

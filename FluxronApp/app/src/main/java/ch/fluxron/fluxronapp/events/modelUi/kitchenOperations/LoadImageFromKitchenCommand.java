@@ -8,8 +8,20 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
  * Requests the load of an image related to a kitchen
  */
 public class LoadImageFromKitchenCommand extends RequestResponseConnection{
+    /**
+     * Describes the method to fit the image into the requested bounds
+     */
     public enum ImageFittingMode {
+        /**
+         * The smaller side of the image is rescaled to match the respective image bounds. Overflowing
+         * pixels are cropped.
+         */
         ScaleAndCropToFit,
+
+        /**
+         * Shrinks the longer side of the image to fit completely into the bounds. Aspect ratio is
+         * preserved.
+         */
         ShrinkToFit
     }
 
