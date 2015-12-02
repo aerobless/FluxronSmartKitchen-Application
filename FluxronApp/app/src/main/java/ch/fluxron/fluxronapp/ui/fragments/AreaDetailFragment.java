@@ -208,4 +208,12 @@ public class AreaDetailFragment extends Fragment {
     public void repositionDevice(DevicePosition position) {
         display.setDevicePosition(position);
     }
+
+    /**
+     * Gets the relative id of the displayed area
+     * @return Area relative id
+     */
+    public int getAreaId() {
+        return areaId;
+    }
 }
