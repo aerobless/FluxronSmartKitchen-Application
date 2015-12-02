@@ -1,15 +1,20 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ActionMenuView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashSet;
@@ -111,6 +116,36 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         changeChildDisplayState();
 
         requestKitchenLoad();
+
+        changeDeviceListLayout();
+    }
+
+    /**
+     * Changes the device list layout according to the screen orientation
+     */
+    private void changeDeviceListLayout() {
+        int orientation = getResources().getConfiguration().orientation;
+        LinearLayout deviceListContainer = (LinearLayout) findViewById(R.id.deviceListLayoutContainer);
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            deviceListContainer.setOrientation(LinearLayout.VERTICAL);
+
+            // Child controls should have the same width as the parent
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            params.weight = 1;
+            findViewById(R.id.kitchenArea).setLayoutParams(params);
+            findViewById(R.id.deviceListLayout).setLayoutParams(params);
+        } else {
+            deviceListContainer.setOrientation(LinearLayout.HORIZONTAL);
+
+            // Child controls should have the same height as the parent
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+            params.weight = 1;
+            findViewById(R.id.kitchenArea).setLayoutParams(params);
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+            params2.weight = 1.6f;
+            findViewById(R.id.deviceListLayout).setLayoutParams(params2);
+        }
     }
 
     private void changeChildDisplayState() {
