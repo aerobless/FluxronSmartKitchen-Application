@@ -15,12 +15,16 @@ import ch.fluxron.fluxronapp.objectBase.ParameterValue;
 public class ParamValidator {
     private Map<String, DeviceParameter> paramMap;
 
+    /**
+     * Instantiates a new ParamValidator.
+     */
     public ParamValidator() {
         paramMap = new ParamManager().getParamMap();
     }
 
     /**
      * Check if the value is valid.
+     *
      * @param param
      * @return
      */
@@ -32,6 +36,7 @@ public class ParamValidator {
     /**
      * Converts a string value to it's corresponding datatype.
      * Returns null if the value isn't valid.
+     *
      * @param param
      * @return
      */
@@ -46,24 +51,24 @@ public class ParamValidator {
         if (dataType == MessageFactory.DATA_TYPE_BOOLEAN) {
             result = Boolean.parseBoolean(param.getValue());
         } else if (isSignedInt(dataType)) {
-            try{
+            try {
                 result = Integer.parseInt(param.getValue());
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return null;
             }
         } else if (isUnsignedInt(dataType)) {
-            try{
+            try {
                 result = Integer.parseInt(param.getValue());
-                if((Integer)result < 0){ //Shouldn't be negative since it's unsigned
+                if ((Integer) result < 0) { //Shouldn't be negative since it's unsigned
                     throw new NumberFormatException();
                 }
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return null;
             }
         } else if (dataType == MessageFactory.DATA_TYPE_FLOAT) {
-            try{
+            try {
                 result = Float.parseFloat(param.getValue());
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return null;
             }
         } else if (dataType == MessageFactory.DATA_TYPE_VISIBLE_STRING) {
@@ -75,12 +80,24 @@ public class ParamValidator {
         return result;
     }
 
+    /**
+     * Check if dataType is signed. True if signed.
+     *
+     * @param dataType
+     * @return
+     */
     private static boolean isSignedInt(int dataType) {
         return dataType == MessageFactory.DATA_TYPE_8BIT_SIGNED_INT
                 || dataType == MessageFactory.DATA_TYPE_16BIT_SIGNED_INT
                 || dataType == MessageFactory.DATA_TYPE_32BIT_SIGNED_INT;
     }
 
+    /**
+     * Check if dataType is unsigned. True if unsigned.
+     *
+     * @param dataType
+     * @return
+     */
     private static boolean isUnsignedInt(int dataType) {
         return dataType == MessageFactory.DATA_TYPE_8BIT_UNSIGNED_INT
                 || dataType == MessageFactory.DATA_TYPE_16BIT_UNSIGNED_INT

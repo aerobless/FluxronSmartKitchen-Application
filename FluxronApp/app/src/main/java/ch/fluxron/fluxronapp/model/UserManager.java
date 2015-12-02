@@ -32,6 +32,11 @@ public class UserManager {
     private IEventBusProvider provider;
     private static final String USER_DATA = "user_data";
 
+    /**
+     * Instantiates a new UserManager.
+     *
+     * @param provider
+     */
     public UserManager(IEventBusProvider provider) {
         users = new HashMap<>();
         users.put("demo", new User("demo", "demo", AccessLevel.DEMO_USER));
