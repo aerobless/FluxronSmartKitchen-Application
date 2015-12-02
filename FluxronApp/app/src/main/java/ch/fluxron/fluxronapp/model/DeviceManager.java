@@ -37,6 +37,11 @@ public class DeviceManager {
 
     private static final String PARAM_PRODUCT_CODE = "1018sub2";
 
+    /**
+     * Instantiates a new DeviceManager.
+     *
+     * @param provider
+     */
     public DeviceManager(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);

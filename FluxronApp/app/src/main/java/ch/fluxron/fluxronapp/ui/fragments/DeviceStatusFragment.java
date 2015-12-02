@@ -18,7 +18,7 @@ import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 /**
- * Displays the status of a device
+ * Fragment displaying the device status and temperature information.
  */
 public class DeviceStatusFragment extends DeviceBaseFragment {
     private List<TemperatureBar> temperatureBars;
@@ -27,8 +27,9 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
 
     /**
      * Creates the status view
-     * @param inflater Inflater
-     * @param container Container
+     *
+     * @param inflater           Inflater
+     * @param container          Container
      * @param savedInstanceState State
      * @return View
      */
@@ -60,6 +61,7 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
 
     /**
      * Initializes the controls
+     *
      * @param deviceView Device view
      */
     private void initControls(View deviceView) {
@@ -78,14 +80,15 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
 
     /**
      * Device was changed
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
-            for(TemperatureBar p:temperatureBars){
+            for (TemperatureBar p : temperatureBars) {
                 p.handleDeviceChanged(inputMsg);
             }
-            for(ParameterView p:parameters){
+            for (ParameterView p : parameters) {
                 p.handleDeviceChanged(inputMsg);
             }
         }
@@ -93,11 +96,12 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
 
     /**
      * Device change failed
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
-            for(ParameterView p:parameters){
+            for (ParameterView p : parameters) {
                 p.handleDeviceNotChanged(inputMsg);
             }
         }

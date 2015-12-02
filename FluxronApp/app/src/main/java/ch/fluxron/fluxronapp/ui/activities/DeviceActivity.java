@@ -20,7 +20,8 @@ import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
 /**
- * Displays the status and history views of a device
+ * Activity to display information about a specific device. Contains fragments for Usage, Error History,
+ * Config etc.
  */
 public class DeviceActivity extends FluxronBaseActivity {
     private IEventBusProvider provider;
@@ -32,6 +33,7 @@ public class DeviceActivity extends FluxronBaseActivity {
 
     /**
      * Creates this activity
+     *
      * @param savedInstanceState State
      */
     @Override
@@ -56,6 +58,16 @@ public class DeviceActivity extends FluxronBaseActivity {
     }
 
     /**
+     * Closes the activity and navigates back to the next lower activity on the stack.
+     *
+     * @param button
+     */
+    public void onBackButtonClicked(View button) {
+        provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
+        finish();
+    }
+
+    /**
      * Sets the status of the device to OK whenever it receives a DeviceChange message.
      *
      * @param inputMsg Message
@@ -65,9 +77,9 @@ public class DeviceActivity extends FluxronBaseActivity {
             TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
             statusOrb.setText(R.string.ok_check);
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-            deviceStatusMessage.setText(getResources().getString(R.string.device_status_connected)+" "+dateFormat.format(inputMsg.getDevice().getLastContact()));
+            deviceStatusMessage.setText(getResources().getString(R.string.device_status_connected) + " " + dateFormat.format(inputMsg.getDevice().getLastContact()));
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
-            if(deviceClass.equals(Device.UNKNOWN_DEVICE_CLASS) && !inputMsg.getDevice().getDeviceClass().equals(Device.UNKNOWN_DEVICE_CLASS)){
+            if (deviceClass.equals(Device.UNKNOWN_DEVICE_CLASS) && !inputMsg.getDevice().getDeviceClass().equals(Device.UNKNOWN_DEVICE_CLASS)) {
                 deviceClass = inputMsg.getDevice().getDeviceClass();
                 progressDeviceClass.setVisibility(View.GONE);
                 setupViewPagerTabs();
@@ -76,7 +88,7 @@ public class DeviceActivity extends FluxronBaseActivity {
     }
 
     /**
-     * Sets up the tab control
+     * Setup for the different fragment tabs: Usage, History etc.
      */
     private void setupViewPagerTabs() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);

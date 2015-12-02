@@ -23,6 +23,7 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     /**
      * New holder
+     *
      * @param itemView Item view
      * @param listener Listener
      * @param provider Provider for the bus
@@ -43,6 +44,7 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     /**
      * Binds to a new device
+     *
      * @param d Device
      */
     public void bind(final Device d) {
@@ -58,6 +60,7 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     /**
      * Click occurred, notify listeners
+     *
      * @param v View
      */
     @Override

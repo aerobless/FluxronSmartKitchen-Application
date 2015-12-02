@@ -20,6 +20,7 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
 
     /**
      * Create this activity
+     *
      * @param savedInstanceState State
      */
     @Override
@@ -32,8 +33,10 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
     }
 
     /**
-     * Save is requested
-     * @param button Button
+     * Validates username & password to make sure it isn't empty. Sends the information down to
+     * the business layer for authentication.
+     *
+     * @param button
      */
     public void onSaveButtonClicked(View button) {
         String user = username.getText().toString();
@@ -50,11 +53,12 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
     }
 
     /**
-     * Authentication result arrived
+     * Listens to UserAuthenticated events and displays the corresponding toast.
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(UserAuthenticated inputMsg) {
-        if(inputMsg.isAuthenticated()){
+        if (inputMsg.isAuthenticated()) {
             showToast("Successfully authenticated!");
         } else {
             showToast("Wrong username or password!");
@@ -63,6 +67,7 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
 
     /**
      * Settings data was loaded
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(AuthenticationLoaded inputMsg) {

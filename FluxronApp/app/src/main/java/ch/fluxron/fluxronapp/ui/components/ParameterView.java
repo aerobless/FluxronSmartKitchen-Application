@@ -1,9 +1,7 @@
 package ch.fluxron.fluxronapp.ui.components;
 
-
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -32,8 +30,9 @@ public class ParameterView extends RelativeLayout {
 
     /**
      * Creates a new parameter view
+     *
      * @param context Context
-     * @param attrs Attribute set
+     * @param attrs   Attribute set
      */
     public ParameterView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -79,6 +78,11 @@ public class ParameterView extends RelativeLayout {
         return parameter;
     }
 
+    /**
+     * Sets the value of this control.
+     *
+     * @param value
+     */
     public void setValue(String value) {
         String formattedValue = value;
 
@@ -100,6 +104,7 @@ public class ParameterView extends RelativeLayout {
 
     /**
      * Device has changed, read the parameter value and display it
+     *
      * @param msg Message
      * @return Text of the new value or null if it was not found
      */
@@ -115,10 +120,11 @@ public class ParameterView extends RelativeLayout {
 
     /**
      * Change failed, display info to the user
+     *
      * @param msg Message
      */
-    public void handleDeviceNotChanged(DeviceNotChanged msg){
-        if(getParameter().contains(msg.getField())){
+    public void handleDeviceNotChanged(DeviceNotChanged msg) {
+        if (getParameter().contains(msg.getField())) {
             paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));
             paramValue.setEnabled(false);
             paramValue.setFocusable(false);

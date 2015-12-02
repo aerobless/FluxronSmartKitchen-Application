@@ -9,7 +9,8 @@ public class ParameterValue {
 
     /**
      * Creates a new parameter
-     * @param name Name of the parameter
+     *
+     * @param name  Name of the parameter
      * @param value Value of the parameter
      */
     public ParameterValue(String name, String value) {
@@ -19,6 +20,7 @@ public class ParameterValue {
 
     /**
      * Gets the name of the parameter
+     *
      * @return Name of the parameter
      */
     public String getName() {
@@ -27,6 +29,7 @@ public class ParameterValue {
 
     /**
      * Sets the name of the parameter
+     *
      * @param name Name of the parameter
      */
     public void setName(String name) {
@@ -35,6 +38,7 @@ public class ParameterValue {
 
     /**
      * Gets the value of the parameter
+     *
      * @return Value of the parameter
      */
     public String getValue() {
@@ -43,6 +47,7 @@ public class ParameterValue {
 
     /**
      * Sets the value of the parameter
+     *
      * @param value Value of the parameter
      */
     public void setValue(String value) {

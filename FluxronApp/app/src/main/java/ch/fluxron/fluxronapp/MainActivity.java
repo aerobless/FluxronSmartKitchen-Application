@@ -140,7 +140,8 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
     }
 
     /**
-     * Navigates to kitchen creation
+     * Request synchronous authentication of the user. If successful switches to the kitchen creation activity.
+     *
      * @param btn Button
      */
     public void navigateCreate(View btn) {
@@ -182,8 +183,9 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
     }
 
     /**
-     * Kitchen was clicked, open it
-     * @param k Kitchen
+     * Request synchronous authentication of the user. If successful switches to the kitchen activity.
+     *
+     * @param k kitchen
      */
     @Override
     public void kitchenClicked(final Kitchen k) {

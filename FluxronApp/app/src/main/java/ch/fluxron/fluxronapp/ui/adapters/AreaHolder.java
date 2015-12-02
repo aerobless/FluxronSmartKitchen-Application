@@ -26,6 +26,7 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     /**
      * New holder
+     *
      * @param itemView Item view
      * @param listener Listener
      * @param provider Provider for the bus
@@ -45,10 +46,11 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     /**
      * Image was loaded, use it
+     *
      * @param msg Message
      */
-    public void onEventMainThread(ImageLoaded msg){
-        if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
+    public void onEventMainThread(ImageLoaded msg) {
+        if (msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null) {
             img.setImageBitmap(msg.getBmp());
 
             // Image was loaded, no need to use the event bus anymore
@@ -60,9 +62,10 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     /**
      * Binds the kitchen area
+     *
      * @param k Area
      */
-    public void bind(final KitchenArea k){
+    public void bind(final KitchenArea k) {
         boundData = k;
         img.setImageBitmap(null);
         parent.post(new Runnable() {
@@ -90,11 +93,12 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     /**
      * Clicked, notify the listener
+     *
      * @param v View
      */
     @Override
     public void onClick(View v) {
-        if(listener != null){
+        if (listener != null) {
             listener.areaClicked(boundData);
         }
     }

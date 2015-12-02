@@ -12,18 +12,20 @@ public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
 
     /**
      * Creates an item decorator
+     *
      * @param space Space between items
      */
-    public SpacesItemDecoration(int space){
+    public SpacesItemDecoration(int space) {
         this.space = space;
     }
 
     /**
      * Gets the margins for the item
+     *
      * @param outRect Output bounds
-     * @param view View to update
-     * @param parent Parent control
-     * @param state State of the parent control
+     * @param view    View to update
+     * @param parent  Parent control
+     * @param state   State of the parent control
      */
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {

@@ -3,7 +3,6 @@ package ch.fluxron.fluxronapp.ui.components;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,8 +30,9 @@ public class ErrorView extends LinearLayout {
 
     /**
      * Creates a new error view
+     *
      * @param context Context
-     * @param attrs Attributes
+     * @param attrs   Attributes
      */
     public ErrorView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,8 +82,10 @@ public class ErrorView extends LinearLayout {
     }
 
     /**
-     * Sets the new value
-     * @param value Value
+     * Converts a combined Fluxron error code to a legible error code and time. Then sets these
+     * values in the UI.
+     *
+     * @param value
      */
     public void setValue(String value) {
         errorControl.setVisibility(VISIBLE);

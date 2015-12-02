@@ -10,11 +10,13 @@ import android.widget.TextView;
 import ch.fluxron.fluxronapp.R;
 
 /**
- * Fragment that displays a simple text
+ * A simple fragment displaying just text. Can be used for debugging or to cap unimplemented areas
+ * in the application.
  */
 public class SimpleTextFragment extends Fragment {
     /**
      * Creates the fragment
+     *
      * @param savedInstanceState State
      */
     @Override
@@ -24,8 +26,9 @@ public class SimpleTextFragment extends Fragment {
 
     /**
      * Creates the simple text view
-     * @param inflater Inflater
-     * @param container Container
+     *
+     * @param inflater           Inflater
+     * @param container          Container
      * @param savedInstanceState State
      * @return View
      */

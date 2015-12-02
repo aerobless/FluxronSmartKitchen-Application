@@ -31,7 +31,7 @@ import ch.fluxron.fluxronapp.ui.util.CoilSetupConfigurator;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
 /**
- * Shows a devices configuration
+ * Fragment displaying the device configuration. Contains mostly ParameterEditables.
  */
 public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<ParameterEditable> parameters;
@@ -45,8 +45,9 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Creates the view
-     * @param inflater Inflater
-     * @param container Container
+     *
+     * @param inflater           Inflater
+     * @param container          Container
      * @param savedInstanceState State
      * @return View
      */
@@ -78,6 +79,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Initializes the base views
+     *
      * @param deviceView Device view
      */
     private void initBasicConfig(View deviceView) {
@@ -98,7 +100,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         keepWarm.setOnCheckedChangeListener(checkedChangeListener);
 
         coilSetupConfigurator = new CoilSetupConfigurator();
-        coilSetupSinner = ((Spinner)deviceView.findViewById(R.id.coilSetupSpinner));
+        coilSetupSinner = ((Spinner) deviceView.findViewById(R.id.coilSetupSpinner));
         coilSetupSinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -117,7 +119,8 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
     }
 
     /**
-     * Initializes the profile views (for thermostats)
+     * Initializes the profile views for thermostats (ETX)
+     *
      * @param deviceView Root view
      */
     private void initProfiles(final View deviceView) {
@@ -161,6 +164,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Clones a profile
+     *
      * @param profileNumber Number of the profile
      * @return Cloned profile
      */
@@ -183,6 +187,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Initializes the advanced config view
+     *
      * @param deviceView Root view
      */
     private void initAdvancecConfig(View deviceView) {
@@ -196,6 +201,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Device was changed, update values
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(DeviceChanged inputMsg) {
@@ -212,6 +218,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Update the basic config values
+     *
      * @param inputMsg Message
      */
     private void handleBasicConfig(DeviceChanged inputMsg) {
@@ -226,6 +233,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * Device value not available
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
@@ -239,6 +247,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
 
     /**
      * User Access Control Level has changed
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(AccessGranted inputMsg) {

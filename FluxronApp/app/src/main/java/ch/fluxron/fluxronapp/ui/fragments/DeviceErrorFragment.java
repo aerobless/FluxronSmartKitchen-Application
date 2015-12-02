@@ -23,8 +23,9 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
 
     /**
      * Creates the view
-     * @param inflater Inflater
-     * @param container Container
+     *
+     * @param inflater           Inflater
+     * @param container          Container
      * @param savedInstanceState State
      * @return View
      */
@@ -57,6 +58,7 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
 
     /**
      * Initializes all the child views
+     *
      * @param deviceView Root view element
      */
     private void init(View deviceView) {
@@ -71,12 +73,13 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
 
     /**
      * Device values changed, update views
+     *
      * @param inputMsg Message
      */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             for (ErrorView er : errorViews) {
-                if(er.handleDeviceChanged(inputMsg)){
+                if (er.handleDeviceChanged(inputMsg)) {
                     noErrorText.setVisibility(View.GONE);
                 }
             }

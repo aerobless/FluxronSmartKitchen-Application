@@ -220,6 +220,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Gets the device address
+     *
      * @return Address of the device
      */
     public String getDeviceAddress() {
@@ -228,6 +229,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Sets the address of the device
+     *
      * @param deviceAddress Address of the device
      */
     public void setDeviceAddress(String deviceAddress) {
@@ -287,8 +289,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Request a move
-     * @param dx x-direction
-     * @param dy y-direction
+     *
+     * @param dx           x-direction
+     * @param dy           y-direction
      * @param lastPosition No more changes after this move?
      * @return Accepted
      */
@@ -301,7 +304,8 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Touch event
-     * @param v View
+     *
+     * @param v     View
      * @param event Touch event
      * @return Handled
      */
@@ -341,7 +345,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     /**
-     * Needs an update
+     * The DeviceView needs to be redrawn now.
      */
     private void fireNeedUpdate() {
         if (listener != null) {
@@ -351,6 +355,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Animation updated, need a repaint
+     *
      * @param animation Animation
      */
     @Override
@@ -406,6 +411,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Animates a views popup effect
+     *
      * @param target View
      */
     private void animateIn(View target) {
@@ -424,6 +430,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Animates a views fadeout effect
+     *
      * @param target View
      */
     private void animateOut(final View target) {
@@ -459,6 +466,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Gets the deletion flag from this view
+     *
      * @return Deletion flag
      */
     public boolean isDeleted() {
@@ -467,6 +475,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
 
     /**
      * Returns wether all animations are done or not
+     *
      * @return All animations done
      */
     private boolean allAnimationsDone() {
@@ -482,7 +491,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
      * Cleans upd any references
      */
     public void cleanUp() {
-        if(this.provider!=null && this.provider.getUiEventBus().isRegistered(this)) {
+        if (this.provider != null && this.provider.getUiEventBus().isRegistered(this)) {
             provider.getUiEventBus().unregister(this);
             provider = null;
         }

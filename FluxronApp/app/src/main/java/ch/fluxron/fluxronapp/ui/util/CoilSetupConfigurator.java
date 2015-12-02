@@ -40,6 +40,12 @@ public class CoilSetupConfigurator {
         configurationMap.put("4x ▢160mm / 8kW", new CoilConfiguration("4x ▢160mm / 8kW", 4, 19250, 30, 15, 56, 8000));
     }
 
+    /**
+     * Returns the coilConfiguration as a map.
+     *
+     * @param input
+     * @return coilConfiguration map
+     */
     public CoilConfiguration getCoilConfig(String input) {
         return configurationMap.get(input);
     }

@@ -45,6 +45,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Sets the listener for clicks
+     *
      * @param listener Listener
      */
     public void setClickListener(IDeviceClickListener listener) {
@@ -77,6 +78,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Saves the instance state
+     *
      * @param outState State
      */
     @Override
@@ -86,8 +88,9 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Creates the view for this fragment
-     * @param inflater Inflater
-     * @param container Container
+     *
+     * @param inflater           Inflater
+     * @param container          Container
      * @param savedInstanceState Saved state
      * @return View
      */
@@ -140,6 +143,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Sets the discovery state
+     *
      * @param value Active
      */
     private void setDiscoveryActive(boolean value) {
@@ -164,6 +168,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Device was loaded
+     *
      * @param msg Message
      */
     public void onEventMainThread(DeviceLoaded msg) {
@@ -174,6 +179,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Device was changed
+     *
      * @param msg Message
      */
     public void onEventMainThread(DeviceChanged msg) {
@@ -183,6 +189,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Device was clicked
+     *
      * @param d Device
      */
     @Override
@@ -191,6 +198,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * A device should be added or bonded
+     *
      * @param d Device
      */
     @Override
@@ -210,6 +218,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     /**
      * Sets the listener for device additions
+     *
      * @param l Listener
      */
     public void setListener(IDeviceAddedListener l) {
