@@ -1,6 +1,5 @@
 package ch.fluxron.fluxronapp.ui.activities;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -13,7 +12,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ActionMenuView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -253,6 +251,19 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
                     list.getListAdapter().removeNotInList(msg.getKitchen().getAreaList());
                 } else {
                     list.getListAdapter().clear();
+                }
+            }
+            else if (listFragment instanceof AreaDetailFragment) {
+                // We loaded the kitchen in a state where the area detail is displayed
+                // now we need to make sure that currentArea is set to the displayed area. This
+                // can happen when the screen rotates or the screen is locked by the user.
+                AreaDetailFragment fragment = (AreaDetailFragment)listFragment;
+                int currentAreaRelativeId = fragment.getAreaId();
+                for (KitchenArea a : msg.getKitchen().getAreaList()) {
+                    if (currentAreaRelativeId == a.getRelativeId()) {
+                        currentArea = a;
+                        break;
+                    }
                 }
             }
         }
