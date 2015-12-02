@@ -35,7 +35,7 @@ import ch.fluxron.fluxronapp.objectBase.Device;
 public class Bluetooth {
     private IEventBusProvider provider;
     private MessageFactory messageFactory;
-    private MessageInterpreter messageInterpreter;
+    private MessageInterpreter messageInterpreter; //listens to the event bus.
     private BluetoothAdapter btAdapter = null;
     private final LruCache<String, BluetoothConnectionThread> connectionCache;
 
@@ -49,8 +49,8 @@ public class Bluetooth {
     /**
      * Instantiates a new bluetooth module.
      *
-     * @param provider
-     * @param context
+     * @param provider eventbus
+     * @param context  application context, required to setup bonding
      */
     public Bluetooth(IEventBusProvider provider, Context context) {
         this.provider = provider;
@@ -68,7 +68,7 @@ public class Bluetooth {
      * Set the Bluetooth PIN of a device. This method should only be run after a attempt at bonding
      * has been made.
      *
-     * @param device
+     * @param device a BluetoothDevice
      */
     public void setDevicePin(BluetoothDevice device) {
         Log.d(TAG, "SETTING PIN FOR " + device.getName());

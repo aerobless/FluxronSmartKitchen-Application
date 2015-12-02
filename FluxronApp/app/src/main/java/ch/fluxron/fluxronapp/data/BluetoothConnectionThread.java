@@ -23,14 +23,15 @@ public class BluetoothConnectionThread extends Thread {
     private final IEventBusProvider provider;
     private final BluetoothSocket socket;
     private final AtomicBoolean keepRunning;
+    private final Object reqRespLock = new Object();
     private RequestResponseConnection requestResponseConnection;
     private final static int MESSAGE_LENGTH = 12;
 
     /**
      * Instantiates a new BluetoothConnectionThread.
      *
-     * @param btsocket
-     * @param provider
+     * @param btsocket with a connection to a remote device.
+     * @param provider eventbus
      */
     public BluetoothConnectionThread(BluetoothSocket btsocket, IEventBusProvider provider) {
         remoteDevice = btsocket.getRemoteDevice();
@@ -46,8 +47,8 @@ public class BluetoothConnectionThread extends Thread {
             tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
+            Log.d("Fluxron", "IOException while trying to get input & outputstream in BTConnectionThread");
         }
-        // TODO: Fix this
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
@@ -104,16 +105,16 @@ public class BluetoothConnectionThread extends Thread {
     }
 
     /**
-     * Write a message into the output stream.
+     * Writes a message into the output stream.
      *
-     * @param message
-     * @param requestResponseConnection
+     * @param message                   the data that should be sent to the device
+     * @param requestResponseConnection the event bus message that triggered the communication with the remote device.
      * @throws IOException
      */
     public void write(byte[] message, RequestResponseConnection requestResponseConnection) throws IOException {
         //Log.d("FLUXRON", "Sending message");
         mmOutStream.write(message);
-        synchronized (this.requestResponseConnection) {
+        synchronized (reqRespLock) {
             this.requestResponseConnection = requestResponseConnection;
         }
     }
