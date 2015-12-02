@@ -13,6 +13,9 @@ public class DeviceTypeConverter {
     public static final String MIA = "MIA";
     public static final String ETX = "ETX";
 
+    /**
+     * Instantiates a new DeviceTypeConverter.
+     */
     public DeviceTypeConverter() {
         this.deviceTypes = new SparseArray<>();
         init();
@@ -20,32 +23,38 @@ public class DeviceTypeConverter {
 
     /**
      * Get the Device Type. E.g. BAX.
+     *
      * @param input
      * @return
      */
-    public String toDeviceClass(int input){
+    public String toDeviceClass(int input) {
         return deviceTypes.get(input).getDeviceClass();
     }
 
     /**
      * Get the Device Type. E.g. BAX.
+     *
      * @param input
      * @return
      */
-    public String toDeviceType(int input){
+    public String toDeviceType(int input) {
         return deviceTypes.get(input).getType();
     }
 
     /**
      * Get the Device Description. E.g. 3500-C.
+     *
      * @param input
      * @return
      */
-    public String toDeviceDescription(int input){
+    public String toDeviceDescription(int input) {
         return deviceTypes.get(input).getDescription();
     }
 
-    private void init(){
+    /**
+     * Initializes this DeviceTypeConverter.
+     */
+    private void init() {
         deviceTypes.append(15460, new ProductCode("LOH", "Modul", "CClass"));
         deviceTypes.append(15381, new ProductCode("LOH", "Flex", "CClass"));
         deviceTypes.append(15373, new ProductCode("LOH", "3500-C", "CClass"));
@@ -113,25 +122,50 @@ public class DeviceTypeConverter {
         deviceTypes.append(3936, new ProductCode("DGL", "9600", "CClass"));
     }
 
+    /**
+     * A value object containing the product code and its properties.
+     */
     private class ProductCode {
         String type;
         String description;
         String deviceClass;
 
+        /**
+         * Instantiates a new ProductCode.
+         *
+         * @param type
+         * @param description
+         * @param deviceClass
+         */
         public ProductCode(String type, String description, String deviceClass) {
             this.type = type;
             this.description = description;
             this.deviceClass = deviceClass;
         }
 
+        /**
+         * Returns the type of the product code.
+         *
+         * @return
+         */
         public String getType() {
             return type;
         }
 
+        /**
+         * Returns the description of the product code.
+         *
+         * @return
+         */
         public String getDescription() {
             return description;
         }
 
+        /**
+         * Returns the class of the product code.
+         *
+         * @return
+         */
         public String getDeviceClass() {
             return deviceClass;
         }

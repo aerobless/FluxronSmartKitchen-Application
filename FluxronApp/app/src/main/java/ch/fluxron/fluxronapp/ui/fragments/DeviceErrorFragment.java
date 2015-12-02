@@ -13,6 +13,9 @@ import ch.fluxron.fluxronapp.ui.components.ErrorView;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
+/**
+ * Fragment displaying all the errors of a remote device.
+ */
 public class DeviceErrorFragment extends DeviceBaseFragment {
     private ErrorView[] errorViews;
     private boolean ready = false;
@@ -45,6 +48,11 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Initializes this fragment.
+     *
+     * @param deviceView
+     */
     private void init(View deviceView) {
         noErrorText = (TextView) deviceView.findViewById(R.id.noErrorText);
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);
@@ -55,10 +63,15 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Listens to DeviceChanged messages and relays them to the ErrorViews.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             for (ErrorView er : errorViews) {
-                if(er.handleDeviceChanged(inputMsg)){
+                if (er.handleDeviceChanged(inputMsg)) {
                     noErrorText.setVisibility(View.GONE);
                 }
             }

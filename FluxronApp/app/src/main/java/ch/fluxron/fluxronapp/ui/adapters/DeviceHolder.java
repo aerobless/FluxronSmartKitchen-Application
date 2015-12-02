@@ -35,6 +35,11 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     }
 
+    /**
+     * Binds the device.
+     *
+     * @param d
+     */
     public void bind(final Device d) {
         boundData = d;
         deviceName.setText(d.getName());

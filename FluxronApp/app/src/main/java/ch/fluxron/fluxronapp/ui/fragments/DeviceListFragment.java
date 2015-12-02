@@ -110,16 +110,27 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         return deviceView;
     }
 
+    /**
+     * Toggles the discovery on & off.
+     */
     public void toggleDiscovery() {
         setDiscoveryActive(!discoveryActive);
     }
 
+    /**
+     * Turns the device discovery on or off. True = on.
+     *
+     * @param value
+     */
     private void setDiscoveryActive(boolean value) {
         discoveryActive = value;
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(value));
         updateStatusText();
     }
 
+    /**
+     * Updates the status text which tells the user whether the discovery is active or not.
+     */
     private void updateStatusText() {
         if (discoveryActive) {
             discoveryButton.setText(getResources().getText(R.string.btn_pause_discovery));
@@ -130,12 +141,23 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         }
     }
 
+    /**
+     * Listens to DeviceLoaded messages and adds them to the list.
+     *
+     * @param msg
+     */
     public void onEventMainThread(DeviceLoaded msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
         updateStatusText();
     }
 
+    /**
+     * Listens to DeviceChanged messages and updates the list so that the device is in the
+     * correct section of the list.
+     *
+     * @param msg
+     */
     public void onEventMainThread(DeviceChanged msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);

@@ -42,7 +42,7 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
     private int maxOffsetTemp = 40;
 
     /**
-     * Create a new temperature bar
+     * Instantiates a new TemperatureBar.
      *
      * @param context Context
      * @param attrs   Attributes
@@ -71,36 +71,46 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
 
         setMax(100);
         updateCurrentTemperature(50);
-
-        this.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setMax(420);
-                updateCurrentTemperature(120);
-            }
-        });
     }
 
+    /**
+     * Updates the current temperature position.
+     */
     private void updateCurrentTempPos() {
         int halfText = getTextWidth(currentTemperature) / 2;
         int textOffset = frontSegment.getWidth() - halfText + (space1.getWidth() / 2);
-        int paddingLimit = getWidth() - halfText*2-10;
+        int paddingLimit = getWidth() - halfText * 2 - 10;
         if (textOffset < paddingLimit) animatePaddingLeft(currentTemperature, textOffset);
     }
 
+    /**
+     * Updates the maximal temperature position.
+     */
     private void updateMaxTempPos() {
         int halfText = getTextWidth(maxTemperature) / 2;
         int textOffset = frontSegment.getWidth() + middleSegment.getWidth() - halfText + 3 * (space1.getWidth() / 2);
-        int paddingLimit = getWidth() - halfText*2 -10;
+        int paddingLimit = getWidth() - halfText * 2 - 10;
         if (textOffset < paddingLimit) animatePaddingLeft(maxTemperature, textOffset);
     }
 
+    /**
+     * Return the text width.
+     *
+     * @param v
+     * @return
+     */
     private int getTextWidth(TextView v) {
         Rect textBounds = new Rect();
-        v.getPaint().getTextBounds((String)v.getText(), 0, v.getText().length(), textBounds);
+        v.getPaint().getTextBounds((String) v.getText(), 0, v.getText().length(), textBounds);
         return textBounds.width();
     }
 
+    /**
+     * Animates the left padding.
+     *
+     * @param v
+     * @param textOffset
+     */
     private void animatePaddingLeft(final TextView v, int textOffset) {
         v.setPadding(textOffset, 0, 0, 0);
     }
@@ -143,8 +153,9 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
 
         String currentTempText = temperature + " °C";
         String maxTempText = maxTemp + " °C";
-        if(!currentTempText.equals(currentTemperature.getText())) currentTemperature.setText(currentTempText);
-        if(!maxTempText.equals(maxTemperature.getText())) maxTemperature.setText(maxTempText);
+        if (!currentTempText.equals(currentTemperature.getText()))
+            currentTemperature.setText(currentTempText);
+        if (!maxTempText.equals(maxTemperature.getText())) maxTemperature.setText(maxTempText);
     }
 
     /**
@@ -168,6 +179,11 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         return parameter;
     }
 
+    /**
+     * Checks if the DeviceChangedEvent contains this parameter. Sets it if that's the case.
+     *
+     * @param msg
+     */
     public void handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
         if (dp != null) {
@@ -177,6 +193,11 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         }
     }
 
+    /**
+     * Scales the maximum temperature.
+     *
+     * @param value
+     */
     private void setScale(Float value) {
         if (value > 500) {
             setMax(100000);

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
@@ -20,6 +19,10 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
+/**
+ * Activity to display information about a specific device. Contains fragments for Usage, Error History,
+ * Config etc.
+ */
 public class DeviceActivity extends FluxronBaseActivity {
     private IEventBusProvider provider;
     private String address = "Unkown";
@@ -49,9 +52,12 @@ public class DeviceActivity extends FluxronBaseActivity {
         provider.getUiEventBus().post(new CyclicRefreshCommand(address));
     }
 
+    /**
+     * Closes the activity and navigates back to the next lower activity on the stack.
+     *
+     * @param button
+     */
     public void onBackButtonClicked(View button) {
-        // Close this activity and navigate back to the activity
-        // that is below on the stack.
         provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
         finish();
     }
@@ -66,9 +72,9 @@ public class DeviceActivity extends FluxronBaseActivity {
             TextView statusOrb = (TextView) findViewById(R.id.statusOrb);
             statusOrb.setText(R.string.ok_check);
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-            deviceStatusMessage.setText(getResources().getString(R.string.device_status_connected)+" "+dateFormat.format(inputMsg.getDevice().getLastContact()));
+            deviceStatusMessage.setText(getResources().getString(R.string.device_status_connected) + " " + dateFormat.format(inputMsg.getDevice().getLastContact()));
             statusOrb.setBackground(getResources().getDrawable(R.drawable.status_ok_background));
-            if(deviceClass.equals(Device.UNKNOWN_DEVICE_CLASS) && !inputMsg.getDevice().getDeviceClass().equals(Device.UNKNOWN_DEVICE_CLASS)){
+            if (deviceClass.equals(Device.UNKNOWN_DEVICE_CLASS) && !inputMsg.getDevice().getDeviceClass().equals(Device.UNKNOWN_DEVICE_CLASS)) {
                 deviceClass = inputMsg.getDevice().getDeviceClass();
                 progressDeviceClass.setVisibility(View.GONE);
                 setupViewPagerTabs();
@@ -76,6 +82,9 @@ public class DeviceActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Setup for the different fragment tabs: Usage, History etc.
+     */
     private void setupViewPagerTabs() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
         DeviceFragmentAdapter dfa = new DeviceFragmentAdapter(getSupportFragmentManager(), this);

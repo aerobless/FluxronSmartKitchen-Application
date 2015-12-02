@@ -49,6 +49,12 @@ public class ParameterEditable extends LinearLayout {
     private Button resetButton;
     private IEventBusProvider provider;
 
+    /**
+     * Instantiates a new ParameterEditable.
+     *
+     * @param context
+     * @param attrs
+     */
     public ParameterEditable(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -97,12 +103,9 @@ public class ParameterEditable extends LinearLayout {
         }
     }
 
-    public void handleAccessLevel(AccessLevel accessLevel) {
-        if (accessLevel.ordinal() >= requiredAccessLevel) {
-            setVisibility(VISIBLE);
-        }
-    }
-
+    /**
+     * Initializes the button listeners.
+     */
     private void initButtonListeners() {
         saveButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -131,12 +134,28 @@ public class ParameterEditable extends LinearLayout {
     private void initOnFocusListener() {
         paramValue.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, final boolean hasFocus) {
-                setFocus(hasFocus);
+                expandEditable(hasFocus);
             }
         });
     }
 
-    private void setFocus(boolean focus) {
+    /**
+     * Checks whether the user has the necessary access level to access this parameter.
+     *
+     * @param accessLevel
+     */
+    public void handleAccessLevel(AccessLevel accessLevel) {
+        if (accessLevel.ordinal() >= requiredAccessLevel) {
+            setVisibility(VISIBLE);
+        }
+    }
+
+    /**
+     * Expands the control if true. Minimizes it if false.
+     *
+     * @param focus
+     */
+    private void expandEditable(boolean focus) {
         if (focus) {
             paramValue.setSelection(paramValue.getText().length());
             paramNameSmall.setVisibility(GONE);
@@ -200,6 +219,11 @@ public class ParameterEditable extends LinearLayout {
         return parameter;
     }
 
+    /**
+     * Sets the value of this parameter.
+     *
+     * @param value
+     */
     public void setValue(String value) {
         String result = value;
         if (measuringUnit != null) {
@@ -221,6 +245,12 @@ public class ParameterEditable extends LinearLayout {
         }
     }
 
+    /**
+     * Check if the deviceNotChanged message contains this parameter and disable it if that's the case.
+     * This happens when a parameter doesn't exist on the remote device (e.g. old software version).
+     *
+     * @param msg
+     */
     public void handleDeviceNotChanged(DeviceNotChanged msg) {
         if (getParameter().contains(msg.getField())) {
             paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));
@@ -230,6 +260,11 @@ public class ParameterEditable extends LinearLayout {
         }
     }
 
+    /**
+     * Sets the address of the device.
+     *
+     * @param deviceAddress
+     */
     public void setDeviceAddress(String deviceAddress) {
         this.deviceAddress = deviceAddress;
     }

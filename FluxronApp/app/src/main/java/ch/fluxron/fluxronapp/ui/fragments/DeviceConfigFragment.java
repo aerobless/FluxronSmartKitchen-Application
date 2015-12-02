@@ -30,6 +30,9 @@ import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.CoilSetupConfigurator;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
+/**
+ * Fragment displaying the device configuration. Contains mostly ParameterEditables.
+ */
 public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<ParameterEditable> parameters;
     private List<View> profiles;
@@ -66,6 +69,11 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Initializes the basic config.
+     *
+     * @param deviceView
+     */
     private void initBasicConfig(View deviceView) {
         parameters.add((ParameterEditable) deviceView.findViewById(R.id.powerMax));
         keepWarm = (Switch) deviceView.findViewById(R.id.keepWarmSwitch);
@@ -84,7 +92,7 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         keepWarm.setOnCheckedChangeListener(checkedChangeListener);
 
         coilSetupConfigurator = new CoilSetupConfigurator();
-        coilSetupSinner = ((Spinner)deviceView.findViewById(R.id.coilSetupSpinner));
+        coilSetupSinner = ((Spinner) deviceView.findViewById(R.id.coilSetupSpinner));
         coilSetupSinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -102,6 +110,11 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         hasBasicConfiguration = true;
     }
 
+    /**
+     * Initializes profiles for ETX devices.
+     *
+     * @param deviceView
+     */
     private void initProfiles(final View deviceView) {
         profiles = new ArrayList<>();
         LinearLayout layout = (LinearLayout) deviceView.findViewById(R.id.profiles);
@@ -132,6 +145,9 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         ((ConfigurableScrollView) deviceView.findViewById(R.id.scrollView)).setScrollOffset(100);
     }
 
+    /**
+     * Closes all profiles.
+     */
     private void closeAllProfiles() {
         for (View profile : profiles) {
             profile.findViewById(R.id.editableViewList).setVisibility(View.GONE);
@@ -155,6 +171,11 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         return clonedProfile;
     }
 
+    /**
+     * Initializes the advanced config.
+     *
+     * @param deviceView
+     */
     private void initAdvancecConfig(View deviceView) {
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.editableViewList);
         for (int i = 0; i < list.getChildCount(); i++) {
@@ -164,6 +185,12 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         hasAdvancedConfiguration = true;
     }
 
+    /**
+     * Listens to DeviceChanged events to set device address and handle deviceChanges in the
+     * parameters themselves.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && hasAdvancedConfiguration) {
             for (ParameterEditable p : parameters) {
@@ -176,6 +203,11 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Updates the basic config.
+     *
+     * @param inputMsg
+     */
     private void handleBasicConfig(DeviceChanged inputMsg) {
         ParameterValue dp = inputMsg.getDevice().getDeviceParameter(keepWarm.getTag().toString());
         if (dp != null) {
@@ -186,6 +218,11 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Listens to DeviceNotChanged messages and relays them to the parameters.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && hasAdvancedConfiguration) {
             for (ParameterEditable p : parameters) {
@@ -195,6 +232,11 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Listens to Accessgranted messages and relays them to the parameters.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(AccessGranted inputMsg) {
         if (hasAdvancedConfiguration) {
             for (ParameterEditable p : parameters) {

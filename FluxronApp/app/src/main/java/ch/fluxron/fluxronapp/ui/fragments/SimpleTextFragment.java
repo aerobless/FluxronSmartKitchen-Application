@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * PROTOTYPE
+ * A simple fragment displaying just text. Can be used for debugging or to cap unimplemented areas
+ * in the application.
  */
 public class SimpleTextFragment extends Fragment {
     @Override

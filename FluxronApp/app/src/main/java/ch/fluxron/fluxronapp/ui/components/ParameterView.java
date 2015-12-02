@@ -1,9 +1,7 @@
 package ch.fluxron.fluxronapp.ui.components;
 
-
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -30,6 +28,12 @@ public class ParameterView extends RelativeLayout {
     TextView paramValue;
     IEventBusProvider provider;
 
+    /**
+     * Instantiates a new ParameterView.
+     *
+     * @param context
+     * @param attrs
+     */
     public ParameterView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -74,6 +78,11 @@ public class ParameterView extends RelativeLayout {
         return parameter;
     }
 
+    /**
+     * Sets the value of this control.
+     *
+     * @param value
+     */
     public void setValue(String value) {
         String formattedValue = value;
 
@@ -93,6 +102,12 @@ public class ParameterView extends RelativeLayout {
         paramValue.setText(formattedValue);
     }
 
+    /**
+     * Checks if the DeviceChanged message contains this parameter and sets its value if that's the case.
+     *
+     * @param msg
+     * @return
+     */
     public String handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
         if (dp != null) {
@@ -103,8 +118,14 @@ public class ParameterView extends RelativeLayout {
         return null;
     }
 
-    public void handleDeviceNotChanged(DeviceNotChanged msg){
-        if(getParameter().contains(msg.getField())){
+    /**
+     * Checks if the DeviceNotChanged message contains this parameter and deactivates the control if that's the case.
+     * This happens when the parameter doesn't exist on the device (e.g. old software version).
+     *
+     * @param msg
+     */
+    public void handleDeviceNotChanged(DeviceNotChanged msg) {
+        if (getParameter().contains(msg.getField())) {
             paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));
             paramValue.setEnabled(false);
             paramValue.setFocusable(false);

@@ -274,6 +274,14 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         }
     }
 
+    /**
+     * Fires a request to move the device to a new position.
+     *
+     * @param dx
+     * @param dy
+     * @param lastPosition
+     * @return
+     */
     private boolean fireRequestMove(float dx, float dy, boolean lastPosition) {
         if (listener != null) {
             return listener.moveRequested(this, (int) dx, (int) dy, lastPosition);
@@ -308,11 +316,18 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         return true;
     }
 
+    /**
+     * Animates the device when it is first added to the kitchen area so that a user sees it
+     * immediately.
+     */
     public void popUp() {
         animateIn(findViewById(R.id.theDeviceOrb));
         animateIn(findViewById(R.id.theStatusOrb));
     }
 
+    /**
+     * The DeviceView needs to be redrawn now.
+     */
     private void fireNeedUpdate() {
         if (listener != null) {
             listener.needsRepaint(false);
@@ -420,7 +435,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     }
 
     public void cleanUp() {
-        if(this.provider!=null && this.provider.getUiEventBus().isRegistered(this)) {
+        if (this.provider != null && this.provider.getUiEventBus().isRegistered(this)) {
             provider.getUiEventBus().unregister(this);
             provider = null;
         }

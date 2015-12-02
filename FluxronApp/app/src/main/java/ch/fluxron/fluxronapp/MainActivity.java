@@ -116,6 +116,11 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         searchConnection = postMessage(cmd);
     }
 
+    /**
+     * Request synchronous authentication of the user. If successful switches to the kitchen creation activity.
+     *
+     * @param btn
+     */
     public void navigateCreate(View btn) {
         SynchronousAccessCommand cmd = new SynchronousAccessCommand(new ITypedCallback<AccessLevel>() {
             @Override
@@ -146,6 +151,11 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         startActivity(startOther);
     }
 
+    /**
+     * Request synchronous authentication of the user. If successful switches to the kitchen activity.
+     *
+     * @param k
+     */
     @Override
     public void kitchenClicked(final Kitchen k) {
         SynchronousAccessCommand cmd = new SynchronousAccessCommand(new ITypedCallback<AccessLevel>() {

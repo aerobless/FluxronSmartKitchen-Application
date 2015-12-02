@@ -29,21 +29,19 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
     /**
      * Adds a new device to the list. If the device already exists,
      * its cached values will be updated. Device equality is determined by using getAddress().
+     *
      * @param d device to add or update.
      */
-    public Map<String, Integer> addOrUpdate(Device d){
-        if (deviceIds.containsKey(d.getAddress()))
-        {
+    public Map<String, Integer> addOrUpdate(Device d) {
+        if (deviceIds.containsKey(d.getAddress())) {
             int position = deviceIds.get(d.getAddress());
-            for(Device dev:devices){
-                if(dev.getAddress().equals(d.getAddress())){
+            for (Device dev : devices) {
+                if (dev.getAddress().equals(d.getAddress())) {
                     dev.setBonded(d.isBonded());
                 }
             }
             notifyItemChanged(position);
-        }
-        else
-        {
+        } else {
             int newPosition = devices.size();
             devices.add(d);
             deviceIds.put(d.getAddress(), newPosition);
@@ -52,7 +50,12 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         return sortList();
     }
 
-    public Map<String, Integer> sortList(){
+    /**
+     * Sorts the devicelist by category.
+     *
+     * @return
+     */
+    public Map<String, Integer> sortList() {
         Map<String, Integer> deviceCategories = new LinkedHashMap<>();
         Collections.sort(devices, new Comparator<Device>() {
             @Override
@@ -63,13 +66,13 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
             }
         });
         int i = 1;
-        for(Device d: devices){
+        for (Device d : devices) {
             String cat = d.getDeviceType();
             Integer deviceCountPerCategory = deviceCategories.get(cat);
-            if(deviceCountPerCategory == null){
+            if (deviceCountPerCategory == null) {
                 deviceCategories.put(cat, 1);
             } else {
-                deviceCategories.put(cat, deviceCountPerCategory+1);
+                deviceCategories.put(cat, deviceCountPerCategory + 1);
             }
             deviceIds.put(d.getAddress(), i);
             notifyItemChanged(i);
@@ -78,12 +81,13 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         return deviceCategories;
     }
 
-    public int size(){
+    public int size() {
         return devices.size();
     }
 
     /**
      * Sets the instance listening to device clicks
+     *
      * @param listener Listener
      */
     public DeviceListAdapter(IDeviceClickListener listener, IEventBusProvider provider) {
@@ -94,7 +98,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
     /**
      * Removes all entries from the list
      */
-    public void clear(){
+    public void clear() {
         devices.clear();
         deviceIds.clear();
         notifyDataSetChanged();
@@ -110,7 +114,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
 
     @Override
     public void onBindViewHolder(DeviceHolder holder, int position) {
-        if(devices.size()>position){
+        if (devices.size() > position) {
             holder.bind(devices.get(position));
         }
     }

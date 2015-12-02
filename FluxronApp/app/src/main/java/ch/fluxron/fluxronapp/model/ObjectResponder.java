@@ -8,18 +8,28 @@ import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 
 /**
- * Responds to a message. FOR PROTOTYPE USAGE ONLY!!!
+ * Responds to ObjectCreated messages.
  */
-public class PrototypeResponder {
+public class ObjectResponder {
 
     private IEventBusProvider provider;
 
-    public PrototypeResponder(IEventBusProvider provider) {
+    /**
+     * Instantiates a new ObjectResponder.
+     *
+     * @param provider
+     */
+    public ObjectResponder(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
     }
 
+    /**
+     * Listens to ObjectCreated events.
+     *
+     * @param msg
+     */
     public void onEventAsync(ObjectCreated msg) {
         if (msg.getData() instanceof Kitchen) {
             KitchenCreated event = new KitchenCreated((Kitchen) msg.getData());

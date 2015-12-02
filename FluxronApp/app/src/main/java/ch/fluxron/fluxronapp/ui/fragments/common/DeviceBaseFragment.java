@@ -44,27 +44,56 @@ public class DeviceBaseFragment extends Fragment {
         provider.getUiEventBus().unregister(this);
     }
 
+    /**
+     * Sets the UI event bus.
+     */
     private void setUIEventBus() {
         provider = (ch.fluxron.fluxronapp.ui.util.IEventBusProvider) getContext().getApplicationContext();
     }
 
+    /**
+     * Initializes address and device class.
+     *
+     * @param address
+     * @param deviceClass
+     */
     public void init(String address, String deviceClass) {
         this.deviceAddress = address;
         this.deviceClass = deviceClass;
     }
 
+    /**
+     * Returns the device address.
+     *
+     * @return device address
+     */
     public String getDeviceAddress() {
         return deviceAddress;
     }
 
-    public String getDeviceClass(){
+    /**
+     * Returns the device class.
+     *
+     * @return device class
+     */
+    public String getDeviceClass() {
         return deviceClass;
     }
 
+    /**
+     * Sets the device address.
+     *
+     * @param deviceAddress
+     */
     public void setDeviceAddress(String deviceAddress) {
         this.deviceAddress = deviceAddress;
     }
 
+    /**
+     * Sets the device class.
+     *
+     * @param deviceClass
+     */
     public void setDeviceClass(String deviceClass) {
         this.deviceClass = deviceClass;
     }

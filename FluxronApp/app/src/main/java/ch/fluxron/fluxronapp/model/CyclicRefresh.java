@@ -34,6 +34,12 @@ public class CyclicRefresh {
     private final Set<String> listOfInterestingParameters;
     private boolean discoveryMode = false;
 
+    /**
+     * Instantiates a new CyclicRefresh service.
+     *
+     * @param provider
+     * @param deviceCache
+     */
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
         this.deviceCache = deviceCache;

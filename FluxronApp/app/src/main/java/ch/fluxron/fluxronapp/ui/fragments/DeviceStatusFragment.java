@@ -17,6 +17,9 @@ import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
+/**
+ * Fragment displaying the device status and temperature information.
+ */
 public class DeviceStatusFragment extends DeviceBaseFragment {
     private List<TemperatureBar> temperatureBars;
     private List<ParameterView> parameters;
@@ -48,6 +51,11 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Initializes this fragment and its basic controls.
+     *
+     * @param deviceView
+     */
     private void initControls(View deviceView) {
         temperatureBars = new ArrayList<>();
         ViewGroup temperatureList = (ViewGroup) deviceView.findViewById(R.id.temperatureBars);
@@ -62,20 +70,30 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Listens to DeviceChanged messages and relays them to parameters and temperatureBars.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
-            for(TemperatureBar p:temperatureBars){
+            for (TemperatureBar p : temperatureBars) {
                 p.handleDeviceChanged(inputMsg);
             }
-            for(ParameterView p:parameters){
+            for (ParameterView p : parameters) {
                 p.handleDeviceChanged(inputMsg);
             }
         }
     }
 
+    /**
+     * Listens to DeviceNotChanged messages and relays them to parameters.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
-            for(ParameterView p:parameters){
+            for (ParameterView p : parameters) {
                 p.handleDeviceNotChanged(inputMsg);
             }
         }

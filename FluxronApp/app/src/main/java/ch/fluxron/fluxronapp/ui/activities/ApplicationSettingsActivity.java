@@ -27,6 +27,12 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         busProvider.getUiEventBus().post(new LoadAuthenticationCommand());
     }
 
+    /**
+     * Validates username & password to make sure it isn't empty. Sends the information down to
+     * the business layer for authentication.
+     *
+     * @param button
+     */
     public void onSaveButtonClicked(View button) {
         String user = username.getText().toString();
         String pw = password.getText().toString();
@@ -41,14 +47,24 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Listens to UserAuthenticated events and displays the corresponding toast.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(UserAuthenticated inputMsg) {
-        if(inputMsg.isAuthenticated()){
+        if (inputMsg.isAuthenticated()) {
             showToast("Successfully authenticated!");
         } else {
             showToast("Wrong username or password!");
         }
     }
 
+    /**
+     * Listens to AuthenticationLoaded events and sets the loaded information in the UI controls.
+     *
+     * @param inputMsg
+     */
     public void onEventMainThread(AuthenticationLoaded inputMsg) {
         username.setText(inputMsg.getUsername());
         password.setText(inputMsg.getPassword());
