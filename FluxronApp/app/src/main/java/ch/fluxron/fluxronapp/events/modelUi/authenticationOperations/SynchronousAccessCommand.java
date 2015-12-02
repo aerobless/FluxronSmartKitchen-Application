@@ -1,16 +1,19 @@
 package ch.fluxron.fluxronapp.events.modelUi.authenticationOperations;
 
-import java.io.InputStream;
-import java.util.Map;
-
 import ch.fluxron.fluxronapp.events.base.ITypedCallback;
 import ch.fluxron.fluxronapp.events.base.SynchronousReplyEvent;
 import ch.fluxron.fluxronapp.objectBase.AccessLevel;
 
 /**
- * Used to request the access level of a user
+ * Used to request the access level of a user synchronously.
  */
-public class SynchronousAccessCommand extends SynchronousReplyEvent{
+public class SynchronousAccessCommand extends SynchronousReplyEvent {
+
+    /**
+     * Instantiates a new SynchronousAccessCommand.
+     *
+     * @param callback
+     */
     public SynchronousAccessCommand(ITypedCallback<AccessLevel> callback) {
         super(callback);
     }

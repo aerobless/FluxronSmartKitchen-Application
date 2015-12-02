@@ -17,7 +17,6 @@ import java.util.Map;
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothBondingCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothDiscoveryCommand;
-import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.BluetoothTestCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceChanged;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.DeviceLoaded;
@@ -75,7 +74,7 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View deviceView = getActivity().getLayoutInflater().inflate(R.layout.fragment_device_list, container, false);
-        this.provider = (IEventBusProvider)getActivity().getApplicationContext();
+        this.provider = (IEventBusProvider) getActivity().getApplicationContext();
         setClickListener(this);
 
         // Set the list's properties
@@ -144,8 +143,6 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
 
     @Override
     public void deviceClicked(Device d) {
-        Log.d("Fluxron", "Requesting data from " + d.getAddress());
-        provider.getUiEventBus().post(new BluetoothTestCommand(d.getAddress()));
     }
 
     @Override

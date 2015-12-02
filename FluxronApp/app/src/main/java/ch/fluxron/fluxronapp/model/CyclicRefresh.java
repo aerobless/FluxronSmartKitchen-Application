@@ -51,7 +51,7 @@ public class CyclicRefresh {
      * @return
      */
     private void refreshLoiP() {
-        synchronized (listOfInterestingParameters){
+        synchronized (listOfInterestingParameters) {
             listOfInterestingParameters.clear();
             listOfInterestingParameters.add(ParamManager.F_CCLASS_1018SUB2_PRODUCT_CODE);
         }
@@ -118,7 +118,7 @@ public class CyclicRefresh {
                         break;
                     }
                     Set<String> tempList;
-                    synchronized (listOfInterestingParameters){
+                    synchronized (listOfInterestingParameters) {
                         tempList = new HashSet<>(listOfInterestingParameters);
                     }
                     for (String param : tempList) {

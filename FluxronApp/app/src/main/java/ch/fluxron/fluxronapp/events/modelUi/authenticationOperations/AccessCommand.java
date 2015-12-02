@@ -5,5 +5,5 @@ import ch.fluxron.fluxronapp.events.base.RequestResponseConnection;
 /**
  * Used to request the access level of a user
  */
-public class AccessCommand extends RequestResponseConnection{
+public class AccessCommand extends RequestResponseConnection {
 }
