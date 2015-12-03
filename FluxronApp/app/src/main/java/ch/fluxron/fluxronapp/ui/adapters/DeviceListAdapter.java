@@ -52,6 +52,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         return sortList();
     }
 
+    /**
+     * Sorts the list of devices by category and device address
+     * @return Sorted list
+     */
     public Map<String, Integer> sortList(){
         Map<String, Integer> deviceCategories = new LinkedHashMap<>();
         Collections.sort(devices, new Comparator<Device>() {
@@ -78,6 +82,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         return deviceCategories;
     }
 
+    /**
+     * Returns the number of devices
+     * @return
+     */
     public int size(){
         return devices.size();
     }
@@ -100,6 +108,12 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         notifyDataSetChanged();
     }
 
+    /**
+     * Creates a view holder
+     * @param parent Parent layout group
+     * @param viewType View type (ignored)
+     * @return View holder
+     */
     @Override
     public DeviceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
@@ -108,6 +122,11 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         return new DeviceHolder(itemView, listener, this.provider);
     }
 
+    /**
+     * Binds a view holder to a specific item in the collection
+     * @param holder Holder for the item
+     * @param position Item index
+     */
     @Override
     public void onBindViewHolder(DeviceHolder holder, int position) {
         if(devices.size()>position){
@@ -115,6 +134,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceHolder> {
         }
     }
 
+    /**
+     * Returns the number of items in this collection
+     * @return Number of items
+     */
     @Override
     public int getItemCount() {
         return devices.size();

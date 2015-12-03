@@ -36,6 +36,10 @@ public class AreaDetailFragment extends Fragment {
     private KitchenActivity areaListener;
     private String areaLoadConnection;
 
+    /**
+     * Initializes the fragment
+     * @param savedInstanceState State
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +53,17 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Provider for the event bus
+     * @param provider Provider
+     */
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;
     }
 
+    /**
+     * Starts this fragment
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -69,6 +80,10 @@ public class AreaDetailFragment extends Fragment {
         provider.getUiEventBus().post(cmd);
     }
 
+    /**
+     * Area loaded, display it
+     * @param msg Message
+     */
     public void onEventMainThread(KitchenAreaLoaded msg) {
         if (msg.getConnectionId().equals(areaLoadConnection)) {
             this.kitchenArea = msg.getArea();
@@ -81,6 +96,9 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Stops this fragment
+     */
     @Override
     public void onStop() {
         super.onStop();
@@ -90,6 +108,10 @@ public class AreaDetailFragment extends Fragment {
         if (display!=null) display.cleanUp();
     }
 
+    /**
+     * Saves the state of this fragment
+     * @param outState State
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -97,6 +119,13 @@ public class AreaDetailFragment extends Fragment {
         outState.putInt(AREA_RELATIVE_ID, areaId);
     }
 
+    /**
+     * Creates the view for this fragment
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,6 +134,10 @@ public class AreaDetailFragment extends Fragment {
         return display;
     }
 
+    /**
+     * Image was loaded, set it to the detail view
+     * @param msg Message
+     */
     public void onEventMainThread(ImageLoaded msg) {
         if (msg.getConnectionId().equals(imageLoadConnection)) {
             // Set the bitmap to the display
@@ -115,6 +148,10 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Position of a device has changed
+     * @param msg Message
+     */
     public void onEventMainThread(DevicePositionChanged msg) {
         // Check if we handle this kitchen and this area at the moment
         if (msg.getKitchenId().equals(kitchenId) && kitchenArea != null && kitchenArea.getRelativeId() == msg.getAreaId()) {
@@ -122,6 +159,10 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the area that should be displayed by this fragment
+     * @param kitchenArea Area
+     */
     public void setKitchenArea(KitchenArea kitchenArea) {
         this.kitchenArea = kitchenArea;
     }

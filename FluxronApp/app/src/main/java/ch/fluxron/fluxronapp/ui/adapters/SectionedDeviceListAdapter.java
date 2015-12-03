@@ -12,7 +12,6 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Create sections in the device list.
@@ -31,6 +30,13 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
     private SparseArray<Section> deviceSections = new SparseArray<Section>();
 
 
+    /**
+     * Creates a new list adapter
+     * @param context Context
+     * @param sectionResourceId Resource Id for section views
+     * @param textResourceId Resource Id for the text
+     * @param deviceListAdapter List adapter for devices
+     */
     public SectionedDeviceListAdapter(Context context, int sectionResourceId, int textResourceId,
                                               RecyclerView.Adapter deviceListAdapter) {
 
@@ -68,17 +74,32 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         });
     }
 
-
+    /**
+     * A view holder for a section
+     */
     public static class SectionViewHolder extends RecyclerView.ViewHolder {
-
+        /**
+         * Title text
+         */
         public TextView title;
 
-        public SectionViewHolder(View view,int mTextResourceid) {
+        /**
+         * Creates a new view holder
+         * @param view View
+         * @param mTextResourceid Resource id for the text
+         */
+        public SectionViewHolder(View view, int mTextResourceid) {
             super(view);
             title = (TextView) view.findViewById(mTextResourceid);
         }
     }
 
+    /**
+     * Creates a new view holder
+     * @param parent Parent layout
+     * @param typeView Type (SECTION_TYPE or default)
+     * @return View holder
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int typeView) {
         if (typeView == SECTION_TYPE) {
@@ -89,6 +110,11 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    /**
+     * Binds a view holder to a specific item in the collection
+     * @param sectionViewHolder View holder
+     * @param position Position
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, int position) {
         if (isSectionHeaderPosition(position)) {
@@ -99,6 +125,11 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
 
     }
 
+    /**
+     * Gets the view type for the position
+     * @param position Position
+     * @return View type
+     */
     @Override
     public int getItemViewType(int position) {
         return isSectionHeaderPosition(position)
@@ -106,22 +137,37 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
                 : baseAdapter.getItemViewType(sectionedPositionToPosition(position)) +1 ;
     }
 
-
+    /**
+     * Section data class
+     */
     public static class Section {
         int firstPosition;
         int sectionedPosition;
         CharSequence title;
 
+        /**
+         * Creates a new section
+         * @param firstPosition Position
+         * @param title Title
+         */
         public Section(int firstPosition, CharSequence title) {
             this.firstPosition = firstPosition;
             this.title = title;
         }
 
+        /**
+         * Gets the title
+         * @return Title
+         */
         public CharSequence getTitle() {
             return title;
         }
     }
 
+    /**
+     * Updates all the sections
+     * @param categories Categories to put into sections
+     */
     public void updateSections(Map<String, Integer> categories){
         if(categories.size()>=1){
             Section[] sections = new Section[categories.size()];
@@ -136,6 +182,10 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    /**
+     * Sets all the sections
+     * @param sections Sections
+     */
     public void setSections(Section[] sections) {
         deviceSections.clear();
 
@@ -158,6 +208,11 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         notifyDataSetChanged();
     }
 
+    /**
+     * Converts a normal position into a sectioned position
+     * @param position Position
+     * @return Sections position
+     */
     public int positionToSectionedPosition(int position) {
         int offset = 0;
         for (int i = 0; i < deviceSections.size(); i++) {
@@ -169,6 +224,11 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         return position + offset;
     }
 
+    /**
+     * Converts a normal position into a sectioned position
+     * @param sectionedPosition Sections position
+     * @return Position
+     */
     public int sectionedPositionToPosition(int sectionedPosition) {
         if (isSectionHeaderPosition(sectionedPosition)) {
             return RecyclerView.NO_POSITION;
@@ -184,11 +244,21 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
         return sectionedPosition + offset;
     }
 
+    /**
+     * Checks if a position contains a header or not
+     * @param position Position
+     * @return
+     */
     public boolean isSectionHeaderPosition(int position) {
         return deviceSections.get(position) != null;
     }
 
 
+    /**
+     * Gets the id of the item at the position
+     * @param position Position
+     * @return Id
+     */
     @Override
     public long getItemId(int position) {
         return isSectionHeaderPosition(position)
@@ -196,6 +266,10 @@ public class SectionedDeviceListAdapter extends RecyclerView.Adapter<RecyclerVie
                 : baseAdapter.getItemId(sectionedPositionToPosition(position));
     }
 
+    /**
+     * Returns the number of items in this collection
+     * @return
+     */
     @Override
     public int getItemCount() {
         return (valid ? baseAdapter.getItemCount() + deviceSections.size() : 0);

@@ -4,7 +4,8 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 
 /**
- * Camera on a canvas
+ * Camera on a canvas.
+ * https://github.com/Consoar/FamilyTree/blob/master/app/src/main/java/bos/whu/familytree/support/views/CanvasCamera.java
  */
 public class Camera {
 
@@ -14,19 +15,36 @@ public class Camera {
     private Matrix _inverseMatrix;
     private boolean _inverseMatrixShouldBeRecalculated = true;
 
+    /**
+     * Creates a new camera
+     */
     public Camera() {
         setTransformMatrix(new Matrix());
     }
 
+    /**
+     * Gets the scaling factor of this camera
+     * @return Scale
+     */
     public float getScale() {
         return _scale;
     }
 
+    /**
+     * Sets the scaling factor of this camera
+     * @param scale Scale
+     */
     public void setScale(float scale) {
         this._scale = scale;
         updateTransformMatrix();
     }
 
+    /**
+     * Returns the coordinates after the effects of the camera have been reverted.
+     * @param x X in view space
+     * @param y Y in view space
+     * @return Point in world space
+     */
     public PointF getAsUntransformedCoordinates(float x, float y)
     {
         float transformedX = x / _scale - _translation.x;
@@ -34,6 +52,12 @@ public class Camera {
         return new PointF(transformedX, transformedY);
     }
 
+    /**
+     * Sets the scale and translates relatively to the scale
+     * @param scale Scale
+     * @param relativeTranslateX Translation x
+     * @param relativeTranslateY Translation y
+     */
     public void setScaleAndRelativeTranslate(float scale, float relativeTranslateX, float relativeTranslateY)
     {
         _scale = scale;
@@ -41,12 +65,21 @@ public class Camera {
         updateTransformMatrix();
     }
 
+    /**
+     * Translates this camera by the delta vector
+     * @param relativeTranslateX dx
+     * @param relativeTranslateY dy
+     */
     private void translate(float relativeTranslateX, float relativeTranslateY)
     {
         PointF currentTranslation = getTranslation();
         setTranslation(currentTranslation.x + relativeTranslateX, currentTranslation.y + relativeTranslateY);
     }
 
+    /**
+     * Returns the translation vector
+     * @return Translation
+     */
     public PointF getTranslation() {
         if (_translation == null) {
             _translation = new PointF();
@@ -54,17 +87,28 @@ public class Camera {
         return _translation;
     }
 
+    /**
+     * Copies the translation into a new point
+     * @return Copied point
+     */
     public PointF copyTranslation() {
         PointF currentTranslation = getTranslation();
         return new PointF(currentTranslation.x, currentTranslation.y);
     }
 
+    /**
+     * Sets the translation of this camera
+     * @param translation Translation
+     */
     public void setTranslation(PointF translation) {
         this._translation = translation;
 
         updateTransformMatrix();
     }
 
+    /**
+     * Recalculates the transformation matrix
+     */
     public void updateTransformMatrix() {
         Matrix transformMatrix = getTransformMatrix();
         transformMatrix.reset();
@@ -74,6 +118,11 @@ public class Camera {
         transformMatrix.postScale(_scale, _scale);
     }
 
+    /**
+     * Sets the translation by using the specified scalars
+     * @param x X
+     * @param y Y
+     */
     public void setTranslation(float x, float y) {
         if (_translation == null) {
             _translation = new PointF(x, y);
@@ -83,14 +132,26 @@ public class Camera {
         updateTransformMatrix();
     }
 
+    /**
+     * Gets the transformation matrix
+     * @return Transformation matrix
+     */
     public Matrix getTransformMatrix() {
         return _transformMatrix;
     }
 
+    /**
+     * Sets the transformation Matrix
+     * @param transformMatrix Matrix
+     */
     public void setTransformMatrix(Matrix transformMatrix) {
         this._transformMatrix = transformMatrix;
     }
 
+    /**
+     * Returns the inverse matrix
+     * @return Inverse matrix
+     */
     public Matrix getInverseMatrix() {
         if(_inverseMatrix == null)
         {
@@ -108,5 +169,4 @@ public class Camera {
         }
         return _inverseMatrix;
     }
-
 }

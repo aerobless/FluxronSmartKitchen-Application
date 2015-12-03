@@ -1,9 +1,7 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +26,12 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
     private IKitchenClickListener listener;
     private IEventBusProvider provider;
 
+    /**
+     * Creates a new view holder
+     * @param itemView Item view
+     * @param listener Listener for clicks
+     * @param provider Event bus provider
+     */
     public KitchenHolder(View itemView, IKitchenClickListener listener, IEventBusProvider provider) {
         super(itemView);
 
@@ -45,12 +49,20 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
 
     }
 
+    /**
+     * Image was loaded
+     * @param msg Message
+     */
     public void onEventMainThread(ImageLoaded msg){
         if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
             img.setImageBitmap(msg.getBmp());
         }
     }
 
+    /**
+     * Binds this holder to a kitchen
+     * @param k Kitchen
+     */
     public void bind(final Kitchen k){
         boundData = k;
         title.setText(k.getName());
@@ -75,6 +87,10 @@ public class KitchenHolder extends RecyclerView.ViewHolder implements View.OnCli
         provider.getUiEventBus().post(command);
     }
 
+    /**
+     * The view was clicked
+     * @param v View
+     */
     @Override
     public void onClick(View v) {
         if(listener != null){

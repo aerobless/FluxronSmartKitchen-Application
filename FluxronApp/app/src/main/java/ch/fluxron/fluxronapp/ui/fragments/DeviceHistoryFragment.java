@@ -31,6 +31,13 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
     // Glass temperature level timers
     private PercentageGroup glassGroup = new PercentageGroup();
 
+    /**
+     * Creates the view for the fragment
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +58,10 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Device was changed, update all the status labels
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
 
@@ -74,6 +85,10 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Device was not changed, update all the status labels
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
             int[] parameterViewIds = new int[]{
@@ -89,6 +104,15 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
         }
     }
 
+
+    /**
+     * Updates all the controls in a percentage group
+     * @param updatedValues Event containing the new values
+     * @param group Group with the percentage values
+     * @param parameterViewIds Views for this group
+     * @param labelIds Labels for this group
+     * @param addToGroup Defines, which parameters should be counted to the total of this group
+     */
     private void updatePercentageGroupedControls(DeviceChanged updatedValues, PercentageGroup group, int[] parameterViewIds, int[] labelIds, boolean[] addToGroup) {
         if (getView() == null) return;
 
