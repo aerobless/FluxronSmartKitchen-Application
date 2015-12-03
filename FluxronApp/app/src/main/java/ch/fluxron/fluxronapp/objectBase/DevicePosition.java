@@ -43,18 +43,34 @@ public class DevicePosition {
         this.position = position;
     }
 
+    /**
+     * Returns the device category
+     * @return Category
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Sets the device category
+     * @param category Category
+     */
     public void setCategory(String category) {
         this.category = category;
     }
 
+    /**
+     * Gets the name of the device
+     * @return Name of the device
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of the device
+     * @param name Name of the device
+     */
     public void setName(String name) {
         this.name = name;
     }
