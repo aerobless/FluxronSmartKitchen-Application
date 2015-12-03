@@ -66,6 +66,10 @@ public class ImportExportManager {
         importTempFiles = new HashMap<>();
     }
 
+    /**
+     * Import was requested
+     * @param msg Message
+     */
     public void onEventAsync(ImportKitchenCommand msg) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -117,6 +121,13 @@ public class ImportExportManager {
         }
     }
 
+    /**
+     * Opens the zip file
+     * @param location Location
+     * @param resolver Resolver for content requests
+     * @return ZipFile instance
+     * @throws IOException
+     */
     private ZipFile openZipFile(Uri location, ContentResolver resolver) throws IOException {
         if ("content".equals(location.getScheme())){
             // If this file was already saved in a temp file, just use the same file again
@@ -138,6 +149,12 @@ public class ImportExportManager {
         return new ZipFile(location.getPath());
     }
 
+    /**
+     * Copies a stream to a destination file
+     * @param src Source stream
+     * @param dst File target
+     * @throws IOException
+     */
     private void copy(InputStream src, File dst) throws IOException {
         InputStream in = new BufferedInputStream(src);
         OutputStream out = new FileOutputStream(dst);
@@ -152,6 +169,13 @@ public class ImportExportManager {
         out.close();
     }
 
+    /**
+     * Notifies a change of progress
+     * @param currentStep Current step
+     * @param stepCount Step count
+     * @param msg Source message
+     * @param objId Object id
+     */
     private void notifyProgress(int currentStep, int stepCount, ImportKitchenCommand msg, String objId) {
         ImportProgressChanged progress = new ImportProgressChanged(stepCount, currentStep);
         progress.setConnectionId(msg);
@@ -159,6 +183,10 @@ public class ImportExportManager {
         provider.getUiEventBus().post(progress);
     }
 
+    /**
+     * Import of the metadata should be started
+     * @param msg Message
+     */
     public void onEventAsync(LoadImportMetadata msg) {
         try {
             FluxronManifest manifest = getMetadataFromUri(msg.getLocation(), msg.getResolver());
@@ -181,6 +209,13 @@ public class ImportExportManager {
         }
     }
 
+    /**
+     * Loads the metadata from a uri location
+     * @param location Location
+     * @param resolver Resolver for content queries
+     * @return Metadata
+     * @throws IOException
+     */
     private FluxronManifest getMetadataFromUri(Uri location, ContentResolver resolver) throws IOException {
         ZipFile file = openZipFile(location, resolver);
         ZipEntry entry = file.getEntry(ENTRY_MANIFEST);
@@ -191,6 +226,10 @@ public class ImportExportManager {
         return parsed;
     }
 
+    /**
+     * Export is requested
+     * @param msg Message
+     */
     public void onEventAsync(final ExportKitchenCommand msg) {
         // Laden der Küche
         GetObjectByIdCommand cmd = new GetObjectByIdCommand(msg.getKitchenId(), new ITypedCallback<Object>() {
@@ -204,6 +243,11 @@ public class ImportExportManager {
         provider.getDalEventBus().post(cmd);
     }
 
+    /**
+     * Exports a kitchen
+     * @param kitchen Kitchen
+     * @param msg Message
+     */
     private void exportKitchen(final Kitchen kitchen, final ExportKitchenCommand msg) {
         // Laden der Attachmentstreams
         GetAllAttachmentStreamsFromObjectCommand cmd = new GetAllAttachmentStreamsFromObjectCommand(kitchen.getId(), new ITypedCallback<Map<String, InputStream>>() {
@@ -215,6 +259,12 @@ public class ImportExportManager {
         provider.getDalEventBus().post(cmd);
     }
 
+    /**
+     * Exports a kitchen to a zip file
+     * @param kitchen Kitchen
+     * @param msg Message
+     * @param streams Streams to add to the zip file
+     */
     private void createKitchenZipFile(Kitchen kitchen, ExportKitchenCommand msg, Map<String, InputStream> streams) {
         // Storage directory
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "flx_export");
@@ -246,10 +296,16 @@ public class ImportExportManager {
             event.setConnectionId(msg);
             provider.getUiEventBus().post(event);
         } catch (java.io.IOException e) {
-
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Copies all streams into the zip file
+     * @param zipFile ZipFile
+     * @param streams Streams to copy
+     * @throws IOException
+     */
     private void writeAnCloseAllStreams(ZipOutputStream zipFile, Map<String, InputStream> streams) throws IOException {
         for(Map.Entry<String, InputStream> stream : streams.entrySet()) {
             ZipEntry entry = new ZipEntry(stream.getKey());
@@ -261,6 +317,12 @@ public class ImportExportManager {
         }
     }
 
+    /**
+     * Copies a stream into the zip file
+     * @param stream Stream
+     * @param zipFile ZipFile
+     * @throws IOException
+     */
     private void copyStreamToZip(InputStream stream, ZipOutputStream zipFile) throws IOException {
         byte[] buffer = new byte[256];
         int bytesRead;
@@ -272,6 +334,12 @@ public class ImportExportManager {
         stream.close();
     }
 
+    /**
+     * Writes the kitchen into the .json file
+     * @param zipFile ZipFile
+     * @param kitchen Kitchen
+     * @throws IOException
+     */
     private void writeObject(ZipOutputStream zipFile, Kitchen kitchen) throws IOException {
         ZipEntry entry = new ZipEntry(ENTRY_KITCHEN);
         zipFile.putNextEntry(entry);
@@ -286,6 +354,12 @@ public class ImportExportManager {
         zipFile.closeEntry();
     }
 
+    /**
+     * Writes the kitchen manifest file
+     * @param zipFile ZipFile
+     * @param kitchen Kitchen
+     * @throws IOException
+     */
     private void writeManifest(ZipOutputStream zipFile, Kitchen kitchen) throws IOException {
         ZipEntry entry = new ZipEntry(ENTRY_MANIFEST);
         zipFile.putNextEntry(entry);

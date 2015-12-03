@@ -1,25 +1,30 @@
 package ch.fluxron.fluxronapp.model;
 
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectCreated;
-import ch.fluxron.fluxronapp.events.modelDal.objectOperations.ObjectLoaded;
 import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenCreated;
-import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.KitchenLoaded;
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
-import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 
 /**
- * Responds to a message. FOR PROTOTYPE USAGE ONLY!!!
+ * Responds to generic object message
  */
-public class PrototypeResponder {
+public class ObjectCreationManager {
 
     private IEventBusProvider provider;
 
-    public PrototypeResponder(IEventBusProvider provider) {
+    /**
+     * Creates a new object creation manager
+     * @param provider Provider
+     */
+    public ObjectCreationManager(IEventBusProvider provider) {
         this.provider = provider;
         provider.getDalEventBus().register(this);
         provider.getUiEventBus().register(this);
     }
 
+    /**
+     * Object was created
+     * @param msg Message
+     */
     public void onEventAsync(ObjectCreated msg) {
         if (msg.getData() instanceof Kitchen) {
             KitchenCreated event = new KitchenCreated((Kitchen) msg.getData());

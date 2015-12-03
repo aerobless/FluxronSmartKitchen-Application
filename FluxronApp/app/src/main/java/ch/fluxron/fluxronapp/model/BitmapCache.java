@@ -15,6 +15,12 @@ public class BitmapCache extends LruCache<String, Bitmap> {
         super(maxSize);
     }
 
+    /**
+     * Returns the size of the cache item
+     * @param key Key
+     * @param value Value
+     * @return Size
+     */
     @Override
     protected int sizeOf(String key, Bitmap value) {
         return value.getByteCount() / 1024;

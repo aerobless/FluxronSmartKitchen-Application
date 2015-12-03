@@ -88,6 +88,11 @@ public class KitchenManager {
         }
     }
 
+    /**
+     * Posts all error message to the UI bus
+     * @param msg Original message
+     * @param errors Error messages
+     */
     private void raiseErrors(RequestResponseConnection msg, List<ValidationErrorOccurred> errors) {
         for (ValidationErrorOccurred error : errors) {
             error.setConnectionId(msg);
@@ -134,6 +139,11 @@ public class KitchenManager {
         }
     }
 
+    /**
+     * Validates an attachments
+     * @param imagePath Path to the image
+     * @return Validation errors, if any were found
+     */
     private List<ValidationErrorOccurred> validateAttachment(Uri imagePath) {
         List<ValidationErrorOccurred> errors = new ArrayList<>();
         if (imagePath == null || imagePath.getPath().trim().equals("")) {
@@ -197,6 +207,11 @@ public class KitchenManager {
         provider.getDalEventBus().post(getOp);
     }
 
+    /**
+     * Removes an area from the kitchen
+     * @param kitchen Kitchen
+     * @param cmd Command
+     */
     private void removeAreaFromKitchen(Kitchen kitchen, DeleteAreaFromKitchenCommand cmd) {
         List<KitchenArea> areas = kitchen.getAreaList();
 
@@ -509,6 +524,11 @@ public class KitchenManager {
         this.provider.getDalEventBus().post(getOp);
     }
 
+    /**
+     * Deletes a device
+     * @param kitchen Kitchen
+     * @param msg Command
+     */
     private void deleteDevice(Kitchen kitchen, DeleteDeviceFromAreaCommand msg) {
         // Find the area
         KitchenArea foundArea = null;
@@ -626,6 +646,11 @@ public class KitchenManager {
         this.provider.getDalEventBus().post(getOp);
     }
 
+    /**
+     * Loads an area
+     * @param kitchen Kitchen
+     * @param msg Command
+     */
     private void loadArea(Kitchen kitchen, LoadKitchenAreaCommand msg) {
         // Find the area
         KitchenArea found = null;
