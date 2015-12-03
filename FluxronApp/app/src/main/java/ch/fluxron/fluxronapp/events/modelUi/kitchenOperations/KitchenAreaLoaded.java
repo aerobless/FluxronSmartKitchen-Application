@@ -9,10 +9,18 @@ import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 public class KitchenAreaLoaded extends RequestResponseConnection {
     private KitchenArea area;
 
+    /**
+     * Area was loaded event
+     * @param area Area
+     */
     public KitchenAreaLoaded(KitchenArea area) {
         this.area = area;
     }
 
+    /**
+     * Returns the loaded area
+     * @return Area
+     */
     public KitchenArea getArea() {
         return area;
     }

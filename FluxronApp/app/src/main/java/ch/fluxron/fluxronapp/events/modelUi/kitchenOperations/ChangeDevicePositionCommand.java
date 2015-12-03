@@ -13,6 +13,13 @@ public class ChangeDevicePositionCommand extends RequestResponseConnection {
     private String kitchenId;
     private int areaId;
 
+    /**
+     * Position change command
+     * @param pos Position
+     * @param kitchenId Id of the kitchen
+     * @param areaID Id of the area
+     * @param deviceId Id of the device
+     */
     public ChangeDevicePositionCommand(Point pos, String kitchenId, int areaID, String deviceId) {
         this.pos = pos;
         this.deviceId = deviceId;
@@ -20,35 +27,43 @@ public class ChangeDevicePositionCommand extends RequestResponseConnection {
         this.kitchenId = kitchenId;
     }
 
+    /**
+     * Returns the position of the device
+     * @return Position
+     */
     public Point getPos() {
         return pos;
     }
 
-    public void setPos(Point pos) {
-        this.pos = pos;
-    }
-
+    /**
+     * Returns the id of the device
+     * @return Device id
+     */
     public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
+    /**
+     * Returns the id of the kitchen
+     * @return Id of the kitchen
+     */
     public String getKitchenId() {
         return kitchenId;
     }
 
+    /**
+     * Sets the id of the kitchen
+     * @param kitchenId Id of the kitchen
+     */
     public void setKitchenId(String kitchenId) {
         this.kitchenId = kitchenId;
     }
 
+    /**
+     * Gets the id of the area
+     * @return Id of the area
+     */
     public int getAreaId() {
         return areaId;
-    }
-
-    public void setAreaId(int areaId) {
-        this.areaId = areaId;
     }
 }
