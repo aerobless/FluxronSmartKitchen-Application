@@ -1,8 +1,10 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -24,12 +26,6 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
     private KitchenArea boundData;
     private IAreaClickedListener listener;
 
-    /**
-     * Creates a new area holder
-     * @param itemView View for the item
-     * @param listener Listener for click events
-     * @param provider Provider for the event bus
-     */
     public AreaHolder(View itemView, IAreaClickedListener listener, IEventBusProvider provider) {
         super(itemView);
 
@@ -43,10 +39,6 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
         card.setPreventCornerOverlap(false);
     }
 
-    /**
-     * Image was loaded, deregister from the event bus and display it
-     * @param msg Message
-     */
     public void onEventMainThread(ImageLoaded msg){
         if(msg.getConnectionId().equals(imageRequestId) && msg.getBmp() != null){
             img.setImageBitmap(msg.getBmp());
@@ -88,10 +80,6 @@ public class AreaHolder extends RecyclerView.ViewHolder implements View.OnClickL
         provider.getUiEventBus().post(command);
     }
 
-    /**
-     * A view was clicked
-     * @param v View
-     */
     @Override
     public void onClick(View v) {
         if(listener != null){

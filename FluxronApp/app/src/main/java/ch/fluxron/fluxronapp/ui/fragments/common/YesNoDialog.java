@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.ui.fragments.common;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -29,11 +30,6 @@ public class YesNoDialog extends DialogFragment {
         this.listener = listener;
     }
 
-    /**
-     * Creates the dialog
-     * @param savedInstanceState State
-     * @return Dialog
-     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {

@@ -17,21 +17,11 @@ import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
-/**
- * Displays the status of a device
- */
 public class DeviceStatusFragment extends DeviceBaseFragment {
     private List<TemperatureBar> temperatureBars;
     private List<ParameterView> parameters;
     private boolean ready = false;
 
-    /**
-     * Creates the view
-     * @param inflater Inflater
-     * @param container Container
-     * @param savedInstanceState State
-     * @return Status view
-     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,10 +48,6 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
-    /**
-     * Initializes the temperature bars and parameter views
-     * @param deviceView Root view
-     */
     private void initControls(View deviceView) {
         temperatureBars = new ArrayList<>();
         ViewGroup temperatureList = (ViewGroup) deviceView.findViewById(R.id.temperatureBars);
@@ -76,10 +62,6 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         }
     }
 
-    /**
-     * Device changed, temperature bars and parameter views need to be updated
-     * @param inputMsg Message
-     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             for(TemperatureBar p:temperatureBars){
@@ -91,10 +73,6 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         }
     }
 
-    /**
-     * Device was not changed, i.e. after saving a value
-     * @param inputMsg Message
-     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
             for(ParameterView p:parameters){

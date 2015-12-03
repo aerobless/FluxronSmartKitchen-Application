@@ -26,10 +26,6 @@ public class AreaListFragment extends Fragment {
     private AreaListAdapter listAdapter;
     private IAreaClickedListener listener;
 
-    /**
-     * Creates this fragment
-     * @param savedInstanceState State
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,39 +38,30 @@ public class AreaListFragment extends Fragment {
         }
     }
 
-    /**
-     * Sets the provider for the event bus
-     * @param provider Provider
-     */
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;
     }
 
-    /**
-     * Sets the listener for area clicks
-     * @param listener Listener
-     */
     public void setClickListener(IAreaClickedListener listener){
         this.listener = listener;
     }
 
-    /**
-     * Saves the instance state
-     * @param outState State
-     */
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KITCHEN_ID, kitchenId);
     }
 
-    /**
-     * Creates the view for this fragment
-     * @param inflater Inflater
-     * @param container Container
-     * @param savedInstanceState Instance state
-     * @return View
-     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -110,11 +97,6 @@ public class AreaListFragment extends Fragment {
         return listView;
     }
 
-    /**
-     * Snaps the list to a proper position and issues a selection event
-     * @param v List recycler view
-     * @param m Layout manager
-     */
     private void snapListAndNotify(final RecyclerView v, LinearLayoutManager m) {
         if (listAdapter.getItemCount() == 0) return;
 
@@ -154,20 +136,12 @@ public class AreaListFragment extends Fragment {
         }
     }
 
-    /**
-     * Notifies the change of a scroll position
-     * @param pos Position
-     */
     private void notifyScrollPosition(int pos) {
         if (this.listener!=null){
             this.listener.areaScrolled(pos);
         }
     }
 
-    /**
-     * Returns the list adapter that should be used to update the data displayed by this fragment
-     * @return List adapter
-     */
     public AreaListAdapter getListAdapter() {
         return listAdapter;
     }

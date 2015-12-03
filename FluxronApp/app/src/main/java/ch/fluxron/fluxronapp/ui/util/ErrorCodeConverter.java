@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.ui.util;
 
+import android.util.Log;
 
 /**
  * Used to convert a Fluxron encoded error code to human readable data.
@@ -18,8 +19,8 @@ public class ErrorCodeConverter {
     /**
      * Converts integer containing encoded Fluxron error code to a error code resource string.
      *
-     * @param input Integer containing the error code
-     * @return String loaded from resources
+     * @param input
+     * @return
      */
     public static String convertToErrorCode(int input) {
         String hex = Integer.toHexString(input);
@@ -39,8 +40,8 @@ public class ErrorCodeConverter {
     /**
      * Converts integer containing encoded Fluxron error code to a time resource string.
      *
-     * @param input Integer containing the error code
-     * @return Time formated into a string
+     * @param input
+     * @return
      */
     public static String convertToTime(int input) {
         String hex = Integer.toHexString(input);

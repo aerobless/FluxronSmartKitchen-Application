@@ -31,14 +31,7 @@ import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
  * Implements a fragment that displays the list of discovered devices
  */
 public class DeviceListFragment extends Fragment implements IDeviceClickListener {
-    /**
-     * Listener for device lists
-     */
     public interface IDeviceAddedListener {
-        /**
-         * The user requested the addition of a device
-         * @param d Device
-         */
         void onDeviceAddRequested(Device d);
     }
 
@@ -51,17 +44,10 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     private IDeviceAddedListener addListener;
     private Button discoveryButton;
 
-    /**
-     * Sets the listener for device clicks
-     * @param listener Listener
-     */
     public void setClickListener(IDeviceClickListener listener) {
         this.listener = listener;
     }
 
-    /**
-     * Fragment was started
-     */
     @Override
     public void onStart() {
         super.onStart();
@@ -71,9 +57,6 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         discoveryActive = true;
     }
 
-    /**
-     * Fragment was stopped
-     */
     @Override
     public void onStop() {
         super.onStop();
@@ -83,22 +66,11 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         provider.getUiEventBus().unregister(this);
     }
 
-    /**
-     * Saves the state of this fragment
-     * @param outState State
-     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * Creates the view for this fragment
-     * @param inflater Inflater
-     * @param container Container
-     * @param savedInstanceState State
-     * @return View
-     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,27 +111,16 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         return deviceView;
     }
 
-    /**
-     * Toggles the discovery
-     */
     public void toggleDiscovery() {
         setDiscoveryActive(!discoveryActive);
     }
 
-    /**
-     * Sets the discovery state
-     * @param value Active
-     */
     private void setDiscoveryActive(boolean value) {
         discoveryActive = value;
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(value));
         updateStatusText();
     }
 
-    /**
-     * Updates the status text
-     */
-    // TODO: Use resources for all texts
     private void updateStatusText() {
         if (discoveryActive) {
             discoveryButton.setText(getResources().getText(R.string.btn_pause_discovery));
@@ -170,39 +131,23 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         }
     }
 
-    /**
-     * Device was loaded
-     * @param msg Message
-     */
     public void onEventMainThread(DeviceLoaded msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
         updateStatusText();
     }
 
-    /**
-     * Device values or state changed
-     * @param msg Message
-     */
     public void onEventMainThread(DeviceChanged msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
     }
 
-    /**
-     * Device was clicked
-     * @param d Device
-     */
     @Override
     public void deviceClicked(Device d) {
         Log.d("Fluxron", "Requesting data from " + d.getAddress());
         provider.getUiEventBus().post(new BluetoothTestCommand(d.getAddress()));
     }
 
-    /**
-     * The add / pair button of a device was clicked
-     * @param d Device that should be paired or added
-     */
     @Override
     public void deviceButtonPressed(Device d) {
         if (d.isBonded()) {
@@ -218,10 +163,6 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         }
     }
 
-    /**
-     * Sets the listener for device add events
-     * @param l Listener
-     */
     public void setListener(IDeviceAddedListener l) {
         this.addListener = l;
     }

@@ -10,21 +10,10 @@ import android.view.View;
 public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
     private int space;
 
-    /**
-     * Creates a new space decorator
-     * @param space Space that should be between two controls
-     */
     public SpacesItemDecoration(int space){
         this.space = space;
     }
 
-    /**
-     * Returns the offsets of the icons
-     * @param outRect Rectangle
-     * @param view View
-     * @param parent Parent view
-     * @param state State
-     */
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);

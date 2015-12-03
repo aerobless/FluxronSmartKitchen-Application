@@ -1,9 +1,13 @@
 package ch.fluxron.fluxronapp.ui.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,12 +64,6 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         notifyDataSetChanged();
     }
 
-    /**
-     * View holder should be created
-     * @param parent Parent layout group
-     * @param viewType Type of the view (ignored)
-     * @return View holder
-     */
     @Override
     public KitchenHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
@@ -74,20 +72,11 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         return new KitchenHolder(itemView, listener, this.provider);
     }
 
-    /**
-     * Viewholder should be bound to the specific item
-     * @param holder Holder
-     * @param position Position
-     */
     @Override
     public void onBindViewHolder(KitchenHolder holder, int position) {
         holder.bind(kitchens.get(position));
     }
 
-    /**
-     * Gets the number of items in this list
-     * @return Number of items
-     */
     @Override
     public int getItemCount() {
         return kitchens.size();

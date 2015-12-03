@@ -62,12 +62,6 @@ public class AreaListAdapter extends RecyclerView.Adapter<AreaHolder> {
         notifyDataSetChanged();
     }
 
-    /**
-     * Creates a ViewHolder for the area
-     * @param parent Parent layout group
-     * @param viewType Type of the view (ignored)
-     * @return ViewHolder for the view
-     */
     @Override
     public AreaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
@@ -77,20 +71,11 @@ public class AreaListAdapter extends RecyclerView.Adapter<AreaHolder> {
         return new AreaHolder(itemView, this.listener, this.provider);
     }
 
-    /**
-     * Binds the ViewHolder to a specific element in the list
-     * @param holder Holder
-     * @param position Element position
-     */
     @Override
     public void onBindViewHolder(AreaHolder holder, int position) {
         holder.bind(areas.get(position));
     }
 
-    /**
-     * Returns the number of items in this list
-     * @return Number of items
-     */
     @Override
     public int getItemCount() {
         return areas.size();

@@ -23,18 +23,11 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.IKitchenClickListener;
 import ch.fluxron.fluxronapp.ui.adapters.KitchenListAdapter;
 
-/**
- * Main Activity of the activity, gets called when the app is started
- */
 public class MainActivity extends FluxronBaseActivity implements IKitchenClickListener {
 
     private KitchenListAdapter listAdapter;
     private String searchConnection = "";
 
-    /**
-     * Called when a new isntance of this activity is created
-     * @param savedInstanceState State that was saved
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +66,6 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         kitchenListView.setAdapter(listAdapter);
     }
 
-    /**
-     * Start of the activity
-     */
     @Override
     public void onStart() {
         super.onStart();
@@ -85,9 +75,28 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         searchConnection = postMessage(new FindKitchenCommand(""));
     }
 
-    /**
-     * Sends a search message to find by name
-     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void sendSearchMessage(){
         String searchQuery = ((TextView)findViewById(R.id.kitchenName)).getText().toString();
         FindKitchenCommand cmd = new FindKitchenCommand(searchQuery);
@@ -95,38 +104,22 @@ public class MainActivity extends FluxronBaseActivity implements IKitchenClickLi
         searchConnection = postMessage(cmd);
     }
 
-    /**
-     * Navigates to the creation of a kitchen
-     * @param btn Button that requested the navigation
-     */
     public void navigateCreate(View btn){
         Intent startOther = new Intent(this, CreateKitchenActivity.class);
         startActivity(startOther);
     }
 
-    /**
-     * A kitchen was loaded
-     * @param msg Message that contains the kitchen
-     */
     public void onEventMainThread(KitchenLoaded msg){
         if (msg.getConnectionId().equals(searchConnection)) {
             listAdapter.addOrUpdate(msg.getKitchen());
         }
     }
 
-    /**
-     * Settings button was clicked
-     * @param view Button that was clicked
-     */
     public void onSettingsButtonClicked(View view){
         Intent startOther = new Intent(this, ApplicationSettingsActivity.class);
         startActivity(startOther);
     }
 
-    /**
-     * A kitchen was clicked and should be displayed
-     * @param k Kitchen to navigate to
-     */
     @Override
     public void kitchenClicked(Kitchen k) {
         Intent startOther = new Intent(this, KitchenActivity.class);
