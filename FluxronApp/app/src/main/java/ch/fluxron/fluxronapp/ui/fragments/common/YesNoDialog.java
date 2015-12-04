@@ -1,6 +1,5 @@
 package ch.fluxron.fluxronapp.ui.fragments.common;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -16,7 +15,16 @@ public class YesNoDialog extends DialogFragment {
      * Listens to yes or no from the YesNoDialog
      */
     public interface IYesNoListener {
+        /**
+         * The user clicked on 'yes'
+         * @param action Action code
+         */
         void yesSelected(int action);
+
+        /**
+         * The user clicked on 'no'
+         * @param action Action code
+         */
         void noSelected(int action);
     }
 
@@ -30,6 +38,11 @@ public class YesNoDialog extends DialogFragment {
         this.listener = listener;
     }
 
+    /**
+     * Creates the new dialog
+     * @param savedInstanceState State
+     * @return Dialog
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
