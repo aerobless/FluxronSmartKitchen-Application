@@ -76,6 +76,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         assignValuesToAreaList();
     }
 
+    /**
+     * Area list should be listened to
+     */
     private void assignValuesToAreaList() {
         Fragment listFragment = getFragmentManager().findFragmentById(R.id.kitchenArea);
         if (listFragment!=null && listFragment instanceof AreaListFragment) {
@@ -85,6 +88,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         }
     }
 
+    /**
+     * Creates the area list
+     */
     private void createAreaList() {
         Bundle par = new Bundle();
         par.putString(AreaListFragment.KITCHEN_ID, kitchenId);
@@ -113,6 +119,9 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         requestKitchenLoad();
     }
 
+    /**
+     * Changes the child views display state according to the fragment managers stack state
+     */
     private void changeChildDisplayState() {
         boolean bIsDetailView = false;
         boolean bIsEditMode = false;
@@ -384,6 +393,10 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         animateEditButton(true);
     }
 
+    /**
+     * We scrolled to a specific area, show that change in the bubble control
+     * @param pos Pos
+     */
     @Override
     public void areaScrolled(int pos) {
         ListBubbleControl c = (ListBubbleControl) findViewById(R.id.bubbleControl);
@@ -506,6 +519,10 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         }
     }
 
+    /**
+     * Device should be a dded
+     * @param d Device
+     */
     @Override
     public void onDeviceAddRequested(Device d) {
         // Send a message to the business logic that the device should be added
@@ -523,6 +540,13 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         postMessage(command);
     }
 
+    /**
+     * Device position changed, save that
+     * @param area Area
+     * @param deviceId Device id
+     * @param x x
+     * @param y y
+     */
     @Override
     public void devicePositionChanged(KitchenArea area, String deviceId, int x, int y) {
         // Send a message to the business logic that the device should be moved
@@ -530,6 +554,11 @@ public class KitchenActivity extends FluxronBaseActivity implements IAreaClicked
         postMessage(command);
     }
 
+    /**
+     * Device should be deleted
+     * @param area Area
+     * @param deviceId Device id
+     */
     @Override
     public void deviceDeleted(KitchenArea area, String deviceId) {
         // Device should be removed from the kitchen area

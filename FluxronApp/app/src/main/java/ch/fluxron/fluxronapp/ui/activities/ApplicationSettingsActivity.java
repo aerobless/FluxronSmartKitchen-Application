@@ -18,6 +18,10 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
     private EditText username;
     private EditText password;
 
+    /**
+     * Create this activity
+     * @param savedInstanceState State
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +31,10 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         busProvider.getUiEventBus().post(new LoadAuthenticationCommand());
     }
 
+    /**
+     * Save is requested
+     * @param button Button
+     */
     public void onSaveButtonClicked(View button) {
         String user = username.getText().toString();
         String pw = password.getText().toString();
@@ -41,6 +49,10 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Authentication result arrived
+     * @param inputMsg Message
+     */
     public void onEventMainThread(UserAuthenticated inputMsg) {
         if(inputMsg.isAuthenticated()){
             showToast("Successfully authenticated!");
@@ -49,6 +61,10 @@ public class ApplicationSettingsActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Settings data was loaded
+     * @param inputMsg Message
+     */
     public void onEventMainThread(AuthenticationLoaded inputMsg) {
         username.setText(inputMsg.getUsername());
         password.setText(inputMsg.getPassword());

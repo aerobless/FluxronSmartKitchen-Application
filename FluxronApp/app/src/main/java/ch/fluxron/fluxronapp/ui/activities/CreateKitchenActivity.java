@@ -20,7 +20,9 @@ import ch.fluxron.fluxronapp.events.modelUi.kitchenOperations.SaveKitchenCommand
 import ch.fluxron.fluxronapp.objectBase.Kitchen;
 import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 
-
+/**
+ * Creates a new kitchen
+ */
 public class CreateKitchenActivity extends FluxronBaseActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String EXTRA_SAVED_FILEPATH = "path";
@@ -31,12 +33,20 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
     private String attachmentRequestId;
     private String kitchenId;
 
+    /**
+     * Creates this activity
+     * @param savedInstanceState State
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_kitchen);
     }
 
+    /**
+     * Saves the file name of the temp image
+     * @param outState State
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -45,6 +55,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Restores the file name of the temp image from the state
+     * @param savedInstanceState State
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -55,12 +69,20 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Validation failed, show message to the user
+     * @param msg Message
+     */
     public void onEventMainThread(ValidationErrorOccurred msg){
         if (msg.getConnectionId().equals(saveRequestId) || msg.getConnectionId().equals(this.attachmentRequestId)) {
             displayError(msg);
         }
     }
 
+    /**
+     * Animate the error view and scroll to it so the user can always see it
+     * @param msg Error
+     */
     private void displayError(ValidationErrorOccurred msg) {
         ScrollView scroller = (ScrollView)findViewById(R.id.createKitchenScroller);
         scroller.smoothScrollTo(0,0);
@@ -70,6 +92,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         errorText.animate().alpha(1).setDuration(ANIM_DURATION_IN);
     }
 
+    /**
+     * Kitchen created, save the image to it
+     * @param msg Message
+     */
     public void onEventMainThread(KitchenCreated msg){
         // if the kitchen loaded was based on our request
         if(msg.getConnectionId().equals(saveRequestId)){
@@ -83,6 +109,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Creation was successful
+     * @param msg Message
+     */
     public void onEventMainThread(ResponseOK msg) {
         if(msg.getConnectionId().equals(this.attachmentRequestId) && this.kitchenId!=null){
             Intent editKitchen = new Intent(this, KitchenActivity.class);
@@ -93,6 +123,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Send a command to create the new kitchen
+     * @param button Button
+     */
     public void createNewKitchen(View button){
         // Animate out the error view
         findViewById(R.id.textViewError).animate().alpha(0).setDuration(ANIM_DURATION_OUT);
@@ -111,6 +145,10 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         postMessage(command);
     }
 
+    /**
+     * Picture should be taken
+     * @param button Button
+     */
     public void onCreatePictureClicked(View button) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         tempFileName = getImageFileUri();
@@ -118,6 +156,12 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
+    /**
+     * Picture was taken
+     * @param requestCode Request code
+     * @param resultCode Result code
+     * @param data Data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -127,6 +171,9 @@ public class CreateKitchenActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Load the image and resize it to fit inside the the view
+     */
     private void loadImageToPreview() {
         ImageView img = (ImageView)findViewById(R.id.imagePreview);
         View noImg = findViewById(R.id.noImageInformation);

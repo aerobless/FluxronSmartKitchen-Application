@@ -108,16 +108,34 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
         }
     }
 
+    /**
+     * Interface compat
+     * @param s Sequence
+     * @param start Start
+     * @param count Count
+     * @param after Left
+     */
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         // Nothing to do here, only for interface compat
     }
 
+    /**
+     * Interface compat
+     * @param s Sequence
+     * @param start Start
+     * @param before Before
+     * @param count Count
+     */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         // Nothing to do here, only for interface compat
     }
 
+    /**
+     * Text changed, we need to update the values
+     * @param s Values
+     */
     @Override
     public void afterTextChanged(Editable s) {
         String name = ((TextView) findViewById(R.id.settingsEditName)).getText().toString();
@@ -161,6 +179,10 @@ public class KitchenSettingsActivity extends FluxronBaseActivity implements Text
         }
     }
 
+    /**
+     * Starts the sending of the exported EMail
+     * @param location Location of the file to attach
+     */
     private void startMailWithAttachment(Uri location) {
         Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
         emailIntent.setType("application/fluxron");

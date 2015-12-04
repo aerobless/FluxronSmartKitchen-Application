@@ -24,6 +24,10 @@ public class FluxronBaseActivity extends AppCompatActivity{
     protected IEventBusProvider busProvider;
     private static int ANIMATE_OUT_MILLISECONDS = 1000;
 
+    /**
+     * Creates this activity
+     * @param savedInstanceState State
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,10 +94,19 @@ public class FluxronBaseActivity extends AppCompatActivity{
         return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + timeStamp + ".jpg"));
     }
 
+    /**
+     * Gets the event bus provider
+     * @return Provider
+     */
     public IEventBusProvider getBusProvider() {
         return busProvider;
     }
 
+    /**
+     * Animates a fadeout
+     * @param v View
+     * @param setVisibility Should the visibility be set to GONE after the animation is finished?
+     */
     public void animateFadeOut(final View v, final boolean setVisibility){
         v.animate().alpha(0).setDuration(ANIMATE_OUT_MILLISECONDS).withEndAction(new Runnable() {
             @Override
@@ -103,6 +116,12 @@ public class FluxronBaseActivity extends AppCompatActivity{
         }).start();
     }
 
+    /**
+     * Animates a fadeout
+     * @param v View
+     * @param setVisibility Should the visibility be set to GONE after the animation is finished?
+     * @param delay Delay before the fadeout starts
+     */
     public void animateFadeOut(final View v, final boolean setVisibility, int delay){
         v.animate().alpha(0).setDuration(ANIMATE_OUT_MILLISECONDS).withEndAction(new Runnable() {
             @Override
@@ -112,11 +131,22 @@ public class FluxronBaseActivity extends AppCompatActivity{
         }).setStartDelay(delay).start();
     }
 
+    /**
+     * Animates a fade in to full opacity
+     * @param v View
+     * @param setVisibility Should the visibility be set to VISIBLE before the animation?
+     */
     public void animateFadeIn(final View v, final boolean setVisibility){
         if(setVisibility) v.setVisibility(View.VISIBLE);
         v.animate().alpha(1).setDuration(ANIMATE_OUT_MILLISECONDS).start();
     }
 
+    /**
+     * Animates a fade in to a specified opacity
+     * @param v View
+     * @param setVisibility Should the visibility be set to VISIBLE before the animation?
+     * @param targetAlpha Alpha value to animate to
+     */
     public void animateFadeIn(final View v, final boolean setVisibility, final float targetAlpha){
         if(setVisibility) v.setVisibility(View.VISIBLE);
         v.animate().alpha(targetAlpha).setDuration(ANIMATE_OUT_MILLISECONDS).start();
@@ -124,12 +154,16 @@ public class FluxronBaseActivity extends AppCompatActivity{
 
     /**
      * Listens to toast messages and displays them as overlay.
-     * @param msg
+     * @param msg Message
      */
     public void onEventMainThread(ToastProduced msg) {
         showToast(msg.getMessage());
     }
 
+    /**
+     * Displays a toast message
+     * @param message Message text
+     */
     public void showToast(String message){
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(getApplicationContext(), message, duration);

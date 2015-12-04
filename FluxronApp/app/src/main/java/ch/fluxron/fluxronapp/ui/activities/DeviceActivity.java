@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.modelUi.deviceOperations.CyclicRefreshCommand;
@@ -20,14 +19,21 @@ import ch.fluxron.fluxronapp.ui.activities.common.FluxronBaseActivity;
 import ch.fluxron.fluxronapp.ui.adapters.DeviceFragmentAdapter;
 import ch.fluxron.fluxronapp.ui.util.IEventBusProvider;
 
+/**
+ * Displays the status and history views of a device
+ */
 public class DeviceActivity extends FluxronBaseActivity {
     private IEventBusProvider provider;
-    private String address = "Unkown";
+    private String address = "Unknown";
     private String deviceClass = Device.UNKNOWN_DEVICE_CLASS;
-    private String name = "Unkown";
+    private String name = "Unknown";
     private LinearLayout progressDeviceClass;
     private TextView deviceStatusMessage;
 
+    /**
+     * Creates this activity
+     * @param savedInstanceState State
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,17 +55,10 @@ public class DeviceActivity extends FluxronBaseActivity {
         provider.getUiEventBus().post(new CyclicRefreshCommand(address));
     }
 
-    public void onBackButtonClicked(View button) {
-        // Close this activity and navigate back to the activity
-        // that is below on the stack.
-        provider.getUiEventBus().post(new CyclicRefreshCommand(CyclicRefreshCommand.ALL_DEVICES));
-        finish();
-    }
-
     /**
      * Sets the status of the device to OK whenever it receives a DeviceChange message.
      *
-     * @param inputMsg
+     * @param inputMsg Message
      */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(address)) {
@@ -76,6 +75,9 @@ public class DeviceActivity extends FluxronBaseActivity {
         }
     }
 
+    /**
+     * Sets up the tab control
+     */
     private void setupViewPagerTabs() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.deviceViewPager);
         DeviceFragmentAdapter dfa = new DeviceFragmentAdapter(getSupportFragmentManager(), this);
@@ -89,7 +91,7 @@ public class DeviceActivity extends FluxronBaseActivity {
     /**
      * Sets the status of the device to failure whenever it receives a DeviceFailed message.
      *
-     * @param inputMsg
+     * @param inputMsg Message
      */
     public void onEventMainThread(DeviceFailed inputMsg) {
         if (inputMsg.getAddress().equals(address)) {

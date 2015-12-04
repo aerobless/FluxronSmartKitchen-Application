@@ -23,6 +23,10 @@ public class KitchenImportActivity extends FluxronBaseActivity {
     private String importConnection;
     private final int ANIM_DURATION = 400;
 
+    /**
+     * Creation of this fragment
+     * @param savedInstanceState State
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
