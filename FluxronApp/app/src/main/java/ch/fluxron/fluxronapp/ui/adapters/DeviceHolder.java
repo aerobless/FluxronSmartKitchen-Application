@@ -21,6 +21,12 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
     private Device boundData;
     private IDeviceClickListener listener;
 
+    /**
+     * New holder
+     * @param itemView Item view
+     * @param listener Listener
+     * @param provider Provider for the bus
+     */
     public DeviceHolder(View itemView, IDeviceClickListener listener, IEventBusProvider provider) {
         super(itemView);
 
@@ -35,6 +41,10 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     }
 
+    /**
+     * Binds to a new device
+     * @param d Device
+     */
     public void bind(final Device d) {
         boundData = d;
         deviceName.setText(d.getName());
@@ -46,6 +56,10 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
         }
     }
 
+    /**
+     * Click occurred, notify listeners
+     * @param v View
+     */
     @Override
     public void onClick(View v) {
         if (listener != null && !(v instanceof Button)) {

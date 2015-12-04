@@ -21,11 +21,21 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
     private String deviceClass;
     private int[] tabTitleResIds = new int[]{R.string.device_tab_status, R.string.device_tab_usage, R.string.device_tab_errors, R.string.device_tab_params};
 
+    /**
+     * New device fragment adapter
+     * @param fm Manager
+     * @param context Context
+     */
     public DeviceFragmentAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.context = context;
     }
 
+    /**
+     * Returns the item at the position
+     * @param position Position
+     * @return Fragment
+     */
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -50,16 +60,30 @@ public class DeviceFragmentAdapter extends FragmentPagerAdapter {
         }
     }
 
+    /**
+     * Returns the number of fragments to be displayed
+     * @return Number of fragments
+     */
     @Override
     public int getCount() {
         return tabTitleResIds.length;
     }
 
+    /**
+     * Gets the page title for an index
+     * @param position Index
+     * @return Page title
+     */
     @Override
     public CharSequence getPageTitle(int position) {
         return context.getResources().getString(tabTitleResIds[position]);
     }
 
+    /**
+     * Initializes the adapter
+     * @param address Address
+     * @param deviceClass Class name
+     */
     public void init(String address, String deviceClass) {
         this.address = address;
         this.deviceClass = deviceClass;

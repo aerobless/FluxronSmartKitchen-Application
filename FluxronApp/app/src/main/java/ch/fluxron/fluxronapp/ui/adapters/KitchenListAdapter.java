@@ -64,6 +64,12 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         notifyDataSetChanged();
     }
 
+    /**
+     * Creates a new view holder
+     * @param parent Parent
+     * @param viewType Type
+     * @return Holder
+     */
     @Override
     public KitchenHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
@@ -72,11 +78,20 @@ public class KitchenListAdapter extends RecyclerView.Adapter<KitchenHolder> {
         return new KitchenHolder(itemView, listener, this.provider);
     }
 
+    /**
+     * Binds the view holder
+     * @param holder Holder
+     * @param position Position
+     */
     @Override
     public void onBindViewHolder(KitchenHolder holder, int position) {
         holder.bind(kitchens.get(position));
     }
 
+    /**
+     * Gets the item count
+     * @return Item count
+     */
     @Override
     public int getItemCount() {
         return kitchens.size();
