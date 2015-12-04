@@ -29,6 +29,11 @@ public class ErrorView extends LinearLayout {
     TextView errorCode;
     IEventBusProvider provider;
 
+    /**
+     * Creates a new error view
+     * @param context Context
+     * @param attrs Attributes
+     */
     public ErrorView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -55,7 +60,7 @@ public class ErrorView extends LinearLayout {
     /**
      * Returns the id of the parameter thats registered for this view.
      *
-     * @return
+     * @return Parameter
      */
     public String getParameter() {
         return parameter;
@@ -64,8 +69,8 @@ public class ErrorView extends LinearLayout {
     /**
      * Handles DeviceChanged events. If the event had an effect it returns true, otherwise false.
      *
-     * @param msg
-     * @return
+     * @param msg Message
+     * @return Parameter found
      */
     public boolean handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
@@ -76,6 +81,10 @@ public class ErrorView extends LinearLayout {
         return false;
     }
 
+    /**
+     * Sets the new value
+     * @param value Value
+     */
     public void setValue(String value) {
         errorControl.setVisibility(VISIBLE);
         String code = ErrorCodeConverter.convertToErrorCode(Integer.parseInt(value));

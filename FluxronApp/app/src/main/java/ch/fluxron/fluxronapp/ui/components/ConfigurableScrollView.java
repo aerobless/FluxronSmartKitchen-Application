@@ -24,6 +24,11 @@ public class ConfigurableScrollView extends ScrollView {
         this.scrollOffset = scrollOffset;
     }
 
+    /**
+     * Gets the scroll delta to scroll to a specific item
+     * @param rect Target rectangle
+     * @return Scroll delta
+     */
     @Override
     protected int computeScrollDeltaToGetChildRectOnScreen (final Rect rect) {
         // adjust by scroll offset

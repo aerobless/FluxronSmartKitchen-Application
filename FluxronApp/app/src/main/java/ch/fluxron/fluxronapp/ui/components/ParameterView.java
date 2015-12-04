@@ -30,6 +30,11 @@ public class ParameterView extends RelativeLayout {
     TextView paramValue;
     IEventBusProvider provider;
 
+    /**
+     * Creates a new parameter view
+     * @param context Context
+     * @param attrs Attribute set
+     */
     public ParameterView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -66,9 +71,9 @@ public class ParameterView extends RelativeLayout {
     }
 
     /**
-     * Returns the id of the parameter thats registered for this view.
+     * Returns the id of the parameter that's registered for this view.
      *
-     * @return
+     * @return id of the parameter
      */
     public String getParameter() {
         return parameter;
@@ -93,6 +98,11 @@ public class ParameterView extends RelativeLayout {
         paramValue.setText(formattedValue);
     }
 
+    /**
+     * Device has changed, read the parameter value and display it
+     * @param msg Message
+     * @return Text of the new value or null if it was not found
+     */
     public String handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
         if (dp != null) {
@@ -103,6 +113,10 @@ public class ParameterView extends RelativeLayout {
         return null;
     }
 
+    /**
+     * Change failed, display info to the user
+     * @param msg Message
+     */
     public void handleDeviceNotChanged(DeviceNotChanged msg){
         if(getParameter().contains(msg.getField())){
             paramValue.setText(getResources().getString(R.string.fieldDoesNotExist));

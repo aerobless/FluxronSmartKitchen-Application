@@ -81,6 +81,9 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         });
     }
 
+    /**
+     * Updates the positions of the label
+     */
     private void updateCurrentTempPos() {
         int halfText = getTextWidth(currentTemperature) / 2;
         int textOffset = frontSegment.getWidth() - halfText + (space1.getWidth() / 2);
@@ -88,6 +91,9 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         if (textOffset < paddingLimit) animatePaddingLeft(currentTemperature, textOffset);
     }
 
+    /**
+     * Updates the positions of the label
+     */
     private void updateMaxTempPos() {
         int halfText = getTextWidth(maxTemperature) / 2;
         int textOffset = frontSegment.getWidth() + middleSegment.getWidth() - halfText + 3 * (space1.getWidth() / 2);
@@ -95,12 +101,22 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         if (textOffset < paddingLimit) animatePaddingLeft(maxTemperature, textOffset);
     }
 
+    /**
+     * Gets the width of the text
+     * @param v Inside this view
+     * @return Width of the text
+     */
     private int getTextWidth(TextView v) {
         Rect textBounds = new Rect();
         v.getPaint().getTextBounds((String)v.getText(), 0, v.getText().length(), textBounds);
         return textBounds.width();
     }
 
+    /**
+     * Sets the left padding
+     * @param v View
+     * @param textOffset Left padding
+     */
     private void animatePaddingLeft(final TextView v, int textOffset) {
         v.setPadding(textOffset, 0, 0, 0);
     }
@@ -160,9 +176,9 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
     }
 
     /**
-     * Returns the id of the parameter thats registered for this view.
+     * Returns the id of the parameter that's registered for this view.
      *
-     * @return
+     * @return Id of the parameter
      */
     public String getParameter() {
         return parameter;
@@ -177,6 +193,10 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         }
     }
 
+    /**
+     * Sets the scale
+     * @param value Scale
+     */
     private void setScale(Float value) {
         if (value > 500) {
             setMax(100000);
@@ -194,6 +214,10 @@ public class TemperatureBar extends LinearLayout implements ValueAnimator.Animat
         }
     }
 
+    /**
+     * Animation was updated, update label positions accordingly
+     * @param animation Animation
+     */
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         updateCurrentTempPos();

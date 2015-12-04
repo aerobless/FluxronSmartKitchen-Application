@@ -129,7 +129,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     /**
      * Set the device name. If the device type is unknown, the device name is set as text for the deviceOrb.
      *
-     * @param deviceName
+     * @param deviceName Name of the devices
      */
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
@@ -143,7 +143,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     /**
      * Get the device type.
      *
-     * @return
+     * @return Type of the device
      */
     public String getDeviceType() {
         return deviceType;
@@ -152,7 +152,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     /**
      * Set the device type. If the device type is unknown, the device name is set as text for the deviceOrb.
      *
-     * @param deviceType
+     * @param deviceType Type of the device
      */
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
@@ -168,7 +168,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     /**
      * Set the device status. Status can be OK, FAILURE or UNKNOWN.
      *
-     * @param deviceStatus
+     * @param deviceStatus Status of the device
      */
     private void setDeviceStatus(int deviceStatus) {
         TextView statusOrb = (TextView) findViewById(R.id.theStatusOrb);
@@ -196,7 +196,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     /**
      * Updates the status orb to OK when we get a successful DeviceChanged event
      *
-     * @param msg
+     * @param msg Message
      */
     public void onEventMainThread(DeviceChanged msg) {
         if (msg.getDevice().getAddress().equals(deviceAddress)) {
@@ -210,7 +210,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     /**
      * Updates the status orb to FAILURE when we get a DeviceFailed event
      *
-     * @param msg
+     * @param msg Message
      */
     public void onEventMainThread(DeviceFailed msg) {
         if (msg.getAddress().equals(deviceAddress)) {
@@ -218,10 +218,18 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         }
     }
 
+    /**
+     * Gets the device address
+     * @return Address of the device
+     */
     public String getDeviceAddress() {
         return deviceAddress;
     }
 
+    /**
+     * Sets the address of the device
+     * @param deviceAddress Address of the device
+     */
     public void setDeviceAddress(String deviceAddress) {
         this.deviceAddress = deviceAddress;
     }
@@ -259,6 +267,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         findViewById(R.id.theCancelOrb).setVisibility(ViewGroup.GONE);
     }
 
+    /**
+     * Delete was clicked
+     */
     private void deleteClicked() {
         if (listener != null) {
             listener.deleteRequested(this);
@@ -274,6 +285,13 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         }
     }
 
+    /**
+     * Request a move
+     * @param dx x-direction
+     * @param dy y-direction
+     * @param lastPosition No more changes after this move?
+     * @return Accepted
+     */
     private boolean fireRequestMove(float dx, float dy, boolean lastPosition) {
         if (listener != null) {
             return listener.moveRequested(this, (int) dx, (int) dy, lastPosition);
@@ -281,6 +299,12 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         return false;
     }
 
+    /**
+     * Touch event
+     * @param v View
+     * @param event Touch event
+     * @return Handled
+     */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -308,22 +332,35 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         return true;
     }
 
+    /**
+     * Starts the popup animation
+     */
     public void popUp() {
         animateIn(findViewById(R.id.theDeviceOrb));
         animateIn(findViewById(R.id.theStatusOrb));
     }
 
+    /**
+     * Needs an update
+     */
     private void fireNeedUpdate() {
         if (listener != null) {
             listener.needsRepaint(false);
         }
     }
 
+    /**
+     * Animation updated, need a repaint
+     * @param animation Animation
+     */
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         fireNeedUpdate();
     }
 
+    /**
+     * Deletion should be reassured by the users
+     */
     public void askForDelete() {
         // Pop up the delete and cancel icon
         animateIn(findViewById(R.id.theDeleteOrb));
@@ -341,6 +378,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         }, 2000);
     }
 
+    /**
+     * Delete cancelled
+     */
     private void removeDeleteStatusViews() {
         // Hide the delete icon and the cancel icon
         animateOut(findViewById(R.id.theDeleteOrb));
@@ -351,6 +391,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         cancelAnimation = false;
     }
 
+    /**
+     * Start the deletion animation
+     */
     public void remove() {
         deleted = true;
 
@@ -361,6 +404,10 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         animateOut(findViewById(R.id.theDeviceOrb));
     }
 
+    /**
+     * Animates a views popup effect
+     * @param target View
+     */
     private void animateIn(View target) {
         if (animators.containsKey(target.getId())) {
             animators.get(target.getId()).end();
@@ -375,6 +422,10 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         animators.put(target.getId(), set);
     }
 
+    /**
+     * Animates a views fadeout effect
+     * @param target View
+     */
     private void animateOut(final View target) {
         if (animators.containsKey(target.getId())) {
             animators.get(target.getId()).end();
@@ -406,10 +457,18 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         animators.put(target.getId(), set);
     }
 
+    /**
+     * Gets the deletion flag from this view
+     * @return Deletion flag
+     */
     public boolean isDeleted() {
         return deleted && allAnimationsDone();
     }
 
+    /**
+     * Returns wether all animations are done or not
+     * @return All animations done
+     */
     private boolean allAnimationsDone() {
         boolean animationsRunning = false;
         for (Animator a : animators.values()) {
@@ -419,6 +478,9 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
         return !animationsRunning;
     }
 
+    /**
+     * Cleans upd any references
+     */
     public void cleanUp() {
         if(this.provider!=null && this.provider.getUiEventBus().isRegistered(this)) {
             provider.getUiEventBus().unregister(this);

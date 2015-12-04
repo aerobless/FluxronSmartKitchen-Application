@@ -20,22 +20,39 @@ public class ListBubbleControl extends LinearLayout{
     private int normalColor;
     private int highlightedColor;
 
+    /**
+     * New list bubble control
+     * @param context Context
+     */
     public ListBubbleControl(Context context) {
         super(context);
         setUpLayout();
     }
 
+    /**
+     * New list bubble control
+     * @param context Context
+     * @param attrs Attributes
+     */
     public ListBubbleControl(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUpLayout();
     }
 
+    /**
+     * New list bubble control
+     * @param context Context
+     * @param attrs Attrs
+     * @param defStyleAttr Styling
+     */
     public ListBubbleControl(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setUpLayout();
     }
 
-
+    /**
+     * Sets up the layout
+     */
     private void setUpLayout() {
         setOrientation(LinearLayout.HORIZONTAL);
         setGravity(Gravity.CENTER);
@@ -44,12 +61,18 @@ public class ListBubbleControl extends LinearLayout{
         this.highlightedColor = ContextCompat.getColor(getContext(), R.color.accentColor1);
     }
 
-
+    /**
+     * Sets the total number of bubbles
+     * @param n Number of bubbles
+     */
     public void setNumberOfBubbles(int n){
         numberOfBubbles = n;
         adjustChildren();
     }
 
+    /**
+     * Recalculates the number of children needed
+     */
     private void adjustChildren() {
         // remove unnecessary bubbles
         while (this.getChildCount() > numberOfBubbles) {
@@ -70,6 +93,10 @@ public class ListBubbleControl extends LinearLayout{
         }
     }
 
+    /**
+     * Sets the index of the selected item
+     * @param i Index
+     */
     public void setCurrentBubble(int i){
         int oldBubble = currentBubble;
         currentBubble = i;

@@ -12,7 +12,7 @@ import ch.fluxron.fluxronapp.R;
  */
 public class NoImageView extends FrameLayout {
     /**
-     * Create a new temperature bar
+     * Create a "no image found" for the user
      * @param context Context
      * @param attrs Attributes
      */

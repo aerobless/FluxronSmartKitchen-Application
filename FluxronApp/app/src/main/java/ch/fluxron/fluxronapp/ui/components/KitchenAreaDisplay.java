@@ -30,6 +30,9 @@ import ch.fluxron.fluxronapp.ui.util.Camera;
  * Displays a big image or parts of it
  */
 public class KitchenAreaDisplay extends View implements IDeviceViewListener {
+    /**
+     * Listener
+     */
     public interface IKitchenAreaListener {
         void devicePositionChanged(KitchenArea area, String deviceId, int x, int y);
         void deviceDeleted(KitchenArea area, String deviceId);
@@ -61,21 +64,39 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
     // Last render time to optimize framerate
     private long lastRenderTimeMilliseconds;
 
+    /**
+     * New display view
+     * @param context Context
+     */
     public KitchenAreaDisplay(Context context) {
         super(context);
         setUp();
     }
 
+    /**
+     * New display view
+     * @param context Context
+     * @param attrs Attributes
+     */
     public KitchenAreaDisplay(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUp();
     }
 
+    /**
+     * New display view
+     * @param context Context
+     * @param attrs Attributes
+     */
     public KitchenAreaDisplay(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setUp();
     }
 
+    /**
+     * Draws all the elements
+     * @param canvas Canvas to draw on
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
@@ -121,6 +142,9 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
     }
 
+    /**
+     * Limits the scrolling so you can't scroll away
+     */
     private void limitTranslation() {
         PointF f = cam.copyTranslation();
 
@@ -133,6 +157,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         cam.setTranslation(f.x, f.y);
     }
 
+    /**
+     * Measures the controls size
+     * @param widthMeasureSpec Spec
+     * @param heightMeasureSpec Spec
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // Try for a width based on our minimum
@@ -147,6 +176,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         setMeasuredDimension(w, h);
     }
 
+    /**
+     * Touch event registered
+     * @param event Event
+     * @return Handled or not
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean touchHandled = false;
@@ -200,6 +234,9 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         return true;
     }
 
+    /**
+     * Sets up all the listeners this control needs
+     */
     private void setUp() {
         cam = new Camera();
         cam.setScale(1);
@@ -226,7 +263,15 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         });
     }
 
+    /**
+     * Background task for image splitting
+     */
     private class SplitImageTask extends AsyncTask<Bitmap, Object, Object> {
+        /**
+         * Splits the image in the background
+         * @param params Exactly one Bitmap
+         * @return null
+         */
         @Override
         protected Object doInBackground(Bitmap... params) {
             Bitmap bmp = params[0];
@@ -238,6 +283,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
             return null;
         }
 
+        /**
+         * Requests a repaint after the splitting is done
+         * @param o Object
+         */
         @Override
         protected void onPostExecute(Object o) {
             needsRepaint(true);
@@ -247,7 +296,7 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
 
     /**
      * Sets the full sized bitmap to display
-     * @param bmp
+     * @param bmp Bitmap
      */
     public void setBitmap(Bitmap bmp){
         splitArraySide = (int)Math.sqrt(splitMaps.length);
@@ -262,10 +311,18 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         new SplitImageTask().execute(bmp);
     }
 
+    /**
+     * Sets the listener for area events
+     * @param listener Listener
+     */
     public void setListener(IKitchenAreaListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Sets the positions of all devices
+     * @param area Area
+     */
     public void setDevicePositions(KitchenArea area){
         this.area = area;
         for(DevicePosition d : area.getDevicePositionList()){
@@ -278,6 +335,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         needsRepaint(true);
     }
 
+    /**
+     * Creates a new device view
+     * @param d Position
+     * @return View
+     */
     @NonNull
     private DeviceView createDeviceView(DevicePosition d) {
         DeviceView deviceRenderer = new DeviceView(getContext());
@@ -289,6 +351,14 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         return deviceRenderer;
     }
 
+    /**
+     * Move of a view is requested
+     * @param v View
+     * @param dx Delta x
+     * @param dy Delta y
+     * @param finalPosition Final movement?
+     * @return Move accepted
+     */
     @Override
     public boolean moveRequested(DeviceView v, int dx, int dy, boolean finalPosition) {
         if (editMode){
@@ -303,6 +373,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         return editMode;
     }
 
+    /**
+     * Device should perform an action
+     * @param v View
+     */
     @Override
     public void actionRequested(DeviceView v) {
         if(editMode) {
@@ -315,6 +389,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         getContext().startActivity(startActivity);
     }
 
+    /**
+     * Repaint needed, keep fps in check
+     * @param force Disable frame rate check
+     */
     @Override
     public void needsRepaint(boolean force) {
         long deltaMillis = System.currentTimeMillis() - lastRenderTimeMilliseconds ;
@@ -326,6 +404,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
     }
 
+    /**
+     * Delete of a device was requested
+     * @param v View
+     */
     @Override
     public void deleteRequested(DeviceView v) {
         if(listener != null){
@@ -370,6 +452,11 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
     }
 
+    /**
+     * Finds a device view by DevicePosition
+     * @param other Search key
+     * @return Found view or null
+     */
     @Nullable
     private DeviceView findDeviceView(DevicePosition other) {
         DeviceView found = null;
@@ -382,6 +469,10 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         return found;
     }
 
+    /**
+     * Removes a view from the area
+     * @param deviceId Id
+     */
     public void removePosition(String deviceId) {
         for(DeviceView deviceView : views) {
             if(deviceView.getPosition().getDeviceId().equals(deviceId)) {
@@ -391,16 +482,27 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         }
     }
 
+    /**
+     * Returns the minimal zoom to fully see the image
+     * @return Minimal zoom
+     */
     private float getMinZoom() {
         return Math.min((float)getHeight() / bmpHeight, (float)getWidth() / bmpWidth);
     }
 
+    /**
+     * Gets the center of the camera
+     * @return Center of the camera
+     */
     public Point getCenterPosition() {
         PointF c =cam.getAsUntransformedCoordinates(getWidth()/2, getHeight()/2);
 
         return new Point((int)c.x, (int)c.y);
     }
 
+    /**
+     * Cleans up any dangling references
+     */
     public void cleanUp(){
         for(DeviceView deviceView : views) {
             deviceView.cleanUp();
