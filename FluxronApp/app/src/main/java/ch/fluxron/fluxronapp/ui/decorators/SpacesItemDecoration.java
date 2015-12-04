@@ -10,10 +10,21 @@ import android.view.View;
 public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
     private int space;
 
+    /**
+     * Creates an item decorator
+     * @param space Space between items
+     */
     public SpacesItemDecoration(int space){
         this.space = space;
     }
 
+    /**
+     * Gets the margins for the item
+     * @param outRect Output bounds
+     * @param view View to update
+     * @param parent Parent control
+     * @param state State of the parent control
+     */
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
