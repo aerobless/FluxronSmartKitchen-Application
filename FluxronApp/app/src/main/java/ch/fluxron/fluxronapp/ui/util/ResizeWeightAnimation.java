@@ -7,7 +7,7 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 
 /**
- * Animates the width of a view
+ * Animates the layout weight of a view
  */
 public class ResizeWeightAnimation extends Animation
 {
@@ -16,6 +16,13 @@ public class ResizeWeightAnimation extends Animation
     private View mView;
     private ValueAnimator.AnimatorUpdateListener listener;
 
+    /**
+     * New resize animation
+     * @param view View to animate
+     * @param targetWeight Target layout weight
+     * @param duration Duration
+     * @param listener Listener
+     */
     public ResizeWeightAnimation(View view, float targetWeight, long duration, ValueAnimator.AnimatorUpdateListener listener)
     {
         mView = view;
@@ -25,6 +32,11 @@ public class ResizeWeightAnimation extends Animation
         setDuration(duration);
     }
 
+    /**
+     * Applies the animation at the current time
+     * @param interpolatedTime Interpolated time from 0 to 1
+     * @param t Transformation
+     */
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t)
     {
@@ -35,12 +47,23 @@ public class ResizeWeightAnimation extends Animation
         }
     }
 
+    /**
+     * Initializes this animation
+     * @param width Width
+     * @param height height
+     * @param parentWidth Parent Width
+     * @param parentHeight Parent Height
+     */
     @Override
     public void initialize(int width, int height, int parentWidth, int parentHeight)
     {
         super.initialize(width, height, parentWidth, parentHeight);
     }
 
+    /**
+     * Returns true
+     * @return true
+     */
     @Override
     public boolean willChangeBounds()
     {
