@@ -17,11 +17,21 @@ import ch.fluxron.fluxronapp.ui.components.TemperatureBar;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
+/**
+ * Displays the status of a device
+ */
 public class DeviceStatusFragment extends DeviceBaseFragment {
     private List<TemperatureBar> temperatureBars;
     private List<ParameterView> parameters;
     private boolean ready = false;
 
+    /**
+     * Creates the status view
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +58,10 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Initializes the controls
+     * @param deviceView Device view
+     */
     private void initControls(View deviceView) {
         temperatureBars = new ArrayList<>();
         ViewGroup temperatureList = (ViewGroup) deviceView.findViewById(R.id.temperatureBars);
@@ -62,6 +76,10 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Device was changed
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             for(TemperatureBar p:temperatureBars){
@@ -73,6 +91,10 @@ public class DeviceStatusFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Device change failed
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
             for(ParameterView p:parameters){

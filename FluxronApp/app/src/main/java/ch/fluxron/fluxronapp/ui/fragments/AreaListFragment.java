@@ -26,6 +26,10 @@ public class AreaListFragment extends Fragment {
     private AreaListAdapter listAdapter;
     private IAreaClickedListener listener;
 
+    /**
+     * Creates the fragment
+     * @param savedInstanceState State
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,30 +42,55 @@ public class AreaListFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the event bus provider
+     * @param provider Event bus provider
+     */
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;
     }
 
+    /**
+     * Gets the event bus provider
+     * @param listener Event bus provider
+     */
     public void setClickListener(IAreaClickedListener listener){
         this.listener = listener;
     }
 
+    /**
+     * Start of the fragment
+     */
     @Override
     public void onStart() {
         super.onStart();
     }
 
+    /**
+     * Stop of the fragment
+     */
     @Override
     public void onStop() {
         super.onStop();
     }
 
+    /**
+     * Saves the instance state
+     * @param outState State
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KITCHEN_ID, kitchenId);
     }
 
+    /**
+     * Creates the view for this fragment
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +126,11 @@ public class AreaListFragment extends Fragment {
         return listView;
     }
 
+    /**
+     * Snaps the list to an entry an notifies the scroll event
+     * @param v List view
+     * @param m Layout manager
+     */
     private void snapListAndNotify(final RecyclerView v, LinearLayoutManager m) {
         if (listAdapter.getItemCount() == 0) return;
 
@@ -118,12 +152,15 @@ public class AreaListFragment extends Fragment {
             }
         }
 
+        // We actually scroll to a useful position
         if(scrollDistanceMin != Integer.MAX_VALUE) {
             final int scrollByX = scrollDistanceMin;
             final int targetPos = scrollPosition;
             v.post(new Runnable() {
                 @Override
                 public void run() {
+                    // First and last element need to scroll as close as possible to their center
+                    // but can't be exact, since that is not possible on those elements (w < margin+screen)
                     if (targetPos==0 || targetPos==(totalCount-1)) {
                         v.smoothScrollToPosition(targetPos);
                     }
@@ -136,12 +173,20 @@ public class AreaListFragment extends Fragment {
         }
     }
 
+    /**
+     * Scroll position changed
+     * @param pos Index
+     */
     private void notifyScrollPosition(int pos) {
         if (this.listener!=null){
             this.listener.areaScrolled(pos);
         }
     }
 
+    /**
+     * Gets the list adapter
+     * @return List adapter
+     */
     public AreaListAdapter getListAdapter() {
         return listAdapter;
     }

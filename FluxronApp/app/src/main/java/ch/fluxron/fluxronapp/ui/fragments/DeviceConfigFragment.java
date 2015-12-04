@@ -30,6 +30,9 @@ import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.CoilSetupConfigurator;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
+/**
+ * Shows a devices configuration
+ */
 public class DeviceConfigFragment extends DeviceBaseFragment {
     private List<ParameterEditable> parameters;
     private List<View> profiles;
@@ -40,6 +43,13 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
     CompoundButton.OnCheckedChangeListener checkedChangeListener;
     private Switch keepWarm;
 
+    /**
+     * Creates the view
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,6 +76,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Initializes the base views
+     * @param deviceView Device view
+     */
     private void initBasicConfig(View deviceView) {
         parameters.add((ParameterEditable) deviceView.findViewById(R.id.powerMax));
         keepWarm = (Switch) deviceView.findViewById(R.id.keepWarmSwitch);
@@ -102,6 +116,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         hasBasicConfiguration = true;
     }
 
+    /**
+     * Initializes the profile views (for thermostats)
+     * @param deviceView Root view
+     */
     private void initProfiles(final View deviceView) {
         profiles = new ArrayList<>();
         LinearLayout layout = (LinearLayout) deviceView.findViewById(R.id.profiles);
@@ -132,12 +150,20 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         ((ConfigurableScrollView) deviceView.findViewById(R.id.scrollView)).setScrollOffset(100);
     }
 
+    /**
+     * Closes all profile views
+     */
     private void closeAllProfiles() {
         for (View profile : profiles) {
             profile.findViewById(R.id.editableViewList).setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Clones a profile
+     * @param profileNumber Number of the profile
+     * @return Cloned profile
+     */
     @NonNull
     private View cloneProfile(int profileNumber) {
         View child = getActivity().getLayoutInflater().inflate(R.layout.fragment_etx_device_config, null);
@@ -155,6 +181,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         return clonedProfile;
     }
 
+    /**
+     * Initializes the advanced config view
+     * @param deviceView Root view
+     */
     private void initAdvancecConfig(View deviceView) {
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.editableViewList);
         for (int i = 0; i < list.getChildCount(); i++) {
@@ -164,6 +194,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         hasAdvancedConfiguration = true;
     }
 
+    /**
+     * Device was changed, update values
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && hasAdvancedConfiguration) {
             for (ParameterEditable p : parameters) {
@@ -176,6 +210,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Update the basic config values
+     * @param inputMsg Message
+     */
     private void handleBasicConfig(DeviceChanged inputMsg) {
         ParameterValue dp = inputMsg.getDevice().getDeviceParameter(keepWarm.getTag().toString());
         if (dp != null) {
@@ -186,6 +224,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Device value not available
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && hasAdvancedConfiguration) {
             for (ParameterEditable p : parameters) {
@@ -195,6 +237,10 @@ public class DeviceConfigFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * User Access Control Level has changed
+     * @param inputMsg Message
+     */
     public void onEventMainThread(AccessGranted inputMsg) {
         if (hasAdvancedConfiguration) {
             for (ParameterEditable p : parameters) {

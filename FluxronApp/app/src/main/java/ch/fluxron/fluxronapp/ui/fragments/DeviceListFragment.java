@@ -44,10 +44,17 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
     private IDeviceAddedListener addListener;
     private Button discoveryButton;
 
+    /**
+     * Sets the listener for clicks
+     * @param listener Listener
+     */
     public void setClickListener(IDeviceClickListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Start of the fragment
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -57,6 +64,9 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         discoveryActive = true;
     }
 
+    /**
+     * Stop of the fragment
+     */
     @Override
     public void onStop() {
         super.onStop();
@@ -66,11 +76,22 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         provider.getUiEventBus().unregister(this);
     }
 
+    /**
+     * Saves the instance state
+     * @param outState State
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Creates the view for this fragment
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState Saved state
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,16 +132,26 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         return deviceView;
     }
 
+    /**
+     * Toggles the discovery
+     */
     public void toggleDiscovery() {
         setDiscoveryActive(!discoveryActive);
     }
 
+    /**
+     * Sets the discovery state
+     * @param value Active
+     */
     private void setDiscoveryActive(boolean value) {
         discoveryActive = value;
         provider.getUiEventBus().post(new BluetoothDiscoveryCommand(value));
         updateStatusText();
     }
 
+    /**
+     * Updates the status text
+     */
     private void updateStatusText() {
         if (discoveryActive) {
             discoveryButton.setText(getResources().getText(R.string.btn_pause_discovery));
@@ -130,24 +161,41 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
             discoveryStatus.setText("Discovery stopped. " + listAdapter.size() + " found.");
         }
     }
+    // TODO: USE RESOURCES
 
+    /**
+     * Device was loaded
+     * @param msg Message
+     */
     public void onEventMainThread(DeviceLoaded msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
         updateStatusText();
     }
 
+    /**
+     * Device was changed
+     * @param msg Message
+     */
     public void onEventMainThread(DeviceChanged msg) {
         Map<String, Integer> deviceCategories = listAdapter.addOrUpdate(msg.getDevice());
         sectionedAdapter.updateSections(deviceCategories);
     }
 
+    /**
+     * Device was clicked
+     * @param d Device
+     */
     @Override
     public void deviceClicked(Device d) {
         Log.d("Fluxron", "Requesting data from " + d.getAddress());
         provider.getUiEventBus().post(new BluetoothTestCommand(d.getAddress()));
     }
 
+    /**
+     * A device should be added or bonded
+     * @param d Device
+     */
     @Override
     public void deviceButtonPressed(Device d) {
         if (d.isBonded()) {
@@ -163,6 +211,10 @@ public class DeviceListFragment extends Fragment implements IDeviceClickListener
         }
     }
 
+    /**
+     * Sets the listener for device additions
+     * @param l Listener
+     */
     public void setListener(IDeviceAddedListener l) {
         this.addListener = l;
     }

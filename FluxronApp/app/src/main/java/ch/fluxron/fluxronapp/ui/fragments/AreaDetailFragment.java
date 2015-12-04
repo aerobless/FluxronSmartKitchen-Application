@@ -33,9 +33,13 @@ public class AreaDetailFragment extends Fragment {
     private KitchenAreaDisplay display;
     private KitchenArea kitchenArea;
     private String imageLoadConnection;
-    private KitchenActivity areaListener;
+    private KitchenAreaDisplay.IKitchenAreaListener areaListener;
     private String areaLoadConnection;
 
+    /**
+     * Creates the fragment
+     * @param savedInstanceState State
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +53,17 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the event bus provider
+     * @param provider Event bus provider
+     */
     public void setEventBusProvider(IEventBusProvider provider) {
         this.provider = provider;
     }
 
+    /**
+     * Start of the fragment
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -69,6 +80,10 @@ public class AreaDetailFragment extends Fragment {
         provider.getUiEventBus().post(cmd);
     }
 
+    /**
+     * Kitchen area was loaded, fill it to the detail display
+     * @param msg Message
+     */
     public void onEventMainThread(KitchenAreaLoaded msg) {
         if (msg.getConnectionId().equals(areaLoadConnection)) {
             this.kitchenArea = msg.getArea();
@@ -81,6 +96,9 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Stop of the fragment
+     */
     @Override
     public void onStop() {
         super.onStop();
@@ -90,6 +108,10 @@ public class AreaDetailFragment extends Fragment {
         if (display!=null) display.cleanUp();
     }
 
+    /**
+     * Saves the instance state
+     * @param outState State
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -97,6 +119,13 @@ public class AreaDetailFragment extends Fragment {
         outState.putInt(AREA_RELATIVE_ID, areaId);
     }
 
+    /**
+     * Creates the view for this fragment
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,6 +134,10 @@ public class AreaDetailFragment extends Fragment {
         return display;
     }
 
+    /**
+     * Image was loaded, set all the data to the detail display
+     * @param msg Message
+     */
     public void onEventMainThread(ImageLoaded msg) {
         if (msg.getConnectionId().equals(imageLoadConnection)) {
             // Set the bitmap to the display
@@ -115,6 +148,10 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Position changed, notify the display
+     * @param msg Message
+     */
     public void onEventMainThread(DevicePositionChanged msg) {
         // Check if we handle this kitchen and this area at the moment
         if (msg.getKitchenId().equals(kitchenId) && kitchenArea != null && kitchenArea.getRelativeId() == msg.getAreaId()) {
@@ -122,6 +159,10 @@ public class AreaDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the kitchen area
+     * @param kitchenArea Kitchen area
+     */
     public void setKitchenArea(KitchenArea kitchenArea) {
         this.kitchenArea = kitchenArea;
     }
@@ -135,7 +176,11 @@ public class AreaDetailFragment extends Fragment {
         display.setEditMode(edit);
     }
 
-    public void setAreaListener(KitchenActivity areaListener) {
+    /**
+     * Sets the listener for kitchen areas
+     * @param areaListener Listener
+     */
+    public void setAreaListener(KitchenAreaDisplay.IKitchenAreaListener areaListener) {
         this.areaListener = areaListener;
     }
 

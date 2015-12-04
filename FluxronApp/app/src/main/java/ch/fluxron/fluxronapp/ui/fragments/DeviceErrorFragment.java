@@ -13,11 +13,21 @@ import ch.fluxron.fluxronapp.ui.components.ErrorView;
 import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 
+/**
+ * Displays a devices error history
+ */
 public class DeviceErrorFragment extends DeviceBaseFragment {
     private ErrorView[] errorViews;
     private boolean ready = false;
     private TextView noErrorText;
 
+    /**
+     * Creates the view
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +55,10 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Initializes all the child views
+     * @param deviceView Root view element
+     */
     private void init(View deviceView) {
         noErrorText = (TextView) deviceView.findViewById(R.id.noErrorText);
         ViewGroup list = (ViewGroup) deviceView.findViewById(R.id.errorViewList);
@@ -55,6 +69,10 @@ public class DeviceErrorFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Device values changed, update views
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
             for (ErrorView er : errorViews) {

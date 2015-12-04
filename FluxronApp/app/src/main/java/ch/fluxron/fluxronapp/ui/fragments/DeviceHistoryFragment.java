@@ -19,6 +19,9 @@ import ch.fluxron.fluxronapp.ui.fragments.common.DeviceBaseFragment;
 import ch.fluxron.fluxronapp.ui.util.DeviceTypeConverter;
 import ch.fluxron.fluxronapp.ui.util.PercentageGroup;
 
+/**
+ * Displays a devices usage counters
+ */
 public class DeviceHistoryFragment extends DeviceBaseFragment {
     private boolean ready = false;
 
@@ -31,6 +34,13 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
     // Glass temperature level timers
     private PercentageGroup glassGroup = new PercentageGroup();
 
+    /**
+     * Creates the view
+     * @param inflater Inflater
+     * @param container Container
+     * @param savedInstanceState State
+     * @return View
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +61,10 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
         return deviceView;
     }
 
+    /**
+     * Device was changed, update the display
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceChanged inputMsg) {
         if (inputMsg.getDevice().getAddress().equals(getDeviceAddress()) && ready) {
 
@@ -74,6 +88,10 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Device change failed, update all views
+     * @param inputMsg Message
+     */
     public void onEventMainThread(DeviceNotChanged inputMsg) {
         if (inputMsg.getAddress().equals(getDeviceAddress()) && ready) {
             int[] parameterViewIds = new int[]{
@@ -89,6 +107,14 @@ public class DeviceHistoryFragment extends DeviceBaseFragment {
         }
     }
 
+    /**
+     * Updates a percentage group
+     * @param updatedValues Device with the parameters
+     * @param group Group to update
+     * @param parameterViewIds Views that contain the parameter values
+     * @param labelIds Labels with the percentages (in the same order as the parameter value views)
+     * @param addToGroup Defines which values should be added to the groups total (in the same order as the parameter value views)
+     */
     private void updatePercentageGroupedControls(DeviceChanged updatedValues, PercentageGroup group, int[] parameterViewIds, int[] labelIds, boolean[] addToGroup) {
         if (getView() == null) return;
 
