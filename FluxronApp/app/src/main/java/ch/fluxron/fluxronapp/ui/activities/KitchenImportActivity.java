@@ -46,8 +46,8 @@ public class KitchenImportActivity extends FluxronBaseActivity {
             this.importMetadataConnection = cmd.getConnectionId();
             postMessage(cmd);
             
-            findViewById(R.id.importProgressBar).animate().alpha(0).setDuration(ANIM_DURATION).start();
-            findViewById(R.id.infoPanel).animate().alpha(1).setDuration(ANIM_DURATION).start();
+            findViewById(R.id.importProgressBar).animate().alpha(1).setDuration(ANIM_DURATION).start();
+            findViewById(R.id.infoPanel).animate().alpha(0).setDuration(ANIM_DURATION).start();
         }
     }
 
