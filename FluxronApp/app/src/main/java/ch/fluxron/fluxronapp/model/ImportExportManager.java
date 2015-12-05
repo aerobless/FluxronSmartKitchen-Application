@@ -273,7 +273,8 @@ public class ImportExportManager {
         if (!mediaStorageDir.exists()) mediaStorageDir.mkdirs();
 
         // Return Uri from that file
-        File destinationFile = new File(mediaStorageDir.getPath() + File.separator + "test.fluxron");
+        String sanitizedName = kitchen.getName().replaceAll("\\W+", "");
+        File destinationFile = new File(mediaStorageDir.getPath() + File.separator + "ex_" + sanitizedName + ".fluxron");
 
         try {
             OutputStream outputStream = new FileOutputStream(destinationFile);
