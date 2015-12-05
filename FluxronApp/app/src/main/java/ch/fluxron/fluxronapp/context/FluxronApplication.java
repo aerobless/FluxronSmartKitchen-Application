@@ -130,7 +130,7 @@ public class FluxronApplication extends Application implements ch.fluxron.fluxro
      * Sets up all business layer components
      */
     private void setupBL() {
-        responder = new ObjectResponder(modelProvier);
+        responder = new ObjectCreationManager(modelProvier);
         deviceManager = new DeviceManager(modelProvier);
         userManager = new UserManager(modelProvier);
         kitchenManger = new KitchenManager(modelProvier);
