@@ -42,7 +42,7 @@ public class FakeBluetooth {
     /**
      * Starts/Stops the discovery of new devices via bluetooth.
      *
-     * @param cmd
+     * @param cmd Message saying whether to enable or disable the discovery.
      */
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
         if (cmd.isEnabled()) {
@@ -79,8 +79,8 @@ public class FakeBluetooth {
     /**
      * Generates a fake device
      *
-     * @param input
-     * @return
+     * @param input the device number, used to always generate the "same" devices.
+     * @return a Device
      */
     private Device generateFakeDevice(int input) {
         int deviceID = randInt(100, 999);
@@ -105,8 +105,9 @@ public class FakeBluetooth {
 
     /**
      * Responds to read requests on fake devices.
+     * Always returns the product code. Doesn't replay to the actual request.
      *
-     * @param cmd
+     * @param cmd a ReadRequest.
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
         if(FAKE_RESPONSE_ENABLED){

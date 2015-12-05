@@ -63,7 +63,7 @@ public class Bluetooth {
      * Set the Bluetooth PIN of a device. This method should only be run after a attempt at bonding
      * has been made.
      *
-     * @param device
+     * @param device a BluetoothDevice
      */
     public void setDevicePin(BluetoothDevice device) {
         Log.d(TAG, "SETTING PIN FOR " + device.getName());
@@ -90,7 +90,7 @@ public class Bluetooth {
      * Sets up a BroadcastReceiver to listen to BluetoothDevice.ACTION_FOUND.
      * When a device is found a message is sent to the DAL-BL event bus.
      *
-     * @param context
+     * @param context the ApplicationContext, used to add a BroadcastReceiver
      */
     private void setupDiscovery(Context context) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -109,7 +109,7 @@ public class Bluetooth {
     /**
      * Sets up a BroadcastReceiver to listen to bonding events.
      *
-     * @param context
+     * @param context the ApplicationContext, used to add a BroadcastReceiver
      */
     private void setupBonding(Context context) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -147,7 +147,7 @@ public class Bluetooth {
     /**
      * Starts/Stops the discovery of new devices via bluetooth.
      *
-     * @param cmd
+     * @param cmd Message saying whether to enable or disable the discovery.
      */
     public void onEventAsync(BluetoothDiscoveryCommand cmd) {
         if (cmd.isEnabled()) {
@@ -160,7 +160,7 @@ public class Bluetooth {
     /**
      * Connects to a bluetooth device and writes data to the field specified in the command.
      *
-     * @param cmd
+     * @param cmd a request to change a parameter on the device.
      */
     public void onEventAsync(BluetoothWriteRequest cmd) {
         byte[] message = messageFactory.makeWriteRequest(cmd.getField(), cmd.getValue());
@@ -178,7 +178,7 @@ public class Bluetooth {
     /**
      * Connects to a bluetooth device and requests the parameters specified in the command.
      *
-     * @param cmd
+     * @param cmd a request to read a parameter from the device.
      */
     public void onEventAsync(BluetoothReadRequest cmd) {
         //TODO: can be removed in production, is used to test with fake devices.
@@ -202,7 +202,7 @@ public class Bluetooth {
     /**
      * Used to start the bonding process with a specific bluetooth device.
      *
-     * @param cmd
+     * @param cmd a command to bond a device
      */
     public void onEventAsync(BluetoothBondingCommand cmd) {
         if (bluetoothEnabled()) {
@@ -246,7 +246,7 @@ public class Bluetooth {
     /**
      * Get an existing connection to a device or establish a new one.
      *
-     * @param device
+     * @param device a BluetoothDevice
      * @return BluetoothConnectionThread for the specified device
      */
     private BluetoothConnectionThread getConnection(BluetoothDevice device, boolean clean) throws IOException {

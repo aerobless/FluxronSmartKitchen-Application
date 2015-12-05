@@ -23,10 +23,17 @@ public class BluetoothConnectionThread extends Thread {
     private final IEventBusProvider provider;
     private final BluetoothSocket socket;
     private final AtomicBoolean keepRunning;
+    private final Object lock = new Object();
     private RequestResponseConnection requestResponseConnection;
 
     private final static int MESSAGE_LENGTH = 12;
 
+    /**
+     * Instantiates a new BluetoothConnectionThread.
+     *
+     * @param btsocket a BluetoothSocket
+     * @param provider dal eventBus
+     */
     public BluetoothConnectionThread(BluetoothSocket btsocket, IEventBusProvider provider) {
         remoteDevice = btsocket.getRemoteDevice();
         InputStream tmpIn = null;
@@ -41,12 +48,16 @@ public class BluetoothConnectionThread extends Thread {
             tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
+            Log.d("Fluxron", "IOException while trying to get Input & Outputstream in BTConnectionThread");
         }
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
     }
 
+    /**
+     * Starts the Thread.
+     */
     public void run() {
         byte[] buffer = new byte[128];
         int nofBytes;
@@ -94,10 +105,17 @@ public class BluetoothConnectionThread extends Thread {
         }
     }
 
+    /**
+     * Writes a message to the outputstream.
+     *
+     * @param message                   a byte array containing a full CANopen message incl. aa aa.
+     * @param requestResponseConnection the message used to request this communication
+     * @throws IOException
+     */
     public void write(byte[] message, RequestResponseConnection requestResponseConnection) throws IOException {
         //Log.d("FLUXRON", "Sending message");
         mmOutStream.write(message);
-        synchronized (this.requestResponseConnection) {
+        synchronized (lock) {
             this.requestResponseConnection = requestResponseConnection;
         }
     }

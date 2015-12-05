@@ -47,7 +47,7 @@ public class MessageInterpreter {
                 handleReadResponse(inputMsg, data, dataPayload);
             } else if (data[2] == MessageFactory.CCD_WRITE_RESPONSE) {
                 //Doesn't contain data
-                //TODO: do something to confirm save?
+                //Log.d("Fluxron", "Successful save");
             } else if (data[2] == MessageFactory.CCD_READ_REQUEST) {
                 /**
                  * A response with a READ_REQUEST as CCD is in fact a READ_RESPONSE longer then 4Bytes.
@@ -71,9 +71,9 @@ public class MessageInterpreter {
     /**
      * Interprets read responses and sends them upstream.
      *
-     * @param inputMsg
-     * @param data
-     * @param dataPayload
+     * @param inputMsg an incoming bluetooth message
+     * @param data the extracted data
+     * @param dataPayload the extracted payload
      */
     private void handleReadResponse(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
         if (dataPayload != null) {
@@ -87,9 +87,9 @@ public class MessageInterpreter {
     /**
      * Interprets error messages and sends them upstream.
      *
-     * @param inputMsg
-     * @param data
-     * @param dataPayload
+     * @param inputMsg an incoming bluetooth message
+     * @param data the extracted data
+     * @param dataPayload the extracted payload
      */
     private void handleError(BluetoothMessageReceived inputMsg, byte[] data, byte[] dataPayload) {
         if (dataPayload != null) {
@@ -124,8 +124,8 @@ public class MessageInterpreter {
      * Returns the field as formatted string.
      * Example: 1008sub3
      *
-     * @param data
-     * @return
+     * @param data a byte array containing the parameter id
+     * @return the parameter id as legible string
      */
     private static String getFieldString(byte[] data) {
         String msb = Integer.toHexString(0xFF & data[4]);
@@ -154,7 +154,7 @@ public class MessageInterpreter {
      * These messages do not follow the CANopen specification. Instead Field 6 tells the
      * additional length after then normal CANopen message (12B).
      *
-     * @param input
+     * @param input a byte array containing a large message
      * @return byte[] Array containing only the data part of the input-Array.
      */
     private byte[] retriveBigData(byte[] input) {
@@ -168,7 +168,7 @@ public class MessageInterpreter {
     /**
      * Decodes little endian byte[] arrays to int values.
      *
-     * @param input
+     * @param input a byte array in Big-Endian
      * @return decoded Int value of the input
      */
     private static int decodeByteArray(byte[] input) {

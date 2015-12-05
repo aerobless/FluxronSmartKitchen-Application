@@ -97,7 +97,7 @@ public class MessageFactory {
 
             ArrayUtils.reverse(dataArray);
             int bodyIt = 3;
-            for(int i=0; i<dataArray.length; i++){
+            for (int i = 0; i < dataArray.length; i++) {
                 messageBody[bodyIt] = dataArray[i];
                 bodyIt++;
             }
@@ -125,9 +125,9 @@ public class MessageFactory {
     /**
      * Converts  Parameter Data Objects to a byte arrays.
      *
-     * @param paramID
-     * @param data
-     * @return
+     * @param paramID the ID of a parameter (e.g. SClass_3101subB)
+     * @param data the data that is to be written to that parameter
+     * @return a byte array encapsulating parameter and data
      * @throws UnsupportedOperationException
      */
     public byte[] convertDataObjectToByte(String paramID, Object data) {
@@ -216,8 +216,8 @@ public class MessageFactory {
     /**
      * Returns a ParameterValue if the key exists. Otherwise null.
      *
-     * @param key
-     * @return
+     * @param key a parameter id (e.g SClass_3101subB)
+     * @return DeviceParameter containing the param and it's value
      */
     public DeviceParameter getParameter(String key) {
         return parameterMap.get(key);
