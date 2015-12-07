@@ -61,7 +61,7 @@ public class Bluetooth {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         setupDiscovery(context);
         setupBonding(context);
-        connectionCache = new ConnectionCache(3);
+        connectionCache = new ConnectionCache(7);
     }
 
     /**
@@ -174,6 +174,7 @@ public class Bluetooth {
         try {
             sendData(cmd.getAddress(), message, cmd);
         } catch (IOException e) {
+            connectionCache.remove(cmd.getAddress());
             BluetoothConnectionFailed connectionFailure = new BluetoothConnectionFailed(BluetoothConnectionFailed.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
             connectionFailure.setConnectionId(cmd);
             provider.getDalEventBus().post(connectionFailure);
@@ -197,6 +198,7 @@ public class Bluetooth {
             try {
                 sendData(cmd.getAddress(), message, cmd);
             } catch (IOException e) {
+                connectionCache.remove(cmd.getAddress());
                 BluetoothConnectionFailed connectionFailure = new BluetoothConnectionFailed(BluetoothConnectionFailed.FailureType.GENERIC_CONECTION_FAILURE, cmd.getAddress());
                 connectionFailure.setConnectionId(cmd);
                 provider.getDalEventBus().post(connectionFailure);
