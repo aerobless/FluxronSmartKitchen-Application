@@ -1,5 +1,7 @@
 package ch.fluxron.fluxronapp.model;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.util.HashMap;
 
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.LoadObjectByIdCommand;
@@ -28,20 +30,31 @@ import ch.fluxron.fluxronapp.objectBase.User;
 public class UserManager {
     private HashMap<String, User> users;
     private User currentUser = null;
-    private Object userLock = new Object();
+    private final Object userLock = new Object();
     private IEventBusProvider provider;
     private static final String USER_DATA = "user_data";
+    private static final String SALT = "ch.fluxron.fluxronapp.model.UserManager.SALT";
 
     /**
      * Instantiates a new UserManager.
      *
-     * @param provider
+     * @param provider EventBus
      */
     public UserManager(IEventBusProvider provider) {
+        /**
+         * TODO: Fluxron should change the passwords of these example users.
+         *
+         * User: demo      Pw: demo
+         * User: user      Pw: 1234
+         * User: developer Pw: fluxronDev
+         *
+         * The password is a SHA256 hash value based on the SALT+password.
+         * So "ch.fluxron.fluxronapp.model.UserManager.SALT"+"demo" equals "974758b327b4cb49c6e0d8e121267ddca7258f54".
+         */
         users = new HashMap<>();
-        users.put("demo", new User("demo", "demo", AccessLevel.DEMO_USER));
-        users.put("user", new User("user", "1234", AccessLevel.AUTHENTICATED_USER));
-        users.put("developer", new User("developer", "fluxronDev", AccessLevel.DEVELOPER));
+        users.put("demo", new User("demo", "d72d6aaa8c56313afdb46686d6feb87970040c0fc283f7ccadb56784e286afbd", AccessLevel.DEMO_USER));
+        users.put("user", new User("user", "3ef35c03eb8ce650bcf94a0005a077089b222a233105791d4b07b1378b8f7fcc", AccessLevel.AUTHENTICATED_USER));
+        users.put("developer", new User("developer", "668a0bfef4ea747d0f817075ca3badb57a73508caab09bf98762ee32bf280882", AccessLevel.DEVELOPER));
 
         this.provider = provider;
         provider.getUiEventBus().register(this);
@@ -60,7 +73,7 @@ public class UserManager {
     /**
      * Relays loaded user information to the UI.
      *
-     * @param inputCmd
+     * @param inputCmd ObjectLoaded event
      */
     public void onEventAsync(ObjectLoaded inputCmd) {
         if (inputCmd.getId().equals(USER_DATA)) {
@@ -75,7 +88,7 @@ public class UserManager {
     /**
      * Responds to AuthenticationCommands and tells to UI whether the login information is correct
      *
-     * @param cmd
+     * @param cmd AuthenticationCommand
      */
     public void onEventAsync(AuthenticationCommand cmd) {
         UserAuthenticated authResponse = new UserAuthenticated(cmd.getUsername(), isAuthenticated(cmd.getUsername(), cmd.getPassword()));
@@ -87,7 +100,7 @@ public class UserManager {
      * Responds to AccessCommands with the currently active users access level. If there is no
      * user logged in the lowest possible level (DEMO_USER) is returned.
      *
-     * @param cmd
+     * @param cmd AccessCommand
      */
     public void onEventAsync(AccessCommand cmd) {
         AccessGranted accessGranted;
@@ -116,18 +129,19 @@ public class UserManager {
      * Checks whether the login information exists in the user manager
      * if it does it stores the currently authenticated user in the DB
      *
-     * @param username
-     * @param password
-     * @return
+     * @param username Username
+     * @param password Password
+     * @return authentication success
      */
     private boolean isAuthenticated(String username, String password) {
+        String passwordHash = DigestUtils.sha256Hex(SALT+password);
         User user = users.get(username);
         if (user != null) {
             synchronized (userLock) {
                 currentUser = user;
             }
             saveToDB(user);
-            return user.getPassword().equals(password);
+            return user.getPassword().equals(passwordHash);
         }
         return false;
     }
@@ -135,7 +149,7 @@ public class UserManager {
     /**
      * Save the authenticated user data in the DB
      *
-     * @param user
+     * @param user a User of this application
      */
     private void saveToDB(User user) {
         SaveObjectCommand cmd = new SaveObjectCommand();
