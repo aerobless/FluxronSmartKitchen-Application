@@ -61,8 +61,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     public DeviceView(Context context) {
         super(context);
         setUp();
-        provider = (IEventBusProvider) getContext().getApplicationContext();
-        provider.getUiEventBus().register(this);
+        initProvider();
         setDeviceStatus(DEVICE_STATUS_UNKNOWN);
     }
 
@@ -75,8 +74,7 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     public DeviceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUp();
-        provider = (IEventBusProvider) getContext().getApplicationContext();
-        provider.getUiEventBus().register(this);
+        initProvider();
         setDeviceStatus(DEVICE_STATUS_UNKNOWN);
     }
 
@@ -90,9 +88,13 @@ public class DeviceView extends RelativeLayout implements View.OnTouchListener, 
     public DeviceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setUp();
+        initProvider();
+        setDeviceStatus(DEVICE_STATUS_UNKNOWN);
+    }
+
+    public void initProvider(){
         provider = (IEventBusProvider) getContext().getApplicationContext();
         provider.getUiEventBus().register(this);
-        setDeviceStatus(DEVICE_STATUS_UNKNOWN);
     }
 
     /**

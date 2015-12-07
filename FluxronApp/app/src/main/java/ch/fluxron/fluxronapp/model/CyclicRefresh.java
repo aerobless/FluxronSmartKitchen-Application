@@ -33,12 +33,13 @@ public class CyclicRefresh {
     private AtomicBoolean forceNextDevice = new AtomicBoolean(false);
     private final Set<String> listOfInterestingParameters;
     private boolean discoveryMode = false;
+    private final int RESPONSE_TIMEOUT = 5; //seconds
 
     /**
      * Instantiates a new CyclicRefresh service.
      *
-     * @param provider
-     * @param deviceCache
+     * @param provider    EventBus
+     * @param deviceCache DeviceCache
      */
     public CyclicRefresh(IEventBusProvider provider, LruCache<String, Device> deviceCache) {
         this.provider = provider;
@@ -53,8 +54,6 @@ public class CyclicRefresh {
 
     /**
      * Initializes the list containing all interesting parameters.
-     *
-     * @return
      */
     private void refreshLoiP() {
         synchronized (listOfInterestingParameters) {
@@ -66,7 +65,7 @@ public class CyclicRefresh {
     /**
      * Copy a snapshot of the current deviceCache to the refreshList.
      *
-     * @return
+     * @return deviceSet
      */
     @NonNull
     private Set<String> copyDeviceCacheToRefreshList() {
@@ -84,7 +83,7 @@ public class CyclicRefresh {
     /**
      * Used to inject devices loaded with a kitchen into the device manager.
      *
-     * @param cmd
+     * @param cmd CyclicRefreshCommand
      */
     public void onEventAsync(CyclicRefreshCommand cmd) {
         if (cmd.getDeviceToRefresh().equals(CyclicRefreshCommand.ALL_DEVICES)) {
@@ -114,6 +113,21 @@ public class CyclicRefresh {
     private void start() {
         skipToNextDevice();
         if (enabled.compareAndSet(false, true)) {
+
+            Thread t = new Thread() {
+                public void run() {
+                    while (enabled.get()) {
+                        try {
+                            Thread.sleep(RESPONSE_TIMEOUT * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        skipToNextDevice();
+                    }
+                }
+            };
+            t.start();
+
             while (enabled.get()) {
                 Set<String> localRefreshList;
                 synchronized (refreshList) {
@@ -146,7 +160,8 @@ public class CyclicRefresh {
      * Post a request to read all the parameters in the list of interesting parameters of a specific
      * device.
      *
-     * @param device
+     * @param device    a Device
+     * @param parameter a Parameter
      */
     private void postRequest(String device, String parameter) {
         BluetoothReadRequest req = new BluetoothReadRequest(device, parameter);
@@ -169,7 +184,7 @@ public class CyclicRefresh {
      * Used to prevent memory churning when there are only fake devices in a kitchen.
      * Can also be used for debugging purposes, to slow down the communication with the devices.
      *
-     * @param timeInMs
+     * @param timeInMs the time in milliseconds
      */
     private static void cooldown(int timeInMs) {
         try {
@@ -182,7 +197,7 @@ public class CyclicRefresh {
     /**
      * Jumps to the next parameter when we have confirmation that the device has changed.
      *
-     * @param inputMsg
+     * @param inputMsg a BluetoothDeviceChanged message
      */
     public void onEventAsync(BluetoothDeviceChanged inputMsg) {
         skipToNextParam();
@@ -192,7 +207,7 @@ public class CyclicRefresh {
      * If the pipe broke or the connection could not be established for other reasons.
      * Skips the current device. It will be automatically retried in the next cycle.
      *
-     * @param inputMsg
+     * @param inputMsg a BluetoothConnectionFailed message
      */
     public void onEventAsync(BluetoothConnectionFailed inputMsg) {
         String connectionID = inputMsg.getConnectionId();
@@ -206,7 +221,7 @@ public class CyclicRefresh {
      * communication error where we still get a response from the device. (There is not connection
      * loss here, just an error response from the remote device.)
      *
-     * @param inputMsg
+     * @param inputMsg a BluetoothRequestFailed message
      */
     public void onEventAsync(BluetoothRequestFailed inputMsg) {
         String connectionID = inputMsg.getConnectionId();
@@ -238,7 +253,7 @@ public class CyclicRefresh {
     /**
      * Listens to RegisterParameterCommand and adds it to the List of interesting parameters.
      *
-     * @param inputMsg
+     * @param inputMsg a RegisterParameter message
      */
     public void onEventAsync(RegisterParameterCommand inputMsg) {
         synchronized (listOfInterestingParameters) {

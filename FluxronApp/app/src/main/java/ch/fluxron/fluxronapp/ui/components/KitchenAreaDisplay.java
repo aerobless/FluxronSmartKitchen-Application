@@ -93,6 +93,12 @@ public class KitchenAreaDisplay extends View implements IDeviceViewListener {
         setUp();
     }
 
+    public void initDeviceViews(){
+        for(DeviceView dv:views){
+            dv.initProvider();
+        }
+    }
+
     /**
      * Draws all the elements
      * @param canvas Canvas to draw on

@@ -75,8 +75,7 @@ public class ErrorView extends LinearLayout {
     public boolean handleDeviceChanged(DeviceChanged msg) {
         ParameterValue dp = msg.getDevice().getDeviceParameter(getParameter());
         if (dp != null) {
-            setValue(dp.getValue());
-            return true;
+            return setValue(dp.getValue());
         }
         return false;
     }
@@ -85,15 +84,21 @@ public class ErrorView extends LinearLayout {
      * Converts a combined Fluxron error code to a legible error code and time. Then sets these
      * values in the UI.
      *
-     * @param value
+     * @param value input ErrorCode
+     * @return success
      */
-    public void setValue(String value) {
+    public boolean setValue(String value) {
         errorControl.setVisibility(VISIBLE);
         String code = ErrorCodeConverter.convertToErrorCode(Integer.parseInt(value));
         String counter = ErrorCodeConverter.convertToTime(Integer.parseInt(value)) + " " + getResources().getString(R.string.hoursAgo);
         this.errorCode.setText(code);
         this.errorDescription.setText(getErrorDescriptionFromCode(code));
         this.errorSince.setText(counter);
+        if(code.equals("e00")){
+            this.setVisibility(GONE);
+            return false;
+        }
+        return true;
     }
 
     /**
