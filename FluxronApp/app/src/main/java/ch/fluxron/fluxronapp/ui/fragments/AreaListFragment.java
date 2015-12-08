@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class AreaListFragment extends Fragment {
     private IEventBusProvider provider;
     private AreaListAdapter listAdapter;
     private IAreaClickedListener listener;
+    private int lastScrollPos = 0;
 
     /**
      * Creates the fragment
@@ -154,23 +156,33 @@ public class AreaListFragment extends Fragment {
 
         // We actually scroll to a useful position
         if(scrollDistanceMin != Integer.MAX_VALUE) {
-            final int scrollByX = scrollDistanceMin;
-            final int targetPos = scrollPosition;
-            v.post(new Runnable() {
-                @Override
-                public void run() {
-                    // First and last element need to scroll as close as possible to their center
-                    // but can't be exact, since that is not possible on those elements (w < margin+screen)
-                    if (targetPos==0 || targetPos==(totalCount-1)) {
-                        v.smoothScrollToPosition(targetPos);
-                    }
-                    else {
-                        v.smoothScrollBy(scrollByX, 0);
-                    }
-                    notifyScrollPosition(targetPos);
-                }
-            });
+            scrollListBy(v, totalCount, scrollDistanceMin, scrollPosition, lastScrollPos);
+            lastScrollPos = scrollPosition;
         }
+    }
+
+    /**
+     * Scrolls the list by a given amount
+     * @param view List view
+     * @param totalCount Total number of views
+     * @param scrollByX X distance to scroll by
+     * @param targetPos List position to be aligned after the scrolling
+     * @param previousPosition Last position to be aligned
+     */
+    private void scrollListBy(final RecyclerView view, final int totalCount, final int scrollByX, final int targetPos, final int previousPosition) {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                // First and last element need to scroll as close as possible to their center
+                // but can't be exact, since that is not possible on those elements (w < margin+screen)
+                if ((targetPos == 0 || targetPos == (totalCount - 1)) && previousPosition!=targetPos ){
+                    view.smoothScrollToPosition(targetPos);
+                } else {
+                    view.smoothScrollBy(scrollByX, 0);
+                }
+                notifyScrollPosition(targetPos);
+            }
+        });
     }
 
     /**
