@@ -1,5 +1,6 @@
 package ch.fluxron.fluxronapp.model;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.HashMap;
@@ -134,14 +135,18 @@ public class UserManager {
      * @return authentication success
      */
     private boolean isAuthenticated(String username, String password) {
-        String passwordHash = DigestUtils.sha256Hex(SALT+password);
+        //Fix according to: http://stackoverflow.com/questions/9126567/method-not-found-using-digestutils-in-android
+        String passwordHash = new String(Hex.encodeHex(DigestUtils.sha256(SALT+password)));
         User user = users.get(username);
         if (user != null) {
             synchronized (userLock) {
                 currentUser = user;
             }
-            saveToDB(user);
-            return user.getPassword().equals(passwordHash);
+            if(user.getPassword().equals(passwordHash)){
+                user.setPassword(password);
+                saveToDB(user);
+                return true;
+            }
         }
         return false;
     }
