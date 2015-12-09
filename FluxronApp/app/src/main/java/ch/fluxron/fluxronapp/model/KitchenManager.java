@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.renderscript.ScriptGroup;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -142,7 +140,7 @@ public class KitchenManager {
         }
         else {
             raiseErrors(msg, errors);
-            
+
             // Load the attachments, if the mainPicture is not found, remove the kitchen
             final String kitchenId = msg.getId();
             GetAllAttachmentStreamsFromObjectCommand loadStreams = new GetAllAttachmentStreamsFromObjectCommand(kitchenId, new ITypedCallback<Map<String, InputStream>>() {
