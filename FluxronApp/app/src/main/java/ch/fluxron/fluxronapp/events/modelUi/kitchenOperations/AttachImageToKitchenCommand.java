@@ -13,7 +13,7 @@ public class AttachImageToKitchenCommand extends RequestResponseConnection{
 
     /**
      * New delete kitchen command
-     * @param id Id of the kitchen to delete
+     * @param id Id of the kitchen to attach to
      */
     public AttachImageToKitchenCommand(String id, Uri imagePath){
         this.id = id;
@@ -21,8 +21,8 @@ public class AttachImageToKitchenCommand extends RequestResponseConnection{
     }
 
     /**
-     * Returns the id of the kitchen to delete
-     * @return Id of the kitchen to delete
+     * Returns the id of the kitchen to attach to
+     * @return Id of the kitchen to attach to
      */
     public String getId() {
         return id;

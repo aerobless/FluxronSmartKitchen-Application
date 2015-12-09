@@ -5,12 +5,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ch.fluxron.fluxronapp.R;
 import ch.fluxron.fluxronapp.events.base.EventContinuation;
@@ -20,6 +23,7 @@ import ch.fluxron.fluxronapp.events.base.ResponseOK;
 import ch.fluxron.fluxronapp.events.base.WaitForResponse;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.AttachFileToObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.DeleteObjectByIdCommand;
+import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetAllAttachmentStreamsFromObjectCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetFileStreamFromAttachmentCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.GetObjectByIdCommand;
 import ch.fluxron.fluxronapp.events.modelDal.objectOperations.IStreamProvider;
@@ -55,6 +59,7 @@ import ch.fluxron.fluxronapp.objectBase.KitchenArea;
 public class KitchenManager {
     private IEventBusProvider provider;
     private BitmapCache kitchenImageCache;
+    private final static String ATTACHMENT_NAME_MAIN_PICTURE = "mainPicture";
 
     /**
      * Sets the event bus this manager should be operating on
@@ -124,7 +129,7 @@ public class KitchenManager {
         List<ValidationErrorOccurred> errors = validateAttachment(msg.getImagePath());
 
         if (errors.size() == 0) {
-            AttachFileToObjectByIdCommand cmd = new AttachFileToObjectByIdCommand(msg.getId(), msg.getImagePath(), "mainPicture");
+            AttachFileToObjectByIdCommand cmd = new AttachFileToObjectByIdCommand(msg.getId(), msg.getImagePath(), ATTACHMENT_NAME_MAIN_PICTURE);
 
             WaitForResponse<RequestResponseConnection> waiter = new WaitForResponse<>();
             RequestResponseConnection response = waiter.postAndWait(provider.getDalEventBus(), cmd, RequestResponseConnection.class);
@@ -137,6 +142,25 @@ public class KitchenManager {
         }
         else {
             raiseErrors(msg, errors);
+            
+            // Load the attachments, if the mainPicture is not found, remove the kitchen
+            final String kitchenId = msg.getId();
+            GetAllAttachmentStreamsFromObjectCommand loadStreams = new GetAllAttachmentStreamsFromObjectCommand(kitchenId, new ITypedCallback<Map<String, InputStream>>() {
+                @Override
+                public void call(Map<String, InputStream> streams){
+                    // Close all streams, we don't need them
+                    for(InputStream s : streams.values()){
+                        try {s.close();}
+                        catch (IOException e) { e.printStackTrace(); }
+                    }
+                    // If there were no streams, we need to remove the kitchen since it is invalid
+                    if (streams.size() == 0) {
+                        DeleteObjectByIdCommand command = new DeleteObjectByIdCommand(kitchenId);
+                        provider.getDalEventBus().post(command);
+                    }
+                }
+            });
+            provider.getDalEventBus().post(loadStreams);
         }
     }
 
