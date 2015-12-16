@@ -1,8 +1,6 @@
 
 ![Fluxron Smart Kitchen](https://raw.githubusercontent.com/aerobless/FluxronSmartKitchen-Application/master/images/appscreen_header.jpg)
 
-####Abstract
-
 Die Firma Fluxron Solutions AG entwickelt in Amriswil Heizlösungen und Küchengeräte
 auf Induktionsbasis. Diese Geräte besitzen eine Bluetooth-Schnittstelle, über welche
 Einstellungen angepasst und ausführliche Laufzeit- und Fehlerprotokolle ausgelesen
@@ -32,5 +30,6 @@ der Status der Geräte wird regelmässig aktualisiert. Der Funktionsumfang wurde
 einem erfolgreichen Praxistest vor Ort überprüft. Die Servicetechniker profitieren nun
 von einer modernen Applikation, welche ihnen den Wartungsalltag erleichtert.
 
+[Die Dokumentation dieser Arbeit kann hier gefunden werden.](https://github.com/aerobless/FluxronSmartKitchen-Documentation)
 
 ![Fluxron Smart Kitchen](https://raw.githubusercontent.com/aerobless/FluxronSmartKitchen-Application/master/images/app_footer.jpg)
